@@ -1,7 +1,7 @@
 # TRACE Benchmark
 
 This directory contains the public benchmark definitions, evaluation procedure,
-model scores, expert scores, and a minimal example run record.
+model scores, expert scores, and a representative example run record.
 
 ## Contents
 

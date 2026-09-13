@@ -14,7 +14,7 @@ release/
 ## Contents
 
 - `benchmark/`: benchmark task definitions, evaluation summaries, the public
-  task runner, and selected redacted run records.
+  task runner, and redacted run records.
 - `cases/ridgecrest/`: curated materials for the 2019 Ridgecrest case.
 - `cases/sanriku/`: curated materials for the Sanriku catalog construction and
   catalog-analysis case.

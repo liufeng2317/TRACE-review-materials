@@ -39,7 +39,7 @@ Materials are available under [`release/cases/sanriku/`](release/cases/sanriku/)
 
 ## Benchmark
 
-The benchmark evaluates whether an analysis agent can complete structured scientific tasks and produce reviewable outputs. It includes Level 1 and Level 2 task definitions, evaluation summaries, selected run records, and public benchmark utilities.
+The benchmark evaluates whether an analysis agent can complete structured scientific tasks and produce reviewable outputs. It includes Level 1 and Level 2 task definitions, evaluation summaries, reviewable run records, and public benchmark utilities.
 
 Manual-reference visualization scores are based on five expert ratings on a 1-5 scale. The corresponding task definitions and evaluation summaries are available under [`release/benchmark/`](release/benchmark/).
 
@@ -50,26 +50,26 @@ This repository focuses on the materials needed to inspect the experimental desi
 - benchmark task definitions and evaluation summaries;
 - case-specific execution and analysis scripts;
 - experiment plans and workflow descriptions;
-- selected processing and validation records;
+- processing and validation records;
 - machine-readable result tables and summary files;
-- figures and other reviewable products where included.
+- figures and other reviewable products supporting the released workflows.
 
-Large source datasets and external software environments are not duplicated in this repository. Local data and software locations are represented by public placeholders where appropriate and must be supplied separately.
+The repository uses public placeholders for local data and software locations. Large source datasets and external software environments are referenced separately.
 
 ## TRACE Framework Availability
 
-The general-purpose TRACE agent framework and its internal `seismoagent` implementation are not included in this pre-publication repository. The released materials document the case-specific workflows and provide the results needed for manuscript review, but they are not intended to be a standalone copy of the complete TRACE framework.
+This repository presents the case-specific workflows and manuscript-facing results associated with TRACE. The general-purpose TRACE agent framework and its internal `seismoagent` implementation will be released after completion of the peer-review process.
 
-The related framework design can be referenced through the [EarthLink project](https://github.com/OpenEarthLab/EarthLink). The complete TRACE framework source code will be released after completion of the peer-review process. Additional implementation details or private access can be provided for manuscript evaluation when required.
+The related framework design can be referenced through the [EarthLink project](https://github.com/OpenEarthLab/EarthLink). Additional implementation details or private access can be provided for manuscript evaluation when required.
 
 ## Reproducibility
 
-The public scripts document the analysis steps and parameters used for the released cases. Reproducing the workflows may require the corresponding scientific datasets, standard scientific Python packages, domain-specific tools, local data paths, and access permissions for external data services.
+The public scripts document the analysis steps and parameters used for the released cases. Reproduction uses the corresponding scientific datasets, standard scientific Python packages, domain-specific tools, local data paths, and access permissions for external data services.
 
-The released result tables and summary files should be treated as the authoritative record of the manuscript-facing outputs. Intermediate materials are included only when they support workflow inspection or validation.
+The released result tables and summary files define the manuscript-facing outputs. Supporting processing materials are included for workflow inspection and validation.
 
 ## Citation and License
 
-Please cite the associated TRACE manuscript when using these materials. A permanent citation and repository version will be added when available.
+Please cite the associated TRACE manuscript when using these materials. A permanent citation and repository version will be added with the formal publication release.
 
-No license is currently specified for this pre-publication repository. Licensing terms will be added with the formal public software release.
+Licensing terms will be added with the formal public software release.

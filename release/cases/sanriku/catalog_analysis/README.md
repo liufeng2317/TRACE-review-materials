@@ -99,8 +99,6 @@ scopes of the same catalog.
 - `scientific_synthesis_reference`: integrates the first nine formal analysis
   runs. `04_1A_M1_migration` remains a separate supplementary branch.
 
-The final scientific values should be read from
-`results/exp_run/outputs/` and the corresponding reports. `results/state/` and
-trajectory files preserve agent execution history, including earlier attempts
-and intermediate diagnostics, and are not an alternative source of final
-scientific values.
+The final scientific values are defined by `results/exp_run/outputs/` and the
+corresponding reports. `results/state/` and trajectory files preserve the agent
+execution history and diagnostic context.
