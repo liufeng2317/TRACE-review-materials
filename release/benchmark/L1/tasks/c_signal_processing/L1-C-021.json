@@ -1,0 +1,38 @@
+{
+  "task_id": "L1-C-021",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Waveform Filtering with Zero-Phase Lowpass Filter",
+    "task_description": {
+      "overview": "Apply a zero-phase lowpass filter to a seismic trace to attenuate high-frequency noise above a specified corner frequency.",
+      "steps": [
+        "Load the seismogram data from the provided URL using ObsPy.",
+        "Select the trace from the Stream object for processing.",
+        "Create a copy of the original trace to preserve raw data.",
+        "Apply a lowpass filter with a corner frequency of 1.0 Hz, using 2 corners and zero-phase option.",
+        "Generate a time vector based on sample count and sampling rate.",
+        "Plot the raw and filtered waveforms for comparison."
+      ],
+      "input_data": {
+        "seismogram_url": "https://examples.obspy.org/RJOB_061005_072159.ehz.new",
+        "filter_type": "lowpass",
+        "corner_frequency_hz": 1.0,
+        "corners": 2,
+        "zerophase": true
+      },
+      "output_data": {
+        "filtered_data": "filtered_data.mseed",
+        "filtered_data_plot": "filtered_data_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "signal processing",
+      "digital filtering",
+      "zero-phase filter",
+      "frequency-domain analysis"
+    ],
+    "agent_prompt": "Load the seismogram from {seismogram_url}. Copy the trace and apply a zero-phase lowpass filter with a 1.0 Hz corner frequency and 2 corners. Generate a time axis based on the trace sampling rate. Output the filtered data array and produce plots comparing the raw and filtered waveforms. Save the filtered data to {filtered_data} and the plot to {filtered_data_plot}."
+  }
+}

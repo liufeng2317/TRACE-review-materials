@@ -1,0 +1,52 @@
+{
+  "task_id": "L2-A-007",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Phase Picking using PhaseNet on STEAD",
+    "task_description": {
+      "overview": "Use a pretrained PhaseNet deep‐learning model to detect P‐ and S‐wave arrivals on the 3-component seismic dataset (STEAD).",
+      "steps": [
+        "Load multi‐component seismic data from the provided .npz file.",
+        "Normalize each component trace by mean removal and max (or standard deviation) scaling.",
+        "Convert normalized data into a PyTorch tensor and move it to the computation device (CPU/GPU).",
+        "Run the PhaseNet model in evaluation mode to obtain probability sequences for noise, P‐phase, and S‐phase.",
+        "Detect arrival picks in the probability sequences using a peak‐detection function with specified probability thresholds and minimum peak distance.",
+        "Return sample indices and associated probabilities for the detected P and S picks."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.csv",
+        "normalization_mode": "max",
+        "device": "npu",
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/stead.pt.v2",
+        "pretrained_param_path": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/stead.json.v2",
+        "overlap": 100,
+        "P_threshold": 0.3,
+        "S_threshold": 0.3,
+        "sampling rate": 100,
+        "accept_residual_sec": 1
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "predict_p_pick": "list of int",
+            "predict_s_pick": "list of int",
+            "target_p_pick": "list of int",
+            "target_s_pick": "list of int"
+          }
+        },
+        "result_figure": "result_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "p-wave and s-wave arrival time",
+      "phase picking",
+      "phasenet",
+      "deep learning",
+      "stead dataset"
+    ],
+    "agent_prompt": "Perform P-wave and S-wave phase picking on the 3-component seismic dataset (STEAD) using PhaseNet. Load and normalize the seismic data from {data_path}. The pretrained PhaseNet model is located at {pretrained_model_path}, and its pretrained parameters is located at {pretrained_param_path}. \n (1) Run inference with the specific overlap, P_threshold, and S_threshold, save the picked results into a csv file, and assign `-1` when no valid p-picks or s-picks is found for a sample. \n (2) Load the target P and S picks from {target_path} by reading the columns `p_arrival_sample` and `s_arrival_sample`. Plot a figure (2 subplots) showing the comparison between the predicted and Target P-wave picks and S-wave picks. \n (3) The result data should be saved to {result_data.save_name} with content {result_data.content}, and the result figure should be saved to {result_figure}."
+  }
+}

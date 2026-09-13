@@ -1,0 +1,38 @@
+{
+  "task_id": "L1-D-008",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Gutenberg-Richter b-value",
+    "task_description": {
+      "overview": "Compute the b-value of the Gutenberg-Richter frequency-magnitude distribution using the maximum likelihood method.",
+      "steps": [
+        "Ensure Catalog.mc and Catalog.delta_m are defined.",
+        "Call cat.estimate_b() to compute the b-value using internal properties.",
+        "Optionally, provide delta_m and mc as arguments to cat.estimate_b().",
+        "Alternatively, call the standalone function estimate_b(magnitudes, delta_m, mc) with a numpy array of magnitudes.",
+        "Extract the b-value from cat.b_value or the function return."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "delta_m": 0.1,
+        "mc": 1.8
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "b_value.json",
+          "content": {
+            "mc": "magnitude of completeness (float)",
+            "b_value": "b-value (float)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "Gutenberg-Richter law",
+      "maximum likelihood estimation",
+      "b-value"
+    ],
+    "agent_prompt": "Estimate the b-value for the given catalog: {catalog_path}. Loading the catalog, and then estimate the b-value using `cat.estimate_b(delta_m={delta_m}, mc={mc})`. \n Note: 1) Save the b-value data to {result_data.save name} with content {result_data.content}."
+  }
+}

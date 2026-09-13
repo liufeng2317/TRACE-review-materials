@@ -1,0 +1,29 @@
+{
+  "task_id": "L1-A-004",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "SeedLink Client Connection",
+    "task_description": {
+      "overview": "Establish a real-time connection to a SeedLink server to receive seismic waveform data.",
+      "steps": [
+        "Define a data handler function that processes incoming Trace objects.",
+        "Call create_client(server_url, on_data=data_handler) to instantiate the client and connect immediately.",
+        "Optionally define on_close and on_error callbacks to handle disconnection and errors."
+      ],
+      "input_data": {
+        "server_url": "geofon.gfz-potsdam.de",
+        "get_info": "ID"
+      },
+      "output_data": {
+        "client_file": "info_response.xml"
+      }
+    },
+    "geophysical_knowledge": [
+      "real-time data acquisition",
+      "SeedLink protocol",
+      "streaming seismic data"
+    ],
+    "agent_prompt": "Connect to the SeedLink server at {server_url} using the `from obspy.clients.seedlink.easyseedlink import create_client` function. Provide the on_data callback to handle incoming Trace objects by printing or storing them. Return the connected client instance. Call the client.get_info('{get_info}') method to get the information of the server. Save the returned xml information"
+  }
+}

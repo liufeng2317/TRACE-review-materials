@@ -1,0 +1,84 @@
+{
+  "task_id": "L2-C-007",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Multi-Station Cross-Correlation Event Swarm Detection",
+    "task_description": {
+      "overview": "Detect repeating or similar events in a seismic swarm by cross-correlating multiple templates across several stations and optionally estimate magnitudes from amplitude ratios.",
+      "steps": [
+        "Load continuous multi-station stream data for the target time window.",
+        "Apply a highpass filter (e.g., >1 Hz) to remove low-frequency noise.",
+        "Define template windows for each known event time and station by slicing the stream.",
+        "Assign template names and magnitudes for later magnitude estimation.",
+        "Optionally implement a custom similarity function enforcing per-station thresholds.",
+        "Run correlation_detector with multiple templates, thresholds, distances, and the custom similarity function.",
+        "Collect detections including times, similarity scores, template associations, amplitude ratios, and estimated magnitudes."
+      ],
+      "input_data": {
+        "continuous_waveform_path": "<DATA_ROOT>/Obspy/data/manully_script/data/xcorr_detector/input/NKC_PLN_ROHR.HHZ.2018.130.mseed",
+        "stations": [
+          "NKC",
+          "ROHR",
+          "PLN"
+        ],
+        "filter": {
+          "type": "highpass",
+          "freq": 1.0,
+          "zerophase": true
+        },
+        "template_definitions": {
+          "origin_times": [
+            "2018-05-10T14:24:50Z",
+            "2018-05-10T19:42:08Z"
+          ],
+          "slices": [
+            {
+              "station": "NKC",
+              "start_offset": 2,
+              "end_offset": 7
+            },
+            {
+              "station": "ROHR",
+              "start_offset": 2,
+              "end_offset": 7
+            },
+            {
+              "station": "PLN",
+              "start_offset": 6,
+              "end_offset": 12
+            }
+          ],
+          "template_names": [
+            "1st template",
+            "2nd template"
+          ],
+          "template_magnitudes": [
+            2.9,
+            2.8
+          ]
+        },
+        "detection_parameters": {
+          "similarity_threshold": 0.5,
+          "distance_sec": 10
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "detections.json",
+          "file_content": {
+            "detections": "list of dictionaries"
+          }
+        },
+        "detection_results": "detection_results.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "multi-station correlation",
+      "swarm detection",
+      "amplitude ratio magnitude estimation",
+      "signal filtering"
+    ],
+    "agent_prompt": "Perform multi-station cross-correlation detection on the provided continuous waveform. Loader waveform from {continuous_waveform_path}, and filter it with given filter parameters. Build templates by slicing around given origin times and stations according to offsets. Use given template names and magnitudes. Run obspy function `detections, sims = correlation_detector(steam,template,height,distance,template_names=template_names,template_magnitudes=template_magnitudes)` with given parameters, Note that the returned `detection` is a list of dictionaries, and `sims` is a list of obspy stream objects (for multiple templates). Plot figures to show the templates, the observed stream, the cross-correlation result, and the detections. Save the detections into a json file {result_data.file_name} with content {result_data.file_content}. Save the figure to {detection_results}."
+  }
+}

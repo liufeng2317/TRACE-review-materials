@@ -1,0 +1,36 @@
+{
+  "task_id": "L1-A-003",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Instrument Response Retrieve via IRIS Web Services",
+    "task_description": {
+      "overview": "Fetch instrument response data in RESP or SAC poles & zeros format using ObsPy Iris client or FDSN station metadata.",
+      "steps": [
+        "Decide whether to use FDSN StationXML or IRIS-specific service for response data.",
+        "If using FDSN, request StationXML for target station/channel/time.",
+        "If using Iris client, call traveltime(), distaz(), or flinnengdahl() if needed for travel-time modeling.",
+        "Extract and save instrument response in RESP or SAC PZ format.",
+        "Integrate response information with waveform data for deconvolution."
+      ],
+      "input_data": {
+        "network": "IU",
+        "station": "ANMO",
+        "location": "00",
+        "channel": "LHZ",
+        "starttime": "UTCDateTime('2010-02-27T06:35:00.000')",
+        "endtime": "UTCDateTime('2010-02-27T06:45:00.000')"
+      },
+      "output_data": {
+        "response_file": "instrument_response.xml",
+        "response_plot": "instrument_response.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "instrument response",
+      "SAC poles and zeros",
+      "station metadata"
+    ],
+    "agent_prompt": "Retrieve instrument response for network={network}, station={station}, location={location}, channel={channel} between {starttime} and {endtime}. Figure the response."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "task_id": "L1-E-013",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Visualize Seismic Catalog Data",
+    "task_description": {
+      "overview": "Generate exploratory plots for spatial, temporal, and magnitude distribution patterns of the seismic catalog.",
+      "steps": [
+        "Load the Catalog object with the required columns (time, latitude, longitude, magnitude).",
+        "Plot event locations on a map using cat.plot_in_space(include_map=True).",
+        "Plot magnitudes over time with cat.plot_mags_in_time().",
+        "Plot the cumulative frequency-magnitude distribution using cat.plot_cum_fmd() with a specified bin size."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "fmd_bin": 0.1
+      },
+      "output_data": {
+        "spatial_distribution_plot": "spatial_distribution_plot.png",
+        "temporal_distribution_plot": "temporal_distribution_plot.png",
+        "frequency_magnitude_distribution_plot": "frequency_magnitude_distribution_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "spatial distribution",
+      "temporal analysis",
+      "frequency-magnitude distribution",
+      "magnitude binning"
+    ],
+    "agent_prompt": "Given the earthquake catalog file {catalog_path}, using the `seismostats` library to produce some figures: 1) a map of event locations with `cat.plot_in_space(include_map=True)`, 2) a time series of magnitudes with `cat.plot_mags_in_time()`, and 3) the cumulative frequency-magnitude distribution with bin size {fmd_bin} using `cat.plot_cum_fmd(fmd_bin={fmd_bin})`. \n Note: 1) Save the spatial distribution plot to {spatial_distribution_plot}, the temporal distribution plot to {temporal_distribution_plot}, and the frequency magnitude distribution plot to {frequency_magnitude_distribution_plot}."
+  }
+}

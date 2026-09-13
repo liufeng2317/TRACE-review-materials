@@ -1,0 +1,45 @@
+{
+  "task_id": "L1-C-007",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "DAS Data Spike Removal",
+    "task_description": {
+      "overview": "Identify and remove spike noise from distributed acoustic sensing (DAS) signals by applying median filters and interpolating affected points.",
+      "steps": [
+        "Load the DAS seismic waveform data from SEG-Y file and set channel spacing (dx) and start time.",
+        "Apply a bandpass filter to the data to isolate frequencies of interest.",
+        "Trim the data window to the time interval around the event.",
+        "Compute an across-channel median filter followed by an across-time median filter to build a median amplitude map.",
+        "Detect spikes: locate points where absolute amplitudes exceed a predefined threshold of the median map.",
+        "Interpolate each detected spike using adjacent channel values.",
+        "Return the cleaned waveform with spikes removed."
+      ],
+      "input_data": {
+        "segy_file_path": "<DATA_ROOT>/daspy/Denoising/input/Stanford1_20180104_113058.566+0000.sgy",
+        "ch2": 320,
+        "channel_spacing_dx": 8,
+        "start_time": "2018-01-04T11:30:58.566000",
+        "bandpass_freq": [
+          1,
+          20
+        ],
+        "trim_window": {
+          "tmin": "2018-01-04T11:34:46.566000",
+          "tmax": "2018-01-04T11:34:56.566000"
+        },
+        "spike_threshold": "default"
+      },
+      "output_data": {
+        "spike_removed_data": "spike_removed_data.sgy",
+        "spike_removed_data_plot": "spike_removed_data_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "noise removal",
+      "median filtering",
+      "DAS signal processing"
+    ],
+    "agent_prompt": "Load the DAS seismic data from {segy_file_path} with ch2={ch2}, set dx to {channel_spacing_dx} and start_time to {start_time}. Apply a {bandpass_freq[0]}–{bandpass_freq[1]} Hz bandpass filter, then trim between {trim_window.tmin} and {trim_window.tmax}. Perform spike removal by median filtering across channels and time. Plot some figures to show the 2D original data, the bandpassed processed data, the timminged data, and the finally spiked removed data. Note: 1) consder using daspy package to load, processing (e.g. bandpass filter, spike removal, etc.) and plot the data. 2) Save the spike removed data to {spike_removed_data} and the plot to {spike_removed_data_plot}."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "run_id": "gpt-5.1/L1-A-001",
+  "promotion_type": "public_example_run_record",
+  "trajectory_available": false,
+  "copied_files": [
+    "request.md",
+    "plan_final.md",
+    "workflow.yml",
+    "generated_scripts/01_download_event_catalog_from_fdsn_server.py"
+  ],
+  "coding_state_summary": {
+    "01_download_event_catalog_from_fdsn_server": {
+      "ancestors": [],
+      "debug_round": [
+        1
+      ],
+      "retries": 0,
+      "status": "success"
+    },
+    "all_success": true
+  }
+}

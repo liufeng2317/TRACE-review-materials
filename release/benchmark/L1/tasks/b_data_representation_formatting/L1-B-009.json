@@ -1,0 +1,102 @@
+{
+  "task_id": "L1-B-009",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Dataless SEED File Clone and Adapt",
+    "task_description": {
+      "overview": "Create a new Dataless SEED file for a station by cloning an existing one and updating station metadata, channel metadata, instrument response parameters, and sensitivity gains.",
+      "steps": [
+        "Import ObsPy Parser and UTCDateTime modules.",
+        "Parse the existing Dataless SEED file from the given URL or path to retrieve blockettes.",
+        "Update blockette 50 with new network code, station call letters, site name, latitude, longitude, elevation, and effective dates.",
+        "Update blockette 33 abbreviation description for the new seismometer.",
+        "For each channel (Z, N, E):",
+        "  a. Update blockette 52 with channel identifier, location identifier, latitude, longitude, elevation, start and end dates.",
+        "  b. Update blockette 53 with pole-zero parameters: number of complex poles/zeros, real and imaginary poles/zeros, and their errors; normalization factor and frequency.",
+        "  c. Update blockette 58 with sensitivity gains for seismometer gain, digitizer gain, and overall sensitivity.",
+        "Write the modified blockettes to a new Dataless SEED file."
+      ],
+      "input_data": {
+        "existing_seed_path": "https://examples.obspy.org/dataless.seed.BW_RNON",
+        "new_station_metadata": {
+          "network_code": "BW",
+          "station_call_letters": "RMOA",
+          "site_name": "Moar Alm, Bavaria, BW-Net",
+          "latitude": 47.761658,
+          "longitude": 12.864466,
+          "elevation": 815.0,
+          "start_effective_date": "2006-07-18T00:00:00.000000Z",
+          "end_effective_date": ""
+        },
+        "seismometer_abbreviation": "Lennartz LE-3D/1 seismometer",
+        "channel_list": [
+          "Z",
+          "N",
+          "E"
+        ],
+        "pole_zero_parameters": {
+          "number_of_complex_poles": 3,
+          "real_pole": [
+            -4.444,
+            -4.444,
+            -1.083
+          ],
+          "imaginary_pole": [
+            4.444,
+            -4.444,
+            0.0
+          ],
+          "real_pole_error": [
+            0,
+            0,
+            0
+          ],
+          "imaginary_pole_error": [
+            0,
+            0,
+            0
+          ],
+          "number_of_complex_zeros": 3,
+          "real_zero": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "imaginary_zero": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "real_zero_error": [
+            0,
+            0,
+            0
+          ],
+          "imaginary_zero_error": [
+            0,
+            0,
+            0
+          ],
+          "A0_normalization_factor": 1.0,
+          "normalization_frequency": 3.0
+        },
+        "sensitivity_gains": {
+          "seismometer_gain": 400.0,
+          "digitizer_gain": 1677850.0,
+          "overall_sensitivity": 671140000.0
+        }
+      },
+      "output_data": {
+        "seed_file": "dataless.seed"
+      }
+    },
+    "geophysical_knowledge": [
+      "Dataless SEED format",
+      "instrument response",
+      "pole-zero model",
+      "sensitivity gain"
+    ],
+    "agent_prompt": "Load the Dataless SEED file at {existing_seed_path}. Parse its blockettes and update blockette 50 with new station metadata, blockette 33 with the {seismometer_abbreviation}, and blockettes 52, 53, and 58 for each channel (Z, N, E) with the provided pole-zero parameters and sensitivity gains. Finally, write the modified Dataless SEED volume to {seed_file}."
+  }
+}

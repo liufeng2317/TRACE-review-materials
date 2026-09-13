@@ -1,0 +1,35 @@
+{
+  "task_id": "L1-D-001",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Array Response Function Computation",
+    "task_description": {
+      "overview": "Compute and visualize the array transfer (response) function for beamforming as a function of wavenumber differences using seismic station coordinates.",
+      "steps": [
+        "Load or define the array station coordinates in a 2D plane (x, y) with depth zero.",
+        "Convert coordinates to kilometers if necessary.",
+        "Define wavenumber analysis limits (klim) and grid resolution (kstep) for kx and ky.",
+        "Call the ObsPy function array_transff_wavenumber() with coordinates, klim, and kstep to compute the transfer function matrix.",
+        "Generate a pseudocolor plot of the transfer function over the wavenumber grid using a suitable colormap.",
+        "Add a colorbar, set color limits, and axis limits, then display the plot."
+      ],
+      "input_data": {
+        "coords": "Nx3 array of station coordinates in kilometers ([[0.01, 0.06, 0.0], [0.2, 0.05, 0.0], [-0.12, 0.17, 0.0], [-0.1, -0.15, 0.0], [0.03, -0.22, 0.0]])",
+        "klim": 40.0,
+        "kstep": 0.4,
+        "coordsys": "xy"
+      },
+      "output_data": {
+        "result_plot": "array_response_function_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "beamforming",
+      "array response function",
+      "wavenumber analysis",
+      "signal processing"
+    ],
+    "agent_prompt": "Compute and plot the array transfer function for beamforming. Input the station coordinates array 'coords' (in km), wavenumber limit 'klim', step size 'kstep', and coordinate system 'coordsys'. Use ObsPy's array_transff_wavenumber() to calculate the transfer function matrix, then produce a pseudocolor plot over the kx-ky grid with a colorbar and appropriate axis limits. \n Note: 1) Save the array response function plot to {result_plot}."
+  }
+}

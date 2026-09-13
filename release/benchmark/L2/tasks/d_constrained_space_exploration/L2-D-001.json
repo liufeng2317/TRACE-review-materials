@@ -1,0 +1,45 @@
+{
+  "task_id": "L2-D-001",
+  "level": "L2",
+  "category": "Constrained space exploration",
+  "task_definition": {
+    "task_name": "DAS Data Strain-to-Velocity Conversion via Curvelet Transform",
+    "task_description": {
+      "overview": "Convert DAS strain data to particle velocity by weighting curvelet coefficients with their median apparent velocity in the FK domain.",
+      "steps": [
+        "Load the preprocessed DAS strain Section object from the pickle file.",
+        "Compute the curvelet transform of the strain data.",
+        "For each curvelet coefficient, multiply by the median velocity of its basis function wedge.",
+        "Inverse curvelet transform to reconstruct the velocity time series.",
+        "Extract the velocity trace for the specified channel for comparison."
+      ],
+      "input_data": {
+        "das_section_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_DAS_M4.3_2688_2826.pkl",
+        "node_seismometer_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_node_M4.3_165.sac",
+        "show_channel": 2781,
+        "show_time_range": [
+          20,
+          70
+        ],
+        "show_p_wave_time_range": [
+          27,
+          32
+        ],
+        "show_s_wave_time_range": [
+          46,
+          56
+        ]
+      },
+      "output_data": {
+        "result_data": "result.pkl",
+        "result_figure": "stain_to_velocity_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "curvelet transform",
+      "strain-to-velocity conversion"
+    ],
+    "agent_prompt": "Using daspy package to load the DAS strain Section from {das_section_path}, and using `curvelet_conversion()` to convert the strain to velocity. Then select the {show_channel} to compare the transformed velocity data with the original node seismometer data ( loaded from {node_seismometer_path}), and enlarge the time range to show the P-wave and S-wave. Note: 1) consider using daspy package to load, process (e.g. curvelet_conversion, etc.). 2) Save the result into a pickle file {result_data} and the figure {result_figure}."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "task_id": "L1-C-011",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "DAS waveform bandpass filtering",
+    "task_description": {
+      "overview": "Filter DAS time-series data using standard frequency filters to isolate or remove specific frequency bands.",
+      "steps": [
+        "Load the preprocessed DAS data.",
+        "Select the desired filter type (bandpass, bandstop, lowpass, highpass, envelope, or Chebyshev lowpass).",
+        "Specify filter parameters (e.g., cutoff frequencies for bandpass).",
+        "Apply the filter to the time-series data.",
+        "Verify the filtered output for artifacts or edge effects."
+      ],
+      "input_data": {
+        "das_data": "<DATA_ROOT>/daspy/Basic_Processing/input/example.pkl",
+        "filter_type": "bandpass",
+        "filter_parameters": {
+          "low_cutoff": 1,
+          "high_cutoff": 15
+        }
+      },
+      "output_data": {
+        "filtered_data": "filtered_data.pkl",
+        "filtered_data_plot": "filtered_data_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency filtering",
+      "bandpass filter",
+      "Chebyshev filter",
+      "signal envelope"
+    ],
+    "agent_prompt": "Using Daspy package to load and filter the DAS data from {das_data}. Apply a {filter_type} filter with provided cutoff frequencies. Plot a figure to show the original data and the filtered data. Note: consider use the Daspy to do the loading, filtering and figureing. 2) Save the filtered data to {filtered_data} and the plot to {filtered_data_plot}."
+  }
+}

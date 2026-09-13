@@ -1,0 +1,46 @@
+{
+  "task_id": "L2-A-004",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Epicentral Distance Estimation using SeisT on STEAD",
+    "task_description": {
+      "overview": "Estimate the epicentral distance of seismic events using a pretrained SeisT deep learning model on STEAD waveform data.",
+      "steps": [
+        "Load the pretrained SeisT model with specified architecture (e.g., seist_l) and checkpoint path.",
+        "Prepare and normalize the input waveform data: load .npz file, subtract mean and scale by standard deviation for each component.",
+        "Convert the normalized NumPy data to a PyTorch tensor and run inference through the model to obtain predicted distances.",
+        "Load the ground truth distances from a CSV file and extract the 'source_distance_km' column.",
+        "Compare predictions with ground truth by computing error metrics or visualizing with a scatter plot and 1:1 reference line."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.csv",
+        "normalize_mode": "std",
+        "device": "npu",
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/epicentral_distance_estimation/pretrained/seist_l/stead.pth",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 6000
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "pred_distance": "list of float",
+            "target_distance": "list of float"
+          }
+        },
+        "result_figure": "distance_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "deep learning model",
+      "epicentral distance estimation",
+      "SeisT",
+      "STEAD dataset"
+    ],
+    "agent_prompt": "Perform epicentral distance estimation on the 3-component seismic dataset (STEAD) using `seist_l` deep learning model. Load and normalize the seismic data from {data_path} with the specific {normalize_mode} mode. The pretrained seist_l model is located at {pretrained_model_path}, and its related parameters are {model_params}. \n (1) Run inference and save the epicentral distance estimation results into a csv file. \n (2) Load the target epicentral distance from {target_path} by reading the columns `source_distance_km`. Compute and save the evaluation metrics between the predicted results and the target epicentral distance, all saved in a json file. \n (3) Plot one figure showing the epicentral distance estimation results and the target epicentral distance. Save the result data to {result_data.save_name} with content {result_data.content}, and save the result figure to {result_figure.save_name}."
+  }
+}

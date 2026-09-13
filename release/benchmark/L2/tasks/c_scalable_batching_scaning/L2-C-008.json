@@ -1,0 +1,54 @@
+{
+  "task_id": "L2-C-008",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Network Coincidence Trigger",
+    "task_description": {
+      "overview": "Perform network-based coincidence triggering on multiple station streams to identify local seismic events.",
+      "steps": [
+        "Assemble a Stream of multiple station Traces.",
+        "Optionally apply a bandpass filter to all traces.",
+        "Invoke coincidence_trigger(method, on_threshold, off_threshold, stream, min_coincidence, sta, lta).",
+        "Parse returned list of events with time, duration, stations and trace_ids."
+      ],
+      "input_data": {
+        "stream": [
+          "https://examples.obspy.org/BW.UH1..SHZ.D.2010.147.cut.slist.gz",
+          "https://examples.obspy.org/BW.UH2..SHZ.D.2010.147.cut.slist.gz",
+          "https://examples.obspy.org/BW.UH3..SHZ.D.2010.147.cut.slist.gz",
+          "https://examples.obspy.org/BW.UH4..SHZ.D.2010.147.cut.slist.gz"
+        ],
+        "filter": {
+          "type": "bandpass",
+          "freqmin": 10,
+          "freqmax": 20
+        },
+        "coincidence_trigger_param": {
+          "method": "recstalta",
+          "on_threshold": 3.5,
+          "off_threshold": 1,
+          "min_coincidence": 3,
+          "STA_seconds": 0.5,
+          "LTA_seconds": 10
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "coincidence_trigger_result.json",
+          "file_content": {
+            "coincidence_trigger_result": "list of dictionaries"
+          }
+        },
+        "coincidence_trigger_result": "coincidence_trigger_result.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "STA/LTA",
+      "network detection",
+      "coincidence trigger"
+    ],
+    "agent_prompt": "Given a list of traces {stream}, apply a {filter.type} filter between {filter.freqmin} and {filter.freqmax} Hz. Run coincidence_trigger with parameters {coincidence_trigger_param}. Plot a figure to show the waveform, the coincidence trigger caculated result, and the finally picked onset and offset times. Save the coincidence trigger result into a json file {result_data.file_name} with content {result_data.file_content}. Save the figure to {coincidence_trigger_result}."
+  }
+}

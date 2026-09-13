@@ -1,0 +1,31 @@
+{
+  "task_id": "L1-E-008",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Seismic Data Spectrogram Computation and Plotting",
+    "task_description": {
+      "overview": "Generate a time-frequency representation (spectrogram) of a seismic waveform stream using ObsPy.",
+      "steps": [
+        "Load the seismic data into an ObsPy Stream object from the provided file path or URL.",
+        "Call the Stream.spectrogram() method to compute and plot the spectrogram.",
+        "Customize plot parameters such as logarithmic scaling, colormap, and title as needed.",
+        "Display or save the spectrogram figure for analysis."
+      ],
+      "input_data": {
+        "seismic_stream_source": "https://examples.obspy.org/RJOB_061005_072159.ehz.new",
+        "log_scale": true,
+        "colormap": "default"
+      },
+      "output_data": {
+        "result_plot": "spectrogram_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "spectral analysis",
+      "time-frequency representation",
+      "seismic waveform"
+    ],
+    "agent_prompt": "Load the seismic waveform stream from {seismic_stream_source} into an ObsPy Stream object. Compute and plot its spectrogram with logarithmic scaling enabled. Output the spectrogram figure, applying an appropriate colormap. \n Note: 1) Save the spectrogram plot to {result_plot}."
+  }
+}

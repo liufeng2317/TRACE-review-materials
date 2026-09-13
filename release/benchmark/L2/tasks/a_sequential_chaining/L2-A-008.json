@@ -1,0 +1,41 @@
+{
+  "task_id": "L2-A-008",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Recursive STA_LTA with Trigger Onset Plotting",
+    "task_description": {
+      "overview": "Retrieve waveform from FDSNWS, compute recursive STA/LTA, detect trigger onsets, and visualize results.",
+      "steps": [
+        "Use FDSN client to fetch waveforms for a given station and time window.",
+        "Compute cft = recursive_sta_lta(tr.data, nsta, nlta).",
+        "Determine on/off sample indices with trigger_onset(cft, on_threshold, off_threshold).",
+        "Plot raw data with vertical lines at on/off times.",
+        "Plot cft with horizontal threshold lines."
+      ],
+      "input_data": {
+        "client": "LMU",
+        "network": "BW",
+        "station": "RTSH",
+        "channel": "EHZ",
+        "starttime": "2009-08-24 00:19:45",
+        "endtime": "2009-08-24 00:20:35",
+        "STA_seconds": 2.5,
+        "LTA_seconds": 10.0,
+        "on_threshold": 3.5,
+        "off_threshold": 0.5
+      },
+      "output_data": {
+        "trigger_cft": "trigger_cft.txt",
+        "trigger_plot": "trigger_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "recursive STA/LTA",
+      "trigger onset detection",
+      "data visualization"
+    ],
+    "agent_prompt": "Using FDSN client, retrieve {network}.{station}..{channel} between {starttime} and {endtime}. Compute recursive STA/LTA with STA={STA_seconds}s, LTA={LTA_seconds}s. Use trigger_onset to find on/off indices for thresholds {on_threshold}/{off_threshold}. Plot the waveform with on/off lines and characteristic function with threshold lines. Save the 1D array trigger_cft to {trigger_cft} and the plot to {trigger_plot}."
+  }
+}

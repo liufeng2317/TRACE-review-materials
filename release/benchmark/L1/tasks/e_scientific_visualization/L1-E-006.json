@@ -1,0 +1,31 @@
+{
+  "task_id": "L1-E-006",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Read and Plot Waveform Data",
+    "task_description": {
+      "overview": "Load seismic waveform data into ObsPy Stream objects from remote URLs.",
+      "steps": [
+        "Import the read function from obspy.core.",
+        "Call read() with the URL of a seismic data file to create a Stream.",
+        "Verify the Stream contents by printing the number of traces and their metadata."
+      ],
+      "input_data": {
+        "waveform_paths": [
+          "<DATA_ROOT>/obspy/waveform_plotting_tutorial/input/COP.BHE.DK.2009.050",
+          "<DATA_ROOT>/obspy/waveform_plotting_tutorial/input/COP.BHN.DK.2009.050",
+          "<DATA_ROOT>/obspy/waveform_plotting_tutorial/input/COP.BHZ.DK.2009.050"
+        ]
+      },
+      "output_data": {
+        "result_plot": "waveform_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic data I/O",
+      "waveform streams"
+    ],
+    "agent_prompt": "Load seismic waveform data from {waveform_paths}. Plot and visualize the waveform. \n Note: 1) Save the waveform plot to {result_plot}."
+  }
+}

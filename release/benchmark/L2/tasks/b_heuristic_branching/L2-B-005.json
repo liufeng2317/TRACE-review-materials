@@ -1,0 +1,45 @@
+{
+  "task_id": "L2-B-005",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "Region-Aware Seismic Phase Picking Branching",
+    "task_description": {
+      "overview": "Automatically select an appropriate pretrained seismic phase picking model based on the geographic region of continuous waveform data. The workflow routes processing according to station location metadata to improve picking reliability across different regional datasets.",
+      "steps": [
+        "Scan all continuous waveform MiniSEED files in the specified directory.",
+        "Extract network and station metadata and retrieve station geographic coordinates from inventory or metadata files.",
+        "Determine the geographic region for each station using predefined regional boundaries.",
+        "If the station is located in the United States, select the PhaseNet model pretrained on the STEAD dataset.",
+        "If the station is located in China, select the PhaseNet model pretrained on the DiTing dataset.",
+        "Apply the selected pretrained model to perform P- and S-phase picking on continuous waveform data.",
+        "Save phase picking results including phase type, pick time, and confidence score.",
+        "Generate a processing log that records which pretrained model was used for each station."
+      ],
+      "input_data": {
+        "data_directory": "<DATA_ROOT>/processed_picking/20190704/CI.CCC.20190704T000000Z__20190705T000000Z.processed.mseed",
+        "region_definition": "the waveform is download from CI.CCC network, located in the Ridgecrest, CA area, USA",
+        "pretrained_phasenet_paths": {
+          "diting": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/diting.pt.v2",
+          "stead": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/original.pt.v2"
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "result.json",
+          "content": {
+            "ppicks": "list of P picks",
+            "spicks": "list of S picks"
+          }
+        },
+        "result_figure": "picks.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "regional variability in seismic waveform characteristics",
+      "domain adaptation of phase picking models",
+      "seismic phase arrival picking standards"
+    ],
+    "agent_prompt": "Picking the seismic phase using PhaseNet model. The region defined as {region_definition}, and the waveform is saved in {data_directory}. If the research region is in the United States, apply the PhaseNet model pretrained on the STEAD dataset (original version). If the research region is in China, apply the PhaseNet model pretrained on the DiTing dataset. Save phase picking results to {result_data.save_name} with content {result_data.content}. Finally, plot waveform and the picking results (in the index range of 6300000 to 6400000), and save it to {result_figure}."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "task_id": "L1-E-012",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Time Frequency Representation Plot",
+    "task_description": {
+      "overview": "Generate and visualize the time–frequency representation (TFR) of a seismic signal using a sliding window Fourier transform.",
+      "steps": [
+        "Load or generate the seismic time series data array and define sampling interval dt.",
+        "Specify frequency range fmin and fmax for the TFR.",
+        "Call the plot_tfr function with the signal, dt, fmin, and fmax.",
+        "Render the time–frequency plot."
+      ],
+      "input_data": {
+        "signal_array_path": "<DATA_ROOT>/obspy/time_frequency_misfit/input/st1.txt",
+        "dt": 0.01,
+        "fmin": 0.5,
+        "fmax": 10.0
+      },
+      "output_data": {
+        "result_plot": "time_frequency_representation_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "time–frequency analysis",
+      "spectrogram",
+      "wave propagation"
+    ],
+    "agent_prompt": "Given a seismic time series array stored in `signal_array_path` sampled at interval `dt`, compute and plot its time–frequency representation between frequencies fmin and fmax. The figure should contain the time-frequency spectrogram and the time-series waveform. \n Note: 1) Save the time frequency representation plot to {result_plot}."
+  }
+}

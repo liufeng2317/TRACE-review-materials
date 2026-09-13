@@ -1,0 +1,35 @@
+{
+  "task_id": "L1-C-016",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Instrument Response Removal",
+    "task_description": {
+      "overview": "Remove or deconvolve the instrument response from raw seismic waveform data to obtain true ground motion (e.g., displacement).",
+      "steps": [
+        "Load seismic waveform data into a Stream object (from FDSN client or local file).",
+        "Load instrument response metadata into an Inventory object (StationXML, RESP, or SEED/Dataless file).",
+        "Define a pre-filter band to stabilize deconvolution (e.g., pre_filt = [f1, f2, f3, f4]).",
+        "Call Stream.remove_response() on the waveform data with parameters: inventory, output unit, pre_filt, optional water_level, plot flag.",
+        "Verify results optionally by visualizing frequency-domain steps or time-series."
+      ],
+      "input_data": {
+        "seismic_waveform_path": "<DATA_ROOT>/obspy/seismometer_correction_simulation/input/IU_ULN_00_LH1_2015-07-18T02.mseed",
+        "inventory_path": "<DATA_ROOT>/obspy/seismometer_correction_simulation/input/IU_ULN_00_LH1.xml",
+        "pre_filt": "[0.001, 0.005, 10, 20]",
+        "water_level": "60"
+      },
+      "output_data": {
+        "removed_response_data": "removed_response_data.mseed",
+        "removed_response_plot": "removed_response_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "instrument response",
+      "deconvolution",
+      "pre-filtering",
+      "frequency-domain analysis"
+    ],
+    "agent_prompt": "Load the seismic waveform from {seismic_waveform_path} and the instrument response metadata from {inventory_path}. Apply remove_response with pre_filt={pre_filt} and water_level={water_level}, set plot=True to visulize the processing process. Save the removed response data to {removed_response_data} and the plot to {removed_response_plot}."
+  }
+}

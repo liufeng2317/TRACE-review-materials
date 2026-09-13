@@ -1,0 +1,40 @@
+{
+  "task_id": "L2-A-009",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Waveform Filtering and Envelope Calculation",
+    "task_description": {
+      "overview": "Filter a seismogram using a zero-phase bandpass filter and compute its envelope for visualization and further analysis.",
+      "steps": [
+        "Load the seismic waveform data from the specified URL or file.",
+        "Extract the raw data array, number of points, and sampling rate from the trace metadata.",
+        "Apply a zero-phase bandpass filter with given corner frequencies and number of corners.",
+        "Compute the envelope of the filtered data using a Hilbert transform or equivalent method.",
+        "Generate a time vector and plot both the filtered waveform and its envelope over the desired time window."
+      ],
+      "input_data": {
+        "seismic_waveform_url": "https://examples.obspy.org/RJOB_061005_072159.ehz.new",
+        "freqmin": 1.0,
+        "freqmax": 3.0,
+        "corners": 2,
+        "zerophase": true,
+        "time_window": [
+          80,
+          90
+        ]
+      },
+      "output_data": {
+        "filtered_data_envelope": "filtered_data_envelope.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "signal filtering",
+      "bandpass filter",
+      "zero-phase filtering",
+      "envelope analysis"
+    ],
+    "agent_prompt": "Load the seismic trace from the URL {seismic_waveform_url}. Apply a zero-phase bandpass filter with freqmin={freqmin} Hz, freqmax={freqmax} Hz, corners={corners}. Compute the envelope of the filtered data. Visualize the filtered waveform and its envelope between {time_window}[0] s and {time_window}[1] s. Save the filtered data envelope to {filtered_data_envelope}."
+  }
+}

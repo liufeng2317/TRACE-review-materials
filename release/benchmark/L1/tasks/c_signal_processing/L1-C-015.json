@@ -1,0 +1,40 @@
+{
+  "task_id": "L1-C-015",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Geographic Coordinate Conversion to/from UTM",
+    "task_description": {
+      "overview": "Convert geographic coordinates (latitude, longitude) to UTM coordinates and back using the utm package, enabling convenient handling of dense seismic station arrays.",
+      "steps": [
+        "Provide a geographic latitude and longitude pair.",
+        "Call utm.from_latlon to obtain easting, northing, UTM zone number, and zone letter.",
+        "If needed, call utm.to_latlon with easting, northing, zone number, and zone letter to recover latitude and longitude.",
+        "Return the forward and reverse conversion results for verification."
+      ],
+      "input_data": {
+        "latitude": 51.2,
+        "longitude": 7.5
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "conversion_results.json",
+          "content": {
+            "longitude": "float",
+            "latitude": "float",
+            "easting": "int",
+            "northing": "int",
+            "utm_zone_number": "int",
+            "utm_zone_letter": "str"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "map projection",
+      "UTM coordinate system",
+      "geodetic conversion"
+    ],
+    "agent_prompt": "Using the 'utm' Python package, convert the geographic coordinate ({latitude}, {longitude}) to UTM coordinates. Save the conversion results to {result_data.save_name} with content {result_data.content}."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "task_id": "L2-C-004",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Epicentral Distance Estimation using SeisT on Continuous Waveform",
+    "task_description": {
+      "overview": "Estimate the epicentral distance of an earthquake from continuous seismic waveform data using a pretrained SeisT deep learning model.",
+      "steps": [
+        "1. Load the SeisT model backbone and pretrained weights.",
+        "2. Read continuous seismic waveform data from a MiniSEED file using ObsPy.",
+        "3. Normalize the multi-channel waveform data by removing the mean and scaling by standard deviation (or maximum amplitude).",
+        "4. Convert the normalized waveform data into a torch tensor and move it to the computation device (CPU/GPU).",
+        "5. Run a forward pass through the SeisT model to obtain the estimated epicentral distance.",
+        "6. Retrieve and return the distance estimation from the model output."
+      ],
+      "input_data": {
+        "waveform_path": "<DATA_ROOT>/DeepLearning_Tests/ldaho_3.8_MFID/raw_waveforms.mseed",
+        "checkpoint_path": "<REPO_ROOT>/seismoagent/library/ai_module/epicentral_distance_estimation/pretrained/seist_l/stead.pth",
+        "normalize_mode": "std",
+        "device": "npu",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 8192
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result_data.json",
+          "file_content": {
+            "predict_distance": "list of float"
+          }
+        },
+        "waveform_with_distance": "waveform_with_distance.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "epicentral distance estimation",
+      "deep learning model",
+      "SeisT",
+      "continuous waveform processing"
+    ],
+    "agent_prompt": "Epicentral distance estimation using `seist_l` deep learning model on the continuous three-component waveform data. Load and normalize the continuous three-component waveform file at {waveform_path} with the specific {normalize_mode} mode, then use the three-component waveform as the model input. The pretrained seist_l model is located at {checkpoint_path} and its related parameters are {model_params}. Run inference by feeding the full-length waveform into the model to obtain a single epicentral distance estimate (no need segment the waveform), and save the estimated value into a json file {result_data.file_name} with content {result_data.file_content}. Finally, plot a figure to show the waveform with the predicted epicentral distance estimation results and save it to {waveform_with_distance}."
+  }
+}

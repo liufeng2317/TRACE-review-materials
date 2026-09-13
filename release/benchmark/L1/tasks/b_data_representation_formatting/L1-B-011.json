@@ -1,0 +1,34 @@
+{
+  "task_id": "L1-B-011",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Waveform Export to MATLAB format",
+    "task_description": {
+      "overview": "Read seismic waveform data from a remote or local file and export each trace as a MATLAB .mat file for further analysis in MATLAB.",
+      "steps": [
+        "Load seismic waveform data into an ObsPy Stream object using obspy.read().",
+        "Iterate over each Trace in the Stream.",
+        "For each Trace, extract metadata fields and waveform data.",
+        "Build a dictionary containing metadata and the data array.",
+        "Save the dictionary to a .mat file using scipy.io.savemat()."
+      ],
+      "input_data": {
+        "waveform_file_path": "https://examples.obspy.org/BW.BGLD..EH.D.2010.037"
+      },
+      "output_data": {
+        "result_files": {
+          "data-1.mat": "data-1.mat",
+          "data-2.mat": "data-2.mat",
+          "data-3.mat": "data-3.mat"
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "seismogram processing",
+      "waveform file handling",
+      "data export"
+    ],
+    "agent_prompt": "Load the seismic waveform file located at {waveform_file_path} using ObsPy. Iterate over each Trace in the resulting Stream, extract its metadata and data array, and save each Trace into a separate MATLAB .mat file named according to the list {result_files}."
+  }
+}

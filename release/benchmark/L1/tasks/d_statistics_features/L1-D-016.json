@@ -1,0 +1,41 @@
+{
+  "task_id": "L1-D-016",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Seismic Waveform Continuous Wavelet Transform",
+    "task_description": {
+      "overview": "Compute and visualize a continuous wavelet transform (CWT) scalogram of seismic waveform data using ObsPy’s internal routine based on Kristekova2006.",
+      "steps": [
+        "Load seismic waveform data into an ObsPy Stream object.",
+        "Select the first Trace from the Stream and extract data, number of points, and sampling interval.",
+        "Define CWT parameters: voices per octave, minimum frequency (f_min), and maximum frequency (f_max).",
+        "Call obspy.signal.tf_misfit.cwt() with the trace data, sampling interval, voices per octave, f_min, and f_max to compute the scalogram.",
+        "Create a time vector and frequency vector (log-spaced between f_min and f_max).",
+        "Plot the absolute value of the scalogram as a pcolormesh with a logarithmic frequency axis."
+      ],
+      "input_data": {
+        "seismic_waveform_path": "<DATA_ROOT>/obspy/continuous_wavelet_transform/input/waveform.mseed",
+        "voices_per_octave": 8,
+        "f_min": 1,
+        "f_max": 50
+      },
+      "output_data": {
+        "result_plot": "scalogram_plot.png",
+        "result_data": {
+          "save name": "scalogram_data.npy",
+          "content": {
+            "scalogram": "scalogram (numpy array)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "wavelet transform",
+      "time-frequency analysis",
+      "continuous wavelet transform",
+      "scalogram"
+    ],
+    "agent_prompt": "Load the seismic waveform from {seismic_waveform_path}. Compute the continuous wavelet transform using ObsPy's cwt routine with voices_per_octave={voices_per_octave}, f_min={f_min} Hz, and f_max={f_max} Hz. Output the scalogram matrix and generate a time-frequency plot with a logarithmic frequency axis. \n Note: 1) Save the scalogram plot to {result_plot} and the scalogram data to {result_data.save name} with content {result_data.content}."
+  }
+}

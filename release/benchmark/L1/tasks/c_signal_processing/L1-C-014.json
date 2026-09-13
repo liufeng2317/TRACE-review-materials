@@ -1,0 +1,48 @@
+{
+  "task_id": "L1-C-014",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Geographic Coordinate Conversion to Gauß-Krüger CRS",
+    "task_description": {
+      "overview": "Transform station coordinates from geographic WGS84 (EPSG:4326) to the regional Gauß-Krüger coordinate system (EPSG:31468).",
+      "steps": [
+        "Load the list of station latitude and longitude values in WGS84.",
+        "Initialize the pyproj Proj objects for source CRS (EPSG:4326) and target CRS (EPSG:31468).",
+        "Use pyproj.transform to convert the longitude and latitude arrays to x and y coordinates in Gauß-Krüger.",
+        "Return or store the transformed x and y coordinate arrays for further geospatial analysis."
+      ],
+      "input_data": {
+        "latitudes": [
+          49.6919,
+          48.1629
+        ],
+        "longitudes": [
+          11.2217,
+          11.2752
+        ],
+        "source_crs_epsg": "4326",
+        "target_crs_epsg": "31468"
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "conversion_results.json",
+          "content": {
+            "longitudes": "list of float",
+            "latitudes": "list of float",
+            "source_crs_epsg": "str",
+            "target_crs_epsg": "str",
+            "x": "list of float",
+            "y": "list of float"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "map projection",
+      "coordinate reference systems",
+      "pyproj transformation"
+    ],
+    "agent_prompt": "Convert the provided station coordinates (latitude and longitude in WGS84) to the Gauß-Krüger (EPSG:31468) coordinate system using pyproj. Input: latitudes, longitudes, source EPSG code '4326', target EPSG code '31468'. Output: arrays of x and y coordinates in Gauß-Krüger CRS. Save the conversion results to {result_data.save_name} with content {result_data.content}."
+  }
+}

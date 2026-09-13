@@ -1,0 +1,50 @@
+{
+  "task_id": "L2-C-009",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Phase Picking using PhaseNet on Continuous Waveform",
+    "task_description": {
+      "overview": "Automatically detect P-wave and S-wave arrival times from continuous three-component seismic waveform data using a pretrained PhaseNet deep neural network model.",
+      "steps": [
+        "Load the pretrained PhaseNet model and its configuration parameters.",
+        "Read the continuous waveform file (miniSEED format) using ObsPy.",
+        "Normalize the three-component waveform data (N, E, Z) by mean and max amplitude.",
+        "Run the PhaseNet inference method with specified overlap and probability thresholds for P and S phases.",
+        "Extract P-phase and S-phase arrival times from the model output.",
+        "Optionally, plot the normalized waveforms and mark the detected P and S arrival times on each component."
+      ],
+      "input_data": {
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/diting.pt.v2",
+        "pretrained_param_path": "<REPO_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/diting.json.v2",
+        "waveform_path": "<DATA_ROOT>/DeepLearning_Tests/ldaho_3.8_MFID/raw_waveforms.mseed",
+        "device": "npu",
+        "normalization_mode": "std",
+        "inference_parameters": {
+          "overlap": 100,
+          "P_threshold": 0.3,
+          "S_threshold": 0.3
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result_data.json",
+          "file_content": {
+            "ppicks": "list of strings",
+            "spicks": "list of strings"
+          }
+        },
+        "waveform_with_picks": "waveform_with_picks.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic arrival time picking",
+      "P-wave detection",
+      "S-wave detection",
+      "deep learning",
+      "phasenet",
+      "continuous waveform processing"
+    ],
+    "agent_prompt": "P-wave and S-wave phase picking using Phasenet on the continuous three-component waveform data. Load and normalize the continuous three-component waveform file at {waveform_path}. The pretrained Phasenet model is located at {pretrained_model_path} and its related parameters are located at {pretrained_param_path}. Run inference with the specific overlap, P_threshold, and S_threshold, save the picked results into a JSON file {result_data.file_name} with content {result_data.file_content}. Finally, plot a figure to show the waveform with the detected P-wave and S-wave picks. Save the figure to {waveform_with_picks}."
+  }
+}

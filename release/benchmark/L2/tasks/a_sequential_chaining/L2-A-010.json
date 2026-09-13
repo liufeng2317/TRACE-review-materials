@@ -1,0 +1,37 @@
+{
+  "task_id": "L2-A-010",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Waveform Merge and Plot Overlapping Seismograms",
+    "task_description": {
+      "overview": "Read multiple overlapping seismic traces, align them in time, merge into a single continuous seismogram, and plot both the individual and merged waveforms.",
+      "steps": [
+        "Load seismic data files from the provided URLs into a Stream object.",
+        "Sort the traces in the Stream by their start times.",
+        "Define a common reference time (t0) from the first trace's start time.",
+        "Plot each individual trace in separate subplots using relative time (seconds since t0).",
+        "Merge the Stream into a single Trace using the specified merge method.",
+        "Plot the merged trace in a final subplot with time relative to t0."
+      ],
+      "input_data": {
+        "file_urls": [
+          "https://examples.obspy.org/dis.G.SCZ.__.BHE",
+          "https://examples.obspy.org/dis.G.SCZ.__.BHE.1",
+          "https://examples.obspy.org/dis.G.SCZ.__.BHE.2"
+        ],
+        "merge_method": 1,
+        "reference_time": "starttime of first trace"
+      },
+      "output_data": {
+        "merged_seismogram": "merged_seismogram.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismogram merging",
+      "waveform alignment",
+      "time series plotting"
+    ],
+    "agent_prompt": "Load the seismic waveform files from the URLs listed under 'file_urls'. Sort the traces by their start times and set the reference time t0 to the earliest start time. Plot each individual trace in separate subplots with time relative to t0. Then merge the traces into a single continuous seismogram using method = {merge_method} and plot the merged result in a final subplot. Output the figure showing both individual and merged waveforms. Save the figure to {merged_seismogram}."
+  }
+}

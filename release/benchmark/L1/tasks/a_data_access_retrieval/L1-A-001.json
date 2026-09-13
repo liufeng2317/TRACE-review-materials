@@ -1,0 +1,40 @@
+{
+  "task_id": "L1-A-001",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Download Event Catalog from FDSN Server",
+    "task_description": {
+      "overview": "Fetch earthquake event data from an FDSN web service and create a catalog with required attributes.",
+      "steps": [
+        "Define a time range and geographic bounding box (min/max latitude and longitude).",
+        "Specify a minimum magnitude threshold.",
+        "Instantiate the FDSN event client with the server URL.",
+        "Fetch events in batches to avoid timeouts using client.get_events().",
+        "Load the returned data into a pandas DataFrame and construct a Catalog object."
+      ],
+      "input_data": {
+        "start_time": "2020-01-01T00:00:00",
+        "end_time": "2022-01-01T00:00:00",
+        "min_longitude": 5,
+        "max_longitude": 11,
+        "min_latitude": 45,
+        "max_latitude": 48,
+        "min_magnitude": 0.5,
+        "batch_size": 1000,
+        "fdsn_url": "http://eida.ethz.ch/fdsnws/event/1/query"
+      },
+      "output_data": {
+        "catalog_file": "earthquake_catalog.csv",
+        "catalog_plot": "earthquake_catalog.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic catalogs",
+      "earthquake event data",
+      "FDSN web services",
+      "Data I/O"
+    ],
+    "agent_prompt": "Using `seismostats` library to download the earthquake catalog from the FDSN server at {fdsn_url}. Fetch earthquake events between {start_time} and {end_time} within the geographic box defined by latitudes {min_latitude}-{max_latitude} and longitudes {min_longitude}-{max_longitude}, only returning events of magnitude ≥ {min_magnitude}. Retrieve data in batches of {batch_size}, assemble into a pandas DataFrame, and create a `seismostats` Catalog object. Save the download catalog, and plot a figure to show the catalog in space."
+  }
+}

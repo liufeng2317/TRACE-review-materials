@@ -1,0 +1,48 @@
+{
+  "task_id": "L1-D-015",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Probabilistic Power Spectral Density Estimation and Visualization",
+    "task_description": {
+      "overview": "Compute and visualize probabilistic power spectral densities (PPSDs) for seismic noise analysis and site quality control.",
+      "steps": [
+        "Load seismic waveform data for the desired station/channel combination from provided URLs or local files.",
+        "Load station metadata (response information) from a StationXML, RESP file, or dataless SEED using ObsPy's read_inventory or Parser.",
+        "Initialize a PPSD object with the trace statistics and metadata.",
+        "Add one-hour segments of the seismic data (Stream or Trace) to the PPSD instance; the object will reject overlapping segments.",
+        "Inspect the processed time segments and data gaps via ppsd.times_processed, ppsd.times_data, and ppsd.times_gaps.",
+        "Generate visualizations: histogram-based PPSD plot, cumulative PPSD plot, temporal PSD time series, and spectrogram-like plots.",
+        "Optionally save the plots to image files (PNG, PDF) and apply custom colormaps (e.g., PQLX)."
+      ],
+      "input_data": {
+        "seismic_waveform_path": [
+          "<DATA_ROOT>/obspy/probabilistic_power_spectral_density/input/BW.KW1..EHZ.D.2011.037",
+          "<DATA_ROOT>/obspy/probabilistic_power_spectral_density/input/BW.KW1..EHZ.D.2011.038"
+        ],
+        "station_metadata_path": "<DATA_ROOT>/obspy/probabilistic_power_spectral_density/input/BW_KW1.xml",
+        "plot_parameters": {
+          "temporal_frequencies": [
+            0.1,
+            1,
+            10
+          ]
+        }
+      },
+      "output_data": {
+        "ppsd_plot": "ppsd.png",
+        "ppsd_cumulative_plot": "ppsd_cumulative.png",
+        "ppsd_temporal_plot": "ppsd_temporal.png",
+        "ppsd_spectrogram_plot": "ppsd_spectrogram.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "power spectral density",
+      "noise analysis",
+      "site quality control",
+      "probabilistic PSD",
+      "spectrogram"
+    ],
+    "agent_prompt": "Compute and visualize the probabilistic power spectral density (PPSD) for station BW.KW1..EHZ channel. Load waveform data from {seismic_waveform_path} and station metadata from {station_metadata_path}. Initialize a PPSD object (obspy.signal.PPSD), add the data streams, and ensure no overlapping segments. After processing, produce the standard PPSD histogram, a cumulative histogram, a temporal PSD plot for frequencies {plot_parameters.temporal_frequencies}, and a spectrogram-like plot. \n Note: 1) Save the ppsd histogram plot to {ppsd_histogram_plot}, the ppsd cumulative plot to {ppsd_cumulative_plot}, the ppsd temporal plot to {ppsd_temporal_plot}, and the ppsd spectrogram plot to {ppsd_spectrogram_plot}."
+  }
+}

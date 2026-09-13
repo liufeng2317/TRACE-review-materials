@@ -1,0 +1,41 @@
+{
+  "task_id": "L1-D-004",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Cumulative Frequency-Magnitude Distribution Calculation",
+    "task_description": {
+      "overview": "Create a cumulative FMD plot (log-linear) and overlay the Gutenberg-Richter fit to evaluate the completeness magnitude (mc) and b-value.",
+      "steps": [
+        "Load the list of earthquake magnitudes from input.",
+        "Define bin width (fmd_bin), b-value, and completeness magnitude (mc).",
+        "Compute cumulative counts of events with magnitude ≥ each bin threshold.",
+        "Generate a log-scaled plot of cumulative frequency vs. magnitude.",
+        "Overlay theoretical Gutenberg-Richter line using provided b_value and mc.",
+        "Customize colors for data and fit line, then return or save the figure."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/catalogs/input/catalog_fdsn.csv",
+        "fmd_bin": 0.1,
+        "color": "color for data (e.g., 'black')",
+        "color_line": "color for fit line (e.g., 'red')"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "fmd_result.json",
+          "content": {
+            "b_value": "b-value (float)",
+            "mc": "magnitude of completeness (float)"
+          }
+        },
+        "result_plot": "fmd_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "cumulative frequency-magnitude distribution",
+      "Gutenberg-Richter law",
+      "catalog completeness magnitude"
+    ],
+    "agent_prompt": "Plot the cumulative frequency-magnitude distribution. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {fmd_bin}, estimate the corresponding magnitude of completeness and b-value, and then plot the cumulative frequency-magnitude distribution. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the fmd plot to {result_plot} and the result data to {result_data.save name} with content {result_data.content}."
+  }
+}

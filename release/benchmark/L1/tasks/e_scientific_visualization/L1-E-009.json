@@ -1,0 +1,38 @@
+{
+  "task_id": "L1-E-009",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Seismic Spherical Ray Path Visualization",
+    "task_description": {
+      "overview": "Compute and plot seismic ray paths on a spherical Earth projection for given distance and phases.",
+      "steps": [
+        "Load the chosen Earth velocity model (e.g., iasp91).",
+        "Specify source depth, epicentral distance, and target phases.",
+        "Compute ray paths with the travel-time modeling tool.",
+        "Render the ray trajectories on a spherical projection.",
+        "Include legend and annotate phase names as needed."
+      ],
+      "input_data": {
+        "velocity_model": "iasp91",
+        "source_depth_km": 500,
+        "epicentral_distance_degrees": 140,
+        "phase_list": [
+          "Pdiff",
+          "SS"
+        ],
+        "plot_type": "spherical",
+        "legend": true
+      },
+      "output_data": {
+        "result_plot": "ray_path_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "ray tracing",
+      "spherical Earth model",
+      "phase conversion"
+    ],
+    "agent_prompt": "Generate a spherical projection plot of seismic ray paths for distance 140° and source depth 500 km. Use iasp91 model and phases Pdiff and SS. Plot a figure to show the spherical ray trajectories. \n Note: 1) the TauPyModel provide `get_ray_paths` to compute the rays and `arrivals.plot_rays` to plot the rays. \n 2) Save the ray path plot to {result_plot}."
+  }
+}

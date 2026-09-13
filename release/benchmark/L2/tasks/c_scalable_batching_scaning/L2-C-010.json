@@ -1,0 +1,36 @@
+{
+  "task_id": "L2-C-010",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Seismic Signal Denoising using DeepDenoiser",
+    "task_description": {
+      "overview": "Apply a pretrained DeepDenoiser neural network to remove noise from continuous seismic waveform data while preserving true signal characteristics.",
+      "steps": [
+        "Load the pretrained DeepDenoiser model and its configuration parameters.",
+        "Normalize raw multi-component seismic waveform data (e.g., N, E, Z) using mean removal and max (or std) scaling.",
+        "Convert normalized arrays into an ObsPy Stream with Trace objects for each component, assigning metadata (network, station, channel, starttime, sampling_rate).",
+        "Run inference with the DeepDenoiser model (with optional overlap parameter) to generate denoised output streams.",
+        "Extract denoised data arrays and compare or visualize against the original noisy waveforms."
+      ],
+      "input_data": {
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/denoise/pretrained/deepdenoiser/original.pt",
+        "pretrained_config_path": "<REPO_ROOT>/seismoagent/library/ai_module/denoise/pretrained/deepdenoiser/original.json",
+        "raw_waveform_npz": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.npz",
+        "normalization_mode": "max",
+        "sampling_rate": 100
+      },
+      "output_data": {
+        "waveform_with_denoised": "waveform_with_denoised.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "signal denoising",
+      "time–frequency representation",
+      "deep neural networks",
+      "stead dataset",
+      "deepdenoiser"
+    ],
+    "agent_prompt": "Seismic signal denoising using `DeepDenoiser` on the 3-component seismic dataset (STEAD). Load and normalize the seismic data from {raw_waveform_npz} with the specific {normalization_mode} mode. The pretrained DeepDenoiser model is located at {pretrained_model_path} and its related parameters are located at {pretrained_config_path}. Run inference with the DeepDenoiser model to generate denoised output streams. Select one example to show the comparison between the original and denoised waveforms (index 10). Save the denoised waveform into a json file {result_data.file_name} with content {result_data.file_content}. Save the figure to {waveform_with_denoised}."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "task_id": "L2-A-003",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "DAS waveform preprocessing workflow",
+    "task_description": {
+      "overview": "Apply a sequence of preprocessing operations to DAS (Distributed Acoustic Sensing) time-series data to prepare it for further analysis.",
+      "steps": [
+        "Load the raw DAS data from the input file.",
+        "Perform detrending to remove linear trends from the data.",
+        "Apply demeaning to subtract the mean value from each channel.",
+        "Normalize the data amplitude if required.",
+        "Optionally apply phase2strain conversion to change data type.",
+        "Optionally perform stacking, cosine taper, and padding as needed.",
+        "If converting data type, use time integration or time differential to update attributes."
+      ],
+      "input_data": {
+        "das_data_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Basic_Processing/input/example.pkl",
+        "operations_sequence": [
+          "detrending",
+          "demeaning",
+          "normalization",
+          "stacking",
+          "cosine_taper",
+          "downsampling",
+          "time_integration"
+        ]
+      },
+      "output_data": {
+        "result_figure": "das_processing.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "signal preprocessing",
+      "time integration",
+      "time differential",
+      "strain and strain rate conversion"
+    ],
+    "agent_prompt": "Using Daspy package to load and process the DAS data from {das_data_path}. Apply the following preprocessing operations seperately (! not sequence): detrending, demeaning, normalization(method='z-score), stacking(N=10), cosine_taper, downsampling(xint=10,tint=2), and time_integration. Plot a 2x4 subplots figure to show the data at each step (raw, detrending, demeaning, normalization, stacking, cosine_taper, downsampling, time_integration). Note: consider use the Daspy to do the loading, processing and figureing. 2) Save the figure to {result_figure}."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "task_id": "L1-E-003",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "DAS Waveform Plot",
+    "task_description": {
+      "overview": "Visualize seismic waveform data stored in a DASPy Section object.",
+      "steps": [
+        "Import the DASPy read function and load the seismic section data into a Section object.",
+        "Call the Section.plot() method without arguments to display the waveform image.",
+        "Optionally show the figure if not automatically rendered."
+      ],
+      "input_data": {
+        "das_data_path": "<DATA_ROOT>/daspy/Basic_Processing/input/example.pkl"
+      },
+      "output_data": {
+        "result_plot": "das_waveform_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic waveform visualization",
+      "DAS data"
+    ],
+    "agent_prompt": "Load the seismic data using daspy.read(das_data_path), obtaining a Section object. Visulaize the waveform image by calling sec.plot() function or using matplotlib to show the image. \n Note: 1) Save the das waveform plot to {result_plot}."
+  }
+}

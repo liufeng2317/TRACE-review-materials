@@ -1,0 +1,39 @@
+{
+  "task_id": "L1-E-007",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Seismic Cartesian Ray Path Visualization",
+    "task_description": {
+      "overview": "Compute and plot seismic ray paths in Cartesian coordinates for specified epicentral distance and phases using a velocity model.",
+      "steps": [
+        "Load the seismic velocity model (e.g., iasp91).",
+        "Define source depth, epicentral distance, and phases of interest.",
+        "Calculate ray path trajectories using travel-time solver.",
+        "Plot the ray paths on a Cartesian map projection.",
+        "Customize legend and visibility of all rays."
+      ],
+      "input_data": {
+        "velocity_model": "iasp91",
+        "source_depth_km": 500,
+        "epicentral_distance_degrees": 140,
+        "phase_list": [
+          "PP",
+          "SSS"
+        ],
+        "plot_type": "cartesian",
+        "plot_all": false,
+        "legend": true
+      },
+      "output_data": {
+        "result_plot": "ray_path_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "ray tracing",
+      "wave propagation",
+      "phase identification"
+    ],
+    "agent_prompt": "Plot the seismic ray paths in Cartesian coordinates for epicentral distance 140° at source depth 500 km. Use the iasp91 velocity model and include phases PP and SSS. Output should a figure with the Cartesian ray paths drawn ('distance(°)-depth(km)' relationship). \n Note: 1) the TauPyModel provide `get_ray_paths` to compute the rays and `arrivals.plot_rays` to plot the rays. \n 2) Save the ray path plot to {result_plot}."
+  }
+}

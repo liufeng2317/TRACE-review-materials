@@ -1,0 +1,51 @@
+{
+  "task_id": "L1-B-003",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Create Catalog from Python Dictionary",
+    "task_description": {
+      "overview": "Create a SeismoStats Catalog object from a Python dictionary.",
+      "steps": [
+        "Prepare a Python dictionary with required columns: 'magnitude' and optionally 'time', 'latitude', 'longitude', 'depth'.",
+        "Import Catalog class from seismostats module.",
+        "Call Catalog(dict_data) to create the Catalog object.",
+        "Use .head() to preview the first entries."
+      ],
+      "input_data": {
+        "dict_data": {
+          "longitude": [
+            42.35,
+            1.35
+          ],
+          "latitude": [
+            7.34444,
+            5.135
+          ],
+          "depth": [
+            5.5,
+            10.52
+          ],
+          "time": [
+            "2022-01-01 05:05:13",
+            "2022-04-07 07:07:15"
+          ],
+          "magnitude": [
+            1.0,
+            2.5
+          ]
+        }
+      },
+      "output_data": {
+        "catalog_file": "catalog.csv",
+        "catalog_plot": "catalog.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "earthquake catalog",
+      "event metadata",
+      "data I/O"
+    ],
+    "agent_prompt": "Create a SeismoStats Catalog from a Python dictionary {dict_data}. Loading the dictionary data, and then create the Catalog object. Plot a figure to show the catalog spatial distribution, and then save the Catalog to a csv file. Save the figure to {catalog_plot} and the csv file to {catalog_file}."
+  }
+}

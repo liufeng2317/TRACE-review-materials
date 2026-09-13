@@ -1,0 +1,62 @@
+{
+  "task_id": "L1-D-018",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Waveform Beamforming FK Analysis",
+    "task_description": {
+      "overview": "Compute frequency–wavenumber (FK) power spectra from seismic array data to estimate backazimuth and slowness of a seismic source.",
+      "steps": [
+        "Load multi‐channel seismic waveform data from a file or URL into an ObsPy Stream object.",
+        "Assign instrument response (PAZ) and station coordinates to each Trace.",
+        "Apply instrument correction to standardize to a desired corner frequency.",
+        "Define FK processing parameters: slowness grid bounds and step, time window length and fraction, frequency band, prewhitening, and detection thresholds.",
+        "Run ObsPy’s array_processing() on the preprocessed Stream to compute time‐dependent relative power, absolute power, backazimuth, and slowness."
+      ],
+      "input_data": {
+        "waveform_source": "https://examples.obspy.org/agfa.mseed",
+        "trace1_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 205479446.68601453,'gain': 1.0})",
+        "trace2_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 205479446.68601453,'gain': 1.0})",
+        "trace3_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 250000000.0,'gain': 1.0})",
+        "trace4_paz": "AttribDict({'poles': [(-4.39823 + 4.48709j), (-4.39823 - 4.48709j)],'zeros': [0j, 0j],'sensitivity': 222222228.10910088,'gain': 1.0})",
+        "trace5_paz": "AttribDict({'poles': [(-4.39823 + 4.48709j), (-4.39823 - 4.48709j), (-2.105 + 0j)],'zeros': [0j, 0j, 0j],'sensitivity': 222222228.10910088,'gain': 1.0})",
+        "trace1_coord": "AttribDict({'latitude': 48.108589,'elevation': 0.450000,'longitude': 11.582967})",
+        "trace2_coord": "AttribDict({'latitude': 48.108192,'elevation': 0.450000,'longitude': 11.583120})",
+        "trace3_coord": "AttribDict({'latitude': 48.108692,'elevation': 0.450000,'longitude': 11.583414})",
+        "trace4_coord": "AttribDict({'latitude': 48.108456,'elevation': 0.450000,'longitude': 11.583049})",
+        "trace5_coord": "AttribDict({'latitude': 48.108730,'elevation': 0.450000,'longitude': 11.583157})",
+        "corn_freq_2_paz": {
+          "corner_frequency_hz": 1.0,
+          "damping": 0.707
+        },
+        "fk_parameters": {
+          "sll_x": -3.0,
+          "slm_x": 3.0,
+          "sll_y": -3.0,
+          "slm_y": 3.0,
+          "sl_s": 0.03,
+          "win_len": 1.0,
+          "win_frac": 0.05,
+          "frqlow": 1.0,
+          "frqhigh": 8.0,
+          "prewhiten": 0,
+          "semb_thres": -1000000000.0,
+          "vel_thres": -1000000000.0,
+          "stime": "UTCDateTime('2008-02-17T11:05:15')",
+          "etime": "UTCDateTime('2008-02-17T11:05:45')",
+          "timestamp": "mlabday"
+        }
+      },
+      "output_data": {
+        "result_plot": "fk_analysis_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "array beamforming",
+      "frequency–wavenumber analysis",
+      "slowness estimation",
+      "backazimuth estimation"
+    ],
+    "agent_prompt": "Perform FK analysis on the seismic array data loaded from {waveform_source}. Set station PAZ and coordinates information to the tr.stats.paz and tr.stats.coordinates, apply instrument correction to {corn_freq_2_paz.corner_frequency_hz} Hz by using the `corn_freq_2_paz` and `st.simulate` function, then run `array_processing(st,**fk_parameters)`. Return an ndarray with columns [timestamp, rel_power, abs_power, backazimuth, slowness]. With the calculated FK output array from array_processing(), generate a 4‐panel time‐series scatter plot for relative power, absolute power, backazimuth, and slowness over time. Color the points by relative power and format the x‐axis as dates. \n Note: 1) Save the fk analysis plot to {result_plot}."
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "task_id": "L2-D-003",
+  "level": "L2",
+  "category": "Constrained space exploration",
+  "task_definition": {
+    "task_name": "DAS Data Strain-to-Velocity Conversion via Time-Domain Slowness Detection",
+    "task_description": {
+      "overview": "Convert DAS strain data to particle velocity by detecting apparent slowness (reciprocal velocity) in the time domain using semblance maximization.",
+      "steps": [
+        "Load the preprocessed DAS strain Section object from the pickle file.",
+        "For each time step on the target channel, perform slant stacking over a window length L to compute semblance across slowness values.",
+        "Select the slowness that maximizes semblance at each time step to obtain apparent velocity.",
+        "Multiply the strain rate by the detected velocity to convert to particle velocity.",
+        "Store the converted velocity trace in the Section object."
+      ],
+      "input_data": {
+        "das_section_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_DAS_M4.3_2688_2826.pkl",
+        "node_seismometer_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_node_M4.3_165.sac",
+        "window_length": "integer (e.g., 10)",
+        "frqlow": "integer (e.g., 1)",
+        "frqhigh": "integer (e.g., 5)",
+        "show_channel": 2781,
+        "show_time_range": [
+          20,
+          70
+        ],
+        "show_p_wave_time_range": [
+          27,
+          32
+        ],
+        "show_s_wave_time_range": [
+          46,
+          56
+        ]
+      },
+      "output_data": {
+        "result_data": "result.pkl",
+        "result_figure": "stain_to_velocity_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "semblance analysis",
+      "slant stacking",
+      "time-domain slowness detection"
+    ],
+    "agent_prompt": "Using daspy package to load the DAS strain Section from {das_section_path}, and using `slant_stacking(L={window_length}, frqlow={frqlow}, frqhigh={frqhigh}, channel={show_channel})` to convert the strain to velocity for the specified channel. Then select the {show_channel} to compare the transformed velocity data with the original node seismometer data (loaded from {node_seismometer_path}), and enlarge the time range to show the P-wave and S-wave. Note: 1) consider using daspy package to load, process (e.g. slant_stacking, etc.). 2) Save the result into a pickle file {result_data} and the figure {result_figure}."
+  }
+}

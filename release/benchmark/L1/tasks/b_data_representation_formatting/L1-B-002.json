@@ -1,0 +1,30 @@
+{
+  "task_id": "L1-B-002",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Create Catalog from CSV File",
+    "task_description": {
+      "overview": "Create a SeismoStats Catalog object from a CSV file.",
+      "steps": [
+        "Import Catalog class from seismostats module.",
+        "Load the CSV using Pandas read_csv() function.",
+        "Call Catalog(df) to create the Catalog object.",
+        "Use .head() to preview the first entries."
+      ],
+      "input_data": {
+        "csv_path": "<DATA_ROOT>/seismostats/catalogs/input/catalog_fdsn.csv"
+      },
+      "output_data": {
+        "catalog_file": "catalog.csv",
+        "catalog_plot": "catalog.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "earthquake catalog",
+      "event metadata",
+      "data I/O"
+    ],
+    "agent_prompt": "Create a SeismoStats Catalog from different methods. Loading catalog from a CSV file {csv_path}, and then create the Catalog object. Plot a figure to show the catalog spatial distribution, and then save the Catalog to a csv file. Save the figure to {catalog_plot} and the csv file to {catalog_file}."
+  }
+}

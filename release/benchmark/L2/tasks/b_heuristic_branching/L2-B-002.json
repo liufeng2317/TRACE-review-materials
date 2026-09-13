@@ -1,0 +1,37 @@
+{
+  "task_id": "L2-B-002",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "DAS Channel Turning Point Detection in Channel Geometry",
+    "task_description": {
+      "overview": "Detect horizontal and vertical turning points in a fiber cable layout based on channel coordinates or low cross-correlation in waveform records.",
+      "steps": [
+        "Load channel geometry coordinates (longitude, latitude, optional depth).",
+        "Compute angular changes between consecutive segments to identify geometric corners.",
+        "Optionally compute adjacent-channel cross-correlation on waveform data to detect signal anomalies.",
+        "Flag indices corresponding to significant horizontal and vertical turning points."
+      ],
+      "input_data": {
+        "geometry": "<DATA_ROOT>/Daspy/data/manully_script/data/Channel_Analysis/input/brady_das_geometry.txt",
+        "depth_info": "boolean flag indicating whether to detect vertical turning points"
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "result.json",
+          "content": {
+            "horizontal_turning_points": "list of horizontal turning points",
+            "vertical_turning_points": "list of vertical turning points"
+          }
+        },
+        "result_figure": "turning_points.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "geometry analysis",
+      "turning point detection",
+      "cross-correlation (optional)"
+    ],
+    "agent_prompt": "Detect turning points in DAS channel geometry. Input: geometry array of [lon, lat, elevation], depth_info flag (True if the data contains elevation information). Compute corner points by analyzing coordinate angles and optionally low adjacent-channel waveform cross-correlation (consider use the `daspy.advanced_tools.channel.turning_points` function). Save the horizontal turning points and vertical turning points to {result_data.save_name} with content {result_data.content}. Finally, scatter plot the geometry and the turning points and save it to {result_figure}."
+  }
+}

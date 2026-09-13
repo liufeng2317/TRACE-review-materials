@@ -1,0 +1,40 @@
+{
+  "task_id": "L1-D-009",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Magnitude of Completeness",
+    "task_description": {
+      "overview": "Determine the lowest magnitude above which seismic events are reliably recorded using three statistical methods.",
+      "steps": [
+        "Ensure magnitudes are binned (delta_m defined).",
+        "Estimate Mc using the maximum curvature method via cat.estimate_mc_maxc(fmd_bin).",
+        "Estimate Mc using the b-stability method via cat.estimate_mc_b_stability().",
+        "Estimate Mc using the Kolmogorov–Smirnov test via cat.estimate_mc_ks().",
+        "Retrieve and compare the Catalog.mc property after each estimation."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "fmd_bin": 0.1
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "mc_data.json",
+          "content": {
+            "mc_maxc": "magnitude of completeness (float)",
+            "mc_b_stability": "magnitude of completeness (float)",
+            "mc_ks": "magnitude of completeness (float)"
+          }
+        },
+        "result_plot": "mc_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "magnitude of completeness",
+      "maximum curvature method",
+      "b-stability method",
+      "Kolmogorov-Smirnov test"
+    ],
+    "agent_prompt": "Estimate the magnitude of completeness for the given catalog: {catalog_path}. First, loading the catalog and bin the magnitude with delta_m=0.1. Then estimate the magnitude of completeness using: 1) maximum curvature (`cat.estimate_mc_maxc(fmd_bin={fmd_bin})`), 2) b-stability (`cat.estimate_mc_b_stability()`), and 3) KS test (`cat.estimate_mc_ks()`), separately. After each call, report the updated Catalog.mc value. Finally, figure the magnitude distribution with the estimated magnitude of completeness. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the mc data to {result_data.save name} with content {result_data.content} and the mc plot to {result_plot}."
+  }
+}

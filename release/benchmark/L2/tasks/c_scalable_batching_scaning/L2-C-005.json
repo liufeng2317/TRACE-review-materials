@@ -1,0 +1,46 @@
+{
+  "task_id": "L2-C-005",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "First Motion Polarity Classification using DitingMotion on Continuous Waveform",
+    "task_description": {
+      "overview": "Automatically determine P-wave first-motion polarity (up or down) on continuous seismic waveforms using a pretrained deep-learning model.",
+      "steps": [
+        "Load the pretrained DiTingMotion model and set it to evaluation mode.",
+        "Read continuous waveform data (MiniSEED) using ObsPy.",
+        "Extract the vertical component (Z) and compute its first difference (dZ).",
+        "Stack Z and dZ into a two-channel input array.",
+        "Normalize the stacked data using standard deviation normalization.",
+        "Convert the normalized data to a torch tensor and run inference through the model.",
+        "Obtain model output probabilities for 'up' and 'down' polarities and select the maximum-probability label."
+      ],
+      "input_data": {
+        "waveform_path": "<DATA_ROOT>/DeepLearning_Tests/ldaho_3.8_MFID/raw_waveforms.mseed",
+        "checkpoint_path": "<REPO_ROOT>/seismoagent/library/ai_module/first_motion_polarity_classification/pretrained/ditingmotion/diting_light.pth",
+        "normalize_mode": "std",
+        "device": "npu",
+        "model_params": {
+          "in_channels": 2,
+          "in_samples": 8192
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result_data.json",
+          "file_content": {
+            "predict_polarity": "list of int (0 means up, 1 means down)"
+          }
+        },
+        "waveform_with_polarity": "waveform_with_polarity.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "first-motion polarity estimation",
+      "deep learning model",
+      "Continuous waveform processing",
+      "DiTingMotion"
+    ],
+    "agent_prompt": "First motion polarity classification using `ditingmotion` deep learning model on the continuous three-component waveform data. Load and normalize the continuous three-component waveform file at {waveform_path} with the specific {normalize_mode} mode, then use the z-component and its difference (dz) as the model input. The pretrained ditingmotion model is located at {checkpoint_path} and its related parameters are {model_params}. Run inference and save the first motion polarity classification results into a json file {result_data.file_name} with content {result_data.file_content}. Finally, plot a figure to show the waveform with the detected first motion polarity classification results (up or down using arrows pointing) and save it to {waveform_with_polarity}."
+  }
+}

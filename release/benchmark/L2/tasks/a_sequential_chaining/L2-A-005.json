@@ -1,0 +1,56 @@
+{
+  "task_id": "L2-A-005",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "First Motion Polarity Classification using DiTingMotion on Diting",
+    "task_description": {
+      "overview": "Automatically classify P-wave first-motion polarity (up or down) from seismic waveform data using a pretrained deep learning model (DiTingMotion).",
+      "steps": [
+        "Load the pretrained DiTingMotion model and set it to evaluation mode.",
+        "Load seismic waveform data from a .npz file, extract the vertical component (Z) and compute its difference (dZ).",
+        "Stack Z and dZ into a two-channel input array and normalize each trace (mean subtraction and max amplitude scaling).",
+        "Convert the normalized data to a torch tensor and run inference through the model to obtain polarity probabilities.",
+        "Determine the predicted polarity class (0 for up, 1 for down) and probability for each trace.",
+        "Load the ground truth polarity labels from a CSV file, map them to numeric values, and compare against predictions.",
+        "Compute classification accuracy (excluding invalid labels) and generate a scatter plot comparing true vs. predicted polarities."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/Diting/diting_event_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/Diting/diting_event_0_100.csv",
+        "normalize_mode": "std",
+        "device": "npu",
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/first_motion_polarity_classification/pretrained/ditingmotion/diting_light.pth",
+        "model_params": {
+          "in_channels": 2,
+          "in_samples": 8192
+        },
+        "polarity_mapping": {
+          "U": 0,
+          "C": 0,
+          "R": 1,
+          "D": 1,
+          "other": "means no target data (NaN)"
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "pred_motion": "list of int",
+            "target_motion": "list of int"
+          }
+        },
+        "result_figure": "motion_classification_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "P-wave polarity estimation",
+      "first-motion polarity estimation",
+      "deep learning model",
+      "DiTingMotion",
+      "DiTing dataset"
+    ],
+    "agent_prompt": "Perform first motion polarity classification on the 3-component seismic dataset (Diting) using `ditingmotion` deep learning model. Load and normalize the seismic data from {data_path} with the specific {normalize_mode} mode, then use the z-component and its difference (dz) as the model input. The pretrained ditingmotion model is located at {pretrained_model_path}, and its related parameters are {model_params}. \n (1) Run inference and save the first motion polarity classification results into a csv file. \n (2) Load the target first motion polarity from {target_path} by reading the columns `p_motion`, note the mapping of the polarity is {polarity_mapping}\n (3) Plot one figure showing the first motion polarity classification results and the target first motion polarity. The result data should be saved to {result_data.save_name} with content {result_data.content}, and the result figure should be saved to {result_figure}."
+  }
+}

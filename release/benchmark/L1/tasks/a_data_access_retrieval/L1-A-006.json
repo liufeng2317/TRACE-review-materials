@@ -1,0 +1,34 @@
+{
+  "task_id": "L1-A-006",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Synthetic Seismograms Retrieve via Syngine Service",
+    "task_description": {
+      "overview": "Download high-frequency global synthetic seismograms for specified source-receiver combinations using IRIS Syngine.",
+      "steps": [
+        "Initialize the ObsPy Syngine client.",
+        "Specify source parameters (latitude, longitude, depth, magnitude) and receiver coordinates.",
+        "Choose the Earth model or synthetics engine.",
+        "Request synthetic waveform data for desired channels and time window.",
+        "Save the synthetic waveforms in MiniSEED or SAC format."
+      ],
+      "input_data": {
+        "model": "ak135f_5s",
+        "network": "IU",
+        "station": "ANMO",
+        "eventid": "GCMT:C201002270634A"
+      },
+      "output_data": {
+        "synthetic_mseed_file": "synthetic_waveforms.mseed",
+        "synthetic_waveform_figure": "synthetic_waveforms.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "synthetic seismograms",
+      "wave propagation modeling",
+      "Earth structure models"
+    ],
+    "agent_prompt": "Using the ObsPy Syngine client, download synthetic seismograms for network={network}, station={station}, eventid={eventid}. Use model={model}. Figure the synthetic waveform. Save the synthetic waveforms to {synthetic_mseed_file} and the synthetic waveform figure to {synthetic_waveform_figure}."
+  }
+}

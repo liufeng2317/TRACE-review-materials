@@ -1,0 +1,45 @@
+{
+  "task_id": "L2-C-006",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Magnitude Estimation using MagNet on Continuous Waveform",
+    "task_description": {
+      "overview": "Estimate earthquake magnitude and uncertainty directly from raw single-station continuous waveform data using the MagNet end-to-end deep learning model.",
+      "steps": [
+        "Load the pretrained MagNet model and its checkpoint into the specified device (CPU/GPU).",
+        "Read continuous waveform data from a MiniSEED file using ObsPy.",
+        "Extract the multi-channel waveform array and apply normalization (zero-mean and standard-deviation scaling).",
+        "Convert the normalized waveform array into a PyTorch tensor and add a batch dimension.",
+        "Run inference with the MagNet model to obtain magnitude and uncertainty estimates.",
+        "Retrieve and format the output as a NumPy array containing [magnitude, uncertainty]."
+      ],
+      "input_data": {
+        "waveform_path": "<DATA_ROOT>/DeepLearning_Tests/ldaho_3.8_MFID/raw_waveforms.mseed",
+        "checkpoint_path": "<REPO_ROOT>/seismoagent/library/ai_module/magnitude_estimation/pretrained/magnet/stead.pth",
+        "normalize_mode": "std",
+        "device": "npu",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 6000
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result_data.json",
+          "file_content": {
+            "predict_magnitude": "list of float"
+          }
+        },
+        "waveform_with_magnitude": "waveform_with_magnitude.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "earthquake magnitude estimation",
+      "deep learning model",
+      "MagNet",
+      "continuous waveform processing"
+    ],
+    "agent_prompt": "Magnitude estimation using `magnet` deep learning model on the continuous three-component waveform data. Load and normalize the continuous three-component waveform file at {waveform_path} with the specific {normalize_mode} mode. The pretrained MagNet model is located at {checkpoint_path} and its related parameters are {model_params}. Run inference and save the magnitude estimation results into a json file {result_data.file_name} with content {result_data.file_content}. Finally, plot a figure to show the waveform with the detected magnitude estimation results and save it to {waveform_with_magnitude}."
+  }
+}

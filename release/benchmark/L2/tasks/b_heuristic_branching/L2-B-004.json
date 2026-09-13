@@ -1,0 +1,49 @@
+{
+  "task_id": "L2-B-004",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "Seismic Waveform Temporal Completeness Checking",
+    "task_description": {
+      "overview": "Check temporal data completeness of MiniSEED waveform files within a directory. If temporal gaps are detected, perform padding to ensure continuous time series while recording all missing intervals.",
+      "steps": [
+        "Scan all .mseed files in the specified directory.",
+        "Group waveform traces by network, station, location, and channel.",
+        "Sort traces chronologically for each group.",
+        "Evaluate temporal continuity based on sampling rate and trace start/end times.",
+        "If no temporal gaps exist, directly save the waveform as a processed output.",
+        "If temporal gaps exist, pad missing intervals using zero or NaN padding to reconstruct continuous time series.",
+        "Record all missing time intervals, including start time, end time, and duration.",
+        "Save padded waveforms into the output directory and generate a temporal completeness report."
+      ],
+      "input_data": {
+        "data_directory": "<DATA_ROOT>/data/waveforms/CI.CCC/",
+        "file_pattern": "network.station.location.channel__YYYYMMDDTHHMMSSZ__YYYYMMDDTHHMMSSZ.mseed",
+        "padding_method": "zero padding"
+      },
+      "output_data": {
+        "waveform_data": "{network}.{station}.{channel}.{starttime}.{endtime}.processed.mseed",
+        "reports_data": {
+          "report_file_name": "completeness_summary.csv",
+          "report_content": {
+            "file": "string",
+            "network": "string",
+            "station": "string",
+            "channel": "string",
+            "starttime": "string",
+            "endtime": "string",
+            "missing_intervals": "list of objects",
+            "num_missing_intervals": "number",
+            "total_missing_time_sec": "number"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic waveform continuity requirements",
+      "sampling rate consistency",
+      "waveform data quality control"
+    ],
+    "agent_prompt": "Check the temporal completeness of all MiniSEED files under {data_directory}. For each file: if data are continuous, save it with name {waveform_data} to the output directory. If temporal gaps exist, pad missing intervals using {padding_method} to reconstruct a continuous waveform and save with name {waveform_data}. Record the missing intervals and output a completeness summary report to {reports_data.report_file_name} with content {reports_data.report_content}."
+  }
+}

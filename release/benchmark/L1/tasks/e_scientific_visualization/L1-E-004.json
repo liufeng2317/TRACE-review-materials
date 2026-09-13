@@ -1,0 +1,31 @@
+{
+  "task_id": "L1-E-004",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Dayplot of Waveform",
+    "task_description": {
+      "overview": "Create a one-day overview plot of a seismic trace, optionally with event markers.",
+      "steps": [
+        "Call plot() on the Stream with type='dayplot'.",
+        "If required, apply filtering (e.g., lowpass) before plotting.",
+        "Provide additional parameters such as interval, vertical labels, scaling, colors, and event criteria."
+      ],
+      "input_data": {
+        "waveform_path": "<DATA_ROOT>/obspy/waveform_plotting_tutorial/input/COP.BHZ.DK.2009.050",
+        "plot_params": {
+          "interval": "60 minutes"
+        }
+      },
+      "output_data": {
+        "result_plot": "dayplot_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "dayplot visualization",
+      "event overlay",
+      "signal filtering"
+    ],
+    "agent_prompt": "Load the stream from the given waveform_path, plot a dayplot with {plot_params['interval']} intervals (the x-axis is the time, and each interval of waveform is a normalized waveform) . \n Note: 1) Save the dayplot plot to {result_plot}."
+  }
+}

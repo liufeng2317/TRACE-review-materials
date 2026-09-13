@@ -1,0 +1,121 @@
+{
+  "task_id": "L2-D-004",
+  "level": "L2",
+  "category": "Constrained space exploration",
+  "task_definition": {
+    "task_name": "Seismic Custom Phase-Distance Spherical Ray Plot",
+    "task_description": {
+      "overview": "Compute and annotate seismic ray paths for a custom list of phase–distance pairs on a spherical Earth projection, and add interior structure labels.",
+      "steps": [
+        "Load the iasp91 velocity model and retrieve planetary radii and interface depths.",
+        "Define a custom list of (phase, epicentral distance) pairs.",
+        "For each pair, compute ray paths at specified source depth.",
+        "Plot each ray on a spherical projection, labeling arrivals and indicating wave type.",
+        "Annotate core and mantle regions with text labels based on model radii."
+      ],
+      "input_data": {
+        "velocity_model": "iasp91",
+        "source_depth_km": 700,
+        "phase_distance_list": [
+          [
+            "P",
+            26
+          ],
+          [
+            "PP",
+            60
+          ],
+          [
+            "PPP",
+            94
+          ],
+          [
+            "PPS",
+            155
+          ],
+          [
+            "p",
+            3
+          ],
+          [
+            "pPcP",
+            100
+          ],
+          [
+            "PKIKP",
+            170
+          ],
+          [
+            "PKJKP",
+            194
+          ],
+          [
+            "S",
+            65
+          ],
+          [
+            "SP",
+            85
+          ],
+          [
+            "SS",
+            134.5
+          ],
+          [
+            "SSS",
+            204
+          ],
+          [
+            "p",
+            -10
+          ],
+          [
+            "pP",
+            -37.5
+          ],
+          [
+            "s",
+            -3
+          ],
+          [
+            "sP",
+            -49
+          ],
+          [
+            "ScS",
+            -44
+          ],
+          [
+            "SKS",
+            -82
+          ],
+          [
+            "SKKS",
+            -120
+          ]
+        ],
+        "plot_type": "spherical",
+        "label_arrivals": true,
+        "plot_all": true,
+        "indicate_wave_type": true
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.json",
+          "file_content": {
+            "phase": "string",
+            "distance": "float",
+            "time": "float"
+          }
+        },
+        "result_figure": "result.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "global ray tracing",
+      "Earth interior structure",
+      "phase conversion"
+    ],
+    "agent_prompt": "Clculate travel time for each phase–distance pair and save the result to {result_data.file_name} with content {result_data.file_content}. Then Plot spherical ray paths for source depth 700 km using iasp91. Label each arrival, indicate wave type, and plot all rays. Annotate the inner core, outer core, and mantle regions using text at appropriate radii. Return a matplotlib figure with the spherical projection and annotations. (Note: the TauPyModel provide `get_ray_paths` to compute the rays and `arrivals.plot_rays` to plot the rays) Save the figure to {result_figure}. Save the result data to {result_data.file_name} with content {result_data.file_content}."
+  }
+}

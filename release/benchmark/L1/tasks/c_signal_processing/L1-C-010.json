@@ -1,0 +1,43 @@
+{
+  "task_id": "L1-C-010",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "DAS Wavefield Decomposition using FK Filtering",
+    "task_description": {
+      "overview": "Separate seismic wavefield into components based on apparent velocity using 2D Fourier (FK) domain filtering.",
+      "steps": [
+        "Load the raw DAS waveform matrix and associated metadata (channel spacing and sampling rate).",
+        "Preprocess the data by removing spikes and bad channels.",
+        "Apply 2D FFT to transform the data into frequency–wavenumber (FK) domain.",
+        "Design a velocity‐based filter window with lower and upper apparent velocity bounds (vmin).",
+        "Multiply the FK spectrum by the taper window (e.g., Tukey) and isolate desired velocity bands.",
+        "Perform inverse 2D FFT to obtain separated time–distance wavefields for seismic and traffic signals."
+      ],
+      "input_data": {
+        "waveform_data_path": "<DATA_ROOT>/daspy/Wavefield_Decomposition/input/waveform_matrix.npy",
+        "channel_spacing": 8,
+        "sampling_rate": 250,
+        "vmin_bounds": [
+          800,
+          1200
+        ],
+        "mode": "decompose",
+        "taper_window": "Tukey"
+      },
+      "output_data": {
+        "decomposed_earthquake_data": "decomposed_earthquake_data.sgy",
+        "decomposed_traffic_data": "decomposed_traffic_data.sgy",
+        "decomposed_plot": "decomposed_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency–wavenumber transform",
+      "wavefield decomposition",
+      "apparent velocity filtering",
+      "FFT",
+      "tapering"
+    ],
+    "agent_prompt": "Perform FK filtering on the DAS waveform data ({waveform_data_path}) with channel spacing of 8 m and sampling rate of 250 Hz. Perform the `spike_removal` and `channel_checking(use=True)` on the loaded daspy section object. Then, perform fk_filter(vmin=vmin_bounds, mode='decompose') to decompose the wavefield into two separated wavefields: one containing seismic waves and the other containing traffic signals. Finally, plot a figure (3x2) to show the waveform (original waveform, the separated seismic component, the separated traffic component) and their corresponding FK spectrum. Note: try to use daspy package to load, process and visualize the data. 2) Save the decomposed earthquake data to {decomposed_earthquake_data} and the decomposed traffic data to {decomposed_traffic_data} and save the plot to {decomposed_plot}."
+  }
+}

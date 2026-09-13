@@ -1,0 +1,48 @@
+{
+  "task_id": "L1-E-011",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Station Inventory and Event Catalog Plot on Custom Projection",
+    "task_description": {
+      "overview": "Render seismic station inventory and earthquake event catalog on a custom Albers Equal Area projection map.",
+      "steps": [
+        "Load station inventory using obspy.read_inventory().",
+        "Load event catalog using obspy.read_events().",
+        "Configure an Albers Equal Area projection (central_longitude=35, central_latitude=50, standard_parallels=(40,42)).",
+        "Create a matplotlib figure and axis with the custom projection and set the map extent to (-15,75,15,80).",
+        "Add gridlines, coastlines, stock imagery, and political borders to the map.",
+        "Plot the inventory and the catalog objects onto the same figure without individual titles or colorbars.",
+        "Display the combined map."
+      ],
+      "input_data": {
+        "inventory_file": "<DATA_ROOT>/obspy/cartopy_plot_with_beachballs/input/inv.xml",
+        "catalog_file": "<DATA_ROOT>/obspy/cartopy_plot_with_beachballs/input/cat.xml",
+        "projection_parameters": {
+          "central_longitude": 35,
+          "central_latitude": 50,
+          "standard_parallels": [
+            40,
+            42
+          ]
+        },
+        "map_extent": [
+          -15.0,
+          75.0,
+          15.0,
+          80.0
+        ]
+      },
+      "output_data": {
+        "result_plot": "station_inventory_and_event_catalog_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic station inventory",
+      "event catalog",
+      "map projection",
+      "visualization"
+    ],
+    "agent_prompt": "Load the seismic station inventory from {inventory_file} and event catalog from {catalog_file}. Create a matplotlib figure with an Albers Equal Area projection using the parameters {projection_parameters} and map extent {map_extent}. Add gridlines, coastlines, stock imagery, and borders. Plot the inventory and catalog on the map in a single figure and display it. \n Note: 1) Save the station inventory and event catalog plot to {result_plot}."
+  }
+}

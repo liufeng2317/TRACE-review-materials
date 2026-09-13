@@ -1,0 +1,8 @@
+schema_version: 1
+paper_reported_models:
+  - id: claude-sonnet-4-20250514
+    included_in_paper_statistics: true
+  - id: gemini-3-flash-preview
+    included_in_paper_statistics: true
+  - id: gpt-5.1
+    included_in_paper_statistics: true

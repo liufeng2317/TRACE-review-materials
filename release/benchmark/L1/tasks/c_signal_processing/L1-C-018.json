@@ -1,0 +1,41 @@
+{
+  "task_id": "L1-C-018",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Response Simulation via PAZ",
+    "task_description": {
+      "overview": "Simulate the response of a target seismometer by removing the original instrument poles-zeros and applying the desired poles-zeros model.",
+      "steps": [
+        "Load raw or pre-corrected seismic waveform data into a Stream object.",
+        "Define a PAZ (poles, zeros, gain, sensitivity) dictionary for the original and desired instrument.",
+        "Call Stream.simulate() with parameters: paz_remove (original PAZ) and paz_simulate (target PAZ).",
+        "Compare or plot the original and simulated traces to verify the transformation."
+      ],
+      "input_data": {
+        "seismic_waveform": "<DATA_ROOT>/obspy/seismometer_correction_simulation/input/waveform.mseed",
+        "paz_remove": {
+          "poles": "[-0.037004 + 0.037016j, -0.037004 - 0.037016j, -251.33 + 0j, -131.04 - 467.29j, -131.04 + 467.29j]",
+          "zeros": "[0j, 0j]",
+          "gain": "60077000.0",
+          "sensitivity": "2516778400.0"
+        },
+        "corn_freq_2_paz": {
+          "freq": "1",
+          "damp": "0.707"
+        }
+      },
+      "output_data": {
+        "simulated_response": "simulated_response.mseed",
+        "simulated_response_plot": "simulated_response_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "poles and zeros",
+      "instrument transfer function",
+      "seismometer simulation",
+      "waveform transformation"
+    ],
+    "agent_prompt": "Load the seismic waveform from {seismic_waveform}. Remove the original instrument response using paz_remove={paz_remove} and simulate the target instrument response (paz_1hz) using corn_freq_2_paz={corn_freq_2_paz}. Generate a comparison plot with the original data and the simulated data (normalized). Save the response simulation plot to {simulated_response_plot} and the simulated response to {simulated_response}."
+  }
+}

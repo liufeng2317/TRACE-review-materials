@@ -1,0 +1,59 @@
+{
+  "task_id": "L1-E-005",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Focal Mechanism Visualization",
+    "task_description": {
+      "overview": "Create graphical representations of earthquake focal mechanisms using moment tensor or strike-dip-rake parameters.",
+      "steps": [
+        "Import the beachball plotting function from the ObsPy imaging module.",
+        "Define the moment tensor components or strike-dip-rake parameters.",
+        "Call the beachball function with the defined parameters and plotting options (size, line width, face color).",
+        "Render or save the plot for interpretation."
+      ],
+      "input_data": {
+        "mt_list_1": [
+          0.91,
+          -0.89,
+          -0.02,
+          1.78,
+          -1.55,
+          0.47
+        ],
+        "mt_list_2": [
+          150,
+          87,
+          1
+        ],
+        "mt_list_3": [
+          -2.39,
+          1.04,
+          1.35,
+          0.57,
+          -2.94,
+          -0.94
+        ],
+        "plot_size": 200,
+        "line_width": 2,
+        "face_colors": [
+          "b",
+          "r",
+          "g"
+        ]
+      },
+      "output_data": {
+        "beachball_plot_1": "beachball_plot_1.png",
+        "beachball_plot_2": "beachball_plot_2.png",
+        "beachball_plot_3": "beachball_plot_3.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "focal mechanism",
+      "moment tensor",
+      "beachball plot",
+      "strike-dip-rake"
+    ],
+    "agent_prompt": "Generate beachball plots for the following focal mechanism parameters: 1) moment tensor {mt_list_1} with blue fill; 2) strike-dip-rake {mt_list_2} with red fill; 3) moment tensor {mt_list_3} with green fill. Use a plot size of 200 and line width of 2. param with `outfile` to save the plot. \n Note: 1) Save the beachball plot 1 to {beachball_plot_1}, the beachball plot 2 to {beachball_plot_2}, and the beachball plot 3 to {beachball_plot_3}."
+  }
+}

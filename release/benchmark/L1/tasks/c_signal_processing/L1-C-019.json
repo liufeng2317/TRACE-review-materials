@@ -1,0 +1,40 @@
+{
+  "task_id": "L1-C-019",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Travel Time Calculation and Curve Plotting",
+    "task_description": {
+      "overview": "Compute and plot travel time curves for seismic phases over a given distance range using a standard velocity model.",
+      "steps": [
+        "Load or reference the seismic velocity model (e.g., iasp91).",
+        "Define source depth and distance range for travel time calculation.",
+        "Select the seismic phases to plot (e.g., P, PP, S).",
+        "Use the travel-time computation function to calculate arrival times.",
+        "Render the travel time curves on a 2D plot."
+      ],
+      "input_data": {
+        "velocity_model": "iasp91",
+        "source_depth_km": 10,
+        "distance_range_degrees": [
+          0,
+          180
+        ],
+        "phase_list": [
+          "P",
+          "PP",
+          "S"
+        ]
+      },
+      "output_data": {
+        "travel_time_curve_plot": "travel_time_curve_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic travel times",
+      "wave propagation",
+      "phase picking"
+    ],
+    "agent_prompt": "Generate a travel time curve plot for seismic phases. Use the iasp91 velocity model at a source depth of 10 km. Calculate arrival times for phases P, PP, and S over distances from 0° to 180°, attention the basic physics of the wave propagation. Output a figure to show the 'distance-travel time' relationship. Save the travel time curve plot to {travel_time_curve_plot}."
+  }
+}

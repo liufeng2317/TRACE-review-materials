@@ -1,0 +1,40 @@
+{
+  "task_id": "L1-D-005",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "DAS Frequency-Domain FK Spectrum Computation",
+    "task_description": {
+      "overview": "Compute and visualize the 2D frequency–wavenumber (FK) spectrum of the seismic section.",
+      "steps": [
+        "Load the seismic Section object using daspy.read().",
+        "Call the Section.plot() method with obj set to 'fk' to specify an FK plot.",
+        "Pass kwargs_pro dict to customize the cosine taper coefficients and FFT output sizes.",
+        "Render the FK spectrum image."
+      ],
+      "input_data": {
+        "das_data_path": "<DATA_ROOT>/daspy/Basic_Processing/input/example.pkl",
+        "obj": "fk",
+        "kwargs_pro": {
+          "taper": [
+            0.02,
+            0.05
+          ],
+          "nfft": [
+            1024,
+            8192
+          ]
+        }
+      },
+      "output_data": {
+        "fk_spectrum_plot": "fk_spectrum_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency–wavenumber analysis",
+      "2D FFT",
+      "spectral tapering"
+    ],
+    "agent_prompt": "Load the Section object via daspy.read({das_data_path}). Generate an FK spectrum plot by calling sec.plot(obj={obj}, kwargs_pro={kwargs_pro}). Display the resulting FK image using matplotlib. \n Note: 1) Save the fk spectrum plot to {fk_spectrum_plot}."
+  }
+}

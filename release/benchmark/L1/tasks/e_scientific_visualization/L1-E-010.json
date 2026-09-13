@@ -1,0 +1,32 @@
+{
+  "task_id": "L1-E-010",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Spatial Distribution Plotting",
+    "task_description": {
+      "overview": "Visualize seismicity in geographic space with dot sizes scaled by magnitude and optional background map and focus region.",
+      "steps": [
+        "Load event longitudes, latitudes, and magnitudes from input.",
+        "Optionally set map resolution, include background map, and define a country or bounding box.",
+        "Scale dot sizes by event magnitudes and apply color mapping.",
+        "Plot events on geographic axes with map features if requested.",
+        "Customize labels, dot labels, and color scheme, then return or save the figure."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "color_dots": "optional, e.g., 'blue'",
+        "color_map": "optional, e.g., 'Greys_r'"
+      },
+      "output_data": {
+        "result_plot": "spatial_distribution_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "spatial seismicity",
+      "geographic visualization",
+      "magnitude scaling"
+    ],
+    "agent_prompt": "Plot seismic events in space using provided longitudes, latitudes, and magnitudes. Loading the earthquake catalog at {catalog_path}, plot the seismic events in space. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the spatial distribution plot to {reslut_plot}."
+  }
+}

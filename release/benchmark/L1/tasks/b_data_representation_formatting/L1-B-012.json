@@ -1,0 +1,58 @@
+{
+  "task_id": "L1-B-012",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Write QuakeML with Custom Tags",
+    "task_description": {
+      "overview": "Add custom namespace elements and attributes to an ObsPy Catalog object and write it out as a QuakeML file.",
+      "steps": [
+        "Define a Python dictionary or AttribDict named `extra` containing custom tags.",
+        "For each custom tag, specify 'value', 'namespace', and optionally 'type' ('element' or 'attribute') and 'attrib' for sub-element attributes.",
+        "Assign `catalog.extra = extra` where catalog is an instance of `obspy.core.event.Catalog`.",
+        "Call `catalog.write('output.xml', format='QUAKEML', nsmap=...)` to produce the QuakeML file."
+      ],
+      "input_data": {
+        "extra": {
+          "my_tag1": {
+            "value": true,
+            "namespace": "http://some-page.de/xmlns/1.0",
+            "attrib": {
+              "{http://some-page.de/xmlns/1.0}my_attrib1": "123.4",
+              "{http://some-page.de/xmlns/1.0}my_attrib2": "567"
+            }
+          },
+          "my_tag2": {
+            "value": "True",
+            "namespace": "http://some-page.de/xmlns/1.0"
+          },
+          "my_tag3": {
+            "value": 1,
+            "namespace": "http://some-page.de/xmlns/1.0"
+          },
+          "my_tag4": {
+            "value": "2013-01-02T13:12:14.600000Z",
+            "namespace": "http://test.org/xmlns/0.1"
+          },
+          "my_attribute": {
+            "value": "my_attribute_value",
+            "type": "attribute",
+            "namespace": "http://test.org/xmlns/0.1"
+          }
+        },
+        "nsmap": {
+          "my_ns": "http://test.org/xmlns/0.1"
+        }
+      },
+      "output_data": {
+        "quakeml_file": "quakeml.xml"
+      }
+    },
+    "geophysical_knowledge": [
+      "QuakeML",
+      "ObsPy Catalog",
+      "XML metadata handling"
+    ],
+    "agent_prompt": "Write and read an ObsPy Catalog file in QuakeML format with custom tags. Input: an `extra` dictionary of custom elements and attributes, and an optional `nsmap` for namespace prefixes. Output: a valid QuakeML file named {quakeml_file} containing the extra tags."
+  }
+}

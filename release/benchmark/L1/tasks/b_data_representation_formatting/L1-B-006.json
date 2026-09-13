@@ -1,0 +1,62 @@
+{
+  "task_id": "L1-B-006",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Custom Tag Injection to StationXML",
+    "task_description": {
+      "overview": "Add custom namespace elements and attributes to StationXML metadata using ObsPy Inventory.",
+      "steps": [
+        "Import Inventory, Network, UTCDateTime, AttribDict from ObsPy.",
+        "Define an AttribDict 'extra' with keys for each custom tag and attribute, specifying 'value', 'namespace', 'type' (optional), and 'attrib' (for subelement attributes).",
+        "Create an Inventory object with one or more Network entries.",
+        "Assign the 'extra' AttribDict to the target object (e.g., inv[0].extra for the first Network).",
+        "Write the Inventory to a StationXML file using inv.write(), passing an nsmap dict for namespace prefixes."
+      ],
+      "input_data": {
+        "network_code": "XX",
+        "extra_tags_definition": {
+          "my_tag": {
+            "value": true,
+            "namespace": "http://some-page.de/xmlns/1.0",
+            "attrib": {
+              "{http://some-page.de/xmlns/1.0}my_attrib1": "123.4",
+              "{http://some-page.de/xmlns/1.0}my_attrib2": "567"
+            }
+          },
+          "my_tag_2": {
+            "value": true,
+            "namespace": "http://some-page.de/xmlns/1.0"
+          },
+          "my_tag_3": {
+            "value": 1,
+            "namespace": "http://some-page.de/xmlns/1.0"
+          },
+          "my_tag_4": {
+            "value": "2013-01-02T13:12:14.600000Z",
+            "namespace": "http://test.org/xmlns/0.1"
+          },
+          "my_attribute": {
+            "value": "my_attribute_value",
+            "type": "attribute",
+            "namespace": "http://test.org/xmlns/0.1"
+          }
+        },
+        "nsmap": {
+          "somepage_ns": "http://some-page.de/xmlns/1.0",
+          "my_ns": "http://test.org/xmlns/0.1"
+        }
+      },
+      "output_data": {
+        "inventory_file": "inventory.xml"
+      }
+    },
+    "geophysical_knowledge": [
+      "StationXML",
+      "station metadata",
+      "XML namespace",
+      "ObsPy Inventory"
+    ],
+    "agent_prompt": "Using ObsPy, inject custom XML tags and attributes into a StationXML inventory. Input: network code '{network_code}', custom tags definition '{extra_tags_definition}', namespace map '{nsmap}', and write output to '{inventory_file}'"
+  }
+}

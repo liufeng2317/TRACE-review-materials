@@ -1,0 +1,36 @@
+{
+  "task_id": "L1-C-012",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Delayed STA_LTA Triggering",
+    "task_description": {
+      "overview": "Detect seismic onsets using a delayed STA/LTA algorithm with improved stability.",
+      "steps": [
+        "Load waveform data into Trace.",
+        "Compute cft = delayed_sta_lta(data, nsta, nlta).",
+        "Apply on_threshold and off_threshold.",
+        "List detected trigger intervals."
+      ],
+      "input_data": {
+        "waveform_data_path": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms.mseed",
+        "trace_id": 0,
+        "sampling_rate": "trace.stats.sampling_rate",
+        "STA_seconds": 5,
+        "LTA_seconds": 10,
+        "on_threshold": 5,
+        "off_threshold": 10
+      },
+      "output_data": {
+        "trigger_cft": "trigger_cft.txt",
+        "trigger_plot": "trigger_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "delayed STA/LTA",
+      "event detection"
+    ],
+    "agent_prompt": "Using seismic samples in {waveform_data_path}, compute delayed STA/LTA with STA={STA_seconds}s and LTA={LTA_seconds}s. Detect triggers crossing {on_threshold} and {off_threshold}. Plot a figure to show the waveform, the delayed sta/lta caculated result, and the finally picked onset and offset times. Save the 1D array trigger_cft series to {trigger_cft} and the plot to {trigger_plot}."
+  }
+}

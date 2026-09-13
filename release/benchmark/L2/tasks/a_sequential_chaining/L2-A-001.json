@@ -1,0 +1,48 @@
+{
+  "task_id": "L2-A-001",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Back Azimuth Estimation using BazNet on STEAD",
+    "task_description": {
+      "overview": "Estimate seismic back azimuth angles from pre-cut three-component waveform segments using a pretrained BazNet deep neural network.",
+      "steps": [
+        "Load three-component waveform data arrays from the STEAD .npz file.",
+        "Normalize each component of the waveforms (zero-mean and divide by standard deviation).",
+        "Convert the normalized NumPy array to a PyTorch tensor and transfer it to the compute device (CPU or GPU).",
+        "Run the BazNet model in evaluation mode to obtain sin and cos predictions of the back azimuth.",
+        "Compute the back azimuth in degrees by applying arctangent2 to the model outputs.",
+        "Load ground truth back azimuth values from the corresponding CSV file for comparison.",
+        "Generate a scatter plot comparing inferred back azimuth versus true back azimuth with a 1:1 reference line."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.csv",
+        "normalize_mode": "std",
+        "device": "npu",
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/back_azimuth_estimation/pretrained/baz_network/stead.pth",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 6000
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "target": "list of float",
+            "predicted": "list of float"
+          }
+        },
+        "result_figure": "result_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "back azimuth estimation",
+      "deep learning model",
+      "BazNet",
+      "STEAD dataset"
+    ],
+    "agent_prompt": "Perform back azimuth estimation on the 3-component seismic dataset (STEAD) using `baz_network` deep learning model. Load and normalize the seismic data from {data_path} with the specific {normalize_mode} mode. The pretrained baz_network model is located at {pretrained_model_path}, and its related parameters are {model_params}. \n (1) Run inference by feeding all-length waveform into the model to obtain a single back azimuth estimate, and save the estimated value into a CSV file. \n (2) Load the target back azimuth from {target_path} by reading the columns `back_azimuth_deg`. \n (3) Plot one figure showing the comparison between the predicted back azimuth estimation results and the target back azimuth. Save the result data to {result_data.save_name} with content {result_data.content}, and save the result figure to {result_figure.save_name}."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "task_id": "L2-A-006",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Magnitude Estimation using MagNet on STEAD",
+    "task_description": {
+      "overview": "Estimate earthquake magnitudes directly from raw single-station waveform data using the MagNet deep learning model and compare with ground truth magnitudes.",
+      "steps": [
+        "Load the pretrained MagNet model with specified input channels and sample length.",
+        "Load the raw waveform data from the STEAD dataset (.npz file).",
+        "Normalize each component of the waveform data using the chosen normalization mode (e.g., 'std').",
+        "Convert the normalized data to a tensor and perform inference with the MagNet model to obtain predicted magnitudes and uncertainties.",
+        "Load the ground truth magnitudes from the provided CSV file.",
+        "Compare predicted magnitudes with ground truth by computing statistics or plotting a 1:1 scatter plot."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_0_100.csv",
+        "normalize_mode": "std",
+        "device": "npu",
+        "pretrained_model_path": "<REPO_ROOT>/seismoagent/library/ai_module/magnitude_estimation/pretrained/magnet/stead.pth",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 6000
+        },
+        "metric_parameters": {
+          "accept_residual_mag": 1
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "pred_magnitude": "list of float",
+            "target_magnitude": "list of float"
+          }
+        },
+        "result_figure": "magnitude_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "earthquake magnitude estimation",
+      "deep learning model",
+      "MagNet",
+      "STEAD dataset"
+    ],
+    "agent_prompt": "Perform magnitude estimation on the 3-component seismic dataset (STEAD) using `magnet` deep learning model. Load and normalize the seismic data from {data_path} with the specific {normalize_mode} mode. The pretrained magnet model is located at {pretrained_model_path}, and its related parameters are {model_params}. \n (1) Run inference and save the magnitude estimation results into a csv file. \n (2) Load the target magnitude from {target_path} by reading the columns `source_magnitude`. \n (3) Plot one figure showing the magnitude estimation results and the target magnitude. The result data should be saved to {result_data.save_name} with content {result_data.content}, and the result figure should be saved to {result_figure}."
+  }
+}

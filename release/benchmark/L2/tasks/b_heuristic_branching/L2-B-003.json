@@ -1,0 +1,45 @@
+{
+  "task_id": "L2-B-003",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "Seismic Channel Completeness Branching",
+    "task_description": {
+      "overview": "Scan all MiniSEED waveform files in a directory and apply channel-completeness-driven branching to standardize three-component seismic data (N, E, Z). The workflow routes processing based on the availability of components at each station.",
+      "steps": [
+        "Scan all .mseed files in the specified directory.",
+        "Group waveform traces by station and time segment.",
+        "Check component completeness (N, E, Z) for each station group.",
+        "If N, E, and Z components exist, directly save them as standardized three-component output.",
+        "If two components exist and include Z, duplicate Z to the missing horizontal component and save standardized output.",
+        "If only Z component exists, duplicate Z to N and E components and save standardized output.",
+        "If Z component is missing or component configuration is invalid, report missing data without generating standardized output.",
+        "Save all standardized three-component waveforms into an output directory and generate a completeness report."
+      ],
+      "input_data": {
+        "data_directory": "<DATA_ROOT>/data/waveforms/CI.CCC",
+        "file_pattern": "network.station.location.channel__YYYYMMDDTHHMMSSZ__YYYYMMDDTHHMMSSZ.mseed"
+      },
+      "output_data": {
+        "waveform_data": "{network}.{station}.{starttime}.{endtime}.processed.mseed",
+        "reports_data": {
+          "save_name": "completeness_report.json",
+          "content": {
+            "network": "string",
+            "station": "string",
+            "starttime": "string",
+            "endtime": "string",
+            "present_components": "list of strings",
+            "missing_components": "list of strings"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "three-component seismic recording standards",
+      "station metadata consistency",
+      "waveform preprocessing and quality control"
+    ],
+    "agent_prompt": "Scan all MiniSEED files under {data_directory}. Group waveform traces by station and time window. Check component completeness for each station-day. If three components (N, E, Z) exist, directly saved with name {waveform_data}. If two components exist and include Z, duplicate the Z component to the missing horizontal component and save with name {waveform_data}. If only Z exists, duplicate Z to N and E and save with name {waveform_data}. If Z-component is missing, ignore this station-day but record the station and time window in the completeness report. Save the completeness report to {reports_data.save_name} with content {reports_data.content}."
+  }
+}

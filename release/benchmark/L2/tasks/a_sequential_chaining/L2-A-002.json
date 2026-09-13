@@ -1,0 +1,46 @@
+{
+  "task_id": "L2-A-002",
+  "level": "L2",
+  "category": "Sequential chaining",
+  "task_definition": {
+    "task_name": "Continuous DAS Data Filtering and Downsampling",
+    "task_description": {
+      "overview": "Apply a sequence of processing steps—low-pass filtering, time and space downsampling, then time integration—to continuous seismic data while preserving continuity across file boundaries.",
+      "steps": [
+        "Initialize a Collection with continuous data file paths.",
+        "Define a list of operations: first a downsampling operation with time interval, spatial interval, and low-pass filter enabled; then a time integration operation.",
+        "Invoke the Collection.process method with the operations list, specifying an output directory and filename suffix.",
+        "Process each file sequentially, caching filter states to avoid discontinuities, and save processed data files to the target directory."
+      ],
+      "input_data": {
+        "file_pattern": "<DATA_ROOT>/daspy/Basic_Processing/input/example.pkl",
+        "operations": [
+          {
+            "name": "downsampling",
+            "parameters": {
+              "tint": 5,
+              "xint": 5,
+              "lowpass_filter": true
+            }
+          },
+          {
+            "name": "time_integration",
+            "parameters": {}
+          }
+        ],
+        "suffix": "_pro"
+      },
+      "output_data": {
+        "result_data": "example_pro.pkl",
+        "result_figure": "example_pro.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "continuous waveforms",
+      "filtering",
+      "downsampling",
+      "time integration"
+    ],
+    "agent_prompt": "Using daspy package to initialize a Collection (from daspy import Collection). Apply the following processing sequence: downsampling with parameters {operations[0].parameters}, then time integration. Save the processed files under {savepath} with suffix {suffix}. Reload and plot a figure to show the raw and processed data. Save the result data to {result_data} and the result figure to {result_figure}."
+  }
+}

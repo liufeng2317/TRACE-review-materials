@@ -1,0 +1,33 @@
+{
+  "task_id": "L1-B-007",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "DAS Channel Location Interpolation",
+    "task_description": {
+      "overview": "Interpolate channel positions along an optical fiber cable using known channel-numbered points and optional track points to constrain cable geometry.",
+      "steps": [
+        "Load known channel points (longitude, latitude, channel number).",
+        "Load optional track points (longitude, latitude) to define cable path.",
+        "Convert coordinates to UTM projection.",
+        "Interpolate channel positions at specified spacing (dx) along the path.",
+        "Back-project interpolated UTM coordinates to WGS84 (longitude, latitude)."
+      ],
+      "input_data": {
+        "known_points_path": "<DATA_ROOT>/daspy/Channel_Analysis/input/known_pt.txt",
+        "track_points_path": "<DATA_ROOT>/daspy/Channel_Analysis/input/track_pt.txt",
+        "dx": "channel spacing in meters (e.g., 2)"
+      },
+      "output_data": {
+        "interpolated_points_file": "interpolated_points.txt",
+        "interpolated_points_plot": "interpolated_points.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "coordinate interpolation",
+      "UTM projection",
+      "georeferencing"
+    ],
+    "agent_prompt": "Interpolate DAS channel locations. Input: known_points array with [lon, lat, channel], optional track_points array with [lon, lat], and spacing dx. Convert to UTM, perform linear interpolation along the path at spacing dx, then convert back to WGS84. Output: array of [longitude, latitude, channel_number]. Finally, scatter plot the interpolated channel locations and the track points. Save the interpolated channel locations to {interpolated_points_file} and the plot to {interpolated_points_plot}."
+  }
+}

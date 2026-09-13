@@ -1,0 +1,72 @@
+{
+  "task_id": "L2-B-006",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "Phase Picking with STA/LTA and AR Picker Branching",
+    "task_description": {
+      "overview": "Use classic STA/LTA to detect whether seismic events exist in waveform data. If an event is detected, apply AR-based phase picking (ar_pick) to determine P- and S-wave arrivals.",
+      "steps": [
+        "Load and preprocess three-component seismic waveform data.",
+        "Apply classic STA/LTA algorithm to detect potential seismic events.",
+        "If STA/LTA detection indicates event presence, extract event windows from the waveform.",
+        "Apply ar_pick on detected event windows to pick P- and S-wave arrival times.",
+        "If no event is detected, skip phase picking for that waveform segment.",
+        "Save detected event windows and corresponding P- and S-phase picks into a CSV file.",
+        "Load reference phase picks and evaluate picking accuracy using residual thresholds (residual < {accept_residual_sec} seconds is considered correct).",
+        "Compute and save evaluation metrics including correct picks, missing picks, and false picks into a JSON file.",
+        "Plot waveform samples with detected P- and S-phase picks overlaid.",
+        "Plot residual distributions between detected picks and reference picks for P and S phases."
+      ],
+      "input_data": {
+        "data_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_noise_0_100.npz",
+        "target_path": "<DATA_ROOT>/DeepLearning_Tests/STEAD/partial/STEAD_event_noise_0_100.csv",
+        "classic_sta_lta_config": {
+          "sta_window_sec": "5 s",
+          "lta_window_sec": "10 s",
+          "trigger_threshold": "1.5",
+          "detrigger_threshold": "0.8"
+        },
+        "ar_picker_config": {
+          "samp_rate": "100",
+          "f1": "1.0",
+          "f2": "20.0",
+          "lta_p": "1.0",
+          "sta_p": "0.1",
+          "lta_s": "4.0",
+          "sta_s": "1.0",
+          "m_p": "2",
+          "m_s": "8",
+          "l_p": "0.1",
+          "l_s": "0.2",
+          "s_pick": "True"
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result.csv",
+          "file_content": {
+            "waveform_idx": "list of int",
+            "pred_events_or_noise": "list of int",
+            "target_events_or_noise": "list of int",
+            "pred_ppicks": "list of float",
+            "target_ppicks": "list of float",
+            "pred_spicks": "list of float",
+            "target_spicks": "list of float"
+          }
+        },
+        "result_figure": {
+          "classification_comparison": "classification_comparison.png",
+          "picks_comparison": "picks_comparison.png"
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "STA/LTA event detection",
+      "autoregressive phase picking",
+      "p-wave and s-wave arrival time",
+      "traditional seismic signal processing"
+    ],
+    "agent_prompt": "Perform seismic event detection and phase picking on the three-component dataset using classical methods. Load and normalize waveform data from {data_path}. \n (1) Apply classical STA/LTA detection using window lengths {sta_window_sec} and {lta_window_sec}, with trigger threshold {trigger_threshold} and detrigger threshold {detrigger_threshold}, to determine whether seismic events exist. \n (2) For detected event windows, apply `ar_pick` to pick P-wave and S-wave arrival times with given parameters {ar_picker_config}. Save the classification of the waveform, and picked results into a CSV file {result_data.file_name} with content {result_data.file_content}. \n (3) Load target picks from {target_path} by reading columns `p_arrival_sample` and `s_arrival_sample`. Compute evaluation metrics between detected picks and target picks (residual < {accept_residual_sec} seconds is considered correct), and count missing and false picks. Save evaluation metrics into a JSON file {result_evaluation.file_name} with content {result_evaluation.file_content}. \n (4) Plot the comparison between the predicted and target classification of the waveform, and save the figure to {result_figure.classification_comparison}. \n (5) Plot the comparison between the predicted and target picks of the waveform (2x1 for ppicks and spicks), and save the figure to {result_figure.picks_comparison}."
+  }
+}

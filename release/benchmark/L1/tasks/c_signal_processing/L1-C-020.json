@@ -1,0 +1,42 @@
+{
+  "task_id": "L1-C-020",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Waveform Downsampling with Anti-Aliasing Filter",
+    "task_description": {
+      "overview": "Reduce the sampling rate of a seismic trace by an integer factor while applying a low-pass filter to prevent aliasing, and compare raw, filtered, and downsampled data.",
+      "steps": [
+        "Load the seismogram from the specified input file or URL.",
+        "Extract the trace object from the stream.",
+        "Copy the trace and apply an integer decimation (downsampling) by the desired factor. By default, apply a low-pass filter with corner frequency 0.4 * original_sampling_rate / factor.",
+        "Optionally, create another copy of the trace and apply only the low-pass filter (same filter parameters) without decimation.",
+        "Generate time vectors for the original, filtered, and downsampled traces.",
+        "Plot the three data series for visual comparison and document the processing steps in the trace metadata."
+      ],
+      "input_data": {
+        "seismogram_path": "https://examples.obspy.org/RJOB_061005_072159.ehz.new",
+        "decimate": {
+          "factor": 4,
+          "strict_length": false
+        },
+        "filter": {
+          "type": "lowpass",
+          "freq": "0.4*original_sampling_rate/decimate.factor"
+        }
+      },
+      "output_data": {
+        "downsampled_data": "downsampled_data.mseed",
+        "downsampled_data_plot": "downsampled_data_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "sampling rate",
+      "anti-aliasing filter",
+      "decimation",
+      "digital signal processing",
+      "seismic signal processing"
+    ],
+    "agent_prompt": "Load the seismogram from {seismogram_path}. Extract the trace and perform integer decimation by a factor of {decimate.factor}, automatically applying a low-pass filter with corner frequency 0.4 * original_sampling_rate / {decimate.factor}. Also apply the same filter without decimation to a copy of the trace. Generate time vectors for each series and plot raw, filtered, and downsampled data over a selected time window. Save the downsampled data to {downsampled_data} and the plot to {downsampled_data_plot}. Note: consider use the obspy package to do the downsampling and filtering."
+  }
+}

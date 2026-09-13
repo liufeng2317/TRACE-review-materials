@@ -1,0 +1,39 @@
+{
+  "task_id": "L1-D-010",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Magnitude of Completeness using Kolmogorov–Smirnov Method",
+    "task_description": {
+      "overview": "Estimate the magnitude of completeness (Mc) by comparing the observed cumulative distribution of magnitudes to an exponential model using the Kolmogorov–Smirnov distance and a probabilistic threshold.",
+      "steps": [
+        "Load the earthquake catalog containing event magnitudes.",
+        "Set the magnitude bin width (Δm) and KS test parameters: probability threshold p and number of random draws n.",
+        "For each candidate Mc, simulate n magnitude samples from an exponential distribution truncated at Mc.",
+        "Compute the KS distance between the observed cumulative distribution and the simulated distribution.",
+        "Determine the smallest Mc for which the probability of observing a KS distance exceeds p.",
+        "Return the estimated Mc and diagnostic information (tested b-values, KS distances)."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "delta_m": "bin width for magnitude discretization (e.g., 0.1)"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "mc_data.json",
+          "content": {
+            "mc": "magnitude of completeness (float)"
+          }
+        },
+        "result_plot": "mc_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "cumulative distribution function",
+      "exponential magnitude distribution",
+      "Kolmogorov–Smirnov test",
+      "magnitude of completeness"
+    ],
+    "agent_prompt": "Estimate the magnitude of completeness (Mc) by the Kolmogorov-Smirnov (K-S) method. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {delta_m}, and apply the K-S method to estimate the magnitude of completeness Mc (`cat.estimate_mc_ks()`). Report the estimated Mc and additional information (tested b-values, KS distances), plot a figure to show the magnitude of completeness. \n Note: 1) The `seismostats` libarary is usefule for catalog statistic analysis and ploting. Please using or refer to the provided functions in `seismostats` \n 2) Save the mc data to {result_data.save name} with content {result_data.content} and the mc plot to {result_plot}."
+  }
+}

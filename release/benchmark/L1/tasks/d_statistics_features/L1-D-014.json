@@ -1,0 +1,38 @@
+{
+  "task_id": "L1-D-014",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Frequency-Magnitude Distribution Statistics",
+    "task_description": {
+      "overview": "Generate a histogram-style plot showing the number of earthquakes per magnitude bin to assess catalog completeness and estimate b-value.",
+      "steps": [
+        "Load the earthquake catalog",
+        "Define magnitude bin width (fmd_bin) for histogram.",
+        "Compute the frequency of events in each magnitude bin.",
+        "Plot the histogram with optional styling parameters (color, size, label).",
+        "Return or save the figure for analysis."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "fmd_bin": "bin width for FMD (e.g., 0.1)"
+      },
+      "output_data": {
+        "result_plot": "fmd_plot.png",
+        "result_data": {
+          "save name": "fmd_data.csv",
+          "content": {
+            "magnitude_bin_center": "magnitude bin center (float)",
+            "count": "frequency (int)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "magnitude distribution",
+      "frequency-magnitude distribution",
+      "b-value estimation"
+    ],
+    "agent_prompt": "Statistic the frequency-magnitude distribution. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {fmd_bin}, statistic the frequency-magnitude distribution and plot the frequency-magnitude distribution. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the fmd plot to {result_plot} and the fmd data to {result_data.save name} with content {result_data.content}."
+  }
+}

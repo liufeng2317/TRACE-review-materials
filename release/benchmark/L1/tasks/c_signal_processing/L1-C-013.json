@@ -1,0 +1,37 @@
+{
+  "task_id": "L1-C-013",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Frequency Response Calculation and Visualization",
+    "task_description": {
+      "overview": "Compute and plot the amplitude and phase frequency response of a seismometer given its poles, zeros, and scale factor.",
+      "steps": [
+        "Load the poles, zeros, and scale factor of the seismometer.",
+        "Compute the complex frequency response using an FFT-based method (e.g., paz_to_freq_resp).",
+        "Convert the unwrapped phase from range [-π, π] to [0, 2π].",
+        "Plot the amplitude response on a log–log frequency scale.",
+        "Plot the phase response on a semilogarithmic frequency scale with y-axis ticks at multiples of π.",
+        "Adjust plot layout, add axis labels, title, and display the figure."
+      ],
+      "input_data": {
+        "poles": "list of complex numbers, e.g., [-4.440+4.440j, -4.440-4.440j, -1.083+0.0j]",
+        "zeros": "list of complex numbers, e.g., [0.0+0.0j, 0.0+0.0j, 0.0+0.0j]",
+        "scale_factor": 0.4,
+        "sampling_interval": 0.005,
+        "nfft": 16384
+      },
+      "output_data": {
+        "frequency_response_plot": "frequency_response_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency response",
+      "seismometer calibration",
+      "poles and zeros",
+      "FFT-based spectral analysis",
+      "phase unwrapping"
+    ],
+    "agent_prompt": "Given the poles, zeros, scale factor, sampling interval, and number of FFT points of a seismometer, compute its frequency response using the paz_to_freq_resp function from obspy.signal.invsim. Then unwrap the phase to range from 0 to 2π, and generate two subplots: (1) amplitude vs. frequency on a log–log scale, (2) phase vs. frequency on a semilog scale with y-ticks at 0, π/2, π, 3π/2, and 2π. Label axes and add a suptitle 'Frequency Response of LE-3D/1s Seismometer'. Save the frequency response plot to {frequency_response_plot}."
+  }
+}

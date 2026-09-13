@@ -1,0 +1,44 @@
+{
+  "task_id": "L1-E-002",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Beachball Plot with Parameter List",
+    "task_description": {
+      "overview": "Create a global map displaying a single beachball symbol from a given moment tensor parameter list at a specified coordinate.",
+      "steps": [
+        "Configure a PlateCarree projection centered on a chosen longitude (e.g., 142.0°).",
+        "Initialize a world map with coastline and gridlines, set extent to global (-180 to 180, -90 to 90).",
+        "Transform the given event lon/lat coordinate to plot projection coordinates.",
+        "Define the moment tensor list [m_rr, m_tt, m_pp, m_rt, m_rp, m_tp].",
+        "Generate a beachball symbol using obspy.imaging.beachball.beach with the moment tensor list and projection coordinates.",
+        "Add the beachball to the map and display the figure."
+      ],
+      "input_data": {
+        "central_longitude": 142.0,
+        "event_location": {
+          "lat": 38.3215,
+          "lon": 142.36929
+        },
+        "moment_tensor_list": [
+          0.136,
+          -0.591,
+          0.455,
+          -0.396,
+          0.046,
+          -0.615
+        ]
+      },
+      "output_data": {
+        "result_plot": "beachball_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "moment tensor",
+      "focal mechanism",
+      "beachball plot",
+      "global projection"
+    ],
+    "agent_prompt": "Set up a global PlateCarree map centered at {central_longitude}°. Plot coastlines and gridlines for extent [-180,180,-90,90]. Transform the event location ({event_location.lon},{event_location.lat}) to map projection coordinates. Use the moment tensor {moment_tensor_list} and projected position to draw a beachball at the map. \n Note: 1) Save the beachball plot to {result_plot}."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "task_id": "L1-A-005",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Station Metadata Retrieve via FDSN Web Services",
+    "task_description": {
+      "overview": "Download station metadata using ObsPy's FDSN client module.",
+      "steps": [
+        "Initialize an ObsPy FDSN client for a chosen data center (e.g., IRIS, ORFEUS, GFZ).",
+        "Request station metadata (StationXML) for specified network, station, location, channel, and time window.",
+        "Save the downloaded station metadata to disk in appropriate formats."
+      ],
+      "input_data": {
+        "station_data": {
+          "network": "IU",
+          "station": "A*",
+          "starttime": "UTCDateTime('2002-01-01')",
+          "endtime": "UTCDateTime('2002-01-02')",
+          "client provider": "IRIS"
+        }
+      },
+      "output_data": {
+        "station_xml_file": "stations.xml",
+        "station_map_file": "stations.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "station metadata retrieval",
+      "FDSN Web Services",
+      "StationXML format"
+    ],
+    "agent_prompt": "Use ObsPy's FDSN client to download station metadata with information from {station_data}. Save and figure the station metadata. Save the retrieved station metadata to {station_xml_file} and the station map to {station_map_file}."
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": "L1-C-006",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Cross-Correlation Pick Correction",
+    "task_description": {
+      "overview": "Align the waveforms of phase onsets from two seismic events to correct the original pick times by fitting a parabola around the maximum of the cross-correlation function.",
+      "steps": [
+        "Load seismic waveform data for two events (st1 and st2) from the provided paths.",
+        "Select the Z-component traces (tr1 and tr2) for analysis.",
+        "Define the original pick times t1 and t2 for the two events.",
+        "Call xcorr_pick_correction with parameters: pre_trigger, post_trigger, cc_maxlag, and optional plotting and filter settings.",
+        "Fit a parabola around the peak of the cross-correlation function to determine the time shift (dt).",
+        "Record the correlation coefficient (coeff) and apply the time correction to the second pick."
+      ],
+      "input_data": {
+        "trace1_waveform_path": "<DATA_ROOT>/obspy/xcorr_pick_correction/input/waveform_a.mseed",
+        "trace2_waveform_path": "<DATA_ROOT>/obspy/xcorr_pick_correction/input/waveform_b.mseed",
+        "pick_time1": "2010-05-27T16:24:33.315000Z",
+        "pick_time2": "2010-05-27T16:27:30.585000Z",
+        "xcorr_pick_correction_param": {
+          "pre_trigger": 0.05,
+          "post_trigger": 0.2,
+          "cc_maxlag": 0.1,
+          "plot": true
+        }
+      },
+      "output_data": {
+        "result": {
+          "save_name": "result.json",
+          "content": {
+            "Time correction": "float",
+            "Correlation coefficient": "float"
+          }
+        },
+        "result_plot": "result_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "cross-correlation",
+      "waveform alignment",
+      "pick time correction"
+    ],
+    "agent_prompt": "You are given two seismic traces (trace1 and trace2) and their original pick times (pick_time1 and pick_time2). Apply cross-correlation pick correction using given parameters. Compute the time correction dt and correlation coefficient coeff. Plot the cross-correlation functions and the time correction result. Save the result to {result.save_name} with content {result.content} and the plot to {result_plot}."
+  }
+}

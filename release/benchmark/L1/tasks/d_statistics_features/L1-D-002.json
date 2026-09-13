@@ -1,0 +1,37 @@
+{
+  "task_id": "L1-D-002",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "B-Value Estimation with BValueEstimator Class",
+    "task_description": {
+      "overview": "Estimate the Gutenberg-Richter b-value from a catalog of earthquake magnitudes using a specified estimation algorithm.",
+      "steps": [
+        "Import the desired estimator class (e.g., ClassicBValueEstimator, BPositiveBValueEstimator, BMorePositiveBValueEstimator, or UtsuBValueEstimator).",
+        "Instantiate the estimator: estimator = SelectedEstimator().",
+        "Call estimator.calculate(magnitudes, mc, delta_m[, times, dmc]) to compute the b-value. The method excludes magnitudes below the completeness threshold mc.",
+        "Access the result via estimator.b_value."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_usgs.csv",
+        "delta_m": "magnitude discretization (float), e.g. 0.1"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "b_value.json",
+          "content": {
+            "mc": "magnitude of completeness (float)",
+            "b_value": "b-value (float)"
+          }
+        },
+        "result_plot": "b_value_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency-magnitude distribution",
+      "Gutenberg-Richter law",
+      "b-value estimation"
+    ],
+    "agent_prompt": "Compute the b-value with given catalog at {catalog_path}. Using the `seismostats` libarary to load the catalog, bin the magnitudes and estimate the magnitude of completeness. Then, calculate the b-value with the `seismostats.analysis.ClassicBValueEstimator` class. Report the b-value and plot a figure to show the b-value estimation (magnitude-frequency distribution and Gutenberg-Richter fit). \n Note: 1) Save the b-value to {result_data.save name} with content {result_data.content} and the plot to {result_plot}."
+  }
+}

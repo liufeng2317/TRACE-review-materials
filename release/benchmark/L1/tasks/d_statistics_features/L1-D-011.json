@@ -1,0 +1,38 @@
+{
+  "task_id": "L1-D-011",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Magnitude of Completeness using Maximum Curvature",
+    "task_description": {
+      "overview": "Estimate the magnitude of completeness (Mc) by finding the magnitude bin with maximum frequency in the non-cumulative frequency-magnitude distribution and applying a correction factor.",
+      "steps": [
+        "Load the earthquake catalog containing event magnitudes.",
+        "Define the magnitude bin width (Δm) for the frequency-magnitude distribution (FMD).",
+        "Compute the number of events in each magnitude bin.",
+        "Identify the bin with the maximum count (maximum curvature).",
+        "Add the correction factor (δ) to the bin magnitude to avoid underestimation.",
+        "Return the estimated Mc and the correction factor used."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "fmd_bin": "bin width for FMD (e.g., 0.1)"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "mc_data.json",
+          "content": {
+            "mc": "magnitude of completeness (float)"
+          }
+        },
+        "result_plot": "mc_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency-magnitude distribution",
+      "maximum curvature method",
+      "magnitude of completeness"
+    ],
+    "agent_prompt": "Estimate the magnitude of completeness (Mc) by the Maximum Curvature method. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {fmd_bin}, and apply the Maximum Curvature method to estimate the magnitude of completeness Mc (`cat.estimate_mc_maxc()`). Report the estimated Mc and the correction factor used, plot a figure to show the magnitude of completeness. \n Note: 1) The `seismostats` libarary is usefule for catalog statistic analysis and ploting. Please using or refer to the provided functions in `seismostats` \n 2) Save the mc data to {result_data.save name} with content {result_data.content} and the mc plot to {result_plot}."
+  }
+}

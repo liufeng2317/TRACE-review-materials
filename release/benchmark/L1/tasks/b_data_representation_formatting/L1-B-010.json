@@ -1,0 +1,30 @@
+{
+  "task_id": "L1-B-010",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "Waveform Export to ASCII formats",
+    "task_description": {
+      "overview": "Convert seismic waveform data into supported ASCII formats using ObsPy's write() method on a Stream object.",
+      "steps": [
+        "Load seismic waveform data from the specified input URL or file using obspy.read().",
+        "Select one of the supported ASCII formats (SLIST, TSPAIR, SH_ASC).",
+        "Use stream.write(output_path, format=format_name) to export the data.",
+        "Verify the generated ASCII file for correct header and data lines."
+      ],
+      "input_data": {
+        "seismic_waveform_path": "https://examples.obspy.org/RJOB20090824.ehz",
+        "format": "SLIST"
+      },
+      "output_data": {
+        "ascii_file": "waveform.ascii"
+      }
+    },
+    "geophysical_knowledge": [
+      "waveform data handling",
+      "ASCII export",
+      "ObsPy Stream"
+    ],
+    "agent_prompt": "Read the seismic waveform from {seismic_waveform_path} using ObsPy, then export it to ASCII format '{format}' at {ascii_file} using the Stream.write() method. Ensure the output file contains the correct header and sample data."
+  }
+}

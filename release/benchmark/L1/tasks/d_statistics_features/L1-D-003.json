@@ -1,0 +1,34 @@
+{
+  "task_id": "L1-D-003",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Catalog Event Hierarchical Clustering",
+    "task_description": {
+      "overview": "Cluster seismic events based on a precomputed dissimilarity (similarity) matrix and visualize the clustering as a dendrogram.",
+      "steps": [
+        "Load the dissimilarity matrix from the provided NPZ file or URL.",
+        "Convert the condensed dissimilarity matrix to a square form if necessary.",
+        "Compute hierarchical linkage using a chosen method (e.g., single linkage).",
+        "Form flat clusters by applying a distance threshold criterion.",
+        "Visualize the results: plot the similarity matrix and generate a dendrogram with color-coded clusters."
+      ],
+      "input_data": {
+        "dissimilarity_matrix_url": "https://examples.obspy.org/dissimilarities.npz",
+        "distance_threshold": 0.3,
+        "linkage_method": "single"
+      },
+      "output_data": {
+        "similarity_matrix_plot": "similarity_matrix_plot.png",
+        "dendrogram_plot": "dendrogram_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "event similarity",
+      "cross-correlation",
+      "hierarchical clustering",
+      "dendrogram visualization"
+    ],
+    "agent_prompt": "Load the seismic event dissimilarity matrix from {dissimilarity_matrix_url}. Convert it to a condensed distance array if needed. Perform hierarchical clustering using the '{linkage_method}' hierarchy.linkage method. Apply a flat cluster cut at a distance threshold of {distance_threshold}. Finally, plot the similarity matrix and render a dendrogram with clusters color-coded by the same threshold. \n Note: 1) Save the similarity matrix plot to {similarity_matrix_plot} and the dendrogram plot to {dendrogram_plot}."
+  }
+}

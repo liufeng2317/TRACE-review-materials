@@ -1,0 +1,50 @@
+{
+  "task_id": "L2-C-002",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Back Azimuth Estimation Using BazNet on Continuous Waveform",
+    "task_description": {
+      "overview": "Estimate seismic backazimuth from three‐component continuous waveform data using a pretrained deep neural network (BazNet).",
+      "steps": [
+        "Load the pretrained BazNet model and weights, move it to the appropriate device (CPU or GPU), and set it to evaluation mode.",
+        "Read continuous three‐component seismic waveform data in MiniSEED or similar format using ObsPy.",
+        "Convert the waveform traces into a NumPy array of shape [3, N], where N ≥ 6000 samples, and normalize each channel by subtracting its mean and dividing by its standard deviation or maximum absolute value.",
+        "Trim or pad the normalized data to exactly 6000 samples per channel.",
+        "Convert the NumPy array to a PyTorch tensor, add a batch dimension, and transfer it to the same device as the model.",
+        "Run the forward pass through the BazNet model to get sine and cosine components of the backazimuth prediction.",
+        "Compute the backazimuth angle in degrees via arctangent of the predicted sine and cosine outputs."
+      ],
+      "input_data": {
+        "waveform_path": "<DATA_ROOT>/DeepLearning_Tests/ldaho_3.8_MFID/raw_waveforms.mseed",
+        "checkpoint_path": "<REPO_ROOT>/seismoagent/library/ai_module/back_azimuth_estimation/pretrained/baz_network/stead.pth",
+        "normalize_mode": "std",
+        "device": "npu",
+        "model_params": {
+          "in_channels": 3,
+          "in_samples": 6000
+        },
+        "inference_params": {
+          "start_point": 15000,
+          "end_point": 21000
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "result_data.json",
+          "file_content": {
+            "pred_baz": "list of float"
+          }
+        },
+        "waveform_with_baz": "waveform_with_baz.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "backazimuth estimation",
+      "Continuous waveform processing",
+      "deep learning model",
+      "BazNet"
+    ],
+    "agent_prompt": "Back azimuth estimation using `baz_network` deep learning model on the continuous three-component waveform data. Load and normalize the continuous three-component waveform file at {waveform_path} with the specific {normalize_mode} mode. The pretrained baz_network model is located at {checkpoint_path} and its related parameters are {model_params}. Run inference by feeding the specific waveform segment from {start_point} to {end_point} into the model to obtain a single back azimuth estimate, and save the estimated value into a json file {result_data.file_name} with content {result_data.file_content}. Finally, plot a figure to show the waveform with the predicted back azimuth estimation results and save it to {waveform_with_baz}."
+  }
+}

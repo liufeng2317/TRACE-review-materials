@@ -1,0 +1,36 @@
+{
+  "task_id": "L1-D-007",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Gutenberg-Richter a-value",
+    "task_description": {
+      "overview": "Calculate the a-value representing overall seismic activity using the Gutenberg-Richter formulation.",
+      "steps": [
+        "Ensure Catalog.mc and Catalog.delta_m are defined.",
+        "Call cat.estimate_a() to compute the a-value using internal properties.",
+        "Optionally, provide delta_m and mc as arguments to cat.estimate_a().",
+        "Retrieve the a-value from cat.a_value."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "delta_m": 0.1,
+        "mc": 1.8
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "a_value.json",
+          "content": {
+            "mc": "magnitude of completeness (float)",
+            "a_value": "a-value (float)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "Gutenberg-Richter law",
+      "a-value estimation"
+    ],
+    "agent_prompt": "Estimate the a-value using Gutenberg-Richter law for the given catalog: {catalog_path}. Loading the catalog, bin the magnitudes with delta_m={delta_m} and set the completeness magnitude to {mc}, and then estimate the a-value using `cat.estimate_a()`. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the a-value data to {result_data.save name} with content {result_data.content}."
+  }
+}

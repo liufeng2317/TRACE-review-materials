@@ -1,0 +1,67 @@
+{
+  "task_id": "L1-E-014",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Waveform Polar Plot of FK Relative Power",
+    "task_description": {
+      "overview": "Create a polar histogram plot summing relative power in bins of backazimuth and slowness.",
+      "steps": [
+        "Load the FK output array [timestamp, rel_power, abs_power, baz, slow].",
+        "Adjust negative backazimuth values by adding 360° to lie in [0,360].",
+        "Define azimuthal (e.g., 36 bins over 360°) and slowness (e.g., 30 bins up to max slowness) bin edges.",
+        "Compute a 2D histogram of relative power over the azimuth and slowness bins.",
+        "Convert azimuth bin edges to radians for polar plotting.",
+        "Plot histogram bars in polar axes with radial coordinate = slowness and angular coordinate = backazimuth, colored by bin power.",
+        "Add a colorbar showing relative power scale and set axis labels."
+      ],
+      "input_data": {
+        "waveform_source": "https://examples.obspy.org/agfa.mseed",
+        "trace1_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 205479446.68601453,'gain': 1.0})",
+        "trace2_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 205479446.68601453,'gain': 1.0})",
+        "trace3_paz": "AttribDict({'poles': [(-0.03736 - 0.03617j), (-0.03736 + 0.03617j)],'zeros': [0j, 0j],'sensitivity': 250000000.0,'gain': 1.0})",
+        "trace4_paz": "AttribDict({'poles': [(-4.39823 + 4.48709j), (-4.39823 - 4.48709j)],'zeros': [0j, 0j],'sensitivity': 222222228.10910088,'gain': 1.0})",
+        "trace5_paz": "AttribDict({'poles': [(-4.39823 + 4.48709j), (-4.39823 - 4.48709j), (-2.105 + 0j)],'zeros': [0j, 0j, 0j],'sensitivity': 222222228.10910088,'gain': 1.0})",
+        "trace1_coord": "AttribDict({'latitude': 48.108589,'elevation': 0.450000,'longitude': 11.582967})",
+        "trace2_coord": "AttribDict({'latitude': 48.108192,'elevation': 0.450000,'longitude': 11.583120})",
+        "trace3_coord": "AttribDict({'latitude': 48.108692,'elevation': 0.450000,'longitude': 11.583414})",
+        "trace4_coord": "AttribDict({'latitude': 48.108456,'elevation': 0.450000,'longitude': 11.583049})",
+        "trace5_coord": "AttribDict({'latitude': 48.108730,'elevation': 0.450000,'longitude': 11.583157})",
+        "corn_freq_2_paz": {
+          "corner_frequency_hz": 1.0,
+          "damping": 0.707
+        },
+        "fk_parameters": {
+          "sll_x": -3.0,
+          "slm_x": 3.0,
+          "sll_y": -3.0,
+          "slm_y": 3.0,
+          "sl_s": 0.03,
+          "win_len": 1.0,
+          "win_frac": 0.05,
+          "frqlow": 1.0,
+          "frqhigh": 8.0,
+          "prewhiten": 0,
+          "semb_thres": -1000000000.0,
+          "vel_thres": -1000000000.0,
+          "stime": "UTCDateTime('2008-02-17T11:05:15')",
+          "etime": "UTCDateTime('2008-02-17T11:05:45')",
+          "timestamp": "mlabday"
+        },
+        "N_azimuth_bins": 36,
+        "N_slowness_bins": 30,
+        "max_slowness": 3.0
+      },
+      "output_data": {
+        "result_plot": "waveform_polar_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "beamforming",
+      "polar histogram",
+      "backazimuth",
+      "slowness"
+    ],
+    "agent_prompt": "Polar plot to visualize the FK analysis result. Perform FK analysis on the seismic array data loaded from {waveform_source}. Set station PAZ and coordinates information to the tr.stats.paz and tr.stats.coordinates, apply instrument correction to {corn_freq_2_paz.corner_frequency_hz} Hz by using the `corn_freq_2_paz` and `st.simulate` function, then run `array_processing(st,**fk_parameters)`. Compute a 2D weighted histogram of relative power in {N_azimuth_bins} backazimuth bins and {N_slowness_bins} slowness bins up to {max_slowness} s/km. Then produce a polar plot where angle is backazimuth and radius is slowness, coloring each bar by summed relative power, and include a colorbar. \n Note: 1) Save the waveform polar plot to {result_plot}."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "L1-E-015",
+  "level": "L1",
+  "category": "Scientific visualization",
+  "task_definition": {
+    "task_name": "Waveform Reading and Visualization",
+    "task_description": {
+      "overview": "Load seismogram data from a file in formats like SAC, MiniSEED, GSE2, etc., into an ObsPy Stream object.",
+      "steps": [
+        "Call obspy.read() with the file path or URL of the seismogram.",
+        "Verify that the returned object is a Stream containing one or more Trace objects.",
+        "Inspect the Stream summary to confirm sample rate and time span."
+      ],
+      "input_data": {
+        "seismogram_path": "http://examples.obspy.org/RJOB_061005_072159.ehz.new"
+      },
+      "output_data": {
+        "result_plot": "waveform_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "seismic data formats",
+      "time series data",
+      "ObsPy Stream/Trace"
+    ],
+    "agent_prompt": "Load the seismogram file located at {seismogram_path}. Visualize the original seismogram data. \n Note: 1) Save the waveform plot to {result_plot}."
+  }
+}

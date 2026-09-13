@@ -1,0 +1,36 @@
+{
+  "task_id": "L1-C-009",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "DAS Wavefield Decomposition using Curvelet Windowing",
+    "task_description": {
+      "overview": "Decompose the DAS wavefield by apparent velocity using a curvelet‐based filter.",
+      "steps": [
+        "Load the preprocessed DAS waveform matrix with metadata.",
+        "Apply fast discrete curvelet transform to the time–distance data.",
+        "Define a velocity threshold (vmin) to separate components.",
+        "Window curvelet coefficients corresponding to velocities above and below vmin.",
+        "Perform inverse curvelet transform to reconstruct separated wavefields."
+      ],
+      "input_data": {
+        "waveform_data_path": "<DATA_ROOT>/daspy/Wavefield_Decomposition/input/waveform_matrix.npy",
+        "channel_spacing": 8,
+        "sampling_rate": 250,
+        "vmin": 1000,
+        "mode": "decompose"
+      },
+      "output_data": {
+        "decomposed_earthquake_data": "decomposed_earthquake_data.sgy",
+        "decomposed_traffic_data": "decomposed_traffic_data.sgy",
+        "decomposed_plot": "decomposed_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "curvelet transform",
+      "wavefield decomposition",
+      "apparent velocity filtering"
+    ],
+    "agent_prompt": "Use the curvelet_windowing method to decompose the DAS waveform data ({waveform_data_path}) with channel spacing of 8 m and sampling rate of 250 Hz. Perform the `spike_removal` and `channel_checking(use=True)` on the loaded daspy section object. Then, perform `curvelet_windowing(mode='decompose', vmin=1000)` to decompose the wavefield into two separated wavefields: one containing seismic waves and the other containing traffic signals. Finally, plot a figure (1x3) to show the waveform (original waveform, the separated seismic component, the separated traffic component). Note: try to use daspy package to load, process and visualize the data. 2) Save the decomposed earthquake data to {decomposed_earthquake_data} and the decomposed traffic data to {decomposed_traffic_data} and save the plot to {decomposed_plot}."
+  }
+}

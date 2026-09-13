@@ -1,0 +1,35 @@
+{
+  "task_id": "L1-A-002",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Event Catalog Retrieve via FDSN Web Services",
+    "task_description": {
+      "overview": "Download seismic event catalog using ObsPy's FDSN client module.",
+      "steps": [
+        "Initialize an ObsPy FDSN client for a chosen data center (e.g., IRIS, ORFEUS, GFZ).",
+        "Request event catalog (QuakeML) for a time and region of interest.",
+        "Save the downloaded event catalog to disk in appropriate formats."
+      ],
+      "input_data": {
+        "event_data": {
+          "starttime": "UTCDateTime('2002-01-01')",
+          "endtime": "UTCDateTime('2002-01-02')",
+          "minmagnitude": "3",
+          "catalog": "ISC",
+          "client provider": "IRIS"
+        }
+      },
+      "output_data": {
+        "catalog_file": "earthquake_catalog.csv",
+        "catalog_plot": "earthquake_catalog.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "event catalog retrieval",
+      "FDSN Web Services",
+      "QuakeML format"
+    ],
+    "agent_prompt": "Use ObsPy's FDSN client to download seismic event catalog with information from {event_data}. Save and figure the event catalog."
+  }
+}

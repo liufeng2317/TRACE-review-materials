@@ -1,0 +1,39 @@
+{
+  "task_id": "L2-B-001",
+  "level": "L2",
+  "category": "Heuristic branching",
+  "task_definition": {
+    "task_name": "DAS Channel Quality Checking",
+    "task_description": {
+      "overview": "Identify and remove 'bad channels' in DAS data based on abnormal signal amplitudes to ensure data quality.",
+      "steps": [
+        "Load DAS waveform data matrix (channels × time samples).",
+        "Compute amplitude statistics for each channel.",
+        "Detect channels with abnormally low or high amplitudes compared to neighbors or thresholds.",
+        "Output lists of good and bad channels.",
+        "Optionally remove bad channels from the data section object."
+      ],
+      "input_data": {
+        "data": "<DATA_ROOT>/Daspy/data/manully_script/data/Channel_Analysis/input/traffic_noise_data.npz",
+        "dx": "channel spacing in meters (e.g., 2)",
+        "fs": "sampling frequency in Hz (e.g., 250)"
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "result.json",
+          "content": {
+            "good_channels": "list of good channels",
+            "bad_channels": "list of bad channels"
+          }
+        },
+        "result_figure": "channel_quality_checking_result.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "signal amplitude analysis",
+      "data quality control",
+      "outlier detection"
+    ],
+    "agent_prompt": "Perform channel quality checking on DAS data from {data_path} with channel spacing {dx} and sampling frequency {fs}. Use the `daspy.advanced_tools.channel.channel_checking` function to check the channel quality. Save the good_channels and bad_channels index to {result_data.save_name} with content {result_data.content}. Plot a figure to show the maximum amplitude of the good and bad channels (use different colors for good and bad channels) and save it to {result_figure}."
+  }
+}

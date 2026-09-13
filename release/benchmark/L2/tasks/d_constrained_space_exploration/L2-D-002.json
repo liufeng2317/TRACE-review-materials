@@ -1,0 +1,46 @@
+{
+  "task_id": "L2-D-002",
+  "level": "L2",
+  "category": "Constrained space exploration",
+  "task_definition": {
+    "task_name": "DAS Data Strain-to-Velocity Conversion via FK Rescaling",
+    "task_description": {
+      "overview": "Convert distributed acoustic sensing (DAS) strain data to particle velocity by applying FK-domain rescaling with apparent phase velocity.",
+      "steps": [
+        "Load the preprocessed DAS strain Section object from the provided pickle file.",
+        "Compute the FK transform of the strain Section.",
+        "Multiply each FK-domain coefficient by its corresponding apparent phase velocity (slope).",
+        "Inverse FK-transform the rescaled data to obtain velocity time series for each channel.",
+        "Extract the velocity trace for the target channel for further analysis."
+      ],
+      "input_data": {
+        "das_section_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_DAS_M4.3_2688_2826.pkl",
+        "node_seismometer_path": "<DATA_ROOT>/Daspy/data/manully_script/data/Strain_velocity_Conversion/input/Brady_node_M4.3_165.sac",
+        "fmax": "tuple (e.g., (5, 6))",
+        "show_channel": 2781,
+        "show_time_range": [
+          20,
+          70
+        ],
+        "show_p_wave_time_range": [
+          27,
+          32
+        ],
+        "show_s_wave_time_range": [
+          46,
+          56
+        ]
+      },
+      "output_data": {
+        "result_data": "result.pkl",
+        "result_figure": "stain_to_velocity_comparison.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "FK transform",
+      "strain-to-velocity conversion"
+    ],
+    "agent_prompt": "Using daspy package to load the DAS strain Section from {das_section_path}, and using `fk_rescaling(fmax=({fmax}))` to convert the strain to velocity. Then select the {show_channel} to compare the transformed velocity data with the original node seismometer data (loaded from {node_seismometer_path}), and enlarge the time range to show the P-wave and S-wave. Note: 1) consider using daspy package to load, process (e.g. fk_rescaling, etc.). 2) Save the result into a pickle file {result_data} and the figure {result_figure}."
+  }
+}

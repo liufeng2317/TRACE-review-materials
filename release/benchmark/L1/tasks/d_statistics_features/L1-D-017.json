@@ -1,0 +1,53 @@
+{
+  "task_id": "L1-D-017",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Seismicity Through Time Statistics",
+    "task_description": {
+      "overview": "Visualize the cumulative number of events over time to detect temporal clustering and changes in completeness magnitude.",
+      "steps": [
+        "Load event times and magnitudes from input.",
+        "If provided, load a list of cut-off magnitudes (mcs) and define delta_m.",
+        "For each cut-off magnitude, filter events above that threshold.",
+        "Compute the cumulative count of events over the time axis.",
+        "Plot one or multiple cumulative count curves with optional grid and styling.",
+        "Return or save the time-series figure."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "fmd_bin": 0.1,
+        "cumulative_count_param": {
+          "mcs": [
+            0.5,
+            1.5,
+            2.5,
+            3.5
+          ],
+          "delta_m": 0.1
+        }
+      },
+      "output_data": {
+        "result_plot": "seismicity_through_time_plot.png",
+        "result_data": {
+          "save name": "seismicity_through_time_data.csv",
+          "content": {
+            "time": "time (datetime)",
+            "mc0.5": "cumulative count for mc = 0.5 (int)",
+            "mc1.5": "cumulative count for mc = 1.5 (int)",
+            "mc2.5": "cumulative count for mc = 2.5 (int)",
+            "mc3.5": "cumulative count for mc = 3.5 (int)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "seismicity rate",
+      "magnitude-time distribution",
+      "temporal seismicity",
+      "temporal clustering",
+      "completeness magnitude"
+    ],
+    "agent_prompt": "Plot the seismicity through time. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {fmd_bin}. Plot a figures to show the seismicity through time: the cumulative count of seismic events through time (normalized to 0-1). \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the seismicity through time plot to {result_plot} and the seismicity through time data to {result_data.save name} with content {result_data.content}."
+  }
+}

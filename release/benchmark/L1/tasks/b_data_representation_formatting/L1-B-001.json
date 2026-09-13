@@ -1,0 +1,46 @@
+{
+  "task_id": "L1-B-001",
+  "level": "L1",
+  "category": "Data representation and formatting",
+  "task_definition": {
+    "task_name": "ASCII to MiniSEED Conversion",
+    "task_description": {
+      "overview": "Convert arbitrary ASCII-formatted time series data into a MiniSEED file with correct metadata headers for use in seismological workflows.",
+      "steps": [
+        "Load the ASCII data string representing time series measurements.",
+        "Convert the ASCII string into a NumPy array of characters.",
+        "Define the MiniSEED header attributes including network, station, location, channel, sampling rate, number of points, data quality, and start time.",
+        "Construct an ObsPy Trace object from the NumPy array and attach the header metadata.",
+        "Create an ObsPy Stream object containing the Trace.",
+        "Write the Stream to disk in MiniSEED format, specifying encoding and record length.",
+        "Optionally read back the MiniSEED file to verify the conversion by decoding the data back to bytes or string."
+      ],
+      "input_data": {
+        "ascii_data_string": "00.0000 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000000\n00.0002 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000001\n00.0005 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000002\n00.0008 0.0 ??? 4.7 97.7 1015.4 0.0 010308 000003\n00.0011 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000004\n00.0013 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000005\n00.0016 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000006\n00.0019 0.0 ??? 4.7 97.7 1015.0 0.0 010308 000007",
+        "header_parameters": {
+          "network": "BW",
+          "station": "RJOB",
+          "location": "",
+          "channel": "WLZ",
+          "sampling_rate": 0.1,
+          "npts": "length of data array",
+          "mseed": {
+            "dataquality": "D"
+          },
+          "starttime": "2025-01-01T00:00:00"
+        },
+        "encoding": 0,
+        "reclen": 256
+      },
+      "output_data": {
+        "mseed_file": "weather.mseed"
+      }
+    },
+    "geophysical_knowledge": [
+      "ASCII to MiniSEED conversion",
+      "seismic data encoding",
+      "metadata header definition"
+    ],
+    "agent_prompt": "Convert the provided ASCII time series data ({ascii_data_string}) into a MiniSEED file. Use the specified header parameters (network, station, location, channel, sampling_rate, npts, dataquality, starttime) to populate the MiniSEED metadata. Write the output to '{mseed_file}' in MSEED format. After writing, read back the file to verify the data integrity and print the decoded bytes or string. Save the formatted streame to {mseed_file}."
+  }
+}

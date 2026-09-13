@@ -1,0 +1,50 @@
+{
+  "task_id": "L1-C-002",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "AR Picker P and S Arrival",
+    "task_description": {
+      "overview": "Estimate P and S arrival times using an autoregressive Akaike Information Criterion method combined with STA/LTA.",
+      "steps": [
+        "Load three-component waveform data arrays for vertical (Z), north (N), and east (E).",
+        "Call ar_pick(z_data, n_data, e_data, sampling_rate, f1, f2, lta_p, sta_s, lta_s, a, b, c, d).",
+        "Receive P and S pick times in seconds."
+      ],
+      "input_data": {
+        "z_data": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms_z.mseed",
+        "n_data": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms_n.mseed",
+        "e_data": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms_e.mseed",
+        "sampling_rate": "trace.stats.sampling_rate",
+        "f1": 1.0,
+        "f2": 20.0,
+        "lta_p": 1.0,
+        "sta_s": 0.1,
+        "lta_s": 4.0,
+        "param1": 1.0,
+        "param2": 2,
+        "param3": 8,
+        "param4": 0.1,
+        "param5": 0.2
+      },
+      "output_data": {
+        "pick_time": {
+          "save_name": "pick_time.json",
+          "content": {
+            "p_pick": "int",
+            "p_pick_time": "str (seconds since start time)",
+            "s_pick": "int",
+            "s_pick_time": "str (seconds since start time)"
+          }
+        },
+        "pick_plot": "pick_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "phase picking",
+      "AR-AIC method",
+      "P- and S-wave identification"
+    ],
+    "agent_prompt": "Given three-component arrays {z_data}, {n_data}, {e_data} sampled at {sampling_rate} Hz, run ar_pick with parameters f1={f1}, f2={f2}, lta_p={lta_p}, sta_s={sta_s}, lta_s={lta_s}, and other params. Return P and S arrival times in seconds. Plot a figure to show the waveform, and the finally picked p and s arrival times. Save the pick time to {pick_time.save_name} with content {pick_time.content} and the plot to {pick_plot}."
+  }
+}

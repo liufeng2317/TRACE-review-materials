@@ -1,0 +1,37 @@
+{
+  "task_id": "L1-D-013",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate a-value using ClassicAValueEstimator",
+    "task_description": {
+      "overview": "Estimate the Gutenberg-Richter a-value from a magnitude catalog using the classical maximum likelihood method.",
+      "steps": [
+        "Load the array of earthquake magnitudes.",
+        "Specify the magnitude of completeness (mc) and magnitude discretization (delta_m).",
+        "Instantiate the ClassicAValueEstimator.",
+        "Call the calculate method with mags, mc, and delta_m.",
+        "Retrieve the a-value from the estimator instance."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "delta_m": "magnitude discretization (float), e.g. 0.1"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "a_value.json",
+          "content": {
+            "mc": "magnitude of completeness (float)",
+            "a_value": "a-value (float)"
+          }
+        }
+      }
+    },
+    "geophysical_knowledge": [
+      "Gutenberg-Richter law",
+      "a-value estimation",
+      "maximum likelihood method"
+    ],
+    "agent_prompt": "Compute the a-value with given catalog at {catalog_path}. Loading the catalog, bin the magnitudes with delta_m={delta_m} and estimate the magnitude of completeness, then use `cat.estimate_a()` to calculate the a-value. \n Note: 1) The `seismostats` libarary provide some functions to do catalog statistic analysis and ploting. Please refer to the `seismostats` provide some functions to assist. \n 2) Save the a-value data to {result_data.save name} with content {result_data.content}."
+  }
+}

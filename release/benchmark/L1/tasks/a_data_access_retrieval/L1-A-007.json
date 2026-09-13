@@ -1,0 +1,36 @@
+{
+  "task_id": "L1-A-007",
+  "level": "L1",
+  "category": "Data access and retrieval",
+  "task_definition": {
+    "task_name": "Waveform Retrieve via FDSN Web Services",
+    "task_description": {
+      "overview": "Download seismic waveform data using ObsPy's FDSN client module.",
+      "steps": [
+        "Initialize an ObsPy FDSN client for a chosen data center (e.g., IRIS, ORFEUS, GFZ).",
+        "Request waveform data for specified network, station, location, channel, and time window.",
+        "Save the downloaded waveform data to disk in appropriate formats."
+      ],
+      "input_data": {
+        "waveform_data": {
+          "network": "IU",
+          "station": "ANMO",
+          "location": "00",
+          "channel": "LHZ",
+          "starttime": "UTCDateTime('2010-02-27T06:45:00.000')",
+          "endtime": "UTCDateTime('2010-02-27T07:45:00.000')",
+          "client provider": "IRIS"
+        }
+      },
+      "output_data": {
+        "waveform_file": "waveform.mseed",
+        "waveform_figure": "waveform.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "waveform retrieval",
+      "waveform formats (MiniSEED)"
+    ],
+    "agent_prompt": "Use ObsPy's FDSN client to download seismic waveform data with information from {waveform_data}. Save and figure the waveform. Save the waveform to {waveform_file} and the waveform figure to {waveform_figure}."
+  }
+}

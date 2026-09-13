@@ -1,0 +1,42 @@
+{
+  "task_id": "L1-D-006",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "DAS waveform frequency spectrum and spectrogram analysis",
+    "task_description": {
+      "overview": "Compute and extract frequency-domain attributes (spectrum, spectrogram, f-k transform) from DAS data for analysis of signal content over time and space.",
+      "steps": [
+        "Load the filtered or raw DAS data.",
+        "Compute the frequency spectrum (x-t) using an FFT-based method.",
+        "Generate the spectrogram (f-t) for all channels or a specified channel range.",
+        "Perform the frequency-wavenumber (f-k) transform for spatial-frequency analysis.",
+        "Optionally limit channel range using xmin and xmax parameters for spectrogram averaging."
+      ],
+      "input_data": {
+        "das_data": "<DATA_ROOT>/daspy/Basic_Processing/input/example.pkl",
+        "spectrum_parameters": {},
+        "spectrogram_parameters": {
+          "chmin": 2600,
+          "chmax": 2620
+        },
+        "fk_transform_parameters": {}
+      },
+      "output_data": {
+        "frequency_spectrum_plot": "frequency_spectrum_plot.png",
+        "frequency_spectrum_data": "frequency_spectrum_data.npy",
+        "spectrogram_data": "spectrogram_data.npy",
+        "spectrogram_plot": "spectrogram_plot.png",
+        "fk_transform_data": "fk_transform_data.npy",
+        "fk_transform_plot": "fk_transform_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "frequency analysis",
+      "Fourier transform",
+      "spectrogram",
+      "frequency-wavenumber (f-k) transform"
+    ],
+    "agent_prompt": "Using Daspy package to load and compute the frequency spectrum and spectrogram from {das_data}. Compute the frequency spectrum and figure it. Finally, perform the f-k transform and plot figures to show the result. \n Note: 1) consider use the Daspy to do the loading, computing and figureing. \n 2) Save the frequency spectrum plot to {frequency_spectrum_plot}, the frequency spectrum data to {frequency_spectrum_data}, the spectrogram data to {spectrogram_data}, the spectrogram plot to {spectrogram_plot}, the fk transform data to {fk_transform_data}, and the fk transform plot to {fk_transform_plot}."
+  }
+}

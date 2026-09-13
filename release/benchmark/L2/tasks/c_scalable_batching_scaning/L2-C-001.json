@@ -1,0 +1,46 @@
+{
+  "task_id": "L2-C-001",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "1D b-value Significance Testing",
+    "task_description": {
+      "overview": "Test if the variation of the seismic b-value over a one-dimensional parameter (e.g., time) is statistically significant.",
+      "steps": [
+        "Load earthquake magnitude data and the corresponding x_variable (e.g., times).",
+        "Set or compute magnitude of completeness (mc) as a constant or vector.",
+        "Choose sliding window size n_m (15 ≤ n_m ≤ n/15) for equal-number magnitude subsets.",
+        "Select a b-value estimation method (e.g., BPositiveBValueEstimator).",
+        "Apply b_significant_1D with inputs: magnitudes, mc, magnitude increment (delta_m), x_variable, n_m, and chosen method.",
+        "Obtain output p-value, mean autocorrelation (mac), expected autocorrelation (mu_mac), and standard deviation (std_mac).",
+        "Compare p-value to significance threshold (e.g., 0.05) to decide if b-value variation is significant."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/SeismoStats/data/manully_script/data/10minute_intro/input/catalog_fdsn.csv",
+        "mc": "float or array, magnitude of completeness (e.g. 1)",
+        "delta_m": "float, magnitude increment (e.g. 0.1)",
+        "x_variable": "array, parameter for ordering magnitudes (e.g., times)",
+        "n_m": "int, number of magnitudes per sliding window (e.g. 100)",
+        "method": "BPositiveBValueEstimator or similar estimator class (e.g. BPositiveBValueEstimator)"
+      },
+      "output_data": {
+        "result_data": {
+          "save_name": "result_data.json",
+          "content": {
+            "p_value": "float",
+            "mean_autocorrelation": "float",
+            "expected_autocorrelation": "float",
+            "standard_deviation": "float"
+          }
+        },
+        "result_figure": "result_figure.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "b-value estimation",
+      "bootstrap autocorrelation",
+      "statistical significance testing"
+    ],
+    "agent_prompt": "Using `seismostats` library to perform 1D b-value significance test. Load the catalog from catalog_path, and bin the magnitude with given `delta_m`. Then, get the `magnitude` and `time` from events, and calculate `b_significant_1D(mags, mc, delta_m, times, n_m, x_variable=times, method= BPositiveBValueEstimator)`. Output the p-value, mean autocorrelation, expected autocorrelation, and its standard deviation. Finally, use the `plot_b_series_constant_nm(mags, delta_m, mc, times, n_m=n_m, x_variable=times, color='red', plot_technique='right', label='b-positive', ax=ax, method=BPositiveBValueEstimator)` from `seismostats.plots` to plot the b-value series with constant n_m. Save the result to {result_data.save_name} with content {result_data.content} and the figure to {result_figure}."
+  }
+}

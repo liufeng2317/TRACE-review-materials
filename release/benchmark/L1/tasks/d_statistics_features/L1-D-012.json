@@ -1,0 +1,41 @@
+{
+  "task_id": "L1-D-012",
+  "level": "L1",
+  "category": "Statistics and feature extraction",
+  "task_definition": {
+    "task_name": "Estimate Magnitude of Completeness using b-value Stability",
+    "task_description": {
+      "overview": "Estimate the magnitude of completeness (Mc) by identifying the lowest magnitude above which the b-value of the Gutenberg-Richter relation remains stable within its theoretical standard deviation.",
+      "steps": [
+        "Load the earthquake catalog containing event magnitudes.",
+        "Set the magnitude bin width (Δm) and stability range L (default 0.5).",
+        "For each candidate Mc, compute b-values for magnitudes ≥ Mc and within the range Mc to Mc+L.",
+        "Calculate the difference between the aggregated b-value and the b-value at Mc.",
+        "Compare the difference to the theoretical standard deviation σ_b at Mc.",
+        "Select the smallest Mc where the difference is less than σ_b.",
+        "Return the estimated Mc and diagnostic information (magnitude tests, b-value differences)."
+      ],
+      "input_data": {
+        "catalog_path": "<DATA_ROOT>/seismostats/10minute_intro/input/catalog_fdsn.csv",
+        "delta_m": "bin width for magnitude discretization (e.g., 0.1)",
+        "stability_range": "L value (default 0.5)"
+      },
+      "output_data": {
+        "result_data": {
+          "save name": "mc_data.json",
+          "content": {
+            "mc": "magnitude of completeness (float)"
+          }
+        },
+        "result_plot": "mc_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "Gutenberg–Richter relation",
+      "b-value estimation",
+      "statistical stability",
+      "magnitude of completeness"
+    ],
+    "agent_prompt": "Estimate the magnitude of completeness (Mc) by the b-value stability method. Loading the earthquake catalog at {catalog_path}, bin the magnitudes with bin width {delta_m}, and apply the b-value stability method to estimate the magnitude of completeness Mc (`cat.estimate_mc_b_stability()`). Report the estimated Mc, plot a figure to show the magnitude of completeness (magnitude-frequency distribution). \n Note: 1) The `seismostats` libarary is usefule for catalog statistic analysis and ploting. Please using or refer to the provided functions in `seismostats` \n 2) Save the mc data to {result_data.save name} with content {result_data.content} and the mc plot to {result_plot}."
+  }
+}

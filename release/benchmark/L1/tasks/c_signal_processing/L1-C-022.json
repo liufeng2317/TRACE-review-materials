@@ -1,0 +1,35 @@
+{
+  "task_id": "L1-C-022",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "Z-Detector Triggering",
+    "task_description": {
+      "overview": "Detect seismic event onsets using the Z-detect method based on zero-crossing counts.",
+      "steps": [
+        "Load waveform data into a Trace object.",
+        "Compute the characteristic function cft = z_detect(trace.data, nsta) with nsta = int(window_seconds * sampling_rate).",
+        "Apply on and off thresholds (negative values) to cft.",
+        "Plot or extract trigger intervals from cft."
+      ],
+      "input_data": {
+        "waveform_data_path": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms.mseed",
+        "trace_id": 0,
+        "sampling_rate": "trace.stats.sampling_rate",
+        "window_seconds": 10,
+        "on_threshold": -0.4,
+        "off_threshold": -0.3
+      },
+      "output_data": {
+        "trigger_cft": "trigger_cft.txt",
+        "trigger_plot": "trigger_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "wave propagation",
+      "zero-crossing detection",
+      "event detection"
+    ],
+    "agent_prompt": "Load the seismic trace from {waveform_data_path}. Compute the Z-detect characteristic with a window of {window_seconds}s. Identify trigger onsets and offsets where cft crosses {on_threshold} and {off_threshold}. Plot a figure to show the waveform, the z-detect caculated blue, and the finally picked onset and offset times. Save the 1D array trigger_cft series to {trigger_cft} and the plot to {trigger_plot}."
+  }
+}

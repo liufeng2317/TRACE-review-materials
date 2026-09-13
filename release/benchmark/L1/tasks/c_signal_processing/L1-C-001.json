@@ -1,0 +1,41 @@
+{
+  "task_id": "L1-C-001",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "AIC Simple Picker (Maeda 1985)",
+    "task_description": {
+      "overview": "Estimate P-onset by finding minimum of Akaike Information Criterion (AIC) function on a slice of the waveform.",
+      "steps": [
+        "Load waveform data and define a time slice containing the event onset.",
+        "Extract sliced data array.",
+        "Compute aic_f = aic_simple(sliced_data).",
+        "Find p_idx = argmin(aic_f) and convert to seconds: p_idx / sampling_rate.",
+        "Add slice starttime to get absolute pick time."
+      ],
+      "input_data": {
+        "trace_data_path": "<DATA_ROOT>/obspy/trigger_tutorial/input/waveforms_aic.mseed",
+        "trace_id": 0,
+        "sampling_rate": "trace.stats.sampling_rate",
+        "slice_start": "1970-01-01T01:00:31.6",
+        "slice_end": "1970-01-01T01:00:34.3"
+      },
+      "output_data": {
+        "pick_time": {
+          "save_name": "pick_time.json",
+          "content": {
+            "pick_index": "int",
+            "pick_time": "str (seconds since start time)"
+          }
+        },
+        "pick_plot": "pick_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "Akaike Information Criterion",
+      "phase picking",
+      "statistical signal analysis"
+    ],
+    "agent_prompt": "Given waveform samples {trace_data_path}, slice from {slice_start} to {slice_end}. Compute aic_simple on the sliced data, find the index of the minimum, convert to seconds, and return the absolute UTC pick time. Plot a figure to show the waveform, and the finally picked p arrival time. Save the pick time to {pick_time.save_name} with content {pick_time.content} and the plot to {pick_plot}."
+  }
+}

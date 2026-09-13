@@ -1,0 +1,68 @@
+{
+  "task_id": "L1-C-008",
+  "level": "L1",
+  "category": "Signal processing",
+  "task_definition": {
+    "task_name": "DAS Data Stochastic Noise Removal via Curvelet Denoising",
+    "task_description": {
+      "overview": "Remove stochastic noise from DAS earthquake records using curvelet transform with reference or automatic thresholding.",
+      "steps": [
+        "Load the preprocessed DAS data with spikes removed and bandpassed around 1–20 Hz.",
+        "Trim the full record into earthquake windows (sec_eq) and baseline noise windows (sec_ns).",
+        "Option A (soft threshold): perform curvelet transform denoising using sec_ns as reference noise, apply default soft threshold, reconstruct waveform.",
+        "Option B (hard threshold): perform curvelet denoising using sec_ns, apply hard threshold to preserve amplitude.",
+        "Option C (automatic threshold): perform curvelet denoising without reference noise, compute coefficient inflection points to set threshold (pad=0, knee_fac adjustable).",
+        "Compare and plot the original and denoised outputs."
+      ],
+      "input_data": {
+        "segy_file_path": "<DATA_ROOT>/daspy/Denoising/input/Stanford1_20180104_113058.566+0000.sgy",
+        "ch2": 320,
+        "channel_spacing_dx": 8,
+        "start_time": "2018-01-04T11:30:58.566000",
+        "bandpass_freq": [
+          1,
+          20
+        ],
+        "origin_time": "2018-01-04T11:34:44",
+        "trim_windows": {
+          "eq": [
+            "origin_time+2s",
+            "origin_time+12s"
+          ],
+          "noise": [
+            "origin_time-10s",
+            "origin_time"
+          ]
+        },
+        "curvelet_denoising_modes": {
+          "soft": {
+            "noise": "noise_window_data"
+          },
+          "hard": {
+            "noise": "noise_window_data",
+            "soft_thresh": false
+          },
+          "automatic": {
+            "pad": 0,
+            "knee_fac": 0.1
+          }
+        }
+      },
+      "output_data": {
+        "denoised_data": {
+          "soft": "denoised_data_soft.sgy",
+          "hard": "denoised_data_hard.sgy",
+          "knee": "denoised_data_knee.sgy"
+        },
+        "denoised_data_plot": "denoised_data_plot.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "stochastic noise",
+      "curvelet transform",
+      "denoising",
+      "thresholding"
+    ],
+    "agent_prompt": "Read DAS data from {segy_file_path} with ch2={ch2}, set dx to {channel_spacing_dx} and start_time to {start_time}. Apply a {bandpass_freq[0]}–{bandpass_freq[1]} Hz bandpass filter and remove spikes (consider using daspy `sec.spike_removal()`). Define earthquake window from {trim_windows.eq[0]} to {trim_windows.eq[1]} and noise window from {trim_windows.noise[0]} to {trim_windows.noise[1]}. Perform curvelet denoising in three modes: soft threshold with noise reference, hard threshold with noise reference while set `soft_thresh` to false, and automatic threshold (pad={automatic_params.pad}, knee_fac={automatic_params.knee_fac}). Plot figure to show the original event data, and the denoised data in three modes. Note: 1) consder using daspy package to load, processing (e.g. bandpass filter, spike removal, curvelet denoising, etc.) and plot the data. 2) Save the denoised data to {denoised_data.save_name} with content {denoised_data.content} and the plot to {denoised_data_plot}."
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "task_id": "L2-C-003",
+  "level": "L2",
+  "category": "Scalable batching and scanning",
+  "task_definition": {
+    "task_name": "Bulk Waveform Download with FDSN Mass Downloader",
+    "task_description": {
+      "overview": "Automate large-scale data retrieval across multiple data centers based on geographic and temporal criteria.",
+      "steps": [
+        "Define the geographic domain (latitude/longitude bounds) and time interval for data collection.",
+        "Set quality control parameters (e.g., minimum channel availability).",
+        "Configure the FDSN mass downloader with target data centers or routing services.",
+        "Run the mass downloader to fetch waveforms and station metadata in batch.",
+        "Verify and organize downloaded data into a file structure for analysis."
+      ],
+      "input_data": {
+        "domain": {
+          "minlatitude": "35.5",
+          "maxlatitude": "36.5",
+          "minlongitude": "-118.0",
+          "maxlongitude": "-117.0"
+        },
+        "timerange": {
+          "starttime": "UTCDateTime('2011-03-11T05:44:00.000')",
+          "endtime": "UTCDateTime('2011-03-11T05:46:00.000')"
+        },
+        "quality": {
+          "reject_channels_with_gaps": "True",
+          "minimum_length": "0.95",
+          "minimum_interstation_distance_in_m": "10E3",
+          "channel_priorities": [
+            "HH[ZNE]",
+            "BH[ZNE]"
+          ],
+          "location_priorities": [
+            "",
+            "00",
+            "10"
+          ]
+        }
+      },
+      "output_data": {
+        "result_data": {
+          "file_name": "download_records.json",
+          "file_content": {
+            "download_files": "list of str",
+            "download_stations": "list of str"
+          }
+        },
+        "waveforms_plot": "waveforms.png"
+      }
+    },
+    "geophysical_knowledge": [
+      "data acquisition",
+      "geospatial querying",
+      "batch processing"
+    ],
+    "agent_prompt": "Configure and execute the ObsPy FDSN mass downloader to retrieve seismic waveforms and station metadata for the geographic box [minlatitude, maxlatitude, minlongitude, maxlongitude] from {starttime} to {endtime}. Figure the download waveform to the {waveforms_plot}. Save the download records into a json file {result_data.file_name} with content {result_data.file_content}."
+  }
+}

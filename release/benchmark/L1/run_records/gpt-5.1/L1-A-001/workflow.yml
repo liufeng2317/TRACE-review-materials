@@ -1,0 +1,160 @@
+tasks:
+  - name: 01_download_event_catalog_from_fdsn_server
+    description: Download an earthquake event catalog from a given FDSN server using seismostats, save it to CSV, and plot epicenters in space
+    script: 01_download_event_catalog_from_fdsn_server.py
+    ancestors: []
+    subtasks:
+      - name: define_parameters
+        description: Define fixed query parameters, FDSN URL, and output filenames as script constants
+        inputs: []
+        outputs:
+          - start_time_str
+          - end_time_str
+          - min_longitude
+          - max_longitude
+          - min_latitude
+          - max_latitude
+          - min_magnitude
+          - batch_size
+          - fdsn_url
+          - catalog_csv
+          - catalog_png
+        params:
+          start_time_str: 2020-01-01T00:00:00
+          end_time_str: 2022-01-01T00:00:00
+          min_longitude: 5.0
+          max_longitude: 11.0
+          min_latitude: 45.0
+          max_latitude: 48.0
+          min_magnitude: 0.5
+          batch_size: 1000
+          fdsn_url: http://eida.ethz.ch/fdsnws/event/1/query
+          catalog_csv: earthquake_catalog.csv
+          catalog_png: earthquake_catalog.png
+
+      - name: parse_and_validate_parameters
+        description: Parse time strings to timestamps and validate temporal, spatial, and magnitude constraints
+        inputs:
+          - start_time_str
+          - end_time_str
+          - min_longitude
+          - max_longitude
+          - min_latitude
+          - max_latitude
+          - min_magnitude
+        outputs:
+          - start_time
+          - end_time
+        params:
+          enforce_start_before_end: true
+          enforce_lon_bounds_order: true
+          enforce_lat_bounds_order: true
+          enforce_non_negative_min_magnitude: true
+
+      - name: initialize_fdsn_client
+        description: Initialize the FDSN event client using the seismostats FDSNWSEventClient class
+        inputs:
+          - fdsn_url
+        outputs:
+          - fdsn_client
+        params:
+          client_class: FDSNWSEventClient
+
+      - name: download_events_in_batches
+        description: Query the FDSN server for events matching time, space, and magnitude filters using batched retrieval
+        inputs:
+          - fdsn_client
+          - start_time
+          - end_time
+          - min_longitude
+          - max_longitude
+          - min_latitude
+          - max_latitude
+          - min_magnitude
+          - batch_size
+        outputs:
+          - raw_events_dataframe
+        params:
+          method: get_events
+          return_type: pandas_dataframe
+          handle_network_errors: true
+          batch_size: 1000
+
+      - name: validate_and_clean_events_dataframe
+        description: Validate the downloaded events DataFrame and normalize essential columns for catalog construction
+        inputs:
+          - raw_events_dataframe
+        outputs:
+          - events_dataframe
+        params:
+          required_columns:
+            - time
+            - latitude
+            - longitude
+          optional_columns:
+            - magnitude
+          convert_time_to_datetime: true
+          convert_coordinates_to_numeric: true
+          convert_magnitude_to_numeric: true
+          drop_rows_with_invalid_coordinates: true
+          drop_rows_with_invalid_magnitude: false
+          allow_empty_dataframe: true
+
+      - name: construct_seismostats_catalog
+        description: Build a seismostats Catalog object from the validated events DataFrame
+        inputs:
+          - events_dataframe
+        outputs:
+          - catalog
+          - number_of_events
+        params:
+          catalog_class: Catalog
+          compute_length_on_creation: true
+
+      - name: export_catalog_to_csv
+        description: Save the catalog to a CSV file without row indices
+        inputs:
+          - catalog
+          - catalog_csv
+        outputs:
+          - catalog_csv_file
+        params:
+          include_index: false
+          handle_io_errors: true
+
+      - name: plot_catalog_in_space
+        description: Generate and save a spatial plot of earthquake epicenters within the specified region
+        inputs:
+          - catalog
+          - min_longitude
+          - max_longitude
+          - min_latitude
+          - max_latitude
+          - start_time_str
+          - end_time_str
+          - min_magnitude
+          - catalog_png
+        outputs:
+          - catalog_png_file
+        params:
+          use_catalog_plot_method_if_available: true
+          fallback_plot_type: scatter
+          x_label: Longitude (deg)
+          y_label: Latitude (deg)
+          title_prefix: Earthquakes
+          point_size: 5.0
+          point_alpha: 0.7
+          color_by_magnitude: false
+          enforce_axis_limits: true
+
+      - name: summarize_download
+        description: Print a concise summary of the download, number of events, and output file locations
+        inputs:
+          - number_of_events
+          - catalog_csv_file
+          - catalog_png_file
+        outputs:
+          - summary_message
+        params:
+          include_event_count: true
+          include_output_paths: true
