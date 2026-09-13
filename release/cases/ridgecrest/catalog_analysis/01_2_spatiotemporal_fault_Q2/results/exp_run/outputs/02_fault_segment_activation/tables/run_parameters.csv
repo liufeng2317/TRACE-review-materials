@@ -1,0 +1,11 @@
+parameter,value
+catalog_path,<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+mainshock_path,<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+fault_path,<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+antecedent_filtered_events,<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/filtered_events.csv
+time_bin_minutes,30
+segment_target_length_km,1.0
+association_threshold_km,3.0
+activation_threshold_count_per_30min_bin,5
+activation_threshold_rate_per_hour,10.0
+max_cores,64

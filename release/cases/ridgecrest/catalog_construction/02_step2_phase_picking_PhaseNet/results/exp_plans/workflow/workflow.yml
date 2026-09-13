@@ -1,0 +1,180 @@
+tasks:
+- name: 01_phasenet_phase_picking
+  description: Run an end-to-end PhaseNet picking workflow on the requested 
+    Ridgecrest station-day MiniSEED files using NPU-safe multiprocessing and 
+    produce validated daily CSV outputs plus one diagnostic figure.
+  script: 01_phasenet_phase_picking.py
+  ancestors: []
+  subtasks:
+  - name: discover_inputs_and_validate_metadata
+    description: Enumerate the requested day folders, parse waveform filenames, 
+      and cross-check station identifiers against station metadata.
+    inputs:
+    - waveform_base_directory
+    - station_metadata_file
+    - start_time
+    - end_time
+    outputs:
+    - workload_manifest
+    - station_lookup_table
+    - input_validation_log
+    params:
+      filename_pattern: '{network}.{station}.{start_time}.{end_time}.mseed'
+      time_window_rule: half_open_interval
+      included_day_keys:
+      - '20190704'
+      - '20190705'
+      station_key_rule: 
+        network.station_from_filename_and_first_field_of_station_metadata
+  - name: read_qc_and_prepare_streams
+    description: Read each MiniSEED file, enforce usable three-component stream 
+      structure, preserve waveform values for amplitude extraction, and record 
+      QC decisions.
+    inputs:
+    - workload_manifest
+    outputs:
+    - validated_stream_jobs
+    - waveform_qc_log
+    - skipped_file_inventory
+    params:
+      required_components: 3
+      component_policy: 
+        require_three_component_input_unless_verified_wrapper_supports_missing_channels
+      trim_rule: intersection_of_file_time_span_with_global_window
+      target_sampling_rate_hz: 100
+      resampling_policy: 
+        resample_only_if_required_by_verified_inference_interface
+  - name: run_npu_safe_phasenet_inference
+    description: Execute PhaseNet discrete picking in parallel with spawn-based 
+      multiprocessing, worker-local NPU initialization, progress reporting, and 
+      failure capture.
+    inputs:
+    - validated_stream_jobs
+    - phasenet_model_definition
+    - phasenet_pretrained_weights
+    outputs:
+    - file_pick_results
+    - runtime_progress_log
+    - inference_failure_inventory
+    params:
+      model_name: PhaseNet
+      pretrained_model_name: original
+      pretrained_model_path: 
+        <PROJECT_ROOT>/seismoagent/library/ai_module/phase_picking/pretrained/v3/phasenet/geofon.pt.v2
+      inference_entrypoint: model.classify
+      annotation_entrypoint: model.annotate_optional_for_diagnostics
+      device: NPU
+      multiprocessing_start_method: spawn
+      minimum_worker_processes: 32
+      detection_threshold: 0.3
+      overlap: 1500
+      blinding:
+      - 0
+      - 0
+      npu_init_policy: initialize_model_and_npu_inside_worker_only
+  - name: postprocess_picks_and_extract_amplitudes
+    description: Convert PhaseNet outputs to the required schema, keep only P 
+      and S picks, and extract waveform amplitudes at the nearest sample to each
+      pick time.
+    inputs:
+    - file_pick_results
+    - validated_stream_jobs
+    outputs:
+    - daily_pick_records
+    - amplitude_extraction_metadata
+    params:
+      kept_phase_types:
+      - P
+      - S
+      phase_time_format: obspy_utcdatetime_iso8601_utc_string
+      p_amplitude_rule: 
+        absolute_amplitude_on_vertical_component_if_available_else_max_absolute_amplitude_across_available_components
+      s_amplitude_rule: 
+        max_absolute_amplitude_across_horizontal_components_if_available_else_max_absolute_amplitude_across_available_components
+      sample_lookup_rule: nearest_waveform_sample_without_time_shift
+  - name: merge_daily_outputs_and_validate
+    description: Merge station-level picks into one CSV per UTC day, enforce the
+      exact header and field constraints, and record day-level validation 
+      results.
+    inputs:
+    - daily_pick_records
+    - station_lookup_table
+    outputs:
+    - picks_20190704_csv
+    - picks_20190705_csv
+    - daily_validation_summary
+    params:
+      output_files:
+      - picks_20190704.csv
+      - picks_20190705.csv
+      csv_header:
+      - station_id
+      - phase_time
+      - phase_score
+      - phase_amplitude
+      - phase_type
+      row_sort_order:
+      - phase_time
+      - station_id
+      - phase_type
+      per_day_filter_rule: retain_only_picks_within_the_corresponding_utc_day
+      zero_pick_policy: write_header_only_csv_and_record_zero_pick_condition
+      validation_rules:
+      - phase_type_is_P_or_S
+      - phase_time_parses_as_obspy_utcdatetime
+      - numeric_fields_are_finite
+      - station_id_in_network_station_form
+  - name: generate_representative_diagnostic_figure
+    description: Create one real diagnostic figure from a successfully processed
+      case showing waveform traces, pick markers, and optional probability 
+      traces.
+    inputs:
+    - validated_stream_jobs
+    - file_pick_results
+    outputs:
+    - picking_process_figure
+    - figure_case_metadata
+    params:
+      figure_count: 1
+      case_selection_rule: 
+        choose_one_successful_station_day_with_clear_p_and_s_picks
+      time_window_rule: focused_window_around_pick_cluster
+      overlays:
+      - waveform_traces
+      - p_pick_markers
+      - s_pick_markers
+      - optional_probability_traces
+      time_axis_format: utc
+  - name: finalize_run_summary_and_failure_evidence
+    description: Validate that both daily CSV outputs and the diagnostic figure 
+      are real processed products and assemble machine-readable run, skip, and 
+      failure summaries.
+    inputs:
+    - picks_20190704_csv
+    - picks_20190705_csv
+    - daily_validation_summary
+    - runtime_progress_log
+    - input_validation_log
+    - waveform_qc_log
+    - inference_failure_inventory
+    - picking_process_figure
+    - figure_case_metadata
+    outputs:
+    - final_validation_summary
+    - failure_skip_inventory
+    - run_manifest
+    params:
+      required_outputs:
+      - picks_20190704.csv
+      - picks_20190705.csv
+      - one_diagnostic_figure
+      success_rule: 
+        daily_csv_outputs_valid_and_figure_linked_to_real_processed_input
+      include_counts:
+      - attempted_files
+      - succeeded_files
+      - failed_files
+      - skipped_files
+      - total_p_picks
+      - total_s_picks
+      - total_rows_written

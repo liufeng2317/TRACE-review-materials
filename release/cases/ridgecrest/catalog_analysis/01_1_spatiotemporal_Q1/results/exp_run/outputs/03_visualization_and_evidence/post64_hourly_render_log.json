@@ -1,0 +1,44 @@
+{
+  "family_name": "figures_post64_hourly",
+  "figure_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly",
+  "pages_expected": 5,
+  "pages_rendered": 5,
+  "results": [
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_001.png",
+      "n_windows": 8,
+      "page_number": 1,
+      "size_bytes": 179937
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_002.png",
+      "n_windows": 8,
+      "page_number": 2,
+      "size_bytes": 213337
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_003.png",
+      "n_windows": 8,
+      "page_number": 3,
+      "size_bytes": 229493
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_004.png",
+      "n_windows": 8,
+      "page_number": 4,
+      "size_bytes": 238007
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_005.png",
+      "n_windows": 2,
+      "page_number": 5,
+      "size_bytes": 112868
+    }
+  ],
+  "workers_used": 8
+}

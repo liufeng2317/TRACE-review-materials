@@ -1,0 +1,2 @@
+separator_time,matched_event_count,matched_event_ids,latitude,longitude,depth_km,magnitude,role,exclusion_rule,full_window_start,full_window_end,early_window_end_exclusive,late_window_start_exclusive
+2019-07-05T11:07:52.830000+00:00,1,interevent_0002500,35.758237795185046,-117.56793972429624,6.42093878,5.37,boundary_only,exclude all events exactly at separator timestamp from all b-value subsets,2019-07-04T17:33:49.040000+00:00,2019-07-06T03:19:53.040000+00:00,2019-07-05T11:07:52.830000+00:00,2019-07-05T11:07:52.830000+00:00

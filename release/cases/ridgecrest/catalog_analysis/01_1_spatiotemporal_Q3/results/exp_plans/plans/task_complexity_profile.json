@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single observational catalog with two coordinated analyses (time-sliced KDE hotspot migration and hourly geometric envelopes) plus multi-figure outputs. Workflow is scientifically involved but uses standard catalog processing and no external model inference.",
+  "data_source_count": 2,
+  "workflow_risk": "medium: many time slices require robust empty-bin handling, fixed-parameter comparability, alpha-shape stability for sparse intervals, and consistent cross-panel/color normalization.",
+  "expected_script_count": 2
+}

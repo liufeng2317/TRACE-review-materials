@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_grid_onset_and_trigger_diagnostics",
+    "generated_at": "2026-07-05T08:15:11.866619+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 532.417,
+    "timing": {
+      "total_sec": 532.417,
+      "coding_agent_sec": 132.569,
+      "code_review_sec": 32.161,
+      "preflight_sec": 0.772,
+      "script_execution_sec": 52.247,
+      "result_check_sec": 68.883,
+      "task_analysis_sec": 243.476
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_grid_onset_and_trigger_diagnostics.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/cell_activity_quality_flags.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_activity_quality_flags.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cell_onset_time_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_onset_time_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cell_onset_time_summary_with_geometry.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_onset_time_summary_with_geometry.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cell_rate_timeseries_30min.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_rate_timeseries_30min.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cell_total_counts.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_total_counts.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cell_trigger_geometry_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/cell_trigger_geometry_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/event_grid_time_assignments.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/event_grid_time_assignments.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/grid_definition_0p5km.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/tables/grid_definition_0p5km.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/onset_vs_trigger_geometry.png",
+      "figures/ridgecrest_onset_time_map.png",
+      "tables/cell_activity_quality_flags.csv",
+      "tables/cell_onset_time_summary.csv",
+      "tables/cell_onset_time_summary_with_geometry.csv",
+      "tables/cell_rate_timeseries_30min.csv",
+      "tables/cell_total_counts.csv",
+      "tables/cell_trigger_geometry_metrics.csv",
+      "tables/event_grid_time_assignments.csv",
+      "tables/grid_definition_0p5km.csv",
+      "tables/grid_metadata_0p5km.csv",
+      "tables/onset_qc_summary.csv",
+      "tables/onset_rule_diagnostics.csv",
+      "tables/onset_rule_parameters.csv",
+      "tables/region_comparison_summary.csv",
+      "tables/regional_activated_cell_fraction.csv",
+      "tables/regional_cumulative_event_counts.csv",
+      "tables/segment_level_onset_summary.csv",
+      "tables/trigger_style_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the 0.5 km grid, estimate sustained-activation onset times, map onset patterns, and compute Mw 6.4-to-Mw 7.1 trigger diagnostics.",
+    "result": "Build the 0.5 km grid, estimate sustained-activation onset times, map onset patterns, and compute Mw 6.4-to-Mw 7.1 trigger diagnostics. Status=success; outputs=19 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

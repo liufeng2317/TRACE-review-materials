@@ -1,0 +1,9 @@
+key,value
+script_path,<PACKAGE_ROOT>/results/exp_run/scripts/02_ridgecrest_figures_and_distribution_plots.py
+metrics_dir,<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation
+output_dir,<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots
+max_workers,64
+n_time_bins,23
+n_map_pages,3
+n_pre71_events,4716
+n_post71_events,7641

@@ -1,0 +1,13 @@
+[2026-07-06 08:11:37] Writing outputs to <PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics
+[2026-07-06 08:11:37] Loading antecedent outputs from Tasks 01 and 02
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 750, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 685, in main
+    data = load_inputs()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 131, in load_inputs
+    segment_activation['first_associated_event_time'] = parse_datetime_mixed(segment_activation['first_associated_event_time'], 'segment_activation.first_associated_event_time')
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 71, in parse_datetime_mixed
+    raise ValueError(f'Failed to parse {n_bad} datetime values in {name}')
+ValueError: Failed to parse 612 datetime values in segment_activation.first_associated_event_time
+

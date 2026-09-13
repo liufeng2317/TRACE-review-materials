@@ -1,0 +1,26 @@
+Ridgecrest spatiotemporal evolution analysis completed successfully.
+{
+  "catalog_path": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv",
+  "mainshock_path": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv",
+  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py",
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+  "max_cores_used": 64,
+  "map_extent_lon_lat": [
+    -117.82240063769927,
+    -117.32280628966367,
+    35.41951379518505,
+    35.96612679518505
+  ],
+  "grid_shape": [
+    220,
+    220
+  ],
+  "fixed_kde_bandwidth_km": 1.4693211427353874,
+  "gaussian_kde_factor": 0.25884725624302213,
+  "fixed_alpha_parameter": 1.1111111111111112,
+  "projection_proj4": "+proj=aeqd +lat_0=35.6840005384865 +lon_0=-117.543958116844 +x_0=0 +y_0=0 +datum=WGS84 +units=km +no_defs +type=crs",
+  "mainshock64_time_utc": "2019-07-04 17:33:49.040000+00:00",
+  "mainshock71_time_utc": "2019-07-06 03:19:53.040000+00:00",
+  "kde_global_max_density": 0.0257830862727606,
+  "kde_high_density_threshold": 0.015469851763656358
+}

@@ -1,0 +1,72 @@
+{
+  "catalog_path": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv",
+  "mainshock_path": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv",
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+  "random_seed": 20250706,
+  "bootstrap_samples": 1000,
+  "max_workers": 64,
+  "fixed_mc": 1.5,
+  "delta_m": 0.01,
+  "selected_crs": "EPSG:32611",
+  "separator_time": "2019-07-05 11:07:52.830000+00:00",
+  "separator_hours_since_mw64": 17.567719444444446,
+  "mw71_hours_since_mw64": 33.76777777777778,
+  "window_specs": [
+    {
+      "label": "primary_N100_step20",
+      "n_events": 100,
+      "step": 20,
+      "exploratory": false
+    },
+    {
+      "label": "exploratory_N50_step10",
+      "n_events": 50,
+      "step": 10,
+      "exploratory": true
+    }
+  ],
+  "overlap_summary": [
+    {
+      "radius_km": 4,
+      "raw_count_mw64": 1311,
+      "raw_count_mw71": 507,
+      "raw_overlap_count": 0,
+      "assigned_count_mw64": 1311,
+      "assigned_count_mw71": 507,
+      "outside_count": 2895
+    },
+    {
+      "radius_km": 5,
+      "raw_count_mw64": 1746,
+      "raw_count_mw71": 704,
+      "raw_overlap_count": 0,
+      "assigned_count_mw64": 1746,
+      "assigned_count_mw71": 704,
+      "outside_count": 2263
+    },
+    {
+      "radius_km": 6,
+      "raw_count_mw64": 2272,
+      "raw_count_mw71": 857,
+      "raw_overlap_count": 0,
+      "assigned_count_mw64": 2272,
+      "assigned_count_mw71": 857,
+      "outside_count": 1584
+    },
+    {
+      "radius_km": 7,
+      "raw_count_mw64": 2528,
+      "raw_count_mw71": 1163,
+      "raw_overlap_count": 403,
+      "assigned_count_mw64": 2401,
+      "assigned_count_mw71": 887,
+      "outside_count": 1425
+    }
+  ],
+  "input_row_counts": {
+    "catalog": 84474,
+    "interevent_before_separator_removal": 4714,
+    "interevent_cleaned": 4713
+  }
+}

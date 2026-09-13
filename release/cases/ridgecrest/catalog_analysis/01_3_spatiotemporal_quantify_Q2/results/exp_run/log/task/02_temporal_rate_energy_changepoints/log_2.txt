@@ -1,0 +1,31 @@
+Loading event table: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/event_region_assignments.csv
+Loaded 4,755 events. Analysis window: 2019-07-04 00:56:37.590000+00:00 to 2019-07-06 03:19:53.040000+00:00
+Building time series in parallel with up to 64 workers for 10 domain-resolution combinations.
+Completed domain=Region_A, resolution=30min
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/concurrent/futures/process.py", line 246, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 350, in build_domain_series
+    cp_rate = bayesian_changepoint_table_for_series(series_df, "rate_per_hour", domain, resolution_label(delta), main64_time)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 175, in bayesian_changepoint_table_for_series
+    cp_candidates, posterior = bayesian_single_changepoint_posterior(values, CHANGEPOINT_MIN_SEGMENT_BINS)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 138, in bayesian_single_changepoint_posterior
+    log_prior = -math.log(candidate_idx.size) - math.log(mean_grid.size) - math.log(std_grid.size)
+NameError: name 'math' is not defined
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 684, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 643, in main
+    sdf, cpdf, summary = future.result()
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/concurrent/futures/_base.py", line 439, in result
+    return self.__get_result()
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+NameError: name 'math' is not defined
+

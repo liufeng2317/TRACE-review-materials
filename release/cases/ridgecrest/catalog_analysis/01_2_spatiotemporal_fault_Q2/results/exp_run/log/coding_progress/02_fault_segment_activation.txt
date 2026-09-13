@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_fault_segment_activation
+Status: success
+Execution stage: analysis_done
+Debug rounds: 2
+Result check rounds: 2
+Elapsed seconds: 655.197
+Started at: 2026-07-05T23:58:16.369668+00:00
+Finished at: 2026-07-06T00:09:11.566350+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_fault_segment_activation.md
+Runtime action: pass
+Code changes: 2
+Last activity: 2026-07-06T00:09:11.566227+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=44.34, coding_agent_sec=197.786, preflight_sec=0.931, result_check_sec=129.309, script_execution_sec=102.382, task_analysis_sec=176.758, total_sec=655.197
+Coding plan context: mode=full_experiment_plan, original_chars=19700, compact_chars=19700
+Coding tool usage: total=15, read_file=6, unique_files=3, used_retrieve=False, tools={'python_executor': 4, 'read_file': 6, 'write_file': 1, 'apply_diff': 3, 'analyze_image_file': 1}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

@@ -1,0 +1,279 @@
+{
+  "generated_at": "2026-07-06T00:18:55.637094+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 3
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 3,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_grid_onset_analysis.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 811,
+        "coding_response_summary": "Done — I wrote the task script at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_grid_onset_analysis.py`\n\nWhat it does:\n- Loads and validates the catalog, mainshock table, and fault...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 38074,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "[2026-07-06 07:56:13] Completed 01_grid_onset_analysis in 55.34 s",
+            "log_size_bytes": 8679,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_grid_onset_analysis/log_0.txt",
+          "message": "The outputs meet the task requirements. The run produced the expected tables and figures, the core grid/onset products are internally consistent, and the visualizations are scientifically usable. There are minor figure-design issues (some low-contrast map elements and the example time-series figure ...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_grid_onset_analysis",
+          "timestamp": "2026-07-05T23:58:12.422667+00:00"
+        },
+        "script_hash_after": "844c2c141cc58baabd9acd471802e728afc004cab4285482dd9e3bffad0039b4",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_grid_onset_analysis.py",
+        "task_name": "01_grid_onset_analysis",
+        "timestamp": "2026-07-05T23:54:55.304736+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "[2026-07-06 07:56:13] Completed 01_grid_onset_analysis in 55.34 s",
+          "log_size_bytes": 8679,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_grid_onset_analysis/log_0.txt",
+        "message": "The outputs meet the task requirements. The run produced the expected tables and figures, the core grid/onset products are internally consistent, and the visualizations are scientifically usable. There are minor figure-design issues (some low-contrast map elements and the example time-series figure ...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_grid_onset_analysis",
+        "timestamp": "2026-07-05T23:58:12.422667+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_grid_onset_analysis/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_grid_onset_analysis/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_grid_onset_analysis.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_grid_onset_analysis.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_grid_onset_analysis.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_grid_onset_analysis"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/02_fault_segment_activation.md",
+      "code_change_count": 2,
+      "debug_attempt_count": 2,
+      "debug_round": 2,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 84,
+        "coding_response_summary": "Fixed the blocking visualization issue in `associated_vs_unassociated_events.png`.\n\nWhat changed:\n- Improved map contrast:\n  - fault traces are now darker and clearer,\n  - unassociated events are now high-contrast orange with higher alpha,\n  - associated events remain visible but subdued to reduce o...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 51185,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 48650,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 2,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "[2026-07-06 08:05:07] Finished fault-segment activation analysis in 26.0 s",
+            "log_size_bytes": 2147,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:524: Futu...[truncated]",
+              "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:602: Matp...[truncated]",
+              "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:736: User...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt",
+          "message": "The outputs meet the task requirements. The script completed successfully, produced the expected tables and figure set, and the core scientific results are internally consistent: 1019 fault segments were built, 4627 events were evaluated, 4490 were associated to segments, the segment time-series cou...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "02_fault_segment_activation",
+          "timestamp": "2026-07-06T00:06:14.583869+00:00"
+        },
+        "script_hash_after": "f68d5c115d045c4e8671cb50be48b3848826c3a1963631e3bc2f5bbfd5e41cec",
+        "script_hash_before": "85c96eec26006c744e37bb7dc833be7f68c60c1d7390ae432adaddab7edb8119",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py",
+        "task_name": "02_fault_segment_activation",
+        "timestamp": "2026-07-06T00:04:17.386572+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "[2026-07-06 08:05:07] Finished fault-segment activation analysis in 26.0 s",
+          "log_size_bytes": 2147,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:524: Futu...[truncated]",
+            "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:602: Matp...[truncated]",
+            "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:736: User...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt",
+        "message": "The outputs meet the task requirements. The script completed successfully, produced the expected tables and figure set, and the core scientific results are internally consistent: 1019 fault segments were built, 4627 events were evaluated, 4490 were associated to segments, the segment time-series cou...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "02_fault_segment_activation",
+        "timestamp": "2026-07-06T00:06:14.583869+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/02_fault_segment_activation.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 2,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "02_fault_segment_activation"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/03_triggering_style_diagnostics.md",
+      "code_change_count": 5,
+      "debug_attempt_count": 5,
+      "debug_round": 5,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 16,
+        "coding_response_summary": "Fixed the blocking failure.\n\nRoot cause:\n- `fault_segment_activation_summary.csv` already contains `start_x_km`, `start_y_km`, `end_x_km`, and `end_y_km`.\n- My unconditional merge logic dropped/replaced geometry columns unnecessarily, which could leave the downstream schema inconsistent depending on...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 43833,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 43533,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 5,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": false,
+            "last_observed_line": "[2026-07-06 08:14:34] Task 03 complete: triggering-style diagnostics and packaged deliverables written successfully",
+            "log_size_bytes": 1470,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: ...[truncated]",
+              "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: ...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt",
+          "message": "The output directory contains the expected packaged deliverables for triggering-style diagnostics, including validated tables and readable figures covering synchrony, along-fault behavior, cross-fault complexity, and Mw 7.1 nucleation-area context. The run completed successfully, tables are populate...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "03_triggering_style_diagnostics",
+          "timestamp": "2026-07-06T00:16:43.400686+00:00"
+        },
+        "script_hash_after": "89b1bb2e0b403a4ea6801c780705cc35e7be6ef83f08c62c1a3b43db84c2d8e9",
+        "script_hash_before": "fa2bbd0f10d817d3c653b89849d27a88984f917f160be50700038ba4fbb69c9e",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py",
+        "task_name": "03_triggering_style_diagnostics",
+        "timestamp": "2026-07-06T00:14:03.612999+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": false,
+          "last_observed_line": "[2026-07-06 08:14:34] Task 03 complete: triggering-style diagnostics and packaged deliverables written successfully",
+          "log_size_bytes": 1470,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: ...[truncated]",
+            "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: ...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt",
+        "message": "The output directory contains the expected packaged deliverables for triggering-style diagnostics, including validated tables and readable figures covering synchrony, along-fault behavior, cross-fault complexity, and Mw 7.1 nucleation-area context. The run completed successfully, tables are populate...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "03_triggering_style_diagnostics",
+        "timestamp": "2026-07-06T00:16:43.400686+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/03_triggering_style_diagnostics.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "03_triggering_style_diagnostics"
+    }
+  ]
+}

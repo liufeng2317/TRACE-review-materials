@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_spatiotemporal_metrics",
+    "generated_at": "2026-07-05T07:46:16.130809+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 517.309,
+    "timing": {
+      "total_sec": 517.309,
+      "coding_agent_sec": 191.084,
+      "code_review_sec": 25.853,
+      "preflight_sec": 1.135,
+      "script_execution_sec": 154.304,
+      "result_check_sec": 43.387,
+      "task_analysis_sec": 98.632
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_spatiotemporal_metrics.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "comparison_metrics_64.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/comparison_metrics_64.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "comparison_metrics_71.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/comparison_metrics_71.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "metrics_runtime_config.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/metrics_runtime_config.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "migration_summary_64_to_71.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/migration_summary_64_to_71.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "migration_summary_post71.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/migration_summary_post71.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "window_cluster_metrics_post64_hourly.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_cluster_metrics_post64_hourly.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "window_cluster_metrics_whole_sequence.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_cluster_metrics_whole_sequence.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "window_metrics_post64_hourly.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_metrics_post64_hourly.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "comparison_metrics_64.csv",
+      "comparison_metrics_71.csv",
+      "metrics_runtime_config.json",
+      "migration_summary_64_to_71.json",
+      "migration_summary_post71.json",
+      "window_cluster_metrics_post64_hourly.csv",
+      "window_cluster_metrics_whole_sequence.csv",
+      "window_metrics_post64_hourly.csv",
+      "window_metrics_whole_sequence.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Compute window-based migration, orientation, spread, and clustering diagnostics for the Ridgecrest sequence.",
+    "result": "Compute window-based migration, orientation, spread, and clustering diagnostics for the Ridgecrest sequence. Status=success; outputs=9 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

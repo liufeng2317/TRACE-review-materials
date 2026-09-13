@@ -1,0 +1,8 @@
+metric,value
+n_filtered_events,4627
+n_fault_segments,1019
+n_associated_events,4490
+n_unassociated_events,137
+n_segments_with_associated_events,407
+n_activated_segments,24
+n_major_fault_raster_rows,12

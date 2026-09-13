@@ -1,0 +1,255 @@
+# Goal
+Investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence from the Mw 6.4 mainshock to the Mw 7.1 mainshock, with explicit tests of whether triggered earthquakes align with mapped fault directions, whether that alignment changes through time, and whether fault activation occurs simultaneously across the fault system or propagates progressively.
+
+## Planning Assumptions
+- Use only the provided observation-based datasets: relocated catalog, mainshock table, and mapped surface-fault polylines; no model data are needed.
+- The catalog schema is fixed as `event_time,latitude,longitude,depth_km,magnitude`; `event_time` must be parsed as UTC datetime.
+- `main_shock_events.csv` is the authoritative source for the Mw 6.4 and Mw 7.1 event times and epicenters used to define all windows and annotations.
+- Faults are provided as geographic polylines in `[longitude, latitude]`; nearest-fault distance and local fault-strike calculations must use polyline segments, not only vertices.
+- Spatial metrics must be computed in a local projected coordinate system centered on Ridgecrest; map display can remain in longitude-latitude if desired, but all distances and directional projections should use projected coordinates.
+- Use consistent half-open bins `[start, end)` for internal time slices; include the endpoint only for the final bin of each requested stage and for explicit comparison windows to avoid losing boundary events.
+- Keep the requested time definition exactly:
+  - analysis window: `[mainshock64, mainshock71]`
+  - Stage 1: `[mainshock64, mainshock64 + 4 hours]` with 30-minute bins
+  - Stage 2: `[mainshock64 + 4 hours, mainshock71]` with 2-hour bins
+  - pre/post Mw 7.1 comparison: before `[mainshock64, mainshock71]`, after `[mainshock71, mainshock71 + 2 days]`
+- Each major analytical step must run independently and produce validated non-empty outputs; plotting stages should consume saved intermediate tables rather than recomputing geometry.
+- Parallel computation up to 64 cores should be used only where beneficial and safe, especially for event-to-fault distance calculations, per-bin geometric summaries, and figure batching; merged outputs must be validated after batching.
+- Long loops over events, time bins, or figure pages should emit progress logs or progress bars.
+- Success evidence must include the requested figures plus non-empty derived tables for event-level and bin-level metrics; diagnostic-only outputs are not sufficient.
+
+## Analysis Plan
+
+### Task 1 — Build the analysis-ready Ridgecrest dataset and canonical time-bin table
+- Task description:
+  - Load the relocated catalog, mainshock table, and fault JSON; standardize timestamps and geometry; construct the exact analysis windows and reusable spatial references for all downstream tasks.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy:
+  - Identify the Mw 6.4 and Mw 7.1 rows from `main_shock_events.csv` by magnitude and verify `mainshock64 < mainshock71`.
+  - Parse all `event_time` values as UTC datetimes.
+  - Assign a unique event index if the relocated catalog has no event identifier.
+  - Convert event epicenters and fault vertices to a single local projected CRS centered on the Ridgecrest area.
+  - Build a fault-segment table from all adjacent vertex pairs, storing segment endpoints, length, azimuth/strike, parent polyline id, and projected geometry.
+  - Construct the full time-bin table:
+    - Stage 1: 8 bins of 30 minutes
+    - Stage 2: consecutive 2-hour bins from `mainshock64 + 4 hours` to `mainshock71`
+    - page assignment and subplot index for 2×4 figure pagination
+  - Compute one canonical spatial extent from the union of:
+    - all events in `[mainshock64, mainshock71 + 2 days]`
+    - both mainshocks
+    - all fault traces
+    - plus a small fixed margin so all panels share identical bounds.
+- Constraints:
+  - Preserve all events with valid time and coordinates; do not impose a magnitude threshold unless invalid rows require exclusion.
+  - Do not alter the requested stage definitions to force a single page.
+  - If the total number of bins is not divisible by 8, retain the final partially filled 2×4 page and suppress unused panels.
+- Key outputs:
+  - Clean event table with UTC times and projected coordinates
+  - Mainshock reference table with Mw 6.4 and Mw 7.1 times and coordinates
+  - Fault polyline table and fault-segment table with projected geometry and strike
+  - Canonical time-bin definition table with stage label, bin start/end, page number, subplot index
+  - Canonical map extent record for reuse by all plotting tasks
+
+### Task 2 — Compute event-level nearest-fault geometry and local fault-orientation attributes
+- Task description:
+  - For each earthquake, compute its minimum distance to the mapped fault network and extract local geometric attributes needed to test fault alignment and migration.
+- Required data sources:
+  - Clean event table, mainshock table, and fault-segment table from Task 1
+- Parameter selection strategy:
+  - Restrict the primary event-level metric computation to:
+    - `[mainshock64, mainshock71]` for the main trigger-evolution analysis
+    - `[mainshock71, mainshock71 + 2 days]` additionally for the before/after comparison metrics
+  - Use spatial indexing on projected fault segments to accelerate candidate selection.
+  - Compute exact point-to-segment nearest distance for each event in projected coordinates and convert to km.
+  - For each event, also store:
+    - nearest segment id
+    - nearest parent fault polyline id
+    - strike of the nearest segment
+    - projected coordinates of the nearest point on the segment
+    - along-segment coordinate relative to the segment endpoints
+  - Parallelize over event chunks up to 64 cores with progress reporting and final completeness checks.
+  - Validate the distance workflow on a random sample by verifying nearest-segment identity and distance consistency.
+- Constraints:
+  - Distances must be measured to full line segments, not nearest vertices.
+  - Report distances as distance to mapped surface traces only; do not interpret them as distance to subsurface rupture planes.
+  - Keep all events even if they are far from mapped faults.
+- Key outputs:
+  - Event-level fault-geometry table for pre-Mw7.1 and post-Mw7.1 windows
+  - Validation summary with processed-event counts, missing counts, and sampled distance checks
+  - Cached spatial-index metadata or equivalent reusable search summary
+
+### Task 3 — Generate the requested time-sliced spatial map series from Mw 6.4 to Mw 7.1
+- Task description:
+  - Produce the chronological map sequence showing how seismicity evolves between the Mw 6.4 and Mw 7.1 mainshocks.
+- Required data sources:
+  - Clean event table and canonical time-bin table from Task 1
+  - Mainshock reference table from Task 1
+  - Fault polyline table from Task 1
+- Parameter selection strategy:
+  - Group bins into chronological pages of 8 panels each in a 2×4 layout.
+  - In every subplot:
+    - plot events in the current bin with a brighter foreground style
+    - plot all earlier events since `mainshock64` but before the current bin in silver with higher transparency
+    - overlay all fault traces with fixed styling
+    - overlay Mw 6.4 and Mw 7.1 epicenters with fixed markers
+    - apply the identical spatial extent from Task 1
+  - Keep point size, transparency rules, and base-layer styling fixed across all panels so visual density changes remain comparable.
+  - Include a concise panel label with bin time range and elapsed time since `mainshock64`.
+  - Allow empty bins to remain as valid panels with background events, faults, and mainshock markers.
+  - Use figure-page batching in parallel only after all panel subsets are precomputed.
+- Constraints:
+  - Do not plot a colorbar.
+  - Keep faults and mainshock epicenters on the top drawing layer in every subplot.
+  - Use only sequence history beginning at `mainshock64` for the silver background in these panels.
+  - Preserve exact chronological order across pages.
+- Key outputs:
+  - Paginated 2×4 time-sliced map figures spanning Stage 1 and Stage 2
+  - Panel manifest table with bin start/end, in-bin event count, cumulative prior count, figure page, subplot index
+
+### Task 4 — Produce the before/after Mw 7.1 spatial comparison figure
+- Task description:
+  - Create a direct spatial comparison of seismicity before and after the Mw 7.1 mainshock.
+- Required data sources:
+  - Clean event table from Task 1
+  - Mainshock reference table from Task 1
+  - Fault polyline table from Task 1
+  - Event-level fault-geometry table from Task 2
+- Parameter selection strategy:
+  - Panel A: events in `[mainshock64, mainshock71]`
+  - Panel B: events in `[mainshock71, mainshock71 + 2 days]`
+  - Use the same spatial extent, fault overlays, and mainshock markers in both panels.
+  - Keep event symbol rules visually comparable between panels; use transparency rather than changing spatial framing.
+  - Add compact panel annotations for event count and median nearest-fault distance from Task 2.
+- Constraints:
+  - Apply one documented boundary rule for the Mw 7.1 event and keep it consistent with the window definitions used elsewhere.
+  - Do not mix pre- and post-Mw7.1 events in the same panel except for explicitly distinct contextual annotation, which is not required here.
+- Key outputs:
+  - Two-panel pre/post Mw 7.1 spatial comparison figure
+  - Comparison summary table with event counts, centroid, and median nearest-fault distance for each window
+
+### Task 5 — Quantify directional alignment, temporal change, and progressive versus simultaneous fault activation
+- Task description:
+  - Derive bin-wise metrics that directly answer the three scientific questions using mapped-fault geometry and time-resolved earthquake distributions.
+- Required data sources:
+  - Canonical time-bin table from Task 1
+  - Event-level fault-geometry table from Task 2
+  - Fault-segment table from Task 1
+- Parameter selection strategy:
+  - For each Stage 1 and Stage 2 bin, compute:
+    - event count
+    - epicenter centroid
+    - principal-axis orientation of the event cloud from projected epicenters
+    - major-axis and minor-axis spread
+    - elongation ratio
+    - median and quantiles of nearest-fault distance
+    - distribution of nearest-fault strikes among events
+  - Compare the event-cloud orientation to mapped-fault orientation using:
+    - angular misfit between event-cloud principal axis and dominant local nearest-fault strike
+    - strike concentration or spread across assigned nearest-fault segments
+  - Quantify whether triggered events are “along the fault direction” using combined evidence:
+    - small angular misfit to local mapped-fault strike
+    - strong elongation along the principal axis
+    - high fraction of events within short nearest-fault distances
+  - Quantify whether alignment changes over time using:
+    - principal-axis orientation versus time
+    - orientation misfit versus time
+    - nearest-fault-strike composition versus time
+  - Quantify whether activation is simultaneous or progressive using along-strike occupancy metrics:
+    - define one or more reference fault-aligned axes from the mapped fault network near the active sequence
+    - project event nearest points or epicenters onto the relevant local fault-aligned coordinate
+    - for each bin, calculate occupied along-strike range, newly activated along-strike range, and cumulative occupied range
+    - record first-activation time for each along-strike spatial bin to test whether the entire fault system activated early or expanded progressively
+  - If the fault network is clearly multi-branch or multi-modal in strike, compute metrics by branch or dominant strike family rather than forcing a single regional direction.
+- Constraints:
+  - Do not infer the reference fault direction from seismicity alone when mapped faults are available.
+  - Treat line orientation with 180° ambiguity consistently.
+  - Flag bins with too few events for stable covariance/PCA estimation and exclude them from directional interpretation plots while retaining counts in tables.
+  - Keep the temporal bins identical to the map-series bins so metric changes can be compared directly with the figures.
+- Key outputs:
+  - Bin-level directional summary table with event count, centroid, principal orientation, elongation ratio, nearest-fault distance statistics, dominant local fault strike, angular misfit, along-strike occupied range, cumulative occupied range, newly activated range
+  - Along-strike first-activation table for spatial bins along the fault system
+  - Compact machine-readable question-to-metric summary table linking each scientific question to quantitative indicators
+
+### Task 6 — Plot nearest-fault distance distributions and their temporal evolution
+- Task description:
+  - Visualize how tightly earthquakes track the mapped faults overall and how that relationship changes through time between the two mainshocks.
+- Required data sources:
+  - Event-level fault-geometry table from Task 2
+  - Canonical time-bin table from Task 1
+  - Bin-level directional summary table from Task 5
+- Parameter selection strategy:
+  - For all events in `[mainshock64, mainshock71]`, plot:
+    - overall nearest-fault distance histogram
+    - empirical cumulative distribution
+  - For time evolution, use the same Stage 1 and Stage 2 bins as Task 3 and Task 5, and plot:
+    - per-bin nearest-fault distance distribution summary
+    - median and interquartile range versus time
+    - fraction of events within selected near-fault thresholds versus time
+  - Choose near-fault thresholds from the empirical distance range and geological interpretability after inspecting the event-level distribution; store the selected thresholds explicitly in the metadata table.
+  - Keep sparse bins in the time series with flagged missing or low-confidence summaries rather than dropping them.
+- Constraints:
+  - Use exactly the same bin definitions as the spatial map sequence.
+  - The requested deliverables are distribution plots and temporal-change plots; supplementary smoothing must not replace the raw distribution summaries.
+- Key outputs:
+  - Overall nearest-fault distance distribution figure
+  - Time-evolving nearest-fault distance summary figure
+  - Per-bin distance statistics table with counts, median, IQR, selected quantiles, threshold fractions
+
+### Task 7 — Produce synthesis plots for alignment change and fault-activation propagation
+- Task description:
+  - Create the compact figure set needed to interpret whether seismicity follows fault direction, whether that direction evolves, and whether rupture-related activation is simultaneous or migratory.
+- Required data sources:
+  - Bin-level directional summary table from Task 5
+  - Along-strike first-activation table from Task 5
+  - Panel manifest from Task 3
+- Parameter selection strategy:
+  - Generate:
+    - principal orientation versus time
+    - angular misfit to mapped fault strike versus time
+    - centroid migration versus time
+    - cumulative along-strike occupied length versus time
+    - along-strike position versus time occupancy diagram or heatmap using first-activation and/or per-bin occupancy
+  - Link each synthesis plot directly to the map bins used in Task 3.
+  - Annotate sparse bins or branch transitions where interpretation is less stable.
+- Constraints:
+  - Distinguish incremental occupancy from cumulative occupancy so increasing event count is not mistaken for spatial migration.
+  - If multiple fault branches control the sequence, separate branch-specific occupancy products where the branch assignment is reliable.
+- Key outputs:
+  - Orientation-versus-time figure
+  - Orientation-misfit-versus-time figure
+  - Centroid/along-strike migration figure
+  - Along-strike occupancy-through-time figure suitable for simultaneous-versus-progressive activation assessment
+
+### Task 8 — Execution structure, independence, and validation
+- Task description:
+  - Organize the workflow into the fewest reliable scripts while keeping major analytical stages independently executable and validated.
+- Required data sources:
+  - All original sources and intermediate tables from Tasks 1–7
+- Parameter selection strategy:
+  - Primary task script:
+    - data loading
+    - time-window construction
+    - projection setup
+    - fault segmentation
+    - event-level nearest-fault and local fault-orientation computation
+    - bin-level directional and along-strike summaries
+    - immediate validation of non-empty event-level and bin-level outputs
+  - Secondary task script:
+    - generation of time-sliced map pages
+    - pre/post Mw 7.1 comparison figure
+    - nearest-fault distribution figures
+    - directional-evolution and along-strike propagation figures
+    - merged-output validation against expected page and figure counts
+  - Reuse saved event-level and bin-level tables between scripts so plotting does not recompute heavy geometry.
+- Constraints:
+  - Do not treat successful parallel batch jobs as final success unless the merged tables and all requested figures are present and non-empty.
+  - Each script must log input counts, output counts, and any sparse-bin or empty-bin conditions.
+  - Failure evidence should include which stage, which bin/page, and which source table caused the issue.
+- Key outputs:
+  - One validated event-level metrics file
+  - One validated bin-level summary file
+  - Complete figure set for map evolution, pre/post comparison, nearest-fault distributions, and directional/along-strike evolution
+  - Validation log summarizing event counts, bin counts, page counts, and completion status

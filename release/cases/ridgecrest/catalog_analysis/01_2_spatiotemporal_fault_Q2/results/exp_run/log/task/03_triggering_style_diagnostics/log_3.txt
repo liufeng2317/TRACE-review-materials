@@ -1,0 +1,11 @@
+[2026-07-06 08:13:12] Writing outputs to <PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics
+[2026-07-06 08:13:12] Loading antecedent outputs from Tasks 01 and 02
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 758, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 707, in main
+    require_columns(segment_activation, required_post_merge, 'segment_activation_post_merge')
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 56, in require_columns
+    raise ValueError(f'{df_name} missing required columns: {missing}')
+ValueError: segment_activation_post_merge missing required columns: ['start_x_km', 'start_y_km', 'end_x_km', 'end_y_km']
+

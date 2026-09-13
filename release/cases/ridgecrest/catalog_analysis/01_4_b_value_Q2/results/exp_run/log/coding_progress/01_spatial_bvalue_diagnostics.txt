@@ -1,0 +1,23 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_spatial_bvalue_diagnostics
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 2643.506
+Started at: 2026-07-06T15:29:04.184379+00:00
+Finished at: 2026-07-06T16:13:07.690815+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_spatial_bvalue_diagnostics/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_spatial_bvalue_diagnostics.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_spatial_bvalue_diagnostics.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-06T16:13:07.690704+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=55.031, coding_agent_sec=169.113, preflight_sec=0.494, result_check_sec=131.003, script_execution_sec=2099.078, task_analysis_sec=187.791, total_sec=2643.506
+Coding plan context: mode=full_experiment_plan, original_chars=20479, compact_chars=20479
+Coding tool usage: total=9, read_file=3, unique_files=1, used_retrieve=True, tools={'python_executor': 2, 'retrieve_catalog_statistics_document_of_seismostats': 1, 'write_file': 1, 'read_file': 3, 'apply_diff': 2}
+Script stall: No new script log progress for 600s across 10 heartbeat(s).
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

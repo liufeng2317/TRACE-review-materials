@@ -1,0 +1,65 @@
+Loading catalog: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/intermainshock_catalog_clean.csv
+Loading mainshocks: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/mainshock_reference_table.csv
+Loading faults: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/fault_segments_table.csv
+Loading morphology intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_morphology_1h.csv
+Loading hotspot metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_metrics.csv
+Selected fixed alpha parameter (inverse length units): 0.00272883 1/m from radius 366.46 m
+Computing interval geometries in parallel with n_jobs=34
+[Parallel(n_jobs=34)]: Using backend LokyBackend with 34 concurrent workers.
+Processing geometry for morphology_1h_33: events=118, start=2019-07-06T01:33:49.040000+00:00, end=2019-07-06T02:33:49.040000+00:00
+Processing geometry for morphology_1h_07: events=137, start=2019-07-04T23:33:49.040000+00:00, end=2019-07-05T00:33:49.040000+00:00
+Processing geometry for morphology_1h_28: events=141, start=2019-07-05T20:33:49.040000+00:00, end=2019-07-05T21:33:49.040000+00:00
+Processing geometry for morphology_1h_21: events=135, start=2019-07-05T13:33:49.040000+00:00, end=2019-07-05T14:33:49.040000+00:00
+Processing geometry for morphology_1h_24: events=152, start=2019-07-05T16:33:49.040000+00:00, end=2019-07-05T17:33:49.040000+00:00
+Processing geometry for morphology_1h_30: events=135, start=2019-07-05T22:33:49.040000+00:00, end=2019-07-05T23:33:49.040000+00:00
+Processing geometry for morphology_1h_27: events=142, start=2019-07-05T19:33:49.040000+00:00, end=2019-07-05T20:33:49.040000+00:00
+Processing geometry for morphology_1h_26: events=141, start=2019-07-05T18:33:49.040000+00:00, end=2019-07-05T19:33:49.040000+00:00
+Processing geometry for morphology_1h_13: events=131, start=2019-07-05T05:33:49.040000+00:00, end=2019-07-05T06:33:49.040000+00:00
+Processing geometry for morphology_1h_20: events=149, start=2019-07-05T12:33:49.040000+00:00, end=2019-07-05T13:33:49.040000+00:00
+Processing geometry for morphology_1h_22: events=148, start=2019-07-05T14:33:49.040000+00:00, end=2019-07-05T15:33:49.040000+00:00
+Processing geometry for morphology_1h_18: events=137, start=2019-07-05T10:33:49.040000+00:00, end=2019-07-05T11:33:49.040000+00:00
+Processing geometry for morphology_1h_08: events=147, start=2019-07-05T00:33:49.040000+00:00, end=2019-07-05T01:33:49.040000+00:00
+Processing geometry for morphology_1h_10: events=152, start=2019-07-05T02:33:49.040000+00:00, end=2019-07-05T03:33:49.040000+00:00
+[Parallel(n_jobs=34)]: Done   3 out of  34 | elapsed:   25.7s remaining:  4.4min
+Processing geometry for morphology_1h_11: events=138, start=2019-07-05T03:33:49.040000+00:00, end=2019-07-05T04:33:49.040000+00:00
+Processing geometry for morphology_1h_29: events=144, start=2019-07-05T21:33:49.040000+00:00, end=2019-07-05T22:33:49.040000+00:00
+Processing geometry for morphology_1h_12: events=149, start=2019-07-05T04:33:49.040000+00:00, end=2019-07-05T05:33:49.040000+00:00
+Processing geometry for morphology_1h_32: events=113, start=2019-07-06T00:33:49.040000+00:00, end=2019-07-06T01:33:49.040000+00:00
+[Parallel(n_jobs=34)]: Done   7 out of  34 | elapsed:   25.7s remaining:  1.6min
+Processing geometry for morphology_1h_23: events=162, start=2019-07-05T15:33:49.040000+00:00, end=2019-07-05T16:33:49.040000+00:00
+Processing geometry for morphology_1h_25: events=146, start=2019-07-05T17:33:49.040000+00:00, end=2019-07-05T18:33:49.040000+00:00
+Processing geometry for morphology_1h_14: events=149, start=2019-07-05T06:33:49.040000+00:00, end=2019-07-05T07:33:49.040000+00:00
+Processing geometry for morphology_1h_31: events=116, start=2019-07-05T23:33:49.040000+00:00, end=2019-07-06T00:33:49.040000+00:00
+Processing geometry for morphology_1h_06: events=138, start=2019-07-04T22:33:49.040000+00:00, end=2019-07-04T23:33:49.040000+00:00
+[Parallel(n_jobs=34)]: Done  11 out of  34 | elapsed:   25.7s remaining:   53.7s
+Processing geometry for morphology_1h_03: events=147, start=2019-07-04T19:33:49.040000+00:00, end=2019-07-04T20:33:49.040000+00:00
+Processing geometry for morphology_1h_34: events=96, start=2019-07-06T02:33:49.040000+00:00, end=2019-07-06T03:19:53.040000+00:00
+Processing geometry for morphology_1h_02: events=130, start=2019-07-04T18:33:49.040000+00:00, end=2019-07-04T19:33:49.040000+00:00
+Processing geometry for morphology_1h_15: events=142, start=2019-07-05T07:33:49.040000+00:00, end=2019-07-05T08:33:49.040000+00:00
+Processing geometry for morphology_1h_17: events=139, start=2019-07-05T09:33:49.040000+00:00, end=2019-07-05T10:33:49.040000+00:00
+Processing geometry for morphology_1h_16: events=141, start=2019-07-05T08:33:49.040000+00:00, end=2019-07-05T09:33:49.040000+00:00
+[Parallel(n_jobs=34)]: Done  15 out of  34 | elapsed:   25.7s remaining:   32.5s
+Processing geometry for morphology_1h_09: events=139, start=2019-07-05T01:33:49.040000+00:00, end=2019-07-05T02:33:49.040000+00:00
+Processing geometry for morphology_1h_19: events=157, start=2019-07-05T11:33:49.040000+00:00, end=2019-07-05T12:33:49.040000+00:00
+Processing geometry for morphology_1h_04: events=135, start=2019-07-04T20:33:49.040000+00:00, end=2019-07-04T21:33:49.040000+00:00
+Processing geometry for morphology_1h_01: events=138, start=2019-07-04T17:33:49.040000+00:00, end=2019-07-04T18:33:49.040000+00:00
+Processing geometry for morphology_1h_05: events=132, start=2019-07-04T21:33:49.040000+00:00, end=2019-07-04T22:33:49.040000+00:00
+[Parallel(n_jobs=34)]: Done  19 out of  34 | elapsed:   25.7s remaining:   20.3s
+[Parallel(n_jobs=34)]: Done  23 out of  34 | elapsed:   25.7s remaining:   12.3s
+[Parallel(n_jobs=34)]: Done  27 out of  34 | elapsed:   25.7s remaining:    6.7s
+[Parallel(n_jobs=34)]: Done  31 out of  34 | elapsed:   25.7s remaining:    2.5s
+[Parallel(n_jobs=34)]: Done  34 out of  34 | elapsed:   25.7s finished
+Saved morphology metrics and boundary tables.
+<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py:632: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  cmap = cm.get_cmap(CMAP_NAME)
+<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py:600: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  sm = cm.ScalarMappable(norm=norm, cmap=cm.get_cmap(CMAP_NAME))
+Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/convex_hull_evolution.png
+<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py:632: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  cmap = cm.get_cmap(CMAP_NAME)
+<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py:600: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  sm = cm.ScalarMappable(norm=norm, cmap=cm.get_cmap(CMAP_NAME))
+Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/alpha_shape_evolution.png
+Saved synthesis tables.
+Saved validation manifest and output inventory.
+03_morphology_and_synthesis completed successfully.

@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Full-window observational Ridgecrest catalog relocation using PAL_HypoDD requires data harmonization, PAL-format phase conversion, HypoDD execution, merged-output validation, and comparative statistical plotting, but the time window and data sources are limited and likely fit one primary workflow.",
+  "data_source_count": 4,
+  "workflow_risk": "medium: success depends on correct PAL_HypoDD phase-format handling, station-code consistency, executable paths, and non-empty mk_pha/ph2dt/HypoDD outputs.",
+  "expected_script_count": 2
+}

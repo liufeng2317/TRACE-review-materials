@@ -1,0 +1,37 @@
+{
+  "comparison_figures_ok": true,
+  "cross_reference_complete": true,
+  "cross_reference_expected_rows": 79,
+  "cross_reference_rows": 79,
+  "overall_success": true,
+  "page_family_checks": [
+    {
+      "all_pages_exist": true,
+      "all_pages_nonempty": true,
+      "label": "whole_sequence_2h",
+      "page_count_match": true,
+      "pages_actual": 4,
+      "pages_expected": 4
+    },
+    {
+      "all_pages_exist": true,
+      "all_pages_nonempty": true,
+      "label": "whole_sequence_6h",
+      "page_count_match": true,
+      "pages_actual": 2,
+      "pages_expected": 2
+    },
+    {
+      "all_pages_exist": true,
+      "all_pages_nonempty": true,
+      "label": "post64_hourly",
+      "page_count_match": true,
+      "pages_actual": 5,
+      "pages_expected": 5
+    }
+  ],
+  "panels_per_page": 8,
+  "post64_hourly_windows": 34,
+  "whole_sequence_2h_windows": 29,
+  "whole_sequence_6h_windows": 16
+}

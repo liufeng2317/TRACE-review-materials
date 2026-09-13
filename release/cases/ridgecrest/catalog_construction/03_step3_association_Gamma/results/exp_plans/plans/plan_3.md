@@ -1,0 +1,214 @@
+# Goal
+Associate daily PhaseNet P/S picks with GaMMA, locate earthquakes for 2019-07-04 to 2019-07-05, estimate event magnitudes from the provided Wood–Anderson waveform archive, and produce per-day paired phase/event files plus diagnostic visualizations.
+
+## Planning Assumptions
+- Observation data are sufficient and should be used exclusively: daily pick CSVs, station metadata, and preprocessed Wood–Anderson MiniSEED files.
+- GaMMA package contract from retrieved documentation/examples:
+  - Main entry point is `gamma.utils.association(picks, stations, config, event_idx0, method)`.
+  - Input picks must be mapped to columns `id`, `timestamp`, `type`, `prob`, `amp`.
+  - Input stations must include `id`, geographic coordinates, and projected `x(km)`, `y(km)`, `z(km)`.
+  - Key outputs are `events` and `assignments`, where assignments link original pick indices to `event_index`.
+  - Config should include projection-derived bounds, `dims`, velocity/eikonal settings, DBSCAN controls, post-association quality thresholds, and `ncpu`.
+- The user explicitly requires:
+  - explicit date range in script: 2019-07-04 to 2019-07-26, processing only two daily files (20190704, 20190705);
+  - all times handled and written as `obspy.UTCDateTime`-compatible ISO strings, not UNIX timestamps;
+  - up to 64 cores for association, location, and magnitude estimation;
+  - output files `phase_YYYYMMDD.dat` and `catalog_YYYYMMDD.dat` rewritten after final magnitude estimation.
+- `station.sta` has no header; first fields are `station_id, latitude, longitude, elevation, <extra_field>`. The undocumented fifth field should not be used unless verified.
+- Wood–Anderson waveforms are already detrended, tapered, response-removed to displacement, and simulated to Wood–Anderson; no additional instrument correction should be planned.
+- The amplitude needed in final `phase_YYYYMMDD.dat` is the S-phase amplitude paired to the assigned event-station pick record, using fallback logic requested by the user.
+- GaMMA’s reported magnitude should be treated as provisional only; final event magnitude comes from waveform-based postprocessing.
+
+## Analysis Plan
+
+### Task 1: Build a single end-to-end daily GaMMA association and relocation workflow script
+- Task description:
+  - Create one primary task script that loops explicitly over `20190704` through `20190725`, reads picks and stations, configures GaMMA, runs association/location in parallel, joins assignments back to picks, and writes intermediate daily event-pick linkage products for downstream magnitude estimation.
+- Required data sources:
+  - `01_phasenet_phase_picking`
+  - `picks_YYYYMMDD.csv`
+  - `station.sta`
+- Parameter selection strategy:
+  - Date loop fixed to `all daily windows from 20190704 through 20190725`.
+  - Read `picks_YYYYMMDD.csv` for each day and rename fields to GaMMA contract:
+    - `station_id -> id`
+    - phase time column -> `timestamp`
+    - phase type column -> `type`
+    - confidence score column -> `prob`
+    - pick amplitude column -> `amp`
+  - Parse station table from `station.sta` with explicit column names:
+    - `id`, `latitude`, `longitude`, `elevation_m`, `extra`
+  - Compute map center from station median longitude/latitude.
+  - Project station coordinates to local Cartesian coordinates using azimuthal equidistant projection centered on the station median.
+  - Set `z(km) = -elevation_m / 1000` for stations.
+  - Derive geographic and projected bounds from station coordinates:
+    - longitude/latitude ranges from station min/max;
+    - projected `x(km)`/`y(km)` limits from those geographic bounds;
+    - depth range fixed to `[0, 30]` km.
+  - Use user-specified 1-D velocity model:
+    - `z = [0.0, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0]`
+    - `p = [4.96, 5.14, 5.45, 6.07, 6.12, 6.24, 7.12]`
+    - `s = [v / 1.73 for v in p]`
+  - Configure GaMMA:
+    - `method = "BGMM"`
+    - `use_dbscan = True`
+    - `use_amplitude = True` for association only if daily picks contain usable amplitudes; otherwise retain picks and document amplitude incompleteness check in output summary
+    - `dims = ["x(km)", "y(km)", "z(km)"]`
+    - `z(km) = (0, 30)`
+    - `eikonal = {vel, h, xlim, ylim, zlim}` with `h = 1.0`
+    - `ncpu = min(64, available_cores)`
+    - start from example-consistent quality thresholds unless daily results indicate empty output:
+      - `min_picks_per_eq = 5`
+      - `min_p_picks_per_eq = 0`
+      - `min_s_picks_per_eq = 0`
+      - `max_sigma11 = 3.0`
+      - `max_sigma22 = 1.0`
+      - `max_sigma12 = 1.0`
+    - DBSCAN parameters initialized from GaMMA example pattern:
+      - `dbscan_min_samples = 3`
+      - `dbscan_eps` estimated from station spacing / P velocity if supported, otherwise use example-compatible fixed value and record it in run summary
+      - `dbscan_min_cluster_size` selected to avoid excessive fragmentation for one-day pick volume
+      - `dbscan_max_time_space_ratio = 5`
+- Constraints:
+  - Must preserve original pick index before association so GaMMA assignments can be joined back exactly.
+  - Must keep times as ISO timestamps compatible with `obspy.UTCDateTime`.
+  - Must show progress by day and by major stage: read, preprocess, associate, export.
+  - Successful completion requires non-empty merged event-assignment outputs for a day when input picks are non-empty; config-only or diagnostic-only output is not sufficient.
+- Key outputs:
+  - Daily intermediate GaMMA event table with origin time, projected location, lon/lat/depth, provisional magnitude, residual metrics, and event index.
+  - Daily pick-assignment table with original pick attributes plus assigned `event_index` and GaMMA score.
+  - Compact daily processing summary table/JSON with input pick counts, associated pick counts, event counts, and configuration actually used.
+
+### Task 2: Reformat GaMMA outputs into paired daily phase/event products
+- Task description:
+  - Convert daily event and assignment results into the user-required `phase_YYYYMMDD.dat` and `catalog_YYYYMMDD.dat` structures, preserving event-to-phase pairing and station-wise P/S consolidation.
+- Required data sources:
+  - Outputs from Task 1
+  - `picks_YYYYMMDD.csv` fields after assignment join
+- Parameter selection strategy:
+  - For each `event_index`, group associated picks by station.
+  - Build one station-phase row per event-station pair with fields:
+    - `net.sta`
+    - `p_pick_time`
+    - `s_pick_time`
+    - `s_amplitude`
+  - Extract `net.sta` directly from pick/station identifiers; if picks already use `network.station`, preserve that exact identifier.
+  - Pairing logic per event-station:
+    - if P exists, write P time; else `-1`
+    - if S exists, write S time; else `-1`
+    - amplitude field:
+      - if both P and S are absent, set `-1.0`
+      - else use S amplitude when available
+      - otherwise use P amplitude
+  - Event header line per event:
+    - `event_origin_time, event_latitude, event_longitude, event_depth, event_magnitude`
+  - `catalog_YYYYMMDD.dat` contains only event header lines, one per event.
+  - Sort events by origin time ascending; sort station-phase lines within each event by station identifier for reproducibility.
+- Constraints:
+  - Phase rows must be written immediately after their parent event header in `phase_YYYYMMDD.dat`.
+  - Only picks assigned to the same `event_index` may be paired under that event.
+  - Do not mix picks from different events or days.
+  - Use the provisional GaMMA magnitude at this stage only for the intermediate write; these files must be rewritten in Task 3 after final magnitude estimation.
+- Key outputs:
+  - Intermediate `phase_20190704.dat`, `catalog_20190704.dat`
+  - Intermediate `phase_20190705.dat`, `catalog_20190705.dat`
+  - Validation table listing, for each event, number of associated stations, P-only/S-only/PS-paired station counts, and any duplicate station-phase conflicts resolved.
+
+### Task 3: Estimate final event magnitudes from Wood–Anderson waveforms and rewrite daily products
+- Task description:
+  - For each associated event, retrieve station waveform amplitudes around assigned S arrivals from the processed Wood–Anderson MiniSEED files, compute per-station local magnitude measurements, combine them into event magnitude, and rewrite the daily phase and catalog files with corrected magnitudes.
+- Required data sources:
+  - `magnitude_wood_anderson`
+  - Outputs from Task 2
+  - `station.sta`
+- Parameter selection strategy:
+  - Match daily waveform directory by date (`20190704` through `20190725`).
+  - Read per-station 24-hour MiniSEED files named `{network}.{station}.{start}.{end}.mseed`.
+  - For each event-station pair:
+    - prefer S pick time as the target amplitude time;
+    - if S pick missing but P exists, retain the requested fallback amplitude logic for file output, but do not treat P-based amplitude as equivalent to S for scientific magnitude estimation without recording it as fallback usage;
+    - extract a short waveform window centered on the assigned S pick for amplitude measurement from the Wood–Anderson trace;
+    - measure peak absolute Wood–Anderson amplitude in the S-phase window and store station amplitude used for magnitude.
+  - Compute hypocentral or epicentral distance from final event location and station coordinates using the event lat/lon/depth and station lat/lon/elevation.
+  - Estimate station local magnitude with a documented Wood–Anderson local-magnitude relation chosen consistently for all stations; if no region-specific Ridgecrest relation is supplied by the user, use one standard Wood–Anderson ML relation and record the exact formula in the machine-readable run summary for traceability.
+  - Aggregate event magnitude from station magnitudes using a robust central estimator:
+    - median preferred;
+    - also save mean, standard deviation, and number of contributing stations.
+  - Replace provisional GaMMA event magnitude with final event magnitude in:
+    - event header lines of `phase_YYYYMMDD.dat`
+    - rows of `catalog_YYYYMMDD.dat`
+- Constraints:
+  - Use the already processed Wood–Anderson waveforms directly; no new response removal or WA simulation.
+  - Magnitude estimation must run in parallel across events/stations up to 64 cores.
+  - Events lacking enough valid station amplitudes should still be retained, with magnitude fallback rule explicitly recorded:
+    - if no valid waveform-derived magnitude is available, keep provisional magnitude or mark missing according to downstream requirement, but the choice must be consistent and logged.
+  - Rewritten daily outputs are the final deliverables; intermediate versions are not final success evidence.
+- Key outputs:
+  - Final rewritten `phase_20190704.dat`, `catalog_20190704.dat`
+  - Final rewritten `phase_20190705.dat`, `catalog_20190705.dat`
+  - Per-event magnitude summary table with event ID, origin time, final magnitude, contributing station count, amplitude-fallback count, median/mean/std of station magnitudes.
+  - Per-station magnitude measurement table with event ID, station ID, P time, S time, measured WA amplitude, source waveform file, source distance, station magnitude, and fallback flags.
+
+### Task 4: Validate scientific consistency of association, location, and magnitude outputs
+- Task description:
+  - Perform merged-output checks to confirm that daily associations, locations, and magnitudes are physically and structurally consistent before accepting the run.
+- Required data sources:
+  - Outputs from Tasks 1–3
+  - `station.sta`
+- Parameter selection strategy:
+  - Check per day:
+    - input picks > associated picks > 0 where possible;
+    - all final event times fall within the target day window;
+    - all event depths are within `[0, 30]` km;
+    - all event lat/lon lie within or near the station-derived geographic bounds;
+    - every phase block begins with one event header and contains only that event’s stations;
+    - all `catalog_YYYYMMDD.dat` events appear in `phase_YYYYMMDD.dat`.
+  - Check magnitude consistency:
+    - final event magnitude exists for most events with adequate associated S picks;
+    - station amplitude source and event-station assignment are one-to-one after conflict resolution.
+  - Produce failure evidence if any day yields empty catalog despite non-empty usable inputs:
+    - daily pick count by type
+    - number of stations with picks
+    - GaMMA config snapshot
+    - count of events before and after post-filtering
+- Constraints:
+  - Validation must occur after per-day outputs are merged into their final scientific products.
+  - Empty or malformed final files do not count as successful completion.
+- Key outputs:
+  - Validation summary CSV/JSON per day.
+  - Exception/diagnostic log listing problematic events, duplicate station picks, missing waveform files, and magnitude estimation failures.
+
+### Task 5: Generate required visualizations
+- Task description:
+  - Produce one association-case figure, one event-location figure, and one event-location statistical figure from the final validated outputs.
+- Required data sources:
+  - Final outputs from Tasks 1–4
+  - `station.sta`
+  - One representative event/day from final associated dataset
+- Parameter selection strategy:
+  - Association result figure:
+    - choose one representative event with multiple associated P and S picks and valid final magnitude;
+    - plot pick times by station and phase, highlighting which picks were assigned to that event and showing the event origin time reference.
+  - Event location result figure:
+    - map view of final event epicenters over station locations;
+    - color or symbol encode depth or final magnitude;
+    - if useful, add a cross-section panel for depth distribution.
+  - Event location statistical figure:
+    - histograms or summary plots of event counts versus time, depth, magnitude, and/or number of associated picks;
+    - include at least one statistic directly tied to location quality, such as pick count per event or GaMMA timing uncertainty distribution.
+- Constraints:
+  - Use final rewritten magnitudes and final locations, not provisional values.
+  - One association-case figure is sufficient, but it must correspond to a real event in the final outputs.
+  - Figures must be reproducible from saved final tables, not manual inspection.
+- Key outputs:
+  - One association-case diagnostic figure.
+  - One final event-location figure.
+  - One event-location statistical summary figure.
+  - Optional figure metadata table identifying the source event/day and data filters used.
+
+### Task dependency flow
+- Task 1 produces daily GaMMA events and assignments.
+- Task 2 consumes Task 1 outputs to build paired daily phase/catalog files.
+- Task 3 consumes Task 2 pairings plus Wood–Anderson waveforms to compute final magnitudes and rewrite the daily deliverables.
+- Task 4 validates the merged final scientific outputs from Tasks 1–3.
+- Task 5 visualizes the final validated outputs from Tasks 3–4.

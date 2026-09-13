@@ -1,0 +1,21 @@
+{
+  "missing_sections": [],
+  "passed": true,
+  "present_sections": [
+    "Scientific Purpose",
+    "Method and Implementation Evidence",
+    "Key Results and Evidence Files",
+    "Limitations and Assumptions",
+    "Report-Ready Summary"
+  ],
+  "required_sections": [
+    "Scientific Purpose",
+    "Method and Implementation Evidence",
+    "Key Results and Evidence Files",
+    "Limitations and Assumptions",
+    "Report-Ready Summary"
+  ],
+  "schema_version": 1,
+  "summary_type": "task_analysis_quality",
+  "task_name": "02_temporal_rate_energy_changepoints"
+}

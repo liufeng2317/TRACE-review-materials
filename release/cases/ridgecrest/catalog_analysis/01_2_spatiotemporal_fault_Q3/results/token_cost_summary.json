@@ -1,0 +1,77 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2692,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 48115,
+      "output_tokens": 11239
+    },
+    "Planing": {
+      "input_tokens": 32165,
+      "output_tokens": 7647
+    },
+    "Plan Merging": {
+      "input_tokens": 17909,
+      "output_tokens": 3822
+    },
+    "Workflow Agent": {
+      "input_tokens": 62019,
+      "output_tokens": 8467
+    },
+    "Coding Agent (01_reference_framework)": {
+      "input_tokens": 100928,
+      "output_tokens": 6192
+    },
+    "Result Check Agent (01_reference_framework)": {
+      "input_tokens": 27792,
+      "output_tokens": 1470
+    },
+    "Task Analysis Agent (01_reference_framework)": {
+      "input_tokens": 41617,
+      "output_tokens": 4688
+    },
+    "Coding Agent (02_kde_migration_analysis)": {
+      "input_tokens": 392484,
+      "output_tokens": 14148
+    },
+    "Result Check Agent (02_kde_migration_analysis)": {
+      "input_tokens": 79060,
+      "output_tokens": 2933
+    },
+    "Task Analysis Agent (02_kde_migration_analysis)": {
+      "input_tokens": 61951,
+      "output_tokens": 6438
+    },
+    "Coding Agent (03_morphology_and_synthesis)": {
+      "input_tokens": 352523,
+      "output_tokens": 13990
+    },
+    "Result Check Agent (03_morphology_and_synthesis)": {
+      "input_tokens": 43400,
+      "output_tokens": 1296
+    },
+    "Task Analysis Agent (03_morphology_and_synthesis)": {
+      "input_tokens": 61906,
+      "output_tokens": 6483
+    },
+    "Evaluation": {
+      "input_tokens": 24806,
+      "output_tokens": 835
+    },
+    "Report Synthesis": {
+      "input_tokens": 63414,
+      "output_tokens": 9616
+    }
+  },
+  "total": {
+    "input_tokens": 1412781,
+    "output_tokens": 99279,
+    "total_tokens": 1512060
+  }
+}

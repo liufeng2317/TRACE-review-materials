@@ -1,0 +1,77 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2786,
+      "output_tokens": 17
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 48545,
+      "output_tokens": 11459
+    },
+    "Planing": {
+      "input_tokens": 54249,
+      "output_tokens": 16314
+    },
+    "Plan Merging": {
+      "input_tokens": 26701,
+      "output_tokens": 4390
+    },
+    "Workflow Agent": {
+      "input_tokens": 32538,
+      "output_tokens": 5586
+    },
+    "Coding Agent (01_grid_onset_analysis)": {
+      "input_tokens": 313499,
+      "output_tokens": 16113
+    },
+    "Result Check Agent (01_grid_onset_analysis)": {
+      "input_tokens": 26554,
+      "output_tokens": 1631
+    },
+    "Task Analysis Agent (01_grid_onset_analysis)": {
+      "input_tokens": 66815,
+      "output_tokens": 8943
+    },
+    "Coding Agent (02_fault_segment_activation)": {
+      "input_tokens": 721663,
+      "output_tokens": 20508
+    },
+    "Result Check Agent (02_fault_segment_activation)": {
+      "input_tokens": 93338,
+      "output_tokens": 3483
+    },
+    "Task Analysis Agent (02_fault_segment_activation)": {
+      "input_tokens": 70420,
+      "output_tokens": 8933
+    },
+    "Coding Agent (03_triggering_style_diagnostics)": {
+      "input_tokens": 830782,
+      "output_tokens": 17359
+    },
+    "Result Check Agent (03_triggering_style_diagnostics)": {
+      "input_tokens": 75325,
+      "output_tokens": 1862
+    },
+    "Task Analysis Agent (03_triggering_style_diagnostics)": {
+      "input_tokens": 48726,
+      "output_tokens": 7485
+    },
+    "Evaluation": {
+      "input_tokens": 30903,
+      "output_tokens": 999
+    },
+    "Report Synthesis": {
+      "input_tokens": 67156,
+      "output_tokens": 8437
+    }
+  },
+  "total": {
+    "input_tokens": 2510000,
+    "output_tokens": 133519,
+    "total_tokens": 2643519
+  }
+}

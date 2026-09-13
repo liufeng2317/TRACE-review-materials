@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 03_triggering_style_diagnostics
+Status: success
+Execution stage: analysis_done
+Debug rounds: 5
+Result check rounds: 1
+Elapsed seconds: 759.522
+Started at: 2026-07-06T00:06:15.831665+00:00
+Finished at: 2026-07-06T00:18:55.353680+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/03_triggering_style_diagnostics.md
+Runtime action: pass
+Code changes: 5
+Last activity: 2026-07-06T00:18:55.353536+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=9.617, coding_agent_sec=348.524, preflight_sec=2.109, result_check_sec=126.837, script_execution_sec=132.894, task_analysis_sec=131.657, total_sec=759.522
+Coding plan context: mode=full_experiment_plan, original_chars=19700, compact_chars=19700
+Coding tool usage: total=16, read_file=2, unique_files=2, used_retrieve=False, tools={'read_file': 2, 'bash_executor': 2, 'python_executor': 6, 'write_file': 1, 'apply_diff': 5}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

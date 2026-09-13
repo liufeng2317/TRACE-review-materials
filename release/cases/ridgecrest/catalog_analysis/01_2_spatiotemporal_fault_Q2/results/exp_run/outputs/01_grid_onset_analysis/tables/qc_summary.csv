@@ -1,0 +1,25 @@
+category,metric,value
+catalog,input_rows,84474
+catalog,missing_required_rows,0
+catalog,duplicate_rows_removed,0
+catalog,invalid_numeric_rows,0
+catalog,invalid_time_rows,0
+catalog,retained_rows,84474
+mainshock_table,input_rows,2
+mainshock_table,missing_required_rows,0
+mainshock_table,duplicate_rows_removed,0
+mainshock_table,invalid_numeric_rows,0
+mainshock_table,invalid_time_rows,0
+mainshock_table,retained_rows,2
+faults,input_fault_polylines,17792
+faults,invalid_fault_polylines,0
+faults,too_short_fault_polylines,16815
+faults,retained_fault_polylines,977
+filtering,catalog_total_events,84474
+filtering,time_window_events,4716
+filtering,spatial_window_events,75031
+filtering,final_spatiotemporal_events,4713
+filtering,t0_utc,2019-07-04 17:33:49.040000+00:00
+filtering,t1_utc,2019-07-06 03:19:53.040000+00:00
+filtering,window_duration_minutes,2026.0666666666666
+filtering,window_duration_hours,33.76777777777778

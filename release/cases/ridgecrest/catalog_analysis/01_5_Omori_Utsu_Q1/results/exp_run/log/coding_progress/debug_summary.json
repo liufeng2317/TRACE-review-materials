@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-07-07T02:30:09.882639+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 2
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 2,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_domain_preparation.md",
+      "code_change_count": 3,
+      "debug_attempt_count": 3,
+      "debug_round": 3,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 13,
+        "coding_response_summary": "Fixed the remaining blocking error.\n\nRoot cause:\n- The user specification defines north/south by exact latitude comparison:\n  - north: events with `latitude > 35.72`\n  - south: events with `latitude < 35.72`\n- My previous patch introduced an `on_split` exclusion using `np.isclose`, which incorrectly...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 16298,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 16420,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 3,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "01_domain_preparation completed successfully.",
+            "log_size_bytes": 1785,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt",
+          "message": "Outputs meet the task requirements overall. The script produced the expected event table, primary domain counts, assignment checks, metadata JSON, and a clear diagnostic figure. The interevent table contains 4,714 retained events with corridor and north/south assignment flags for the required split ...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_domain_preparation",
+          "timestamp": "2026-07-07T02:24:04.734523+00:00"
+        },
+        "script_hash_after": "b0e495df685ea9a6d3b9a671e6108ef507a1550220a5edef428a75a0b2994a92",
+        "script_hash_before": "16a466dfa74c4844f8c4bd70144c914a63863f4e6aa0af82b676ef246ed044b1",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py",
+        "task_name": "01_domain_preparation",
+        "timestamp": "2026-07-07T02:21:55.498467+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "01_domain_preparation completed successfully.",
+          "log_size_bytes": 1785,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt",
+        "message": "Outputs meet the task requirements overall. The script produced the expected event table, primary domain counts, assignment checks, metadata JSON, and a clear diagnostic figure. The interevent table contains 4,714 retained events with corridor and north/south assignment flags for the required split ...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_domain_preparation",
+        "timestamp": "2026-07-07T02:24:04.734523+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_domain_preparation.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_domain_preparation"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/02_omori_fitting_and_figures.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 730,
+        "coding_response_summary": "Implemented `/.../scripts/02_omori_fitting_and_figures.py`.\n\nWhat changed:\n- Added primary cumulative pure power-law Omori fitting for:\n  - Entire area\n  - Northern area\n  - Southern area\n- Used MLE for `lambda(t)=K*t^(-p)` with explicit lower bound `t_min = first event time in window`.\n- Added fit ...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 33408,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "02_omori_fitting_and_figures completed successfully.",
+            "log_size_bytes": 4967,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt",
+          "message": "Results meet the task requirements. The expected primary tables, bootstrap summary, merged results, split-sensitivity results, comparison table, and both required figures were produced. Output tables are populated with reasonable values across all 27 primary windows and 54 split-sensitivity rows, an...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "02_omori_fitting_and_figures",
+          "timestamp": "2026-07-07T02:28:27.305344+00:00"
+        },
+        "script_hash_after": "c47d7217f201a4f4b32ac0a93bfa64744a0da67d5af015602c5e415f2322a8a4",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py",
+        "task_name": "02_omori_fitting_and_figures",
+        "timestamp": "2026-07-07T02:27:01.317141+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "02_omori_fitting_and_figures completed successfully.",
+          "log_size_bytes": 4967,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt",
+        "message": "Results meet the task requirements. The expected primary tables, bootstrap summary, merged results, split-sensitivity results, comparison table, and both required figures were produced. Output tables are populated with reasonable values across all 27 primary windows and 54 split-sensitivity rows, an...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "02_omori_fitting_and_figures",
+        "timestamp": "2026-07-07T02:28:27.305344+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/02_omori_fitting_and_figures.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "02_omori_fitting_and_figures"
+    }
+  ]
+}

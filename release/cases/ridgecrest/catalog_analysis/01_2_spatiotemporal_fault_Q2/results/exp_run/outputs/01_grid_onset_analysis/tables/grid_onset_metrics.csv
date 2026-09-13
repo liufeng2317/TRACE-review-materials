@@ -1,0 +1,11 @@
+metric,value,denominator_occupied_cells,numerator_activated_cells
+fraction_activated_within_30_minutes,0.0449438202247191,445,20
+fraction_activated_within_60_minutes,0.060674157303370786,445,27
+fraction_activated_within_120_minutes,0.07191011235955057,445,32
+fraction_activated_within_240_minutes,0.09438202247191012,445,42
+onset_time_quantile_q01_hours,0.0,445,104
+onset_time_quantile_q025_hours,1.0,445,104
+onset_time_quantile_q05_hours,6.25,445,104
+onset_time_quantile_q075_hours,12.625,445,104
+onset_time_quantile_q09_hours,20.85,445,104
+spearman_onset_vs_distance_to_mw64,0.5049181542467573,445,104

@@ -1,0 +1,103 @@
+{
+  "generated_at": "2026-07-05T08:46:03.458039+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 1,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_spatiotemporal_evolution.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 699,
+        "coding_response_summary": "Done — I wrote the task script at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py`\n\nWhat it does:\n- Reads and cleans the Ridgecrest relocated catalog...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 35672,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "Done.",
+            "log_size_bytes": 2733,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt",
+          "message": "Results meet the task requirements. The output directory contains the expected catalog, KDE, morphology, merged diagnostics, validation tables, metadata manifest, and representative figures. Tabular outputs are internally consistent: the inter-mainshock catalog has 5,206 rows, KDE summaries cover 23...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_ridgecrest_spatiotemporal_evolution",
+          "timestamp": "2026-07-05T08:43:42.661296+00:00"
+        },
+        "script_hash_after": "ec4e2ff51c8e8dbf084bd685572440798d2fa74bac2aaea5e6dd86649e3cfa69",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py",
+        "task_name": "01_ridgecrest_spatiotemporal_evolution",
+        "timestamp": "2026-07-05T08:40:46.848767+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "Done.",
+          "log_size_bytes": 2733,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt",
+        "message": "Results meet the task requirements. The output directory contains the expected catalog, KDE, morphology, merged diagnostics, validation tables, metadata manifest, and representative figures. Tabular outputs are internally consistent: the inter-mainshock catalog has 5,206 rows, KDE summaries cover 23...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_ridgecrest_spatiotemporal_evolution",
+        "timestamp": "2026-07-05T08:43:42.661296+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_spatiotemporal_evolution.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_ridgecrest_spatiotemporal_evolution"
+    }
+  ]
+}

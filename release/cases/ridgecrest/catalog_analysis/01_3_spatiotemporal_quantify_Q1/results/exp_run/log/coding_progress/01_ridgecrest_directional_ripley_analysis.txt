@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_ridgecrest_directional_ripley_analysis
+Status: success
+Execution stage: analysis_done
+Debug rounds: 3
+Result check rounds: 1
+Elapsed seconds: 933.022
+Started at: 2026-07-06T02:53:06.241941+00:00
+Finished at: 2026-07-06T03:08:39.263416+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_directional_ripley_analysis.md
+Runtime action: pass
+Code changes: 3
+Last activity: 2026-07-06T03:08:39.263305+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=29.827, coding_agent_sec=166.278, preflight_sec=1.235, result_check_sec=78.941, script_execution_sec=503.896, task_analysis_sec=150.958, total_sec=933.022
+Coding plan context: mode=full_experiment_plan, original_chars=19255, compact_chars=19255
+Coding tool usage: total=13, read_file=7, unique_files=1, used_retrieve=False, tools={'python_executor': 2, 'write_file': 1, 'read_file': 7, 'apply_diff': 3}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

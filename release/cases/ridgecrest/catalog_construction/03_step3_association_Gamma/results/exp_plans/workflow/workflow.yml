@@ -1,0 +1,301 @@
+tasks:
+- name: 01_gamma_association_location_magnitude
+  description: Run an end-to-end daily workflow that prepares stations and 
+    picks, associates phases with GaMMA, locates events, recomputes magnitudes 
+    from Wood-Anderson waveforms, rewrites final products, validates outputs, 
+    and generates QC figures.
+  script: 01_gamma_association_location_magnitude.py
+  ancestors: []
+  subtasks:
+  - name: parse_station_metadata_and_region
+    description: Read station metadata, standardize station identifiers, project
+      coordinates to kilometers, and derive the GaMMA search region.
+    inputs:
+    - station_metadata_file
+    outputs:
+    - station_table
+    - projection_model
+    - region_bounds
+    - station_qc_summary
+    params:
+      station_fields:
+      - id
+      - latitude
+      - longitude
+      - elevation_m
+      projection: azimuthal_equidistant
+      projection_center: station_median_longitude_latitude
+      depth_range_km:
+      - 0.0
+      - 30.0
+      derived_columns:
+      - x(km)
+      - y(km)
+      - z(km)
+      z_definition: negative_elevation_m_over_1000
+  - name: load_and_standardize_daily_picks
+    description: Load each daily PhaseNet pick file, map it to the GaMMA schema,
+      preserve pick indices, and validate station joins.
+    inputs:
+    - daily_pick_csv_files
+    - station_table
+    outputs:
+    - master_pick_tables_by_day
+    - gamma_pick_tables_by_day
+    - pick_qc_summary_by_day
+    params:
+      explicit_start_time: 2019-07-04T00:00:00Z
+      explicit_end_time: 2019-07-26T00:00:00Z
+      processed_day_keys:
+      - '20190704'
+      - '20190705'
+      - '20190706'
+      - '20190707'
+      - '20190708'
+      - '20190709'
+      - '20190710'
+      - '20190711'
+      - '20190712'
+      - '20190713'
+      - '20190714'
+      - '20190715'
+      - '20190716'
+      - '20190717'
+      - '20190718'
+      - '20190719'
+      - '20190720'
+      - '20190721'
+      - '20190722'
+      - '20190723'
+      - '20190724'
+      - '20190725'
+      required_pick_columns:
+      - id
+      - timestamp
+      - type
+      - prob
+      - amp
+      allowed_phase_types:
+      - P
+      - S
+      preserve_index_field: pick_index
+      amplitude_filter_strategy: 
+        use_amp_subset_if_scientifically_adequate_otherwise_disable_amplitude_in_gamma
+  - name: configure_and_run_gamma_association
+    description: Build the GaMMA configuration from the station geometry and 
+      velocity model, then run daily association and location in parallel.
+    inputs:
+    - station_table
+    - region_bounds
+    - gamma_pick_tables_by_day
+    - projection_model
+    outputs:
+    - gamma_config
+    - event_tables_by_day
+    - assignment_tables_by_day
+    - joined_pick_tables_by_day
+    - gamma_run_summary_by_day
+    params:
+      gamma_entry_point: gamma.utils.association
+      method: BGMM
+      oversample_factor: 5
+      use_dbscan: true
+      dbscan_min_samples: 3
+      dbscan_max_time_space_ratio: 5
+      dbscan_eps_strategy: 
+        estimate_from_station_geometry_or_use_15_and_record_choice
+      dbscan_min_cluster_size_strategy: 
+        choose_conservative_integer_from_daily_pick_volume_and_record_choice
+      dims:
+      - x(km)
+      - y(km)
+      - z(km)
+      depth_range_km:
+      - 0.0
+      - 30.0
+      bfgs_padding_km: 1.0
+      fallback_uniform_velocity_km_per_s:
+        p: 4.96
+        s: 2.867052023121387
+      eikonal_velocity_model:
+        z:
+        - 0.0
+        - 1.0
+        - 2.0
+        - 4.0
+        - 8.0
+        - 16.0
+        - 32.0
+        p:
+        - 4.96
+        - 5.14
+        - 5.45
+        - 6.07
+        - 6.12
+        - 6.24
+        - 7.12
+        s:
+        - 2.867052023121387
+        - 2.971098265895954
+        - 3.1502890173410405
+        - 3.508670520231214
+        - 3.5375722543352603
+        - 3.606936416184971
+        - 4.115606936416185
+      eikonal_grid_spacing_km: 1.0
+      min_picks_per_eq: 5
+      min_p_picks_per_eq: 0
+      min_s_picks_per_eq: 0
+      max_sigma11: 3.0
+      max_sigma22: 1.0
+      max_sigma12: 1.0
+      max_cores: 64
+      assignment_join_key: pick_index
+      convert_event_xy_back_to_lonlat: true
+  - name: rebuild_event_station_phase_pairs
+    description: Group assigned picks by event and station, select one P and one
+      S pick per station, and build the requested event-paired daily products.
+    inputs:
+    - event_tables_by_day
+    - joined_pick_tables_by_day
+    outputs:
+    - paired_event_station_tables_by_day
+    - preliminary_phase_files_by_day
+    - preliminary_catalog_files_by_day
+    - pairing_qc_summary_by_day
+    params:
+      station_group_key: id
+      event_group_key: event_index
+      phase_selection_rule:
+        primary: highest_probability
+        tie_breaker: earliest_pick_time
+      phase_line_fields:
+      - net_sta
+      - p_pick_time
+      - s_pick_time
+      - s_amplitude
+      phase_amplitude_rule: use_s_amplitude_else_p_amplitude_else_negative_one
+      missing_pick_time_value: '-1'
+      missing_amplitude_value: -1.0
+      event_header_fields:
+      - event_origin_time
+      - event_latitude
+      - event_longitude
+      - event_depth
+      - event_magnitude
+  - name: extract_waveform_amplitudes_and_estimate_magnitude
+    description: Measure Wood-Anderson amplitudes around associated phase times,
+      compute station magnitudes, aggregate final event magnitudes, and update 
+      phase amplitudes.
+    inputs:
+    - paired_event_station_tables_by_day
+    - station_table
+    - wood_anderson_waveform_archive
+    - event_tables_by_day
+    outputs:
+    - station_amplitude_tables_by_day
+    - station_magnitude_tables_by_day
+    - event_magnitude_tables_by_day
+    - updated_paired_event_station_tables_by_day
+    - magnitude_qc_summary_by_day
+    params:
+      waveform_time_reference_priority:
+      - s_pick_time
+      - p_pick_time
+      waveform_filename_pattern: '{network}.{station}.{start_time}.{end_time}.mseed'
+      waveform_day_folder_key: YYYYMMDD
+      amplitude_measurement_domain: wood_anderson_displacement
+      update_phase_amplitude_with_waveform_measurement: true
+      fallback_phase_amplitude_rule: 
+        use_waveform_s_amplitude_else_associated_s_amplitude_else_associated_p_amplitude_else_negative_one
+      distance_model: hypocentral_distance_from_event_station_geometry
+      event_magnitude_aggregation: median_station_magnitude
+      event_magnitude_support_metrics:
+      - contributing_station_count
+      - magnitude_spread
+      - fallback_flags
+      parallel_workers: up_to_64_or_available_cores
+      local_magnitude_formula_strategy: 
+        define_explicit_relation_in_script_metadata_and_apply_consistently
+  - name: rewrite_final_daily_products_and_validate
+    description: Rewrite final daily catalog and phase files with corrected 
+      magnitudes, validate internal consistency, and capture failure evidence.
+    inputs:
+    - event_magnitude_tables_by_day
+    - updated_paired_event_station_tables_by_day
+    - region_bounds
+    - station_table
+    outputs:
+    - final_catalog_files_by_day
+    - final_phase_files_by_day
+    - validation_summary_by_day
+    - failure_evidence_log
+    - batch_run_summary
+    params:
+      final_catalog_format:
+      - event_origin_time
+      - event_latitude
+      - event_longitude
+      - event_depth
+      - event_magnitude
+      final_phase_format:
+        event_header:
+        - event_origin_time
+        - event_latitude
+        - event_longitude
+        - event_depth
+        - event_magnitude
+        station_phase_row:
+        - net_sta
+        - p_pick_time
+        - s_pick_time
+        - s_amplitude
+      sort_events_by: origin_time
+      required_validations:
+      - pick_file_readable
+      - station_table_valid
+      - waveform_day_folder_exists
+      - assignments_join_without_index_mismatch
+      - catalog_event_count_matches_phase_headers
+      - all_phase_rows_belong_to_valid_event_block
+      - event_depth_within_bounds
+      - event_lonlat_within_or_near_region
+      - final_magnitude_consistency_across_outputs
+  - name: generate_visualizations_and_progress_outputs
+    description: Produce the requested association, location, and statistical 
+      figures and emit progress updates during processing.
+    inputs:
+    - final_catalog_files_by_day
+    - final_phase_files_by_day
+    - joined_pick_tables_by_day
+    - station_table
+    - validation_summary_by_day
+    outputs:
+    - association_case_figure
+    - event_location_figure
+    - event_location_statistics_figure
+    - progress_log
+    params:
+      association_case_selection: 
+        representative_event_with_multiple_associated_stations_and_both_phase_types_when_available
+      association_plot_content:
+      - station_vs_time_assigned_picks
+      - highlight_selected_event
+      - distinguish_P_and_S
+      location_plot_content:
+      - stations
+      - epicenters
+      - optional_depth_view_if_supported
+      statistics_plot_content:
+      - event_counts_vs_time
+      - depth_or_magnitude_distribution
+      - picks_per_event_distribution
+      progress_reporting_steps:
+      - station_parsing
+      - daily_pick_loading
+      - gamma_start_end
+      - assignment_rebuilding
+      - magnitude_extraction
+      - final_file_rewrite
+      - figure_generation
+      max_cores: 64

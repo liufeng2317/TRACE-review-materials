@@ -1,0 +1,108 @@
+Resetting output directory...
+Loading geometry metadata and event assignments...
+Using up to 64 parallel workers.
+Building cell table for Region_A...
+Region_A: post-Mw6.4 assigned events = 2789
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:   23.8s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:   23.9s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:   24.0s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:   24.1s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:   24.2s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:   24.3s
+[Parallel(n_jobs=64)]: Done 137 tasks      | elapsed:   24.4s
+[Parallel(n_jobs=64)]: Done 160 tasks      | elapsed:   24.5s
+[Parallel(n_jobs=64)]: Done 185 tasks      | elapsed:   24.6s
+[Parallel(n_jobs=64)]: Done 210 tasks      | elapsed:   24.7s
+[Parallel(n_jobs=64)]: Done 237 tasks      | elapsed:   24.8s
+[Parallel(n_jobs=64)]: Done 264 tasks      | elapsed:   24.9s
+[Parallel(n_jobs=64)]: Done 293 tasks      | elapsed:   25.0s
+[Parallel(n_jobs=64)]: Done 322 tasks      | elapsed:   25.2s
+[Parallel(n_jobs=64)]: Done 353 tasks      | elapsed:   25.3s
+[Parallel(n_jobs=64)]: Done 384 tasks      | elapsed:   25.8s
+[Parallel(n_jobs=64)]: Done 417 tasks      | elapsed:   26.0s
+[Parallel(n_jobs=64)]: Done 450 tasks      | elapsed:   26.1s
+[Parallel(n_jobs=64)]: Done 534 out of 600 | elapsed:   26.3s remaining:    3.3s
+[Parallel(n_jobs=64)]: Done 595 out of 600 | elapsed:   26.4s remaining:    0.2s
+[Parallel(n_jobs=64)]: Done 600 out of 600 | elapsed:   26.4s finished
+Building cell table for Region_B...
+Region_B: post-Mw6.4 assigned events = 2854
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Batch computation too fast (0.015155792236328125s.) Setting batch_size=2.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=64)]: Done 146 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=64)]: Done 192 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=64)]: Done 242 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=64)]: Done 292 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=64)]: Done 346 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=64)]: Done 400 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=64)]: Done 458 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=64)]: Done 516 tasks      | elapsed:    1.2s
+[Parallel(n_jobs=64)]: Done 578 tasks      | elapsed:    1.4s
+[Parallel(n_jobs=64)]: Done 640 tasks      | elapsed:    1.6s
+[Parallel(n_jobs=64)]: Done 706 tasks      | elapsed:    1.7s
+[Parallel(n_jobs=64)]: Done 772 tasks      | elapsed:    1.8s
+[Parallel(n_jobs=64)]: Done 842 tasks      | elapsed:    2.0s
+[Parallel(n_jobs=64)]: Done 912 tasks      | elapsed:    2.1s
+[Parallel(n_jobs=64)]: Done 986 tasks      | elapsed:    2.2s
+[Parallel(n_jobs=64)]: Done 1207 out of 1212 | elapsed:    2.5s remaining:    0.0s
+[Parallel(n_jobs=64)]: Done 1212 out of 1212 | elapsed:    2.5s finished
+Building neighborhood cell table for Mw6.4_neighborhood...
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Batch computation too fast (0.015419721603393555s.) Setting batch_size=2.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=64)]: Done 146 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=64)]: Done 192 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=64)]: Done 242 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=64)]: Done 292 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=64)]: Done 346 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=64)]: Done 400 tasks      | elapsed:    1.4s
+[Parallel(n_jobs=64)]: Done 458 tasks      | elapsed:    1.5s
+[Parallel(n_jobs=64)]: Done 516 tasks      | elapsed:    1.6s
+[Parallel(n_jobs=64)]: Done 578 tasks      | elapsed:    1.7s
+[Parallel(n_jobs=64)]: Done 640 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=64)]: Done 706 tasks      | elapsed:    2.0s
+[Parallel(n_jobs=64)]: Done 772 tasks      | elapsed:    2.1s
+[Parallel(n_jobs=64)]: Done 842 tasks      | elapsed:    2.2s
+[Parallel(n_jobs=64)]: Done 912 tasks      | elapsed:    2.3s
+[Parallel(n_jobs=64)]: Done 986 tasks      | elapsed:    2.4s
+[Parallel(n_jobs=64)]: Done 1060 tasks      | elapsed:    2.6s
+[Parallel(n_jobs=64)]: Done 1264 out of 1264 | elapsed:    2.8s finished
+Building neighborhood cell table for Mw7.1_neighborhood...
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Batch computation too fast (0.014077901840209961s.) Setting batch_size=2.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:    0.1s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:    0.2s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:    0.3s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=64)]: Done 146 tasks      | elapsed:    0.5s
+[Parallel(n_jobs=64)]: Done 192 tasks      | elapsed:    0.6s
+[Parallel(n_jobs=64)]: Done 242 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=64)]: Done 292 tasks      | elapsed:    0.8s
+[Parallel(n_jobs=64)]: Done 346 tasks      | elapsed:    0.9s
+[Parallel(n_jobs=64)]: Done 400 tasks      | elapsed:    1.0s
+[Parallel(n_jobs=64)]: Done 458 tasks      | elapsed:    1.2s
+[Parallel(n_jobs=64)]: Done 516 tasks      | elapsed:    1.3s
+[Parallel(n_jobs=64)]: Done 578 tasks      | elapsed:    1.5s
+[Parallel(n_jobs=64)]: Done 640 tasks      | elapsed:    1.6s
+[Parallel(n_jobs=64)]: Done 706 tasks      | elapsed:    1.8s
+[Parallel(n_jobs=64)]: Done 772 tasks      | elapsed:    1.9s
+[Parallel(n_jobs=64)]: Done 842 tasks      | elapsed:    2.0s
+[Parallel(n_jobs=64)]: Done 912 tasks      | elapsed:    2.1s
+[Parallel(n_jobs=64)]: Done 986 tasks      | elapsed:    2.3s
+[Parallel(n_jobs=64)]: Done 1060 tasks      | elapsed:    2.4s
+[Parallel(n_jobs=64)]: Done 1264 out of 1264 | elapsed:    2.7s finished
+Generating figures...
+03_gridded_activation_ordering completed successfully.

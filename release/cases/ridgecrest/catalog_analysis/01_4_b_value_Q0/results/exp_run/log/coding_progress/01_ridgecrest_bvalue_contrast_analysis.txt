@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_ridgecrest_bvalue_contrast_analysis
+Status: success
+Execution stage: analysis_done
+Debug rounds: 2
+Result check rounds: 1
+Elapsed seconds: 612.486
+Started at: 2026-07-06T14:17:38.923888+00:00
+Finished at: 2026-07-06T14:27:51.410269+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_bvalue_contrast_analysis.md
+Runtime action: pass
+Code changes: 2
+Last activity: 2026-07-06T14:27:51.410162+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=52.546, coding_agent_sec=257.265, preflight_sec=0.895, result_check_sec=76.89, script_execution_sec=44.1, task_analysis_sec=179.357, total_sec=612.486
+Coding plan context: mode=full_experiment_plan, original_chars=16939, compact_chars=16939
+Coding tool usage: total=12, read_file=3, unique_files=1, used_retrieve=False, tools={'python_executor': 6, 'write_file': 1, 'read_file': 3, 'apply_diff': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

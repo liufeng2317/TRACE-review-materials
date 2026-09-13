@@ -1,0 +1,107 @@
+{
+  "caution": "All evidence products are descriptive observations from relocated catalog spatiotemporal patterns and do not by themselves prove a physical triggering mechanism.",
+  "comparison64_change": {
+    "after_event_count": 4715,
+    "along_strike_centroid_change_km": -6.053769497140113,
+    "before_event_count": 39,
+    "centroid_shift_azimuth_deg": 190.08720814110623,
+    "centroid_shift_distance_km": 11.482667241668508,
+    "centroid_shift_dx_km": -2.011153817860577,
+    "centroid_shift_dy_km": -11.305171706072928,
+    "comparison_label": "mw64",
+    "cross_strike_centroid_change_km": 9.75722921009766,
+    "event_count_change": 4676,
+    "hotspot_shift_azimuth_deg": 223.8358073581004,
+    "hotspot_shift_distance_km": 3.160353141348601,
+    "hotspot_shift_dx_km": -2.188841962602861,
+    "hotspot_shift_dy_km": -2.279649718878062,
+    "occupied_area_change_km2": 966.177005509899,
+    "principal_axis_orientation_change_deg": 35.86973458099732
+  },
+  "comparison71_change": {
+    "after_event_count": 7641,
+    "along_strike_centroid_change_km": 13.416699511299592,
+    "before_event_count": 4715,
+    "centroid_shift_azimuth_deg": 335.9503432860567,
+    "centroid_shift_distance_km": 14.6916669413606,
+    "centroid_shift_dx_km": -5.987269105832302,
+    "centroid_shift_dy_km": 13.416321633376787,
+    "comparison_label": "mw71",
+    "cross_strike_centroid_change_km": -5.986422282078101,
+    "event_count_change": 2926,
+    "hotspot_shift_azimuth_deg": 321.529566765916,
+    "hotspot_shift_distance_km": 30.617328377487524,
+    "hotspot_shift_dx_km": -19.047367548622965,
+    "hotspot_shift_dy_km": 23.971203274816386,
+    "occupied_area_change_km2": 4110.59772868243,
+    "principal_axis_orientation_change_deg": 47.83389127375949
+  },
+  "immediate_post64_summary": {
+    "cumulative_centroid_distance_km": 35.43209657287035,
+    "distance_to_target_trend_slope_km_per_hour": -0.06817920791167935,
+    "dominant_cluster_fraction_median": 0.677382053654024,
+    "dominant_orientation_deg": 20.590346554451656,
+    "mean_centroid_step_distance_km": 1.073699896147586,
+    "median_cluster_count": 2.0,
+    "multi_cluster_window_fraction": 0.7647058823529411,
+    "n_windows_total": 34,
+    "n_windows_with_events": 34,
+    "net_centroid_shift_azimuth_deg": 241.2122680053333,
+    "net_centroid_shift_distance_km": 1.293175788226761,
+    "orientation_change_class": "strong_change",
+    "summary_label": "64_to_71"
+  },
+  "interpretation_table_rows": 5,
+  "key_observational_flags": {
+    "direction_change_across_mw64": "rotating",
+    "direction_change_across_mw71": "rotating",
+    "new_zone_after_mw64": "no_clear_new_zone",
+    "new_zone_after_mw71": "new_zone_likely",
+    "post64_cluster_mode": "multiple_simultaneous_clusters",
+    "post64_motion_state": "stepwise",
+    "post64_target_trend": "approaching_target_zone",
+    "post71_cluster_mode": "multiple_simultaneous_clusters",
+    "post71_motion_state": "stepwise"
+  },
+  "mainshock64_time": "2019-07-04T17:33:49.040000+00:00",
+  "mainshock71_time": "2019-07-06T03:19:53.040000+00:00",
+  "post71_summary": {
+    "cumulative_centroid_distance_km": 15.9629577211987,
+    "distance_to_target_trend_slope_km_per_hour": -0.06325373955712087,
+    "dominant_cluster_fraction_median": 0.7826673231903437,
+    "dominant_orientation_deg": 326.13641989248424,
+    "mean_centroid_step_distance_km": 1.0641971814132465,
+    "median_cluster_count": 2.5,
+    "multi_cluster_window_fraction": 1.0,
+    "n_windows_total": 16,
+    "n_windows_with_events": 16,
+    "net_centroid_shift_azimuth_deg": 141.3370390109406,
+    "net_centroid_shift_distance_km": 5.19118755064297,
+    "orientation_change_class": "stable",
+    "summary_label": "post71"
+  },
+  "question_focus": "Ridgecrest spatiotemporal evolution with emphasis on transition from Mw 6.4 to Mw 7.1",
+  "supporting_figures": {
+    "comparison_figures": [
+      "compare_before_after_mw64.png",
+      "compare_before_after_mw71.png"
+    ],
+    "post64_hourly_pages": [
+      "post64_hourly_page_001.png",
+      "post64_hourly_page_002.png",
+      "post64_hourly_page_003.png",
+      "post64_hourly_page_004.png",
+      "post64_hourly_page_005.png"
+    ],
+    "whole_sequence_2h_pages": [
+      "whole_sequence_2h_page_001.png",
+      "whole_sequence_2h_page_002.png",
+      "whole_sequence_2h_page_003.png",
+      "whole_sequence_2h_page_004.png"
+    ],
+    "whole_sequence_6h_pages": [
+      "whole_sequence_6h_page_001.png",
+      "whole_sequence_6h_page_002.png"
+    ]
+  }
+}

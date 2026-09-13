@@ -1,0 +1,74 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-06T14:27:51.540805+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 1,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 16939,
+        "mode": "full_experiment_plan",
+        "original_chars": 16939,
+        "task_name": "01_ridgecrest_bvalue_contrast_analysis"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 6
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py": {
+            "count": 3,
+            "tools": {
+              "read_file": 3
+            }
+          }
+        },
+        "read_file_call_count": 3,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 2,
+          "python_executor": 6,
+          "read_file": 3,
+          "write_file": 1
+        },
+        "total_tool_calls": 12,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 2,
+      "elapsed_sec": 612.486,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T14:27:51.410269+00:00",
+      "last_activity_at": "2026-07-06T14:27:51.410162+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-06T14:17:38.923888+00:00",
+      "status": "success",
+      "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+      "timing": {
+        "code_review_sec": 52.546,
+        "coding_agent_sec": 257.265,
+        "preflight_sec": 0.895,
+        "result_check_sec": 76.89,
+        "script_execution_sec": 44.1,
+        "task_analysis_sec": 179.357,
+        "total_sec": 612.486
+      }
+    }
+  ]
+}

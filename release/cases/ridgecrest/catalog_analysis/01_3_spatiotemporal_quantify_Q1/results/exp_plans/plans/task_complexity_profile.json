@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "The request requires a full spatiotemporal earthquake-sequence workflow using three observational datasets, repeated directional Ripley K/L calculations over many 30-minute windows, representative-window selection, multi-panel map/rose visualizations, and parallelized execution with validation of intermediate outputs.",
+  "data_source_count": 3,
+  "workflow_risk": "High computational cost and methodological sensitivity in directional Ripley statistics, especially choice of characteristic scale r, spatial window normalization, sparse intervals, and ensuring stable outputs across many time bins.",
+  "expected_script_count": 3
+}

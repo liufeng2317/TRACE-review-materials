@@ -1,0 +1,4 @@
+series,n_pairs,n_usable_pairs,n_ci_excludes_zero,median_delta_b
+fixed,17,5,1,-0.11184515115503835
+dynamic,17,13,1,-0.14174716332497217
+exploratory_dynamic,43,6,0,-0.08053112062688711

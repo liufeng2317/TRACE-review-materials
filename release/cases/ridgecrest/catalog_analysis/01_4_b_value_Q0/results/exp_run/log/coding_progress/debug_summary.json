@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-07-06T14:27:51.561795+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 1,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_bvalue_contrast_analysis.md",
+      "code_change_count": 2,
+      "debug_attempt_count": 2,
+      "debug_round": 2,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 2,
+        "coding_response_summary": "Fixed the preflight failure by adding:\n\n- `from __future__ import annotations`\n\nat the top of the script, which makes the existing `| None` type annotations compatible with the Python 3.9 runtime.",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 52326,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 52290,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 2,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+            "log_size_bytes": 19435,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+          "message": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation chec...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+          "timestamp": "2026-07-06T14:24:51.916515+00:00"
+        },
+        "script_hash_after": "38f18d0818ea37385573110b730d81de335788134a163ee59d41e9e5517d4884",
+        "script_hash_before": "911eb14d410f5ec31bfeeee715c8cca6c47dfe757a94834a87809c4a81be1e2e",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+        "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+        "timestamp": "2026-07-06T14:22:49.974967+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+          "log_size_bytes": 19435,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+        "message": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation chec...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+        "timestamp": "2026-07-06T14:24:51.916515+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_bvalue_contrast_analysis.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_ridgecrest_bvalue_contrast_analysis"
+    }
+  ]
+}

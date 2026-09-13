@@ -1,0 +1,53 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2719,
+      "output_tokens": 17
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 75772,
+      "output_tokens": 14640
+    },
+    "Planing": {
+      "input_tokens": 88690,
+      "output_tokens": 13298
+    },
+    "Plan Merging": {
+      "input_tokens": 50087,
+      "output_tokens": 5006
+    },
+    "Workflow Agent": {
+      "input_tokens": 55180,
+      "output_tokens": 3791
+    },
+    "Coding Agent (01_spatial_bvalue_diagnostics)": {
+      "input_tokens": 394839,
+      "output_tokens": 19883
+    },
+    "Result Check Agent (01_spatial_bvalue_diagnostics)": {
+      "input_tokens": 78786,
+      "output_tokens": 1999
+    },
+    "Task Analysis Agent (01_spatial_bvalue_diagnostics)": {
+      "input_tokens": 130880,
+      "output_tokens": 11180
+    },
+    "Evaluation": {
+      "input_tokens": 17595,
+      "output_tokens": 969
+    },
+    "Report Synthesis": {
+      "input_tokens": 81559,
+      "output_tokens": 9412
+    }
+  },
+  "total": {
+    "input_tokens": 976107,
+    "output_tokens": 80195,
+    "total_tokens": 1056302
+  }
+}

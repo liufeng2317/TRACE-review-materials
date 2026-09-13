@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_omori_fitting_and_figures",
+    "generated_at": "2026-07-07T02:30:09.879593+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 363.124,
+    "timing": {
+      "total_sec": 363.124,
+      "coding_agent_sec": 112.679,
+      "code_review_sec": 61.584,
+      "preflight_sec": 0.359,
+      "script_execution_sec": 31.099,
+      "result_check_sec": 53.819,
+      "task_analysis_sec": 102.222
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_omori_fitting_and_figures.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "bootstrap_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/bootstrap_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "final_merged_primary_results.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/final_merged_primary_results.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "fit_input_audit_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/fit_input_audit_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "north_vs_south_primary_comparison_35p72.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/north_vs_south_primary_comparison_35p72.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "panel_b_rate_curve_support.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/panel_b_rate_curve_support.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "primary_fit_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/primary_fit_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "run_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/run_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "split_sensitivity_results.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/split_sensitivity_results.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "bootstrap_summary.csv",
+      "final_merged_primary_results.csv",
+      "fit_input_audit_table.csv",
+      "main_two_panel_omori_comparison.png",
+      "north_vs_south_primary_comparison_35p72.csv",
+      "panel_b_rate_curve_support.csv",
+      "primary_fit_table.csv",
+      "run_metadata.json",
+      "split_sensitivity_results.csv",
+      "split_sensitivity_summary.png",
+      "workflow_manifest.json"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Fit cumulative pure power-law Omori models with bootstrap uncertainty, create required figures, and save primary and split-sensitivity results.",
+    "result": "Fit cumulative pure power-law Omori models with bootstrap uncertainty, create required figures, and save primary and split-sensitivity results. Status=success; outputs=11 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

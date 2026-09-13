@@ -1,0 +1,13 @@
+check_name,passed
+background_fixed_full,True
+interevent_full_region_all_windows,True
+m64_primary_5km_all_windows,True
+m71_primary_5km_all_windows,True
+contrast_rows_nonempty,True
+figure_exists::figure_1_interevent_map.png,True
+figure_exists::figure_2_magnitude_frequency_distributions.png,True
+figure_exists::figure_3_fixed_window_bvalue_comparison.png,True
+figure_exists::figure_4_contrast_plot.png,True
+figure_exists::figure_5_radius_sensitivity.png,True
+figure_exists::figure_6_time_magnitude_completeness.png,True
+figure_exists::figure_7_overlap_diagnostic.png,True

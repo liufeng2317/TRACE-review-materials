@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0-public",
+  "state_scope": "release_summary",
+  "stage": "04_step4_relocation_HypoDD",
+  "status": "completed",
+  "interval_start": "2019-07-04T00:00:00Z",
+  "interval_end": "2019-07-26T00:00:00Z",
+  "daily_windows": 22,
+  "final_relocated_events": 84474,
+  "native_unadjusted_events": 84475,
+  "magnitude_min": -0.85,
+  "magnitude_median": 0.88,
+  "magnitude_max": 7.1
+}

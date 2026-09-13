@@ -1,0 +1,229 @@
+{
+  "start_time": "2019-07-04T00:00:00",
+  "end_time": "2019-07-26T00:00:00",
+  "workers": 8,
+  "thresholds": {
+    "P_threshold": 0.4,
+    "S_threshold": 0.4,
+    "overlap": 1500
+  },
+  "amplitude_rules": {
+    "P": "absolute amplitude on vertical component at nearest waveform sample",
+    "S": "maximum absolute amplitude across the two horizontal components at nearest waveform sample"
+  },
+  "station_metadata_count": 47,
+  "files_discovered": 853,
+  "files_skipped_during_discovery": 0,
+  "files_failed": 12,
+  "files_succeeded": 841,
+  "days": {
+    "20190704": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190704.csv",
+      "rows_written": 34583,
+      "P_picks": 16342,
+      "S_picks": 18241,
+      "files_attempted": 27,
+      "files_succeeded": 27,
+      "files_failed": 12
+    },
+    "20190705": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190705.csv",
+      "rows_written": 123977,
+      "P_picks": 58424,
+      "S_picks": 65553,
+      "files_attempted": 31,
+      "files_succeeded": 31,
+      "files_failed": 12
+    },
+    "20190706": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190706.csv",
+      "rows_written": 141113,
+      "P_picks": 64882,
+      "S_picks": 76231,
+      "files_attempted": 30,
+      "files_succeeded": 30,
+      "files_failed": 12
+    },
+    "20190707": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190707.csv",
+      "rows_written": 138742,
+      "P_picks": 63908,
+      "S_picks": 74834,
+      "files_attempted": 31,
+      "files_succeeded": 31,
+      "files_failed": 12
+    },
+    "20190708": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190708.csv",
+      "rows_written": 142427,
+      "P_picks": 66400,
+      "S_picks": 76027,
+      "files_attempted": 34,
+      "files_succeeded": 33,
+      "files_failed": 1
+    },
+    "20190709": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190709.csv",
+      "rows_written": 128768,
+      "P_picks": 60099,
+      "S_picks": 68669,
+      "files_attempted": 33,
+      "files_succeeded": 32,
+      "files_failed": 1
+    },
+    "20190710": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190710.csv",
+      "rows_written": 142630,
+      "P_picks": 67366,
+      "S_picks": 75264,
+      "files_attempted": 35,
+      "files_succeeded": 34,
+      "files_failed": 1
+    },
+    "20190711": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190711.csv",
+      "rows_written": 161406,
+      "P_picks": 75769,
+      "S_picks": 85637,
+      "files_attempted": 40,
+      "files_succeeded": 39,
+      "files_failed": 1
+    },
+    "20190712": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190712.csv",
+      "rows_written": 163828,
+      "P_picks": 77146,
+      "S_picks": 86682,
+      "files_attempted": 40,
+      "files_succeeded": 39,
+      "files_failed": 1
+    },
+    "20190713": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190713.csv",
+      "rows_written": 168619,
+      "P_picks": 79808,
+      "S_picks": 88811,
+      "files_attempted": 44,
+      "files_succeeded": 43,
+      "files_failed": 1
+    },
+    "20190714": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190714.csv",
+      "rows_written": 165343,
+      "P_picks": 78048,
+      "S_picks": 87295,
+      "files_attempted": 43,
+      "files_succeeded": 42,
+      "files_failed": 1
+    },
+    "20190715": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190715.csv",
+      "rows_written": 152986,
+      "P_picks": 71830,
+      "S_picks": 81156,
+      "files_attempted": 41,
+      "files_succeeded": 40,
+      "files_failed": 1
+    },
+    "20190716": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190716.csv",
+      "rows_written": 130717,
+      "P_picks": 61561,
+      "S_picks": 69156,
+      "files_attempted": 39,
+      "files_succeeded": 38,
+      "files_failed": 1
+    },
+    "20190717": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190717.csv",
+      "rows_written": 138267,
+      "P_picks": 64927,
+      "S_picks": 73340,
+      "files_attempted": 41,
+      "files_succeeded": 40,
+      "files_failed": 1
+    },
+    "20190718": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190718.csv",
+      "rows_written": 133986,
+      "P_picks": 62596,
+      "S_picks": 71390,
+      "files_attempted": 39,
+      "files_succeeded": 38,
+      "files_failed": 1
+    },
+    "20190719": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190719.csv",
+      "rows_written": 130727,
+      "P_picks": 61525,
+      "S_picks": 69202,
+      "files_attempted": 42,
+      "files_succeeded": 41,
+      "files_failed": 1
+    },
+    "20190720": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190720.csv",
+      "rows_written": 147400,
+      "P_picks": 69783,
+      "S_picks": 77617,
+      "files_attempted": 43,
+      "files_succeeded": 43,
+      "files_failed": 12
+    },
+    "20190721": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190721.csv",
+      "rows_written": 164944,
+      "P_picks": 78198,
+      "S_picks": 86746,
+      "files_attempted": 45,
+      "files_succeeded": 45,
+      "files_failed": 12
+    },
+    "20190722": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190722.csv",
+      "rows_written": 148995,
+      "P_picks": 69968,
+      "S_picks": 79027,
+      "files_attempted": 44,
+      "files_succeeded": 44,
+      "files_failed": 12
+    },
+    "20190723": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190723.csv",
+      "rows_written": 161520,
+      "P_picks": 76200,
+      "S_picks": 85320,
+      "files_attempted": 47,
+      "files_succeeded": 47,
+      "files_failed": 12
+    },
+    "20190724": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190724.csv",
+      "rows_written": 141736,
+      "P_picks": 67000,
+      "S_picks": 74736,
+      "files_attempted": 43,
+      "files_succeeded": 43,
+      "files_failed": 12
+    },
+    "20190725": {
+      "csv_path": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4/picks_20190725.csv",
+      "rows_written": 132807,
+      "P_picks": 62531,
+      "S_picks": 70276,
+      "files_attempted": 41,
+      "files_succeeded": 41,
+      "files_failed": 12
+    }
+  },
+  "diagnostic_figure": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking/phasenet_pick_example.png",
+  "source_pick_dir": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking",
+  "threshold_filter_note": "Filtered from existing PhaseNet picks generated with P/S thresholds 0.3/0.3; scores below 0.3 are not recoverable without rerunning PhaseNet.",
+  "total_rows_written": 3095521,
+  "total_P_picks": 1454311,
+  "total_S_picks": 1641210,
+  "production_scope": "full Ridgecrest production window",
+  "daily_windows": 22,
+  "validated_waveform_products": 853,
+  "phase_picking_note": "Full-window PhaseNet counts retained here are the thresholded production counts reported in the manuscript supplementary information."
+}

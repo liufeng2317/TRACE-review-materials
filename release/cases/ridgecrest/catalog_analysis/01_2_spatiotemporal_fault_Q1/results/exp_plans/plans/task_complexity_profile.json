@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single-observation workflow using three local sources, but it requires staged time-window construction, repeated spatial-map generation, and computationally intensive nearest-fault distance analysis with temporal statistics and parallel execution/validation.",
+  "data_source_count": 3,
+  "workflow_risk": "medium",
+  "expected_script_count": 3
+}

@@ -1,0 +1,37 @@
+{
+  "fixed_mc": 1.5,
+  "delta_m": 0.01,
+  "grid_spacing_km": 1.0,
+  "max_workers_used": 64,
+  "full_interevent_valid_nodes_r5": 469,
+  "pre_separator_valid_nodes_r5": 396,
+  "post_separator_valid_nodes_r5": 361,
+  "difference_common_valid_nodes_r5": 334,
+  "mw71_vs_control": [
+    {
+      "window_name": "full_interevent",
+      "mw71_core_median_b": 0.6283700231766193,
+      "mw64_core_median_b": 0.676207549861068,
+      "valid_node_median_b": 0.685030998339918,
+      "future71_relative_class": "lower",
+      "control64_relative_class": "similar"
+    },
+    {
+      "window_name": "pre_separator",
+      "mw71_core_median_b": 0.5613457327487097,
+      "mw64_core_median_b": 0.6125663997843058,
+      "valid_node_median_b": 0.63143279091748,
+      "future71_relative_class": "lower",
+      "control64_relative_class": "similar"
+    },
+    {
+      "window_name": "post_separator",
+      "mw71_core_median_b": 0.6886761364881853,
+      "mw64_core_median_b": 1.0014888755537008,
+      "valid_node_median_b": 0.9706227177995818,
+      "future71_relative_class": "lower",
+      "control64_relative_class": "similar"
+    }
+  ],
+  "interpretation_note": "Spatial Q2 results are to be interpreted only as support or non-support for Q0/Q1 local b-value findings, not as an independent precursor claim."
+}

@@ -1,0 +1,20 @@
+Preparing output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment
+Loading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Loaded 84,474 catalog events
+Loading mainshocks: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Mw 6.4 event time: 2019-07-04 17:33:49.040000+00:00
+Mw 7.1 event time: 2019-07-06 03:19:53.040000+00:00
+Catalog truncated to pre-Mw7.1 window: 4,755 events
+Built local azimuthal equidistant projection
+Region A centerline length: 24.87 km
+Region B centerline length: 50.47 km
+Loading faults: <REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+Projected 17,792 fault traces
+Saved event-level enriched table: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/event_region_assignments.csv
+Saved assignment summary: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/region_assignment_summary.csv
+Saved figures to: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures
+Assignment counts:
+  region  assigned_event_count  assigned_fraction  corridor_overlap_count  corridor_overlap_fraction  unassigned_corridor_fraction  median_abs_across_km  p95_abs_across_km  along_min_km  along_max_km  centerline_length_km  half_width_km
+Region_A                  2817           0.592429                    1239                   0.260568                      0.063302              0.857866           2.403770      0.205520     24.860559             24.865486            3.0
+Region_B                  2876           0.604837                    1239                   0.260568                      0.063302              1.028367           2.675625      0.257258     49.222161             50.468748            3.0
+Task 01_region_geometry_assignment completed successfully.

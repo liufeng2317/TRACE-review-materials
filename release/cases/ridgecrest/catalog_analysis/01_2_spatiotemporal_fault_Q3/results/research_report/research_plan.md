@@ -1,0 +1,288 @@
+# Goal
+Investigate the spatiotemporal evolution of relocated Ridgecrest seismicity between the Mw 6.4 and Mw 7.1 mainshocks, with special emphasis on whether transfer toward the Mw 7.1 rupture zone is expressed as progressive spatial focusing, progressive spreading/defocusing, bifurcation, or concentration near mapped complex fault geometry.
+
+## Planning Assumptions
+- Use only the provided observation-based datasets:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- The catalog and mainshock CSVs use columns `event_time, latitude, longitude, depth_km, magnitude`; `event_time` must be parsed consistently before any interval construction.
+- The inter-mainshock analysis window is defined strictly by the Mw 6.4 and Mw 7.1 events listed in `main_shock_events.csv`; if catalog times differ, keep the mainshock file authoritative and record the discrepancy.
+- Plotting should remain in longitude-latitude space, but KDE bandwidth selection, hotspot step distances, nearest-fault distances, and geometric metrics should be computed in one local projected Cartesian CRS derived from the study extent.
+- Fixed comparability settings must be held constant across the full study:
+  - one KDE bandwidth for all KDE intervals,
+  - one common KDE grid extent and resolution,
+  - one global KDE color normalization across all interval maps,
+  - one alpha parameter for all alpha-shape intervals,
+  - one common map extent for all figures.
+- Convex hull requires at least 3 non-collinear points; alpha-shape must be skipped and flagged for intervals with insufficient points or invalid geometry rather than replaced with artificial fallback polygons.
+- Parallel execution up to 64 cores is appropriate for per-interval KDE and geometry calculations, but merged outputs must be validated for chronological completeness and non-empty scientific results where expected.
+- Fault JSON is a list of polyline segments of `[longitude, latitude]` pairs and is used as an unchanged structural overlay plus optional distance/context diagnostics.
+
+## Analysis Plan
+
+### Task 1: Build the shared inter-mainshock analysis dataset and reference framework
+- Task description
+  - Load, clean, and synchronize the relocated catalog, mainshock table, and fault traces; define all interval sets and the common spatial framework used by every later analysis.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - Identify the Mw 6.4 and Mw 7.1 rows from `main_shock_events.csv` by magnitude and confirm chronological order.
+  - Define:
+    - master window: `[t64, t71]`
+    - KDE Stage 1 bins: `[t64, t64 + 4 hr]` at 30 min spacing
+    - KDE Stage 2 bins: `[t64 + 4 hr, t71]` at 2 hr spacing
+    - morphology bins: `[t64, t71]` at 1 hr spacing
+  - Use one explicit boundary rule for all intervaling: left-closed/right-open for internal bins, final bin closed at the end.
+  - Restrict the analysis catalog to events within `[t64, t71]`.
+  - Flatten fault JSON into segment-wise coordinate tables for plotting and geometric diagnostics.
+  - Define one common plotting extent from the union of inter-mainshock events, the two mainshocks, and fault coordinates, padded by a small fixed margin.
+  - Define one local projected CRS centered on the Ridgecrest study area for all distance- and area-sensitive calculations.
+- Constraints
+  - Preserve original longitude-latitude columns for plotting overlays.
+  - Remove or flag rows with invalid time/latitude/longitude values; do not introduce magnitude filtering unless a data-quality issue forces it, and then keep it separate from the main analysis.
+  - The shared outputs from this task must be reusable by later steps so each major analysis can run independently.
+- Key outputs
+  - `intermainshock_catalog_clean.csv`
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+  - `interval_definitions_kde_stage1.csv`
+  - `interval_definitions_kde_stage2.csv`
+  - `interval_definitions_morphology_1h.csv`
+  - `analysis_metadata.json`
+
+### Task 2: Spatial KDE migration analysis between Mw 6.4 and Mw 7.1
+- Task description
+  - Compute interval-wise 2D KDE maps for Stage 1 and Stage 2, track the primary hotspot through time, and evaluate whether the density field migrates toward Mw 7.1 by focusing, spreading, or bifurcation.
+- Required data sources
+  - `intermainshock_catalog_clean.csv`
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+  - `interval_definitions_kde_stage1.csv`
+  - `interval_definitions_kde_stage2.csv`
+- Parameter selection strategy
+  - Use one common 2D grid over the shared plotting extent for all KDE intervals.
+  - Choose grid spacing once from the full study extent so hotspot positions are stable while runtime remains practical.
+  - Select one fixed KDE bandwidth from the full inter-mainshock point distribution in projected coordinates using one documented objective rule; freeze that value for all intervals.
+  - Compute KDE per interval in projected coordinates and transform the grid for longitude-latitude plotting.
+  - Determine one global KDE maximum across all valid intervals from both stages and use it as the shared color normalization for every subplot.
+  - For each interval, identify the primary hotspot as the location of maximum KDE density; if multiple equal maxima occur, use the centroid of the highest-density connected region.
+  - Record interval event count, hotspot longitude/latitude, hotspot projected coordinates, peak density, and stage label.
+- Constraints
+  - Keep bandwidth, grid, extent, and color normalization identical across all KDE maps.
+  - Do not adapt bandwidth or grid by interval.
+  - Intervals with zero or too few events must remain in the sequence with explicit low-sample or no-data status rather than being silently omitted.
+  - Overlay both mainshock epicenters and fault traces on every subplot.
+  - Do not plot a colorbar.
+  - Use parallel processing for interval KDE computation and hotspot extraction, then validate that merged interval outputs are complete and time-ordered.
+- Key outputs
+  - `kde_interval_summary.csv`
+  - `kde_stage1_hotspots.csv`
+  - `kde_stage2_hotspots.csv`
+  - `kde_global_normalization.json`
+
+#### Task 2.1: Generate stage-wise KDE panel figures
+- Task description
+  - Assemble the requested KDE map sequences as figure pages with 8 subplots arranged in 2 × 4 grids.
+- Required data sources
+  - KDE outputs from Task 2
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+- Parameter selection strategy
+  - Group intervals by stage and paginate in blocks of 8 intervals.
+  - Apply the same extent, normalization, overlays, and annotation rules on every page.
+  - Label each subplot by interval start/end time and event count.
+- Constraints
+  - If a stage has more than 8 intervals, generate multiple pages while preserving the same 2 × 4 layout and identical visual settings.
+  - If a stage has fewer than 8 intervals on the last page, leave unused panels blank or explicitly marked unused rather than rescaling the layout.
+- Key outputs
+  - `kde_stage1_panels_page01.png`
+  - `kde_stage2_panels_page01.png`
+  - additional paginated KDE panel figures if required
+
+#### Task 2.2: Hotspot migration tracking and transfer diagnostics
+- Task description
+  - Trace hotspot migration paths separately for Stage 1 and Stage 2 and provide compact diagnostics relevant to transfer toward Mw 7.1 and structural complexity.
+- Required data sources
+  - `kde_stage1_hotspots.csv`
+  - `kde_stage2_hotspots.csv`
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+- Parameter selection strategy
+  - Connect hotspot locations chronologically within each stage.
+  - Compute support metrics in projected coordinates:
+    - stepwise migration distance
+    - cumulative path length
+    - distance from hotspot to Mw 7.1 epicenter through time
+    - nearest-fault distance
+    - local fault-segment density or number of nearby segments within a fixed search radius as a proxy for structural complexity
+  - Use these metrics to support, not replace, the requested qualitative hotspot maps.
+- Constraints
+  - Produce one hotspot migration figure per stage.
+  - Overlay fault traces and both mainshocks at the top level.
+  - Do not infer dynamic stress transfer directly from these diagnostics.
+- Key outputs
+  - `hotspot_migration_stage1.png`
+  - `hotspot_migration_stage2.png`
+  - `hotspot_migration_metrics.csv`
+
+### Task 3: Geometric morphological evolution of the seismic point cloud
+- Task description
+  - Evaluate whether the spatial envelope of hourly seismicity contracts toward Mw 7.1, expands/defocuses, or fragments into multiple lobes by computing convex hull and alpha-shape boundaries for each 1-hour interval.
+- Required data sources
+  - `intermainshock_catalog_clean.csv`
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+  - `interval_definitions_morphology_1h.csv`
+- Parameter selection strategy
+  - Use the 1-hour interval table spanning `[t64, t71]`.
+  - Compute all geometry in projected coordinates, then convert boundaries back to longitude-latitude for plotting.
+  - Convex hull:
+    - compute polygon boundary when at least 3 non-collinear points exist
+    - record area, perimeter, centroid, and principal orientation if stable
+  - Alpha-shape:
+    - choose one fixed alpha parameter from the full inter-mainshock cloud using one documented heuristic
+    - apply the same alpha to every interval
+    - retain all valid disconnected components and record component count
+  - Compute interval-level supporting diagnostics:
+    - event count
+    - convex hull area and perimeter
+    - alpha-shape area and perimeter where valid
+    - centroid coordinates
+    - centroid distance to Mw 7.1 epicenter
+    - compactness or isoperimetric ratio
+    - optional major/minor axis or oriented bounding-box dimensions
+- Constraints
+  - Do not tune alpha interval-by-interval.
+  - Intervals with insufficient or degenerate geometry must be preserved in summary tables with explicit reason codes such as `too_few_points`, `collinear_points`, or `invalid_alpha_geometry`.
+  - Use parallel computation for per-interval geometry and metrics.
+  - Merged geometry products must be checked for chronological completeness and valid geometry counts.
+- Key outputs
+  - `convex_hull_metrics.csv`
+  - `alpha_shape_metrics.csv`
+  - `geometry_status_by_interval.csv`
+
+#### Task 3.1: Convex hull evolution figure
+- Task description
+  - Plot all hourly convex hull boundaries in one common spatial frame to visualize outer-envelope evolution through time.
+- Required data sources
+  - `convex_hull_metrics.csv`
+  - boundary outputs from Task 3
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+- Parameter selection strategy
+  - Encode elapsed time since Mw 6.4 using one monotonic color ramp from early cool colors to late warm colors.
+  - Plot only boundary curves, not filled polygons.
+- Constraints
+  - Overlay faults and both mainshock epicenters at the top level.
+  - Keep the same plotting extent as the KDE products.
+- Key outputs
+  - `convex_hull_evolution.png`
+
+#### Task 3.2: Alpha-shape evolution figure
+- Task description
+  - Plot all valid hourly alpha-shape boundaries in one common spatial frame to visualize concave and potentially multi-lobed structure through time.
+- Required data sources
+  - `alpha_shape_metrics.csv`
+  - boundary outputs from Task 3
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+- Parameter selection strategy
+  - Use the same elapsed-time color mapping as Task 3.1.
+  - Plot only boundary curves for each component.
+- Constraints
+  - Overlay faults and both mainshock epicenters at the top level.
+  - Do not fill polygons.
+  - Invalid intervals remain absent from the figure but explicit in `geometry_status_by_interval.csv`.
+- Key outputs
+  - `alpha_shape_evolution.png`
+
+### Task 4: Focusing/defocusing and structural-context diagnostic summaries
+- Task description
+  - Produce compact machine-readable summaries that directly address whether the inter-mainshock evolution is focusing toward Mw 7.1, spreading, or bifurcating, and whether activity concentrates near mapped complex fault zones.
+- Required data sources
+  - `hotspot_migration_metrics.csv`
+  - `convex_hull_metrics.csv`
+  - `alpha_shape_metrics.csv`
+  - `fault_segments_table.csv`
+  - `mainshock_reference_table.csv`
+- Parameter selection strategy
+  - Build interval-wise diagnostics from:
+    - hotspot distance to Mw 7.1 versus time
+    - hull and alpha-shape area versus time
+    - compactness versus time
+    - alpha-shape component count versus time
+    - nearest-fault distance and local fault-complexity proxy for hotspots and centroids
+  - Flag candidate intervals for:
+    - focusing: decreasing distance to Mw 7.1 with decreasing area or narrowing spread
+    - spreading/defocusing: increasing area, widening spread, or outward centroid/hotspot migration
+    - bifurcation: increased alpha-shape fragmentation or multiple disconnected components
+  - Keep these as evidence layers for scientific interpretation rather than final causal claims.
+- Constraints
+  - Surface fault traces are map-based context only; do not over-interpret them as full rupture geometry.
+  - Diagnostic classifications must be explicit, rule-based, and traceable to the summary metrics.
+- Key outputs
+  - `spatiotemporal_synthesis_summary.csv`
+  - `interval_process_flags.csv`
+
+### Task 5: Execution organization and validation
+- Task description
+  - Organize the workflow so each major analytical step can be run independently, while ensuring reliable merged outputs and progress reporting.
+- Required data sources
+  - All source data and outputs from Tasks 1–4
+- Parameter selection strategy
+  - Use three cohesive task scripts:
+    - Script A: shared preprocessing and interval/reference construction for Task 1
+    - Script B: KDE computation, panel figures, hotspot tracking, and diagnostics for Task 2
+    - Script C: hourly geometry computation, evolution figures, and synthesis diagnostics for Tasks 3–4
+  - Let Scripts B and C depend only on Script A outputs so the two major analyses are independently executable.
+  - Use up to 64 cores for interval-parallel loops with progress logs by interval and by stage.
+  - After each script, run immediate output validation:
+    - expected interval counts
+    - non-empty input subsets where expected
+    - complete hotspot or geometry tables
+    - paginated figure counts
+    - valid shared extent and parameter metadata
+- Constraints
+  - A script is not successful unless its final scientific outputs are present and non-empty when expected.
+  - Successful parallel batches alone do not count as success unless the merged stage outputs validate.
+- Key outputs
+  - `analysis_validation_manifest.json`
+  - `output_inventory.csv`
+
+### Task script organization
+- Primary execution flow
+  - Script A → Script B and/or Script C
+- Data dependencies
+  - Script A provides cleaned catalog, mainshock metadata, fault tables, interval definitions, common extent, and projected coordinates.
+  - Script B consumes Script A outputs and produces KDE products plus hotspot summaries.
+  - Script C consumes Script A outputs and produces geometry products plus the synthesis summaries that also ingest Script B hotspot metrics when available.
+- Expected named outputs
+  - `intermainshock_catalog_clean.csv`
+  - `mainshock_reference_table.csv`
+  - `fault_segments_table.csv`
+  - `interval_definitions_kde_stage1.csv`
+  - `interval_definitions_kde_stage2.csv`
+  - `interval_definitions_morphology_1h.csv`
+  - `analysis_metadata.json`
+  - `kde_interval_summary.csv`
+  - `kde_stage1_hotspots.csv`
+  - `kde_stage2_hotspots.csv`
+  - `kde_global_normalization.json`
+  - `kde_stage1_panels_page01.png`
+  - `kde_stage2_panels_page01.png`
+  - additional paginated KDE figures if needed
+  - `hotspot_migration_stage1.png`
+  - `hotspot_migration_stage2.png`
+  - `hotspot_migration_metrics.csv`
+  - `convex_hull_metrics.csv`
+  - `alpha_shape_metrics.csv`
+  - `geometry_status_by_interval.csv`
+  - `convex_hull_evolution.png`
+  - `alpha_shape_evolution.png`
+  - `spatiotemporal_synthesis_summary.csv`
+  - `interval_process_flags.csv`
+  - `analysis_validation_manifest.json`
+  - `output_inventory.csv`

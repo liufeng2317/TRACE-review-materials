@@ -1,0 +1,8 @@
+{
+  "station_id": "CI.CLC",
+  "day": "20190704",
+  "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190704/CI.CLC.20190704T000000Z.20190705T000000Z.mseed",
+  "plot_window_start": "2019-07-04T00:37:37.473300",
+  "plot_window_end": "2019-07-04T00:39:37.473300",
+  "figure_path": "<PROJECT_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking/phasenet_pick_example.png"
+}

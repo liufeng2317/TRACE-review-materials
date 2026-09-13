@@ -1,0 +1,7 @@
+metric,value
+filtered_events,4713
+occupied_grid_cells,445
+activated_grid_cells,104
+robust_onset_cells,86
+weak_onset_cells,18
+no_onset_occupied_cells,341

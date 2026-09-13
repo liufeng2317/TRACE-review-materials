@@ -1,0 +1,46 @@
+Prepared clean output directory: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics (removed 0 top-level files)
+Task script: <PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py
+Raw catalog path (read-only reference): <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Loading mainshock table: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Loading long-window enriched catalog from ancestor output: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps/tables/ridgecrest_window_long_64_to_71.csv
+Loaded long-window events: 5,206
+Constructing 0.5 km × 0.5 km study grid from [Mw 6.4, Mw 7.1] event extent
+Grid built with 19,758 cells (111 × 178)
+Assigning events to grid cells and 30-minute time bins
+Building cell-by-time count matrix: 19,758 cells × 68 time bins
+  Expanded matrix chunk 0:2,469 to long-form rows
+  Expanded matrix chunk 2,469:4,938 to long-form rows
+  Expanded matrix chunk 4,938:7,407 to long-form rows
+  Expanded matrix chunk 7,407:9,876 to long-form rows
+  Expanded matrix chunk 9,876:12,345 to long-form rows
+  Expanded matrix chunk 12,345:14,814 to long-form rows
+  Expanded matrix chunk 14,814:17,283 to long-form rows
+  Expanded matrix chunk 17,283:19,752 to long-form rows
+  Expanded matrix chunk 19,752:19,758 to long-form rows
+Selected onset rule: threshold_count=1, min_total_events=3, persistence_future_bins=3, persistence_min_active_bins=2, cumulative_window_bins=4, cumulative_min_count=3
+Running per-cell onset detection in parallel with 64 workers across 19,758 cells
+  Onset detection progress: 987/19,758 cells
+  Onset detection progress: 1,974/19,758 cells
+  Onset detection progress: 2,961/19,758 cells
+  Onset detection progress: 3,948/19,758 cells
+  Onset detection progress: 4,935/19,758 cells
+  Onset detection progress: 5,922/19,758 cells
+  Onset detection progress: 6,909/19,758 cells
+  Onset detection progress: 7,896/19,758 cells
+  Onset detection progress: 8,883/19,758 cells
+  Onset detection progress: 9,870/19,758 cells
+  Onset detection progress: 10,857/19,758 cells
+  Onset detection progress: 11,844/19,758 cells
+  Onset detection progress: 12,831/19,758 cells
+  Onset detection progress: 13,818/19,758 cells
+  Onset detection progress: 14,805/19,758 cells
+  Onset detection progress: 15,792/19,758 cells
+  Onset detection progress: 16,779/19,758 cells
+  Onset detection progress: 17,766/19,758 cells
+  Onset detection progress: 18,753/19,758 cells
+  Onset detection progress: 19,740/19,758 cells
+  Onset detection progress: 19,758/19,758 cells
+Creating onset-time spatial map: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/figures/ridgecrest_onset_time_map.png
+Creating trigger diagnostic figure: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics/figures/onset_vs_trigger_geometry.png
+Completed grid, onset, and trigger diagnostics successfully.
+Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics

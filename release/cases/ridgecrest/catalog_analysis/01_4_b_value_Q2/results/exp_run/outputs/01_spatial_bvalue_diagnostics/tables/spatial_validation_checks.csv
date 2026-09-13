@@ -1,0 +1,13 @@
+window_name,radius_km,node_count,valid_nodes,median_n_ge_mc_valid
+full_interevent,4.0,3920,371,181.0
+full_interevent,5.0,3920,469,224.0
+full_interevent,6.0,3920,573,254.0
+full_interevent,7.0,3920,685,288.0
+pre_separator,4.0,3920,309,147.0
+pre_separator,5.0,3920,396,178.0
+pre_separator,6.0,3920,488,208.0
+pre_separator,7.0,3920,585,224.0
+post_separator,4.0,3920,270,65.5
+post_separator,5.0,3920,361,82.0
+post_separator,6.0,3920,461,96.0
+post_separator,7.0,3920,564,111.0

@@ -1,0 +1,26 @@
+[INFO] Script path: <PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py
+[INFO] Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics
+[INFO] Parallel configuration: max_cores=64, n_jobs=16
+[INFO] Clustering configuration: eps_km=2.5, min_samples=12
+[INFO] Reading catalog: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/ridgecrest_catalog_clean.csv
+[INFO] Reading mainshock reference: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/mainshock_reference_verified.csv
+[INFO] Reading whole_windows: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_whole_sequence.csv
+[INFO] Reading post64_windows: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_post64_hourly.csv
+[INFO] Reading comparison_intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_comparison_intervals.csv
+[INFO] Computing window metrics for whole_sequence: n_windows=45, n_jobs=16
+[INFO] Completed whole_sequence: metrics_rows=45, cluster_rows=45
+[INFO] Computing window metrics for post64_hourly: n_windows=34, n_jobs=16
+[INFO] Completed post64_hourly: metrics_rows=34, cluster_rows=34
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py", line 1064, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py", line 985, in main
+    comparison_metrics, comparison_changes = finalize_comparison_metrics(
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py", line 752, in finalize_comparison_metrics
+    rec = compute_interval_summary(
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py", line 720, in compute_interval_summary
+    hx, hy, hd = density_center(x, y, step_km=GRID_STEP_KM, bandwidth_km=HOTSPOT_BANDWIDTH_KM)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py", line 426, in density_center
+    for xi, yi in zip(x, y, strict=False):
+TypeError: zip() takes no keyword arguments
+

@@ -1,0 +1,207 @@
+# Goal
+Perform a Ridgecrest interevent Omori-Utsu comparison for the fixed Mw 7.1 fault-zone corridor, testing whether the northern subdivision shows systematically smaller fitted power-law p-values than the southern subdivision in later cumulative periods between the Mw 6.4 and Mw 7.1 mainshocks.
+
+## Planning Assumptions
+- Use the provided relocated observation catalog and mainshock metadata only; no model data are needed.
+- Primary analysis uses only events in the interevent window `(Mw 6.4 origin time, Mw 7.1 origin time)` and magnitude threshold `M >= 3.0`.
+- Primary Omori model is the 2-parameter pure power-law rate `lambda(t) = K * t^(-p)` fit by maximum likelihood over cumulative windows `[0, t_n]`; do not promote a `K-c-p` model to the main result.
+- Because the power-law rate is singular at `t = 0`, fitting must use event times strictly greater than 0 and explicitly document the lower bound used in the likelihood; if a window has no valid positive event times or too few events for a stable fit, mark it as failed/unconstrained.
+- Bootstrap uncertainty should resample event times within each domain-window fit independently and report median, 2.5th percentile, and 97.5th percentile of `p`; failed bootstrap replicates should be excluded but counted for diagnostics.
+- The corridor is fixed by the user-provided centerline and 6 km total width; north/south subdivision is defined by latitude split lines 35.70, 35.72, and 35.74 degrees N, with 35.72 as the primary split.
+- Use a local metric coordinate system for corridor projection and distance-to-centerline calculations; preserve original lon/lat for map-style diagnostics and split-by-latitude assignment.
+- Major steps should be saved as reusable outputs so downstream fitting and plotting do not recompute domain selection.
+
+## Analysis Plan
+
+### Task 1: Build interevent catalog subset and fixed fault-zone domain assignments
+- Task description:
+  - Read the relocated catalog and 2-row mainshock file.
+  - Identify the Mw 6.4 and Mw 7.1 events from `main_shock_events.csv`.
+  - Compute time since Mw 6.4 in days for all catalog events.
+  - Keep only events strictly inside `(Mw 6.4 time, Mw 7.1 time)`.
+  - Project interevent events and the Mw 7.1 centerline into local metric coordinates.
+  - Construct the fixed 6 km-wide corridor around the centerline.
+  - Assign events to:
+    - entire corridor
+    - northern corridor (`lat > 35.72`)
+    - southern corridor (`lat < 35.72`)
+  - Also repeat north/south labels for split sensitivities at 35.70 and 35.74.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy:
+  - Parse `event_time` as UTC timestamps.
+  - Select the Mw 6.4 and Mw 7.1 rows from the mainshock file by magnitude.
+  - Use the user-provided centerline endpoints:
+    - start `(-117.735813, 35.897499)`
+    - end `(-117.362520, 35.559488)`
+  - Use total corridor width 6.0 km, half-width 3.0 km.
+  - Use primary split latitude 35.72; sensitivity splits 35.70 and 35.74.
+- Constraints:
+  - Domain selection must be based on corridor membership first, then north/south split within the corridor.
+  - Events exactly on split latitude should be handled explicitly and consistently; recommended rule: assign only strictly north/south and leave exact-on-line cases in entire-area only, recording count if nonzero.
+  - Preserve all event identifiers/row indices needed to trace fit inputs back to source rows.
+- Key outputs:
+  - `ridgecrest_interevent_domain_events.csv` with source columns plus:
+    - `time_since_m64_days`
+    - local projected coordinates
+    - along-strike / cross-strike distance
+    - `in_corridor`
+    - `domain_entire`
+    - `domain_north_3572`
+    - `domain_south_3572`
+    - sensitivity domain flags for 35.70 and 35.74
+  - `domain_counts_primary.csv` for Entire/North/South at split 35.72
+  - `analysis_metadata.json` or CSV with Mw 6.4 time, Mw 7.1 time, 0.732 day, 1.404 day, centerline geometry, width, and split latitude
+
+### Task 2: Create domain-definition diagnostics and validate geometric assignment
+- Task description:
+  - Produce the required domain-assignment figure showing all interevent events, fixed corridor geometry, split line, domain membership, and mainshocks.
+  - Validate that assigned north/south events are subsets of the entire corridor and that counts match the saved summary table.
+- Required data sources:
+  - `ridgecrest_interevent_domain_events.csv` from Task 1
+  - `main_shock_events.csv`
+- Parameter selection strategy:
+  - Color all interevent events by `time_since_m64_days`.
+  - Draw the centerline and both corridor boundaries from the projected geometry, then transform back to lon/lat if plotting in geographic coordinates.
+  - Mark Mw 6.4 and Mw 7.1 mainshocks with distinct symbols.
+  - Highlight north and south assigned events within the corridor using blue/red overlays.
+- Constraints:
+  - The figure must clearly distinguish:
+    - all interevent events
+    - events inside the entire corridor
+    - north vs south subsets
+    - the 35.72 split line
+  - Count mismatches between plot layers and `domain_counts_primary.csv` should be treated as assignment failure evidence.
+- Key outputs:
+  - `figure_domain_assignment.png`
+  - `domain_assignment_checks.csv` with counts for all interevent, corridor, north, south, and exact-on-split events if any
+
+### Task 3: Fit cumulative pure power-law Omori models for Entire/North/South domains
+- Task description:
+  - For each primary domain and each required cumulative endpoint, fit `lambda(t)=K*t^(-p)` by MLE using only domain events with `M >= 3.0` and `0 < t <= t_n`.
+  - Evaluate fit success, event counts, and low-count flags.
+  - Repeat the north/south comparison for split-line sensitivities 35.70 and 35.74 as a secondary branch after the primary 35.72 analysis is complete.
+- Required data sources:
+  - `ridgecrest_interevent_domain_events.csv`
+  - `analysis_metadata.json` or CSV
+- Parameter selection strategy:
+  - Primary cumulative endpoints in days:
+    - 0.30, 0.50, 0.68, 0.732, 0.85, 1.00, 1.10, 1.22, 1.404
+  - Filter to `magnitude >= 3.0`.
+  - For each fit window, use event times `t_i` strictly greater than 0.
+  - Estimate `p` and `K` jointly under the truncated observation interval `[t_min, t_n]`, where `t_min` is the smallest positive event time actually used in that window if needed to regularize the integral.
+  - Record `t_min_used_days` per fit.
+  - Mark northern-domain windows with `N <= 20` using `low_count_open_circle = true`.
+- Constraints:
+  - If a domain-window has too few events, invalid likelihood, non-finite optimum, or failed optimizer convergence, save a failure row instead of a forced estimate.
+  - Early southern windows may remain missing if unconstrained.
+  - Use the same fitting protocol across Entire/North/South to ensure comparability.
+  - The primary comparison table must only use split 35.72; sensitivity outputs must be stored separately.
+- Key outputs:
+  - `omori_fits_primary_3572.csv` with at least:
+    - `domain_label`
+    - `period_days`
+    - `event_count`
+    - `success_flag`
+    - `failure_reason`
+    - `p_fit`
+    - `K_fit`
+    - `t_min_used_days`
+    - `low_count_open_circle`
+  - `omori_fit_inputs_audit.csv` listing event times used in each successful/failed window
+  - `omori_fits_split3570.csv` and `omori_fits_split3574.csv` for robustness checks
+
+### Task 4: Bootstrap uncertainty estimation for p-values
+- Task description:
+  - For each successful primary fit, bootstrap event times within that domain-window to quantify uncertainty in `p`.
+  - Merge bootstrap summaries into the main fit table.
+  - Repeat for sensitivity split-line runs only after the primary bootstrap is complete.
+- Required data sources:
+  - `omori_fits_primary_3572.csv`
+  - `omori_fit_inputs_audit.csv`
+- Parameter selection strategy:
+  - Resample event times with replacement within each domain-window.
+  - Use a fixed bootstrap replicate count chosen to balance stability and runtime; default target should be large enough to estimate 95% intervals reliably, with the exact count recorded in metadata.
+  - Use parallel execution across domain-window combinations or replicate blocks.
+  - For each fit, summarize:
+    - bootstrap median `p`
+    - 2.5 percentile
+    - 97.5 percentile
+    - number of successful bootstrap replicates
+    - number of failed bootstrap replicates
+- Constraints:
+  - Bootstrap must reuse the same MLE fitting formulation and lower-bound handling as the primary fit.
+  - If bootstrap success rate is poor, retain the primary fit but flag the uncertainty estimate as unstable.
+  - Failed bootstrap samples must not be silently replaced.
+- Key outputs:
+  - `omori_bootstrap_primary_3572.csv`
+  - `omori_results_primary_3572.csv` merged table containing:
+    - `domain_label`
+    - `period_days`
+    - `event_count`
+    - `success_flag`
+    - `p_fit`
+    - `p_bootstrap_median`
+    - `p_bootstrap_q025`
+    - `p_bootstrap_q975`
+    - `low_count_open_circle`
+    - bootstrap success diagnostics
+  - `omori_bootstrap_split3570.csv` and `omori_bootstrap_split3574.csv` for optional robustness
+
+### Task 5: Generate the required main two-panel figure and optional robustness figure
+- Task description:
+  - Build the primary two-panel figure:
+    - Panel a: `p` versus cumulative period for Entire/North/South using split 35.72.
+    - Panel b: observed rate versus time for the Entire-area final 1.404-day window with fitted power-law overlay.
+  - Optionally add a secondary split-line sensitivity summary for 35.70/35.72/35.74.
+- Required data sources:
+  - `omori_results_primary_3572.csv`
+  - `omori_fit_inputs_audit.csv`
+  - `analysis_metadata.json`
+  - sensitivity result tables if robustness figure is produced
+- Parameter selection strategy:
+  - Panel a:
+    - x-axis uses the specified cumulative endpoints.
+    - Plot Entire in grey, North in blue, South in red.
+    - Use filled circles with vertical uncertainty bars for normal points.
+    - Use open blue circles for North points with `N <= 20`.
+    - Leave failed/unconstrained points absent.
+    - Draw vertical reference lines at 0, 0.732, and 1.404 day.
+  - Panel b:
+    - Use the Entire-area fit at `t_n = 1.404 day`.
+    - Estimate observed rate from time bins in log-spaced or scientifically justified bins over the fitted interval; record bin edges in metadata.
+    - Overlay the fitted `K*t^(-p)` curve evaluated over the same interval.
+    - Annotate fitted `p` and bootstrap uncertainty and annotate `1.404 day`.
+- Constraints:
+  - Panel a is the primary figure and must remain focused on Entire vs North vs South for split 35.72.
+  - Robustness figure must not replace the primary comparison.
+  - Rate estimation in panel b must be clearly separated from the MLE fitting itself; binning is for visualization only.
+- Key outputs:
+  - `figure_omori_main_two_panel.png`
+  - `figure_split_sensitivity.png` if generated
+  - `panel_b_rate_curve_data.csv` with bin edges, observed counts, observed rates, and fitted rates
+
+### Task 6: Synthesize comparison-ready diagnostics and interpretation support tables
+- Task description:
+  - Assemble compact machine-readable summaries that directly support the scientific question about later-period north vs south p-values.
+  - Identify periods where North has lower median/fitted `p` than South and whether uncertainty intervals overlap.
+- Required data sources:
+  - `omori_results_primary_3572.csv`
+  - sensitivity result tables if available
+  - `domain_counts_primary.csv`
+- Parameter selection strategy:
+  - Define “later interevent period” operationally as the larger cumulative endpoints approaching 1.404 day; keep the assessment descriptive rather than threshold-based unless explicitly required later.
+  - Compute comparison columns:
+    - `north_minus_south_p_fit`
+    - `north_minus_south_p_bootstrap_median`
+    - overlap indicator for bootstrap intervals
+    - low-count caution flag
+  - Keep the primary summary based on split 35.72; add parallel summary rows for 35.70 and 35.74 only in a secondary file.
+- Constraints:
+  - Do not over-interpret low-count or failed windows.
+  - A weak or inconsistent trend must remain visible in the summary rather than collapsed into a binary claim.
+- Key outputs:
+  - `north_south_comparison_primary_3572.csv`
+  - `split_sensitivity_comparison.csv`
+  - `workflow_output_manifest.csv` listing all saved tables/figures and their dependencies

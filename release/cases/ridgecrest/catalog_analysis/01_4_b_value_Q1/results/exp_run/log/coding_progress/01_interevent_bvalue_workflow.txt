@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_interevent_bvalue_workflow
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 683.221
+Started at: 2026-07-06T14:46:48.339722+00:00
+Finished at: 2026-07-06T14:58:11.560631+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_interevent_bvalue_workflow.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-06T14:58:11.560494+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=51.362, coding_agent_sec=232.016, preflight_sec=0.548, result_check_sec=127.226, script_execution_sec=110.17, task_analysis_sec=161.048, total_sec=683.221
+Coding plan context: mode=full_experiment_plan, original_chars=16858, compact_chars=16858
+Coding tool usage: total=13, read_file=2, unique_files=1, used_retrieve=False, tools={'python_executor': 9, 'write_file': 1, 'read_file': 2, 'apply_diff': 1}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

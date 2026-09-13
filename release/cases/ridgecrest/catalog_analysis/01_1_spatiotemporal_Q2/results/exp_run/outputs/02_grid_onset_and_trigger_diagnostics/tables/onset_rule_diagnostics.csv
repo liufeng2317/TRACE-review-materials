@@ -1,0 +1,11 @@
+metric,value
+positive_30min_count_p50,1.0
+positive_30min_count_p75,1.0
+positive_30min_count_p90,2.0
+occupied_cells,922.0
+cells_with_total_ge_min_total_events,409.0
+cumulative_window_bins,4.0
+cumulative_positive_p60,1.0
+selected_threshold_count,1.0
+selected_min_total_events,3.0
+selected_cumulative_min_count,3.0

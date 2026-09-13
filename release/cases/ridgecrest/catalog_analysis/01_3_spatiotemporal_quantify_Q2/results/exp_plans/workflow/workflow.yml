@@ -1,0 +1,367 @@
+tasks:
+- name: 01_region_geometry_assignment
+  description: Build the fixed local metric geometry, assign events to corridors
+    and diagnostic neighborhoods, and generate region-definition quality-control
+    outputs.
+  script: 01_region_geometry_assignment.py
+  ancestors: []
+  subtasks:
+  - name: load_and_standardize_inputs
+    description: Load the relocated catalog, mainshock table, and fault traces 
+      and standardize required fields.
+    inputs:
+    - relocated_catalog_csv
+    - mainshock_events_csv
+    - surface_faults_json
+    outputs:
+    - catalog_table
+    - mainshock_table
+    - fault_trace_collection
+    params:
+      catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      mainshock_identification: magnitude_match_for_mw64_and_mw71
+      time_window: catalog_start_to_mw71_origin
+  - name: build_local_metric_geometry
+    description: Construct one shared local metric coordinate system and fixed 
+      corridor and circle geometries for all spatial calculations.
+    inputs:
+    - catalog_table
+    - mainshock_table
+    - fault_trace_collection
+    outputs:
+    - projected_catalog_coordinates
+    - projected_mainshock_coordinates
+    - projected_fault_traces
+    - region_a_corridor_geometry
+    - region_b_corridor_geometry
+    - mw64_circle_geometry
+    - mw71_circle_geometry
+    params:
+      region_a_centerline_start:
+        longitude: -117.635877
+        latitude: 35.555024
+      region_a_centerline_end:
+        longitude: -117.463113
+        latitude: 35.729199
+      region_a_strike_deg: 39.0
+      region_b_centerline_start:
+        longitude: -117.735813
+        latitude: 35.897499
+      region_b_centerline_end:
+        longitude: -117.36252
+        latitude: 35.559488
+      region_b_strike_deg: 138.0
+      corridor_half_width_km: 3.0
+      neighborhood_radius_km: 10.0
+      corridor_membership_rule: finite_segment_and_half_width_threshold
+  - name: assign_events_and_compute_spatial_temporal_attributes
+    description: Compute projected coordinates, relative times, distances, 
+      along-strike and across-strike coordinates, and independent boolean domain
+      masks for each event.
+    inputs:
+    - catalog_table
+    - projected_catalog_coordinates
+    - projected_mainshock_coordinates
+    - region_a_corridor_geometry
+    - region_b_corridor_geometry
+    - mw64_circle_geometry
+    - mw71_circle_geometry
+    outputs:
+    - enriched_event_table
+    - assignment_masks
+    params:
+      reference_time: mw64_origin_time
+      end_time: mw71_origin_time
+      masks:
+      - all_region
+      - region_a
+      - region_b
+      - mw64_neighborhood
+      - mw71_neighborhood
+      - corridor_overlap
+      - unassigned_to_corridors
+      keep_masks_independent: true
+  - name: generate_region_definition_diagnostics
+    description: Produce assignment summaries and diagnostic figures for 
+      corridor coverage, along-strike span, and unassigned-event distribution.
+    inputs:
+    - enriched_event_table
+    - projected_fault_traces
+    - region_a_corridor_geometry
+    - region_b_corridor_geometry
+    - mw64_circle_geometry
+    - mw71_circle_geometry
+    - projected_mainshock_coordinates
+    outputs:
+    - assignment_summary_table
+    - fixed_corridor_assignment_map
+    - across_centerline_distance_figure
+    - along_strike_distribution_figure
+    - unassigned_event_diagnostic_map
+    - geometry_validation_log
+    params:
+      summary_metrics:
+      - assignment_counts
+      - corridor_overlap_count
+      - unassigned_fraction
+      - median_absolute_across_centerline_distance
+      - p95_absolute_across_centerline_distance
+      - along_strike_coordinate_range
+      display_assignment_classes:
+      - region_a
+      - region_b
+      - unassigned
+      event_color_reference: time_since_mw64
+      corridor_half_width_marker_km: 3.0
+      neighborhood_boundary_radius_km: 10.0
+
+- name: 02_temporal_rate_energy_changepoints
+  description: Construct domain-scale rate and energy time series, extract 
+    timing diagnostics, and run Bayesian change-point analysis for corridor and 
+    neighborhood domains.
+  script: 02_temporal_rate_energy_changepoints.py
+  ancestors:
+  - 01_region_geometry_assignment
+  subtasks:
+  - name: build_domain_time_series
+    description: Aggregate event counts and energy into shared 30-minute and 
+      1-hour bins for all required domains.
+    inputs:
+    - enriched_event_table
+    - mainshock_table
+    outputs:
+    - domain_time_series_30min
+    - domain_time_series_1h
+    - domain_bin_metadata
+    params:
+      domains:
+      - all_region
+      - region_a
+      - region_b
+      - mw64_neighborhood
+      - mw71_neighborhood
+      time_resolutions:
+      - 30min
+      - 1h
+      shared_bin_edges_within_resolution: true
+      energy_relation: log10_energy_joule_equals_1p5m_plus_4p8
+  - name: derive_activation_timing_metrics
+    description: Compute post-Mw 6.4 timing metrics for first activity, 
+      sustained activation, strongest rate change, and peak rate.
+    inputs:
+    - domain_time_series_30min
+    - domain_time_series_1h
+    - mainshock_table
+    outputs:
+    - domain_timing_metrics
+    - neighborhood_timing_metrics
+    params:
+      reference_time: mw64_origin_time
+      metrics:
+      - first_event_time
+      - first_sustained_activity_time
+      - strongest_rate_change_time
+      - peak_rate_time
+      - cumulative_count
+      - cumulative_energy
+      sustained_activity_rule: 
+        first_run_of_consecutive_nonzero_bins_with_fixed_persistence
+      strongest_rate_change_rule: 
+        most_prominent_positive_bayesian_rate_change_after_mw64
+  - name: detect_bayesian_change_points
+    description: Apply one consistent Bayesian change-point method to rate and 
+      energy series for all domains and resolutions.
+    inputs:
+    - domain_time_series_30min
+    - domain_time_series_1h
+    outputs:
+    - rate_change_point_table
+    - energy_change_point_table
+    - change_point_diagnostics
+    params:
+      observables:
+      - seismic_rate
+      - energy_release
+      domains:
+      - all_region
+      - region_a
+      - region_b
+      - mw64_neighborhood
+      - mw71_neighborhood
+      resolutions:
+      - 30min
+      - 1h
+      model_selection_strategy: 
+        one_consistent_bayesian_changepoint_model_across_all_series
+      include_segment_levels: true
+      include_support_metric: true
+  - name: generate_temporal_comparison_outputs
+    description: Produce comparative temporal figures and compact summary tables
+      for corridor and neighborhood activation evolution.
+    inputs:
+    - domain_time_series_30min
+    - domain_time_series_1h
+    - domain_timing_metrics
+    - neighborhood_timing_metrics
+    - rate_change_point_table
+    - energy_change_point_table
+    - mainshock_table
+    outputs:
+    - corridor_rate_timeseries_figure
+    - corridor_rate_change_figure
+    - corridor_cumulative_count_figure
+    - corridor_energy_figure
+    - corridor_normalized_energy_figure
+    - neighborhood_comparison_figure
+    - region_a_vs_region_b_rate_dominance_figure
+    - domain_summary_table
+    - neighborhood_summary_table
+    - temporal_validation_log
+    params:
+      corridor_domains:
+      - all_region
+      - region_a
+      - region_b
+      neighborhood_domains:
+      - mw64_neighborhood
+      - mw71_neighborhood
+      cumulative_products:
+      - raw_cumulative_count
+      - normalized_cumulative_count_fraction
+      - raw_cumulative_energy
+      - normalized_cumulative_energy_fraction
+      optional_dominance_diagnostics:
+      - rate_difference
+      - rate_ratio_when_defined
+      mainshock_reference_lines:
+      - mw64
+      - mw71
+
+- name: 03_gridded_activation_ordering
+  description: Compute gridded corridor and neighborhood activation statistics 
+    and resolve internal spatial ordering before the Mw 7.1 mainshock.
+  script: 03_gridded_activation_ordering.py
+  ancestors:
+  - 01_region_geometry_assignment
+  subtasks:
+  - name: build_fixed_grids_and_assign_events
+    description: Create fixed 0.5 km grids inside both corridors and both 
+      circular neighborhoods and assign events to cells while retaining 
+      zero-count cells.
+    inputs:
+    - enriched_event_table
+    - region_a_corridor_geometry
+    - region_b_corridor_geometry
+    - mw64_circle_geometry
+    - mw71_circle_geometry
+    - projected_mainshock_coordinates
+    outputs:
+    - region_a_grid
+    - region_b_grid
+    - mw64_neighborhood_grid
+    - mw71_neighborhood_grid
+    - corridor_cell_event_links
+    - neighborhood_cell_event_links
+    params:
+      cell_size_km:
+        x: 0.5
+        y: 0.5
+      preserve_zero_count_cells: true
+      domains:
+      - region_a
+      - region_b
+      - mw64_neighborhood
+      - mw71_neighborhood
+  - name: compute_cellwise_activation_statistics
+    description: Calculate cell-level count, rate, energy, first-activation 
+      timing, peak-rate timing, and geometric attributes for corridor and 
+      neighborhood grids.
+    inputs:
+    - corridor_cell_event_links
+    - neighborhood_cell_event_links
+    - enriched_event_table
+    - projected_mainshock_coordinates
+    outputs:
+    - corridor_cell_statistics
+    - neighborhood_cell_statistics
+    - corridor_cell_time_series_30min
+    - corridor_cell_time_series_1h
+    params:
+      time_resolutions:
+      - 30min
+      - 1h
+      first_activation_definition: 
+        first_post_mw64_event_time_or_first_nonzero_bin_center_applied_consistently
+      statistics:
+      - event_count
+      - cumulative_energy
+      - first_activation_time
+      - peak_rate_time
+      - along_strike_coordinate
+      - across_strike_coordinate
+      - distance_to_mw64
+      - distance_to_mw71
+      - cell_center_longitude
+      - cell_center_latitude
+  - name: aggregate_along_strike_ordering_metrics
+    description: Summarize cell statistics into along-strike bins and quantify 
+      internal activation ordering within each corridor.
+    inputs:
+    - corridor_cell_statistics
+    - corridor_cell_time_series_30min
+    - corridor_cell_time_series_1h
+    outputs:
+    - region_a_along_strike_summary
+    - region_b_along_strike_summary
+    - activation_ordering_diagnostics
+    params:
+      along_strike_bin_width_km: 0.5
+      summary_metrics:
+      - bin_center
+      - event_count
+      - first_activation_time
+      - peak_rate_time
+      - cumulative_energy
+      trend_diagnostics:
+      - along_strike_vs_first_activation_trend
+      - delayed_patch_flagging
+      - nonmonotonic_activation_flagging
+  - name: generate_gridded_activation_outputs
+    description: Produce cumulative-count maps, first-activation maps, 
+      time-versus-along-strike heatmaps, and export cell-level and along-strike 
+      summary tables.
+    inputs:
+    - corridor_cell_statistics
+    - neighborhood_cell_statistics
+    - region_a_along_strike_summary
+    - region_b_along_strike_summary
+    - region_a_corridor_geometry
+    - region_b_corridor_geometry
+    - mw64_circle_geometry
+    - mw71_circle_geometry
+    - projected_mainshock_coordinates
+    - projected_fault_traces
+    outputs:
+    - corridor_cumulative_count_map
+    - corridor_first_activation_map
+    - neighborhood_first_activation_map
+    - region_a_along_strike_heatmap
+    - region_b_along_strike_heatmap
+    - region_a_first_activation_vs_along_strike_figure
+    - region_b_first_activation_vs_along_strike_figure
+    - corridor_cell_level_table
+    - neighborhood_cell_level_table
+    - gridded_validation_log
+    params:
+      zero_count_cell_color: grey
+      shared_first_activation_color_scale: zero_to_mw71_time_since_mw64_hours
+      primary_internal_ordering_visualization: time_versus_along_strike_heatmap
+      include_mainshock_labels: true
+      include_corridor_boundaries: true
+      include_centerlines: true
+      parallel_workers_max: 64

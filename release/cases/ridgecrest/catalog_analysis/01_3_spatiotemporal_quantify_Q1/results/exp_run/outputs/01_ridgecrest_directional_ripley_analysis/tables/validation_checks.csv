@@ -1,0 +1,8 @@
+check,passed
+interval_count_matches_matrix,True
+sector_count_matches_axial_grid,True
+mainshock64_present,True
+mainshock71_present,True
+representative_windows_nonempty,True
+valid_intervals_present,True
+interval_summary_count_matches_intervals,True

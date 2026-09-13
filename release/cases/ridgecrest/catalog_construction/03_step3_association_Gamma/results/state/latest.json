@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0-public",
+  "state_scope": "release_summary",
+  "stage": "03_step3_association_Gamma",
+  "status": "completed",
+  "interval_start": "2019-07-04T00:00:00Z",
+  "interval_end": "2019-07-26T00:00:00Z",
+  "daily_windows": 22,
+  "associated_events": 140505,
+  "assigned_P_picks": 1016008,
+  "assigned_S_picks": 1104082,
+  "assigned_picks": 2120090,
+  "paired_phase_rows": 1343624
+}

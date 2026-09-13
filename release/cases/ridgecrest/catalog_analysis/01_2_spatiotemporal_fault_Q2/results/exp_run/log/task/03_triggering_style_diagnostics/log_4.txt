@@ -1,0 +1,8 @@
+[2026-07-06 08:14:27] Writing outputs to <PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics
+[2026-07-06 08:14:27] Loading antecedent outputs from Tasks 01 and 02
+<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  grouped = active.groupby(col, dropna=True)
+<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py:270: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  grouped = active.groupby(col, dropna=True)
+[2026-07-06 08:14:28] Computing along-fault metrics for 977 parent faults with n_jobs=64
+[2026-07-06 08:14:34] Task 03 complete: triggering-style diagnostics and packaged deliverables written successfully

@@ -1,0 +1,3 @@
+label,event_time,latitude,longitude,depth_km,magnitude
+Mainshock64,2019-07-04T17:33:49.040000+00:00,35.70421,-117.49392,11.864,6.4
+Mainshock71,2019-07-06T03:19:53.040000+00:00,35.77623,-117.59286,1.986,7.1

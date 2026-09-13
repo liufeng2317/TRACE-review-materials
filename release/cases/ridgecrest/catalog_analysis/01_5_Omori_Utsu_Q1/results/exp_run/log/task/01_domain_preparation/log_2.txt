@@ -1,0 +1,12 @@
+Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation
+Reading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Reading mainshocks: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Mw 6.4 origin time: 2019-07-04T17:33:49.040000+00:00
+Mw 7.1 origin time: 2019-07-06T03:19:53.040000+00:00
+Interevent events retained: 4714
+Saving event table: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/interevent_domain_event_table.csv
+Saving domain counts: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_counts_primary.csv
+Saving assignment checks: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_assignment_checks.csv
+Saving metadata: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_metadata.json
+Creating diagnostic figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_assignment_diagnostic.png
+01_domain_preparation completed successfully.

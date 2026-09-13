@@ -1,0 +1,65 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 3486,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 24301,
+      "output_tokens": 5031
+    },
+    "Planing": {
+      "input_tokens": 34355,
+      "output_tokens": 8299
+    },
+    "Plan Merging": {
+      "input_tokens": 19390,
+      "output_tokens": 3732
+    },
+    "Workflow Agent": {
+      "input_tokens": 31944,
+      "output_tokens": 4244
+    },
+    "Coding Agent (01_domain_preparation)": {
+      "input_tokens": 317869,
+      "output_tokens": 11308
+    },
+    "Result Check Agent (01_domain_preparation)": {
+      "input_tokens": 29150,
+      "output_tokens": 1385
+    },
+    "Task Analysis Agent (01_domain_preparation)": {
+      "input_tokens": 12967,
+      "output_tokens": 3608
+    },
+    "Coding Agent (02_omori_fitting_and_figures)": {
+      "input_tokens": 325296,
+      "output_tokens": 15988
+    },
+    "Result Check Agent (02_omori_fitting_and_figures)": {
+      "input_tokens": 19449,
+      "output_tokens": 1147
+    },
+    "Task Analysis Agent (02_omori_fitting_and_figures)": {
+      "input_tokens": 42316,
+      "output_tokens": 6302
+    },
+    "Evaluation": {
+      "input_tokens": 17762,
+      "output_tokens": 878
+    },
+    "Report Synthesis": {
+      "input_tokens": 74504,
+      "output_tokens": 8710
+    }
+  },
+  "total": {
+    "input_tokens": 952789,
+    "output_tokens": 70647,
+    "total_tokens": 1023436
+  }
+}

@@ -1,0 +1,366 @@
+tasks:
+- name: 01_catalog_windows_qc
+  description: Build the validated Ridgecrest catalog, verified mainshock 
+    references, common map extent, and reusable time-window tables.
+  script: 01_catalog_windows_qc.py
+  ancestors: []
+  subtasks:
+  - name: load_and_validate_inputs
+    description: Read the catalog and mainshock CSV files, verify schema, and 
+      parse event times as UTC.
+    inputs:
+    - relocated_catalog_csv
+    - mainshock_events_csv
+    outputs:
+    - raw_catalog_table
+    - raw_mainshock_table
+    - schema_validation_log
+    params:
+      required_catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      required_mainshock_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      time_field: event_time
+      timezone: UTC
+  - name: clean_catalog_and_verify_mainshocks
+    description: Remove invalid rows, sort events chronologically, identify Mw 
+      6.4 and Mw 7.1 mainshocks, and verify their order.
+    inputs:
+    - raw_catalog_table
+    - raw_mainshock_table
+    outputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    - catalog_qc_summary
+    params:
+      mainshock_magnitudes:
+      - 6.4
+      - 7.1
+      invalid_row_policy: exclude_and_log
+      uniqueness_check: true
+      chronological_check: true
+  - name: derive_extent_and_event_attributes
+    description: Compute one padded map extent and reusable projected and 
+      elapsed-time attributes for all events.
+    inputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    outputs:
+    - analysis_extent
+    - catalog_with_projected_attributes
+    params:
+      extent_padding_strategy: fixed_small_margin
+      coordinate_strategy: local_planar_projection
+      derived_attributes:
+      - elapsed_hours_since_mw64
+      - elapsed_hours_since_mw71
+      - sequence_segment_label
+      - projected_x
+      - projected_y
+  - name: build_window_definitions
+    description: Construct complete time-window tables for whole-sequence, 
+      comparison, and post-Mw 6.4 analyses.
+    inputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    - analysis_extent
+    outputs:
+    - time_windows_whole_sequence
+    - time_windows_post64_hourly
+    - time_windows_comparison_intervals
+    params:
+      interval_convention: half_open
+      whole_sequence_stage_a:
+        start: mainshock64
+        end: mainshock71_plus_1_day
+        step_hours: 2
+      whole_sequence_stage_b:
+        start: mainshock71_plus_1_day
+        end: mainshock71_plus_5_days
+        step_hours: 6
+      post64_hourly:
+        start: mainshock64
+        end: mainshock71
+        step_hours: 1
+      comparison_intervals:
+      - pre64
+      - post64_pre71
+      - pre71
+      - post71_2day
+      preserve_empty_windows: true
+
+- name: 02_spatiotemporal_metrics
+  description: Compute window-based migration, orientation, spread, and 
+    clustering diagnostics for the Ridgecrest sequence.
+  script: 02_spatiotemporal_metrics.py
+  ancestors:
+  - 01_catalog_windows_qc
+  subtasks:
+  - name: compute_window_metrics_whole_sequence
+    description: Calculate per-window counts, centroid, spread, orientation, and
+      distance metrics for whole-sequence windows.
+    inputs:
+    - catalog_with_projected_attributes
+    - mainshock_reference_verified
+    - time_windows_whole_sequence
+    outputs:
+    - window_metrics_whole_sequence
+    params:
+      minimum_events_for_orientation: data_driven_threshold
+      minimum_events_for_area: data_driven_threshold
+      reference_vector: mw64_to_mw71
+      metric_groups:
+      - event_count
+      - magnitude_summary
+      - centroid
+      - principal_axis_azimuth
+      - major_minor_spread
+      - footprint_area
+      - centroid_distance_to_mainshocks
+      - centroid_azimuth_from_mainshocks
+      - along_cross_strike_projections
+  - name: compute_window_metrics_post64_hourly
+    description: Calculate hourly centroid, spread, orientation, and migration 
+      metrics for the post-Mw 6.4 sequence.
+    inputs:
+    - catalog_with_projected_attributes
+    - mainshock_reference_verified
+    - time_windows_post64_hourly
+    outputs:
+    - window_metrics_post64_hourly
+    - migration_summary_64_to_71
+    params:
+      minimum_events_for_orientation: data_driven_threshold
+      migration_outputs:
+      - consecutive_centroid_displacement
+      - cumulative_centroid_migration
+      - principal_axis_change_through_time
+      - distance_to_mw71_vs_time
+      reference_vector: mw64_to_mw71
+  - name: compute_cluster_diagnostics
+    description: Estimate per-window cluster structure and simultaneous 
+      activation diagnostics using fixed projected-space settings.
+    inputs:
+    - catalog_with_projected_attributes
+    - time_windows_whole_sequence
+    - time_windows_post64_hourly
+    - mainshock_reference_verified
+    outputs:
+    - window_cluster_metrics_whole_sequence
+    - window_cluster_metrics_post64_hourly
+    - post64_branching_flags
+    params:
+      clustering_method: density_based_projected_coordinates
+      parameter_selection: fixed_from_catalog_spatial_scale
+      cluster_outputs:
+      - cluster_count
+      - dominant_cluster_fraction
+      - cluster_centroids
+      - cluster_azimuths_relative_to_mw64
+      - simultaneous_multi_cluster_flag
+      insufficient_data_policy: mark_insufficient
+  - name: compute_before_after_change_metrics
+    description: Quantify centroid shifts, orientation changes, area changes, 
+      and density-center shifts around the two mainshocks.
+    inputs:
+    - catalog_with_projected_attributes
+    - time_windows_comparison_intervals
+    - mainshock_reference_verified
+    - analysis_extent
+    outputs:
+    - comparison_metrics_64
+    - comparison_metrics_71
+    - migration_summary_post71
+    params:
+      comparison_pairs:
+      - mw64_before_after
+      - mw71_before_after
+      shared_spatial_grid: true
+      metric_groups:
+      - event_counts
+      - centroid_shift_vector
+      - principal_axis_orientation_change
+      - occupied_area_change
+      - density_center_shift
+  - name: validate_metric_completeness
+    description: Check that all expected windows and comparison intervals have 
+      metrics or explicit insufficient-data flags.
+    inputs:
+    - time_windows_whole_sequence
+    - time_windows_post64_hourly
+    - time_windows_comparison_intervals
+    - window_metrics_whole_sequence
+    - window_metrics_post64_hourly
+    - window_cluster_metrics_whole_sequence
+    - window_cluster_metrics_post64_hourly
+    - comparison_metrics_64
+    - comparison_metrics_71
+    outputs:
+    - metric_validation_log
+    params:
+      completeness_checks:
+      - window_coverage
+      - duplicate_window_absence
+      - explicit_insufficient_flags
+      max_cores: 64
+
+- name: 03_visualization_and_evidence
+  description: Generate all requested map figures, comparison plots, 
+    machine-readable evidence summaries, and final validation products.
+  script: 03_visualization_and_evidence.py
+  ancestors:
+  - 02_spatiotemporal_metrics
+  subtasks:
+  - name: render_whole_sequence_maps
+    description: Create the chronological 2 by 4 page series for the 
+      whole-sequence 2-hour and 6-hour time slices.
+    inputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    - time_windows_whole_sequence
+    - analysis_extent
+    - window_metrics_whole_sequence
+    outputs:
+    - whole_sequence_2h_page_index
+    - whole_sequence_6h_page_index
+    - whole_sequence_figure_pages
+    - whole_sequence_render_log
+    params:
+      page_layout: 2_by_4
+      page_batch_size: 8
+      stage_a_window_hours: 2
+      stage_b_window_hours: 6
+      current_event_style: fixed_bright_foreground
+      prior_event_style: silver_high_transparency
+      mainshock_marker_policy:
+        mw64: show_after_occurrence
+        mw71: show_after_occurrence
+      preserve_empty_windows: true
+      parallel_unit: figure_page
+      max_cores: 64
+  - name: render_before_after_comparisons
+    description: Create the before and after spatial overlay figures for Mw 6.4 
+      and Mw 7.1 with fixed symbol meanings.
+    inputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    - time_windows_comparison_intervals
+    - analysis_extent
+    - comparison_metrics_64
+    - comparison_metrics_71
+    outputs:
+    - compare_before_after_mw64
+    - compare_before_after_mw71
+    - before_after_change_metrics_64
+    - before_after_change_metrics_71
+    params:
+      before_color: fixed_before_color
+      after_color: fixed_after_color
+      include_mainshock_markers: true
+      optional_overlay_summaries:
+      - centroid_markers
+      - principal_axis_markers
+      no_colorbar: true
+  - name: render_post64_hourly_maps
+    description: Create the hour-by-hour post-Mw 6.4 map pages with fixed 
+      styling and chronological continuity.
+    inputs:
+    - ridgecrest_catalog_clean
+    - mainshock_reference_verified
+    - time_windows_post64_hourly
+    - analysis_extent
+    - window_metrics_post64_hourly
+    - window_cluster_metrics_post64_hourly
+    - post64_branching_flags
+    outputs:
+    - post64_hourly_page_index
+    - post64_hourly_figure_pages
+    - post64_hourly_render_log
+    params:
+      page_layout: 2_by_4
+      page_batch_size: 8
+      window_hours: 1
+      current_event_style: fixed_bright_foreground
+      prior_event_style: silver_high_transparency
+      mainshock_marker_policy:
+        mw64: show_in_all_panels
+      preserve_empty_windows: true
+      panel_annotations:
+      - hour_index_since_mw64
+      - current_window_event_count
+      parallel_unit: figure_page
+      max_cores: 64
+  - name: build_triggering_evidence_products
+    description: Summarize observational evidence for migration, branching, 
+      directional change, and new activation zones in machine-readable form.
+    inputs:
+    - window_metrics_whole_sequence
+    - window_metrics_post64_hourly
+    - window_cluster_metrics_whole_sequence
+    - window_cluster_metrics_post64_hourly
+    - comparison_metrics_64
+    - comparison_metrics_71
+    - migration_summary_64_to_71
+    - migration_summary_post71
+    - whole_sequence_2h_page_index
+    - whole_sequence_6h_page_index
+    - post64_hourly_page_index
+    outputs:
+    - ridgecrest_triggering_evidence_summary
+    - ridgecrest_interval_interpretation_table
+    - figure_window_cross_reference
+    params:
+      interval_groups:
+      - immediate_post_mw64
+      - inter_mainshock_mw64_to_mw71
+      - immediate_post_mw71
+      - before_after_mw64
+      - before_after_mw71
+      interpretation_fields:
+      - dominant_orientation
+      - orientation_stability_class
+      - centroid_motion_class
+      - cluster_structure_class
+      - new_activation_zone_flag
+      - supporting_pages
+      ambiguity_policy: mark_ambiguous_when_mixed
+  - name: validate_outputs_and_manifest
+    description: Verify page counts, chronological ordering, file completeness, 
+      and cross-product consistency, then write the final manifest and 
+      validation report.
+    inputs:
+    - time_windows_whole_sequence
+    - time_windows_post64_hourly
+    - whole_sequence_2h_page_index
+    - whole_sequence_6h_page_index
+    - post64_hourly_page_index
+    - whole_sequence_render_log
+    - post64_hourly_render_log
+    - metric_validation_log
+    - ridgecrest_triggering_evidence_summary
+    outputs:
+    - output_manifest
+    - validation_report
+    - run_log
+    params:
+      validation_checks:
+      - expected_window_counts
+      - expected_page_counts
+      - chronological_ordering
+      - no_missing_windows
+      - no_duplicate_windows
+      - nonempty_figure_files
+      - shared_extent_consistency
+      - shared_style_consistency
+      rerun_failed_batches_if_possible: true
+      progress_reporting:
+      - logs
+      - progress_bars

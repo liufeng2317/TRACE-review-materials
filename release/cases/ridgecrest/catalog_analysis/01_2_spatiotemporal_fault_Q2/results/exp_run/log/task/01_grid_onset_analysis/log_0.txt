@@ -1,0 +1,63 @@
+[2026-07-06 07:55:17] Starting 01_grid_onset_analysis with n_jobs=64
+[2026-07-06 07:55:17] Loading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+[2026-07-06 07:55:17] Loading mainshocks: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+[2026-07-06 07:55:17] Loading faults: <REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+[2026-07-06 07:55:27] Building grid with nx=53, ny=56, cells=2968
+[2026-07-06 07:55:27] Constructing per-cell time series for 445 occupied cells using 64 workers
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:   25.3s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:   25.6s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:   25.9s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:   26.2s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:   26.8s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:   27.2s
+[Parallel(n_jobs=64)]: Done 137 tasks      | elapsed:   27.4s
+[Parallel(n_jobs=64)]: Done 160 tasks      | elapsed:   27.7s
+[Parallel(n_jobs=64)]: Done 185 tasks      | elapsed:   28.1s
+[Parallel(n_jobs=64)]: Done 210 tasks      | elapsed:   28.5s
+[Parallel(n_jobs=64)]: Done 237 tasks      | elapsed:   28.9s
+[Parallel(n_jobs=64)]: Done 264 tasks      | elapsed:   29.4s
+[Parallel(n_jobs=64)]: Done 293 tasks      | elapsed:   29.9s
+[Parallel(n_jobs=64)]: Done 363 out of 445 | elapsed:   31.0s remaining:    7.0s
+[Parallel(n_jobs=64)]: Done 408 out of 445 | elapsed:   31.8s remaining:    2.9s
+[Parallel(n_jobs=64)]: Done 445 out of 445 | elapsed:   32.4s finished
+[2026-07-06 07:56:00] Computing onset table for 445 occupied cells using 64 workers
+[Parallel(n_jobs=64)]: Using backend LokyBackend with 64 concurrent workers.
+[Parallel(n_jobs=64)]: Batch computation too fast (0.06511688232421875s.) Setting batch_size=2.
+[Parallel(n_jobs=64)]: Done  17 tasks      | elapsed:    0.4s
+[Parallel(n_jobs=64)]: Done  34 tasks      | elapsed:    0.7s
+[Parallel(n_jobs=64)]: Done  53 tasks      | elapsed:    1.1s
+[Parallel(n_jobs=64)]: Done  72 tasks      | elapsed:    1.4s
+[Parallel(n_jobs=64)]: Done  93 tasks      | elapsed:    1.8s
+[Parallel(n_jobs=64)]: Done 114 tasks      | elapsed:    2.2s
+[Parallel(n_jobs=64)]: Batch computation too slow (2.4565205574035645s.) Setting batch_size=1.
+[Parallel(n_jobs=64)]: Done 146 tasks      | elapsed:    2.7s
+[Parallel(n_jobs=64)]: Done 192 tasks      | elapsed:    3.1s
+[Parallel(n_jobs=64)]: Done 242 tasks      | elapsed:    3.6s
+[Parallel(n_jobs=64)]: Done 318 out of 445 | elapsed:    4.3s remaining:    1.7s
+[Parallel(n_jobs=64)]: Done 408 out of 445 | elapsed:    5.4s remaining:    0.5s
+[Parallel(n_jobs=64)]: Done 445 out of 445 | elapsed:    6.1s finished
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/mainshock_reference_table.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/study_region_bounds.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/qc_summary.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/filtered_events.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/time_bins.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_definition.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/event_to_cell_assignment.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/cell_time_series.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_cell_onset.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_onset_metrics.csv
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/validation_summary.csv
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ string from another format. See: https://proj.org/faq.html#what-is-the-best-format-for-describing-coordinate-reference-systems
+  proj = self._crs.to_proj4(version=version)
+[2026-07-06 07:56:06] Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/run_parameters.csv
+[2026-07-06 07:56:07] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/study_region_overview.png
+[2026-07-06 07:56:08] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/occupied_cells_map.png
+[2026-07-06 07:56:08] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/occupied_cell_event_histogram.png
+[2026-07-06 07:56:09] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/study_area_seismicity_rate.png
+[2026-07-06 07:56:10] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/grid_onset_map.png
+[2026-07-06 07:56:10] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/grid_onset_histogram_cdf.png
+[2026-07-06 07:56:11] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/grid_onset_confidence_map.png
+[2026-07-06 07:56:12] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/example_cell_time_series.png
+[2026-07-06 07:56:13] Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/figures/grid_onset_vs_distance_mw64.png
+[2026-07-06 07:56:13] Completed 01_grid_onset_analysis in 55.34 s

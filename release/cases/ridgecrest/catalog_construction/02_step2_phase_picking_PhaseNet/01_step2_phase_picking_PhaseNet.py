@@ -1,0 +1,54 @@
+import os
+import sys
+sys.path.append("<PROJECT_ROOT>/")
+from seismoagent.runing import run_seismoagent
+
+user_request = """
+You are a senior seismologist. You are given a task to pick the seismic phase using deep learning model (PhaseNet):
+
+## 1. Data
+### 1.1 Continuous Seismic Waveform Data (MiniSEED)
+- Base Directory: `<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/outputs/01_preprocess_ridgecrest_stationday_waveforms/phase_picking`
+    - Structure: Subfolders named by start date (e.g. 20190704), each containing processed MiniSEED files for specific 24-hour ranges.
+    - Naming: `{network}.{station}.{start_time}.{end_time}.mseed` (e.g., `CI.CCC.20190704T000000Z.20190705T000000Z.mseed`)
+
+### 1.2 Station Metadata 
+- File: `<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/outputs/01_preprocess_ridgecrest_stationday_waveforms/station.sta`
+
+## 2. Waveform Loading and Phase Picking
+- Use **PhaseNet** (deep learning methods) for phase picking:
+    - Pretrained model: Use the "original" version, appropriate for the data
+    - Device: Use NPU for fast inference (no CPU-only code required)
+    - Avoid re-initializing NPU in forked subprocesses.
+- Format output as `picks_YYYYMMDD.csv`
+    - Columns: `station_id, phase_time, phase_score, phase_amplitude, phase_type`
+        - `station_id`  → e.g. "CI.CCC"
+        - `phase_time`  → UTC datetime string (not timestamp), consistent with Obspy `UTCDateTime`
+        - `phase_score` → PhaseNet confidence/probability
+        - `phase_amplitude` → Amplitude at phase time (from raw waveform)
+        - `phase_type` → "P" or "S"
+    - Include header row in csv file (see field names above).
+    - File one per day, containing all picks for that day.
+- Plot a figure to show the picking process (one case is enough)
+
+## 3. Computational & software requirements
+- Process the full production window `2019-07-04` to `2019-07-26` (22 daily windows).  
+- Define start/end times as script variables for scalability and clarity.
+- Use multip-processing to speed up the picking process (at least 32 processes).
+- All times must remain as Obspy `UTCDateTime` ISO 8601 format (e.g., `2019-07-04T16:13:43.44Z`). Do not use UNIX timestamps.
+- Show progress throughout the script (per station/file and picking step), if possible.
+"""
+
+if __name__ == "__main__":
+
+    run_name = "01_step2_phase_picking_PhaseNet"
+    output_dir = "<CASE_ROOT>/catalog_construction/run"
+
+    run_seismoagent(
+        request=user_request,
+        run_name=run_name,
+        output_dir=output_dir,
+        disable_refinement=False,
+        max_refinement_rounds=3,
+        enable_trajectory=True,
+    )

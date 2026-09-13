@@ -1,0 +1,154 @@
+tasks:
+- name: 01_ridgecrest_spatiotemporal_evolution
+  description: Build the inter-mainshock catalog, compute KDE and morphology 
+    diagnostics, generate figures, and validate merged outputs for the 
+    Ridgecrest sequence.
+  script: 01_ridgecrest_spatiotemporal_evolution.py
+  ancestors: []
+  subtasks:
+  - name: build_working_catalog_and_intervals
+    description: Read the catalog and mainshock tables, clean records, subset 
+      the inter-mainshock window, and define shared interval schemes and spatial
+      reference.
+    inputs:
+    - relocated_catalog_table
+    - mainshock_reference_table
+    outputs:
+    - inter_mainshock_event_table
+    - mainshock_metadata_table
+    - interval_definition_table
+    - shared_spatial_reference
+    - analysis_metadata_table
+    params:
+      analysis_window: inter_mainshock
+      kde_stage1_interval: 30_minutes
+      kde_stage1_duration: 4_hours
+      kde_stage2_interval: 2_hours
+      morphology_interval: 1_hour
+      bin_closure_rule: left_closed_right_open_with_final_endpoint_inclusive
+      missing_value_policy: drop_nonfinite_required_fields_and_log_counts
+      projection_strategy: 
+        local_projected_crs_centered_on_inter_mainshock_seismicity
+      extent_strategy: 
+        common_lon_lat_extent_from_inter_mainshock_catalog_with_fixed_margin
+  - name: compute_kde_and_hotspot_evolution
+    description: Compute fixed-bandwidth KDE on a common grid for all KDE 
+      intervals, extract hotspot maxima, and save interval summaries and 
+      manifests.
+    inputs:
+    - inter_mainshock_event_table
+    - mainshock_metadata_table
+    - interval_definition_table
+    - shared_spatial_reference
+    outputs:
+    - kde_grid_stack
+    - kde_interval_summary_table
+    - kde_diagnostic_table
+    - kde_parameter_manifest
+    - stage_comparison_summary_table
+    params:
+      coordinate_system_for_kde: projected_planar_coordinates
+      bandwidth_strategy: 
+        one_documented_global_rule_from_full_inter_mainshock_point_cloud
+      grid_strategy: fixed_regular_grid_over_shared_extent
+      color_normalization_strategy: 
+        global_normalization_from_all_valid_interval_kde_grids
+      hotspot_definition: global_maximum_of_interval_kde_field
+      high_density_threshold_strategy: 
+        one_fixed_threshold_applied_to_all_intervals
+      insufficient_interval_policy: retain_and_flag_without_fabricated_hotspot
+      parallel_workers_max: 64
+      progress_reporting: enabled
+  - name: generate_kde_panels_and_hotspot_paths
+    description: Create paginated 2x4 KDE panel figures for both stages and plot
+      hotspot migration paths with mainshock overlays.
+    inputs:
+    - kde_grid_stack
+    - kde_interval_summary_table
+    - mainshock_metadata_table
+    - shared_spatial_reference
+    - kde_parameter_manifest
+    outputs:
+    - stage1_kde_panel_figure_set
+    - stage2_kde_panel_figure_set
+    - stage1_hotspot_migration_figure
+    - stage2_hotspot_migration_figure
+    params:
+      subplot_layout: 2_by_4
+      pagination_rule: create_additional_pages_if_stage_exceeds_8_intervals
+      shared_color_scale: true
+      draw_colorbar: false
+      overlay_mainshocks: true
+      shared_spatial_extent: true
+  - name: compute_hourly_morphology
+    description: Compute hourly convex hull and alpha-shape geometries, extract 
+      morphology metrics, and serialize boundary coordinates.
+    inputs:
+    - inter_mainshock_event_table
+    - interval_definition_table
+    - mainshock_metadata_table
+    - shared_spatial_reference
+    outputs:
+    - morphology_summary_table
+    - convex_hull_boundary_table
+    - alpha_shape_boundary_table
+    - geometry_parameter_manifest
+    params:
+      coordinate_system_for_geometry: projected_planar_coordinates
+      convex_hull_validity_rule: at_least_3_noncollinear_points
+      alpha_selection_strategy: 
+        one_documented_global_rule_from_full_inter_mainshock_spatial_scale
+      alpha_shape_component_policy: 
+        retain_all_valid_components_and_record_component_count
+      invalid_geometry_policy: record_null_geometry_with_reason
+      parallel_workers_max: 64
+      progress_reporting: enabled
+  - name: generate_morphology_overlay_figures
+    description: Plot all hourly convex hull and alpha-shape boundaries in a 
+      common frame using time-encoded boundary colors and mainshock overlays.
+    inputs:
+    - morphology_summary_table
+    - convex_hull_boundary_table
+    - alpha_shape_boundary_table
+    - mainshock_metadata_table
+    - shared_spatial_reference
+    outputs:
+    - convex_hull_evolution_figure
+    - alpha_shape_evolution_figure
+    params:
+      color_encoding: elapsed_time_since_mw64_with_cool_to_warm_ramp
+      polygon_fill: false
+      plot_boundary_only: true
+      draw_all_alpha_components: true
+      shared_spatial_extent: true
+      overlay_mainshocks: true
+  - name: integrate_diagnostics_and_validate_outputs
+    description: Merge KDE and morphology diagnostics, assign machine-readable 
+      interpretation labels, and record validation and run logs.
+    inputs:
+    - kde_interval_summary_table
+    - kde_diagnostic_table
+    - stage_comparison_summary_table
+    - morphology_summary_table
+    - mainshock_metadata_table
+    outputs:
+    - unified_diagnostic_table
+    - interpretation_label_table
+    - validation_summary_table
+    - run_log
+    params:
+      alignment_axis: elapsed_time_since_mw64
+      interpretation_labels:
+      - focusing
+      - defocusing
+      - fragmented
+      - insufficient_data
+      interpretation_rule_strategy: 
+        predefined_documented_metric_rules_using_existing_observational_diagnostics
+      validation_requirements:
+      - merged_kde_outputs_present
+      - merged_hotspot_records_present_when_valid
+      - merged_convex_hull_outputs_present_when_valid
+      - merged_alpha_shape_outputs_present_when_valid
+      skipped_interval_recording: explicit_reason_required
+      progress_reporting: enabled

@@ -1,0 +1,254 @@
+tasks:
+- name: 01_catalog_windows_and_time_colored_maps
+  description: Load and validate the Ridgecrest catalog, derive relative-time 
+    and projected-coordinate fields, create analysis windows, and generate 
+    time-colored epicenter products with bin summaries.
+  script: 01_catalog_windows_and_time_colored_maps.py
+  ancestors: []
+  subtasks:
+  - name: load_and_validate_inputs
+    description: Read the catalog and mainshock tables, validate required 
+      columns, and verify unique Mw 6.4 and Mw 7.1 reference events.
+    inputs:
+    - relocated_catalog_csv
+    - mainshock_reference_csv
+    outputs:
+    - validated_catalog
+    - checked_mainshock_reference
+    - input_validation_report
+    params:
+      required_catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      mainshock_identification: magnitude_match_and_uniqueness_check
+      datetime_reference: timezone_consistent_parse
+  - name: derive_relative_time_and_projection
+    description: Compute relative times from Mw 6.4 and project epicenters to 
+      local Cartesian coordinates for distance-based analyses.
+    inputs:
+    - validated_catalog
+    - checked_mainshock_reference
+    outputs:
+    - analysis_ready_catalog
+    - projection_metadata
+    - catalog_qc_summary
+    params:
+      relative_time_fields:
+      - time_rel_sec_from_64
+      - time_rel_min_from_64
+      - time_rel_hr_from_64
+      projected_coordinate_fields:
+      - x_km
+      - y_km
+      projection_strategy: local_cartesian_centered_on_sequence_or_mw64
+  - name: extract_analysis_windows
+    description: Build the short and long post-Mw 6.4 event subsets and 
+      summarize their temporal and spatial extents.
+    inputs:
+    - analysis_ready_catalog
+    - checked_mainshock_reference
+    outputs:
+    - ridgecrest_window_short_64_to_4h
+    - ridgecrest_window_long_64_to_71
+    - window_validation_summary
+    params:
+      short_window: from_mw64_to_mw64_plus_4h
+      long_window: from_mw64_to_mw71
+      inclusion_rule: closed_interval_with_reference_time_validation
+  - name: assign_discrete_time_bins
+    description: Assign fixed categorical time bins for the short and long 
+      windows without within-bin interpolation.
+    inputs:
+    - ridgecrest_window_short_64_to_4h
+    - ridgecrest_window_long_64_to_71
+    - checked_mainshock_reference
+    outputs:
+    - short_window_binned_events
+    - long_window_binned_events
+    - plotting_metadata_table
+    params:
+      short_bin_width_minutes: 30
+      long_bin_width_hours: 2
+      bin_assignment_rule: each_event_in_exactly_one_half_open_bin
+      keep_empty_bins_in_metadata: true
+  - name: generate_time_colored_point_clouds
+    description: Create categorical longitude-latitude epicenter scatter plots 
+      for both time windows with mainshock overlays.
+    inputs:
+    - short_window_binned_events
+    - long_window_binned_events
+    - checked_mainshock_reference
+    - plotting_metadata_table
+    outputs:
+    - time_colored_epicenters_64_to_4h
+    - time_colored_epicenters_64_to_71
+    - plot_generation_log
+    params:
+      plotting_space: longitude_latitude
+      color_mode: categorical_discrete_bins
+      overlay_markers:
+      - mw64_epicenter
+      - mw71_epicenter
+      render_order_strategy: later_bins_first_if_needed
+  - name: summarize_time_bin_spatial_patterns
+    description: Compute descriptive spatial summaries for each time bin to 
+      support assessment of temporal layering and migration.
+    inputs:
+    - short_window_binned_events
+    - long_window_binned_events
+    - analysis_ready_catalog
+    - checked_mainshock_reference
+    outputs:
+    - time_bin_spatial_summary
+    - centroid_migration_diagnostic_table
+    - bin_count_tables
+    params:
+      summary_metrics:
+      - event_count
+      - centroid_xy_km
+      - along_strike_spread
+      - across_strike_spread
+      - distance_to_mw64
+      - distance_to_mw71
+      - centroid_migration_distance
+      sequence_axis_strategy: pca_on_post_mw64_projected_epicenters
+      underpopulated_bin_handling: count_and_centroid_only_when_needed
+
+- name: 02_grid_onset_and_trigger_diagnostics
+  description: Build the 0.5 km grid, estimate sustained-activation onset times,
+    map onset patterns, and compute Mw 6.4-to-Mw 7.1 trigger diagnostics.
+  script: 02_grid_onset_and_trigger_diagnostics.py
+  ancestors:
+  - 01_catalog_windows_and_time_colored_maps
+  subtasks:
+  - name: construct_grid_and_assign_cells
+    description: Define the 0.5 km study grid from the long-window catalog 
+      extent and assign events to spatial cells and 30-minute bins.
+    inputs:
+    - ridgecrest_window_long_64_to_71
+    - checked_mainshock_reference
+    - projection_metadata
+    outputs:
+    - grid_definition_0p5km
+    - event_cell_time_assignments
+    - grid_construction_report
+    params:
+      cell_size_km:
+        x: 0.5
+        y: 0.5
+      time_bin_width_minutes: 30
+      study_region_rule: extent_of_long_window_events
+      parallel_workers_max: 64
+  - name: aggregate_local_seismicity_rates
+    description: Build per-cell 30-minute count series and occupancy summaries 
+      while preserving zero-count bins.
+    inputs:
+    - event_cell_time_assignments
+    - grid_definition_0p5km
+    outputs:
+    - cell_rate_timeseries_30min
+    - cell_total_counts
+    - occupancy_summary_table
+    - aggregation_log
+    params:
+      include_zero_count_bins: true
+      output_representation: merged_sparse_or_long_format_matrix
+      parallel_workers_max: 64
+      progress_reporting: true
+  - name: detect_sustained_activation_onset
+    description: Apply one uniform sustained-rate rule to estimate onset time 
+      and quality flags for each occupied cell.
+    inputs:
+    - cell_rate_timeseries_30min
+    - cell_total_counts
+    - checked_mainshock_reference
+    outputs:
+    - cell_onset_time_summary
+    - cell_activity_quality_flags
+    - onset_rule_parameter_record
+    - onset_detection_qc_table
+    params:
+      onset_rule_strategy: 
+        first_candidate_bin_with_sustained_local_rate_increase
+      threshold_selection: catalog_driven_simple_uniform_count_threshold
+      persistence_requirement: 
+        activity_in_at_least_2_of_next_3_bins_or_minimum_near_future_cumulative_count
+      quality_flags:
+      - robust
+      - ambiguous
+      - inactive
+      - insufficient_data
+      parallel_workers_max: 64
+      progress_reporting: true
+  - name: map_onset_time_and_compute_geometry
+    description: Create the onset-time spatial map and compute geometric metrics
+      relative to the Mw 6.4-Mw 7.1 frame.
+    inputs:
+    - grid_definition_0p5km
+    - cell_onset_time_summary
+    - cell_activity_quality_flags
+    - checked_mainshock_reference
+    outputs:
+    - onset_time_spatial_map
+    - cell_trigger_geometry_metrics
+    - onset_distance_diagnostic_tables
+    - segment_level_onset_summary
+    params:
+      color_mapping: darker_earlier_lighter_later
+      inactive_cell_display: distinct_from_valid_late_onset
+      geometry_metrics:
+      - distance_to_mw64
+      - distance_to_mw71
+      - along_strike_coordinate
+      - cross_strike_coordinate
+      sequence_axis_strategy: mw64_to_mw71_axis_or_catalog_pca_if_needed
+  - name: evaluate_mw64_to_mw71_trigger_patterns
+    description: Compare Mw 6.4 vicinity, connecting corridor, and Mw 7.1 
+      vicinity activation histories to classify the trigger style.
+    inputs:
+    - cell_onset_time_summary
+    - cell_trigger_geometry_metrics
+    - time_bin_spatial_summary
+    - centroid_migration_diagnostic_table
+    - checked_mainshock_reference
+    outputs:
+    - regional_cumulative_count_table
+    - regional_activated_cell_fraction_table
+    - trigger_region_comparison_table
+    - trigger_style_summary
+    params:
+      regions:
+      - mw64_vicinity
+      - corridor
+      - mw71_vicinity
+      region_definition_strategy: 
+        simple_reproducible_bounds_from_catalog_geometry
+      trigger_style_classes:
+      - synchronous
+      - staged_cascade_like
+      - mixed
+      - inconclusive
+  - name: validate_outputs_and_capture_failure_evidence
+    description: Verify merged scientific outputs, check onset coverage and 
+      ranges, and record any failures or dropped cells.
+    inputs:
+    - grid_definition_0p5km
+    - cell_rate_timeseries_30min
+    - cell_onset_time_summary
+    - trigger_style_summary
+    outputs:
+    - final_validation_report
+    - failure_evidence_log
+    - processing_manifest
+    params:
+      validation_checks:
+      - non_empty_outputs
+      - no_duplicate_cell_ids
+      - onset_times_within_analysis_window
+      - complete_coverage_of_occupied_cells
+      - merged_output_consistency
+      retain_logs: true
+      progress_reporting: true

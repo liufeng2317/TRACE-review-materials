@@ -1,0 +1,146 @@
+[
+  {
+    "ok": false,
+    "task": {
+      "day": "20190708",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190708/ZY.SV07.20190708T000000Z.20190709T000000Z.mseed",
+      "file_start": "2019-07-08T00:00:00",
+      "file_end": "2019-07-09T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190709",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190709/ZY.SV07.20190709T000000Z.20190710T000000Z.mseed",
+      "file_start": "2019-07-09T00:00:00",
+      "file_end": "2019-07-10T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190710",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190710/ZY.SV07.20190710T000000Z.20190711T000000Z.mseed",
+      "file_start": "2019-07-10T00:00:00",
+      "file_end": "2019-07-11T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190711",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190711/ZY.SV07.20190711T000000Z.20190712T000000Z.mseed",
+      "file_start": "2019-07-11T00:00:00",
+      "file_end": "2019-07-12T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190712",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190712/ZY.SV07.20190712T000000Z.20190713T000000Z.mseed",
+      "file_start": "2019-07-12T00:00:00",
+      "file_end": "2019-07-13T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190713",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190713/ZY.SV07.20190713T000000Z.20190714T000000Z.mseed",
+      "file_start": "2019-07-13T00:00:00",
+      "file_end": "2019-07-14T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190714",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190714/ZY.SV07.20190714T000000Z.20190715T000000Z.mseed",
+      "file_start": "2019-07-14T00:00:00",
+      "file_end": "2019-07-15T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190715",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190715/ZY.SV07.20190715T000000Z.20190716T000000Z.mseed",
+      "file_start": "2019-07-15T00:00:00",
+      "file_end": "2019-07-16T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190716",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190716/ZY.SV07.20190716T000000Z.20190717T000000Z.mseed",
+      "file_start": "2019-07-16T00:00:00",
+      "file_end": "2019-07-17T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190717",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190717/ZY.SV07.20190717T000000Z.20190718T000000Z.mseed",
+      "file_start": "2019-07-17T00:00:00",
+      "file_end": "2019-07-18T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190718",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190718/ZY.SV07.20190718T000000Z.20190719T000000Z.mseed",
+      "file_start": "2019-07-18T00:00:00",
+      "file_end": "2019-07-19T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  },
+  {
+    "ok": false,
+    "task": {
+      "day": "20190719",
+      "station_id": "ZY.SV07",
+      "file_path": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_picking/20190719/ZY.SV07.20190719T000000Z.20190720T000000Z.mseed",
+      "file_start": "2019-07-19T00:00:00",
+      "file_end": "2019-07-20T00:00:00",
+      "metadata_match": true
+    },
+    "error": "ValueError: Unexpected sampling rate 200.0; expected 100 Hz"
+  }
+]

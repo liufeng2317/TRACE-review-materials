@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "The request requires a multi-stage observational seismicity workflow: fixed geometric region construction, event assignment, multiscale time-series/energy analyses, change-point detection, grid-based spatiotemporal statistics, neighborhood diagnostics, and multiple validation/diagnostic outputs from three related files. The workflow has moderate implementation risk due to geometric projection choices, temporal window alignment to the two mainshocks, and statistical change-point extraction, but it can be organized into a small number of cohesive scripts.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate",
+  "expected_script_count": 3
+}

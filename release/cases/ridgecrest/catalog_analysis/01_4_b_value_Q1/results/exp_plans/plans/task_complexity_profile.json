@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single observational catalog workflow with one main analysis pipeline, but requires careful event filtering, metric spatial masking, sliding-window b-value estimation under two Mc schemes, bootstrap uncertainty, reliability labeling, temporal matching, and multiple diagnostic outputs.",
+  "data_source_count": 2,
+  "workflow_risk": "moderate",
+  "expected_script_count": 1
+}

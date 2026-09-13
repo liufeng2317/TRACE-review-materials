@@ -1,0 +1,39 @@
+{
+  "local_crs_wkt": "PROJCRS[\"unknown\",BASEGEOGCRS[\"unknown\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]],ID[\"EPSG\",6326]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8901]]],CONVERSION[\"unknown\",METHOD[\"Modified Azimuthal Equidistant\",ID[\"EPSG\",9832]],PARAMETER[\"Latitude of natural origin\",35.6848575609659,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8801]],PARAMETER[\"Longitude of natural origin\",-117.54377497631,ANGLEUNIT[\"degree\",0.0174532925199433],ID[\"EPSG\",8802]],PARAMETER[\"False easting\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8806]],PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8807]]],CS[Cartesian,2],AXIS[\"(E)\",east,ORDER[1],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],AXIS[\"(N)\",north,ORDER[2],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]]]",
+  "neighborhood_radius_km": 10.0,
+  "region_a": {
+    "strike_deg": 39.0,
+    "half_width_km": 4.0,
+    "length_km": 24.865486353865844,
+    "start_lon": -117.635877,
+    "start_lat": 35.555024,
+    "end_lon": -117.463113,
+    "end_lat": 35.729199
+  },
+  "region_b": {
+    "strike_deg": 138.0,
+    "half_width_km": 4.0,
+    "length_km": 50.46874751692821,
+    "start_lon": -117.735813,
+    "start_lat": 35.897499,
+    "end_lon": -117.36252,
+    "end_lat": 35.559488
+  },
+  "mainshock64": {
+    "event_time": "2019-07-04 17:33:49.040000+00:00",
+    "longitude": -117.49392,
+    "latitude": 35.70421,
+    "magnitude": 6.4
+  },
+  "mainshock71": {
+    "event_time": "2019-07-06 03:19:53.040000+00:00",
+    "longitude": -117.59286,
+    "latitude": 35.77623,
+    "magnitude": 7.1
+  },
+  "notes": [
+    "Corridor membership is based on finite-segment projection and 4 km half-width.",
+    "Mw6.4-neighborhood and Mw7.1-neighborhood are fixed 10 km radius circles in local metric coordinates.",
+    "Display figures may use an exclusive assignment class for symbol styling, but boolean masks remain independent."
+  ]
+}

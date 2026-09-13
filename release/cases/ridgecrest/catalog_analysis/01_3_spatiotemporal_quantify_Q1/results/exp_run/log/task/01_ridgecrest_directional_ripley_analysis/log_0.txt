@@ -1,0 +1,35 @@
+Prepared output directory and removed 0 stale derived files from prior runs.
+Script path: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis
+Loading input datasets...
+Clipped catalog event count: 6333 from 2019-07-04 17:33:49.040000+00:00 to 2019-07-06 13:19:53.040000+00:00
+Candidate radii (km): [0.5, 0.57, 1.65, 3.0, 5.0, 8.0, 12.0]
+Selected characteristic radius r*: 0.57 km
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_qc_summary.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/interval_definitions.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/representative_windows.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/fault_orientation_families.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/radius_selection_diagnostics.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_catalog_with_intervals.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/mainshock_metadata.csv
+Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/radius_selection_diagnostics.png
+Computing 30-minute directional Ripley statistics in parallel...
+
+Intervals:   0%|          | 0/88 [00:00<?, ?it/s]01_3_trigger_spatiotemporal_quantify_Q1-v1
+Intervals: 100%|██████████| 88/88 [00:00<00:00, 1707.94it/s]01_3_trigger_spatiotemporal_quantify_Q1-v1
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_ripley_full_interval_radius_sector.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/interval_directional_summary.csv
+Saved table: <REPO_ROOT>/examples/ridgecrest/catalog_01_3_trigger_spatiotemporal_quantify_Q1-v1uantify_Q1-v2/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_transition_intervals.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_L_matrix_rstar.csv
+<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:474: FutureWarning: The behavior of DatetimeProperties.to_pydatetime is deprecated, in a future version this will return a Series containing python datetime objects instead of an ndarray. To retain the old behavior, call `np.array` on the result
+  times = mdates.date2num(interval_df['start_time'].dt.to_pydatetime())
+<PACKAGE_ROOT>/results/01_ridgecrest_directional_ripley_analysis.py:512: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  fig.tight_layout()01_3_trigger_spatiotemporal_quantify_Q1-v1
+Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/time_direction_heatmap_rstar.png
+Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/map_rose_whole_window_4h.png
+Saved figure: <REPO_ROOT>/examples/ridgecrest/catalog_analysis/run01_3_trigger_spatiotemporal_quantify_Q1-v1/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/map_rose_near_mainshock64.png
+Saved figure: <REPO_ROOT>/examples/ridgecrest/catalog_analysis/run01_3_trigger_spatiotemporal_quantify_Q1-v1/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/map_rose_near_mainshock71.png
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/representative_window_directional_summary.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_parameters.csv
+Saved table: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/validation_checks.csv
+All requested analysis products generated successfully.

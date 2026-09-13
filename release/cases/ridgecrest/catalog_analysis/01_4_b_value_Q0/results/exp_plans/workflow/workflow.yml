@@ -1,0 +1,245 @@
+tasks:
+- name: 01_ridgecrest_bvalue_contrast_analysis
+  description: Execute the complete Ridgecrest fixed-window b-value contrast 
+    workflow from catalog harmonization through diagnostics, figures, and 
+    validation.
+  script: 01_ridgecrest_bvalue_contrast_analysis.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_clean_catalogs
+    description: Read the interevent, background, and mainshock files, harmonize
+      schemas, clean invalid rows, and preserve traceable event identifiers.
+    inputs:
+    - interevent_catalog_csv
+    - background_catalog_csv
+    - mainshock_catalog_csv
+    outputs:
+    - cleaned_interevent_catalog
+    - cleaned_background_catalog
+    - mainshock_metadata
+    - catalog_cleaning_summary
+    params:
+      canonical_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      background_column_map:
+        datetime: event_time
+        latR: latitude
+        lonR: longitude
+        depR: depth_km
+        mag: magnitude
+      time_standard: UTC
+      duplicate_policy: keep_first_sorted_record
+  - name: define_time_controls_and_separator
+    description: Identify the Mw 6.4 and Mw 7.1 origin times, locate the 
+      separator event metadata, and define strict interevent windows with 
+      required exclusions.
+    inputs:
+    - cleaned_interevent_catalog
+    - mainshock_metadata
+    outputs:
+    - interevent_window_definitions
+    - separator_event_metadata
+    - excluded_event_registry
+    params:
+      separator_time: '2019-07-05T11:07:52.830000Z'
+      exclude_mainshocks: true
+      exclude_separator_from_estimation: true
+      interevent_bounds: strict_between_mainshocks
+  - name: infer_magnitude_discretization
+    description: Infer catalog magnitude discretization for Mc and b-value 
+      estimation and record any harmonized comparison increment.
+    inputs:
+    - cleaned_interevent_catalog
+    - cleaned_background_catalog
+    outputs:
+    - magnitude_precision_metadata
+    - interevent_delta_m
+    - background_delta_m
+    - comparison_delta_m
+    params:
+      inference_rule: smallest_stable_repeated_increment_after_noise_suppression
+      require_explicit_delta_m_in_estimators: true
+  - name: build_metric_projection_and_radius_masks
+    description: Project events and hypocenters to a local metric CRS, compute 
+      horizontal distances, and construct local core memberships for all 
+      requested radii.
+    inputs:
+    - cleaned_interevent_catalog
+    - mainshock_metadata
+    outputs:
+    - projected_interevent_catalog
+    - hypocenter_distance_table
+    - local_core_memberships
+    - projection_metadata
+    params:
+      projection_strategy: local_metric_crs_centered_on_ridgecrest_study_area
+      distance_dimension: horizontal_only
+      radii_km:
+      - 4
+      - 5
+      - 6
+      - 7
+  - name: quantify_overlap_and_assign_local_cores
+    description: Compute raw overlap diagnostics for each radius and create 
+      exclusive nearest-hypocenter local assignments when overlap occurs.
+    inputs:
+    - local_core_memberships
+    - hypocenter_distance_table
+    outputs:
+    - radius_overlap_diagnostics
+    - exclusive_local_assignments
+    - overlap_assignment_metadata
+    params:
+      exclusivity_rule: nearest_hypocenter_if_overlap_exists
+      tie_break_rule:
+      - smallest_horizontal_distance
+      - stable_event_id
+      report_raw_and_exclusive_counts: true
+  - name: assemble_subset_matrix
+    description: Build the full matrix of background, interevent regional, and 
+      local-core subsets across windows, radii, and assignment modes.
+    inputs:
+    - cleaned_interevent_catalog
+    - cleaned_background_catalog
+    - interevent_window_definitions
+    - exclusive_local_assignments
+    outputs:
+    - subset_matrix
+    - subset_event_collections
+    params:
+      catalogs:
+      - background
+      - interevent
+      windows:
+      - full
+      - early
+      - late
+      domains:
+      - regional_background
+      - full_interevent_region
+      - mw64_core
+      - mw71_core
+      assignment_modes:
+      - regional
+      - exclusive_local
+  - name: estimate_mc_for_all_subsets
+    description: Compute automatic and conservative magnitude of completeness 
+      values for every supported subset using maximum curvature.
+    inputs:
+    - subset_matrix
+    - subset_event_collections
+    - magnitude_precision_metadata
+    outputs:
+    - mc_estimates_table
+    - mc_reference_lookup
+    params:
+      method: estimate_mc_maxc
+      fmd_bin_source: subset_delta_m
+      fixed_mc_primary: 1.5
+      conservative_rule: max_subset_mc_and_corresponding_full_window_mc
+  - name: compute_bvalues_and_bootstrap_uncertainty
+    description: Estimate b-values and supporting statistics for fixed, 
+      automatic, and conservative Mc modes and bootstrap uncertainty summaries 
+      in parallel.
+    inputs:
+    - subset_matrix
+    - subset_event_collections
+    - mc_estimates_table
+    - magnitude_precision_metadata
+    outputs:
+    - bvalue_aggregates_unified
+    - bootstrap_run_metadata
+    - bootstrap_replicate_summaries
+    params:
+      bvalue_method: ClassicBValueEstimator
+      estimator_formula: Aki_Utsu_MLE_with_bin_correction
+      mc_modes:
+      - fixed_1p5
+      - auto_maxc
+      - conservative_maxc
+      bootstrap_samples_min: 1000
+      parallel_workers_max: 64
+      progress_logging: true
+      minimum_events_above_mc_to_estimate: 2
+      reliability_thresholds:
+        robust_primary_diagnostics: 100
+        usable_moderately_uncertain:
+          min: 50
+          max: 99
+        exploratory:
+          min: 30
+          max: 49
+        highly_unreliable_below: 30
+  - name: derive_bvalue_contrasts
+    description: Compute requested fixed-window b-value contrasts and bootstrap 
+      difference intervals for core, regional, and temporal comparisons.
+    inputs:
+    - bvalue_aggregates_unified
+    - bootstrap_replicate_summaries
+    outputs:
+    - bvalue_contrasts
+    - contrast_bootstrap_metadata
+    params:
+      primary_mc_mode: fixed_1p5
+      contrasts:
+      - mw71_minus_mw64
+      - mw71_minus_full_region
+      - late_minus_early_within_mw64
+      - late_minus_early_within_mw71
+      primary_radius_km: 5
+      direction_rule: higher_lower_or_indistinguishable_from_zero_interval
+      inherited_reliability: weaker_component_subset
+  - name: generate_tables_figures_and_validation
+    description: Write all required CSV outputs, create diagnostic figures, save
+      reproducibility metadata, and validate that required fixed-Mc products are
+      present.
+    inputs:
+    - catalog_cleaning_summary
+    - separator_event_metadata
+    - projection_metadata
+    - magnitude_precision_metadata
+    - radius_overlap_diagnostics
+    - bvalue_aggregates_unified
+    - bvalue_contrasts
+    - bootstrap_run_metadata
+    - mc_estimates_table
+    - subset_matrix
+    - projected_interevent_catalog
+    - mainshock_metadata
+    - interevent_window_definitions
+    outputs:
+    - cleaned_catalog_summaries_csv
+    - separator_event_metadata_csv
+    - bvalue_aggregates_unified_csv
+    - bvalue_contrasts_csv
+    - radius_overlap_diagnostics_csv
+    - bootstrap_run_metadata_csv
+    - run_validation_summary_csv
+    - run_metadata_manifest
+    - figure_interevent_map
+    - figure_magnitude_frequency_distributions
+    - figure_fixed_window_bvalue_comparison
+    - figure_contrast_plot
+    - figure_radius_sensitivity
+    - figure_time_magnitude_completeness
+    - figure_overlap_diagnostic
+    params:
+      required_fixed_mc_rows:
+      - background_full_reference
+      - interevent_full_region_full
+      - interevent_full_region_early
+      - interevent_full_region_late
+      - mw64_core_radius_5_full
+      - mw64_core_radius_5_early
+      - mw64_core_radius_5_late
+      - mw71_core_radius_5_full
+      - mw71_core_radius_5_early
+      - mw71_core_radius_5_late
+      figures_required: 7
+      include_background_as_separate_reference_in_main_comparison: true
+      save_machine_readable_metadata: true
+      validate_nonempty_scientific_outputs: true

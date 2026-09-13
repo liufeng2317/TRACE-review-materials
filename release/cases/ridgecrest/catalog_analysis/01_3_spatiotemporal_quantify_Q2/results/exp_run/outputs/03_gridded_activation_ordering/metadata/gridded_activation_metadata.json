@@ -1,0 +1,14 @@
+{
+  "cell_size_km": 0.5,
+  "corridor_grid_cell_size_km": 0.5,
+  "neighborhood_grid_cell_size_km": 0.5,
+  "time_resolutions_hours": [
+    0.5,
+    1.0
+  ],
+  "first_activation_definition": "first post-Mw6.4 event time in each cell, in hours since Mw 6.4",
+  "peak_rate_time_definition": "center of the highest-count bin within the specified resolution",
+  "along_strike_bin_km": 0.5,
+  "max_hours_until_Mw7.1": 33.76777777777778,
+  "parallel_jobs": 64
+}

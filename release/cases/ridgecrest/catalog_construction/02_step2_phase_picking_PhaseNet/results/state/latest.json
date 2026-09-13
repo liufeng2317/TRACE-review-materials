@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0-public",
+  "state_scope": "release_summary",
+  "stage": "02_step2_phase_picking_PhaseNet",
+  "status": "completed",
+  "interval_start": "2019-07-04T00:00:00Z",
+  "interval_end": "2019-07-26T00:00:00Z",
+  "daily_windows": 22,
+  "station_metadata_entries": 47,
+  "discovered_products": 853,
+  "successful_inferences": 841,
+  "failed_inferences": 12,
+  "P_picks": 1454311,
+  "S_picks": 1641210,
+  "total_picks": 3095521
+}

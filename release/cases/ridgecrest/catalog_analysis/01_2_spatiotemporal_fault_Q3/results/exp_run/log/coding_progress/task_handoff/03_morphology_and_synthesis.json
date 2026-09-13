@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "03_morphology_and_synthesis",
+    "generated_at": "2026-07-06T01:52:40.010321+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 559.036,
+    "timing": {
+      "total_sec": 559.036,
+      "coding_agent_sec": 158.757,
+      "code_review_sec": 19.895,
+      "preflight_sec": 0.406,
+      "script_execution_sec": 122.471,
+      "result_check_sec": 119.853,
+      "task_analysis_sec": 134.862
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/03_morphology_and_synthesis.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/03_morphology_and_synthesis/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "alpha_shape_boundaries.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/alpha_shape_boundaries.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "alpha_shape_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/alpha_shape_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "analysis_validation_manifest.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/analysis_validation_manifest.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "convex_hull_boundaries.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/convex_hull_boundaries.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "convex_hull_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/convex_hull_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "geometry_status_by_interval.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/geometry_status_by_interval.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "interval_process_flags.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/interval_process_flags.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "output_inventory.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis/output_inventory.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "alpha_shape_boundaries.csv",
+      "alpha_shape_evolution.png",
+      "alpha_shape_metrics.csv",
+      "analysis_validation_manifest.json",
+      "convex_hull_boundaries.csv",
+      "convex_hull_evolution.png",
+      "convex_hull_metrics.csv",
+      "geometry_status_by_interval.csv",
+      "interval_process_flags.csv",
+      "output_inventory.csv",
+      "spatiotemporal_synthesis_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Compute hourly convex hull and alpha-shape evolution, then summarize focusing, defocusing, and bifurcation diagnostics.",
+    "result": "Compute hourly convex hull and alpha-shape evolution, then summarize focusing, defocusing, and bifurcation diagnostics. Status=success; outputs=11 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

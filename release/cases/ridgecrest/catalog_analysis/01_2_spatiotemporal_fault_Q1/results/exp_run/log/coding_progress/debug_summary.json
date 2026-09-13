@@ -1,0 +1,182 @@
+{
+  "generated_at": "2026-07-05T18:18:20.716230+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 2
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 2,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_metrics_preparation.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 754,
+        "coding_response_summary": "Implemented `01_ridgecrest_metrics_preparation.py` at the requested path.\n\nWhat it does:\n- Loads and validates the catalog, mainshock table, and fault JSON.\n- Parses UTC times and projects events/mainshocks into a local AEQD CRS in km.\n- Builds:\n  - clean catalog table\n  - mainshock reference table\n...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 34460,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "01_ridgecrest_metrics_preparation completed successfully",
+            "log_size_bytes": 8980,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_metrics_preparation/log_0.txt",
+          "message": "Outputs meet the task requirements. The run completed successfully and produced the expected analysis-ready Ridgecrest dataset, nearest-fault event metrics for both pre- and post-M7.1 windows, canonical time bins, bin-level directional summaries, along-strike activation metrics, and validation/run m...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_ridgecrest_metrics_preparation",
+          "timestamp": "2026-07-05T18:00:39.565850+00:00"
+        },
+        "script_hash_after": "b790299b0c868e0de6f12af325e55d437f6a7da7c1445748d8f839ef8b2663a0",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_metrics_preparation.py",
+        "task_name": "01_ridgecrest_metrics_preparation",
+        "timestamp": "2026-07-05T17:58:37.851115+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "01_ridgecrest_metrics_preparation completed successfully",
+          "log_size_bytes": 8980,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ strin...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_metrics_preparation/log_0.txt",
+        "message": "Outputs meet the task requirements. The run completed successfully and produced the expected analysis-ready Ridgecrest dataset, nearest-fault event metrics for both pre- and post-M7.1 windows, canonical time bins, bin-level directional summaries, along-strike activation metrics, and validation/run m...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_ridgecrest_metrics_preparation",
+        "timestamp": "2026-07-05T18:00:39.565850+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_metrics_preparation/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_metrics_preparation/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_metrics_preparation.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_metrics_preparation.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_metrics_preparation.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_ridgecrest_metrics_preparation"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/02_ridgecrest_figures_and_distribution_plots.md",
+      "code_change_count": 3,
+      "debug_attempt_count": 3,
+      "debug_round": 3,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 108,
+        "coding_response_summary": "I fixed the scientifically weak centroid/migration figure.\n\nWhat changed:\n- Reworked `plot_centroid_and_migration()` to avoid the misleading shared x-axis layout that compressed the centroid map and time series.\n- New figure design:\n  - Left: centroid migration map with data-driven longitude/latitud...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 37310,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 34683,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 3,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "Task 02_ridgecrest_figures_and_distribution_plots completed successfully",
+            "log_size_bytes": 14538,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_ridgecrest_figures_and_distribution_plots/log_2.txt",
+          "message": "The output directory meets the task requirements. All requested Ridgecrest figures and summary CSVs are present, non-empty, and the reviewed visualizations are scientifically readable. The regenerated centroid/migration figure is now interpretable enough to support the directional-evolution synthesi...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "02_ridgecrest_figures_and_distribution_plots",
+          "timestamp": "2026-07-05T18:15:48.982304+00:00"
+        },
+        "script_hash_after": "e32fe0afe5edbb7307400d4ec424271a36edd6d2632929be9e64f0aaba771430",
+        "script_hash_before": "bf45ee74e9f353489538bccb708f0dee5bc84e0b77677b9ed854c5fb89e9a420",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_ridgecrest_figures_and_distribution_plots.py",
+        "task_name": "02_ridgecrest_figures_and_distribution_plots",
+        "timestamp": "2026-07-05T18:10:35.082945+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "Task 02_ridgecrest_figures_and_distribution_plots completed successfully",
+          "log_size_bytes": 14538,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_ridgecrest_figures_and_distribution_plots/log_2.txt",
+        "message": "The output directory meets the task requirements. All requested Ridgecrest figures and summary CSVs are present, non-empty, and the reviewed visualizations are scientifically readable. The regenerated centroid/migration figure is now interpretable enough to support the directional-evolution synthesi...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "02_ridgecrest_figures_and_distribution_plots",
+        "timestamp": "2026-07-05T18:15:48.982304+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_ridgecrest_figures_and_distribution_plots/log_2.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/02_ridgecrest_figures_and_distribution_plots/log_2.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/02_ridgecrest_figures_and_distribution_plots.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/02_ridgecrest_figures_and_distribution_plots.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 2,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_ridgecrest_figures_and_distribution_plots.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "02_ridgecrest_figures_and_distribution_plots"
+    }
+  ]
+}

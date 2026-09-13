@@ -1,0 +1,295 @@
+# Goal
+Compute and compare time-varying b-value evolution only within the Mw 6.4–Mw 7.1 interevent period for two local hypocentral cores—the future Mw 7.1 target core and the Mw 6.4 control core—using reproducible sliding-event-window analysis, bootstrap uncertainty, Mc diagnostics, and reliability labeling, without imposing any predefined trend.
+
+## Planning Assumptions
+- Use only the provided observational CSV catalogs:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- The analysis period is strictly bounded by the Mw 6.4 origin time and Mw 7.1 origin time, with both mainshocks excluded from the interevent analysis catalog.
+- The fixed separator event is the M5.37 event at `2019-07-05T11:07:52.830000Z`; it must be identified from the relocated catalog, reported in metadata and figures, and excluded from every sliding-window estimate.
+- Spatial selection uses horizontal distance only after projecting hypocenters to a local metric CRS; depth is retained in all outputs but is not part of the radius mask.
+- Primary comparison uses 5 km cores centered on the Mw 6.4 and Mw 7.1 hypocenters. Optional radius sensitivity uses 4, 5, 6, and 7 km.
+- If sensitivity radii overlap, report overlap counts and then assign overlapping events exclusively to the nearest hypocenter in horizontal metric distance before window construction.
+- Primary time-varying analysis uses sliding event windows with `N=100`, `step=20`. If 5 km coverage is insufficient, also compute clearly labeled exploratory results with `N=50`, `step=10`.
+- Use `seismostats` package contracts relevant to this task:
+  - `estimate_mc_maxc(fmd_bin=delta_m)` for dynamic Mc by maximum curvature.
+  - `estimate_b(magnitudes, mc=..., delta_m=...)` or `ClassicBValueEstimator().calculate(mags, mc, delta_m)` for classical b-value estimation.
+  - Both classical estimators exclude magnitudes below `Mc`, so `Mc` and `delta_m` must be supplied explicitly.
+- The required scientific estimator is the Aki-Utsu maximum-likelihood b-value with bin correction, consistent with the classical estimator form:
+  - `b = log10(e) / (mean(M) - Mc + delta_M / 2)`.
+- `delta_m` must be inferred from observed catalog discretization using a robust spacing check on magnitudes; do not infer it from decimal display alone.
+- Bootstrap uncertainty must use at least 500 resamples per window, with 1000 preferred when runtime is practical. Parallel computation may use up to 64 cores with progress logging.
+- Reliability labels are reporting categories based on `n >= Mc`:
+  - `>=100`: robust
+  - `50–99`: usable_but_moderately_uncertain
+  - `30–49`: exploratory
+  - `<30`: highly_unreliable
+- Highly unreliable windows may be shown for completeness but must not support conclusions.
+- Successful execution requires non-empty validated 5 km scientific outputs when event counts permit; config-only or diagnostic-only artifacts are not sufficient.
+
+## Analysis Plan
+### Task 1 — Build the cleaned interevent catalog, event markers, and core assignments
+- Task description
+  - Load the relocated catalog and mainshock table, identify the Mw 6.4 and Mw 7.1 hypocenters, isolate the strict interevent catalog, identify the fixed M5.37 separator event, project coordinates to a local metric CRS, and assign events to primary and sensitivity cores.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy
+  - Parse `event_time` as UTC-aware timestamps and sort chronologically.
+  - Identify Mw 6.4 and Mw 7.1 rows in the mainshock file by magnitude and time consistency.
+  - Filter interevent catalog with:
+    - `event_time > Mw6.4_time`
+    - `event_time < Mw7.1_time`
+  - Exclude both mainshocks explicitly even if duplicated in the relocated catalog.
+  - Identify the separator event by exact timestamp match first; verify with magnitude, latitude, longitude, and depth; store its metadata and remove it before any sliding-window construction.
+  - Create a local projected CRS appropriate for Ridgecrest and compute horizontal metric distances from each event to both mainshock hypocenters.
+  - For radius values `4, 5, 6, 7 km`, compute raw core membership and overlap counts.
+  - For overlapping sensitivity radii, apply exclusive nearest-hypocenter assignment and retain both raw-overlap and final-assignment metadata.
+  - Infer `delta_m` from cleaned-catalog magnitude discretization using stable non-zero spacing checks across unique sorted magnitudes and record the selected global value.
+- Constraints
+  - Separator event is a visual/time boundary only and must not appear in any analysis window.
+  - Use horizontal distance only for cylindrical core masks.
+  - Preserve original `latitude`, `longitude`, `depth_km`, `magnitude`, and time fields in outputs.
+  - Report separator event time, magnitude, location, depth, and hours since Mw 6.4.
+- Key outputs
+  - `cleaned_interevent_catalog.csv`
+  - `event_markers_metadata.csv`
+  - `core_assignment_5km.csv`
+  - `core_assignment_radius_sensitivity.csv`
+  - `spatial_overlap_summary.csv`
+  - `magnitude_discretization_metadata.csv`
+  - Interevent map figure with Mw 6.4 and Mw 7.1 hypocenters, 5 km cores, and separator event
+
+### Task 2 — Construct sliding event windows and compute per-window b-values, Mc, uncertainty, and reliability
+- Task description
+  - For each core, radius, and window family, create chronological sliding event windows and compute fixed-Mc and dynamic-Mc b-values with bootstrap uncertainty and reliability diagnostics.
+- Required data sources
+  - Outputs from Task 1: cleaned catalog, marker metadata, core assignments, overlap summary, inferred `delta_m`
+- Parameter selection strategy
+  - Primary analysis:
+    - radius `5 km`
+    - `N=100`, `step=20`
+  - Exploratory fallback:
+    - radius `5 km`
+    - `N=50`, `step=10`
+    - trigger if either primary 5 km core has insufficient temporal coverage or too few valid windows
+  - Optional sensitivity analysis:
+    - radii `4, 5, 6, 7 km`
+    - use primary `N=100`, `step=20` where feasible
+    - use exploratory `N=50`, `step=10` only when primary sensitivity windows are insufficient; keep results separately labeled
+  - For every window record:
+    - core label
+    - radius
+    - window family (`N`, `step`)
+    - window index
+    - start time
+    - end time
+    - center or median event time
+    - hours since Mw 6.4
+    - raw event count
+    - magnitude minimum and maximum
+  - Fixed-Mc branch:
+    - set `Mc = 1.5`
+    - compute `n_ge_mc`
+    - estimate b with classical Aki-Utsu method using inferred `delta_m`
+    - bootstrap by resampling window events with replacement and recomputing b with fixed Mc
+  - Dynamic-Mc branch:
+    - estimate `Mc_dynamic` with `estimate_mc_maxc(fmd_bin=delta_m)`
+    - compute `n_ge_mc_dynamic`
+    - estimate b with classical Aki-Utsu method using that Mc and the same `delta_m`
+    - bootstrap by resampling window events, recomputing dynamic Mc and b for each resample
+  - Bootstrap outputs per window:
+    - number of bootstrap resamples
+    - bootstrap mean
+    - bootstrap median
+    - bootstrap standard deviation
+    - percentile confidence limits
+    - CI width
+  - Reliability labeling:
+    - assign from `n >= Mc` separately for fixed-Mc and dynamic-Mc results
+- Constraints
+  - Use event-count sliding windows only; no fixed-duration bins.
+  - Build all windows from the separator-filtered catalog only.
+  - If dynamic Mc estimation fails or yields invalid input for b estimation, record failure status and missing values rather than substituting defaults.
+  - Keep fixed-Mc and dynamic-Mc outputs separate.
+  - Show progress logs for bootstrap processing and parallelize across windows and/or bootstrap batches up to 64 cores.
+- Key outputs
+  - `bvalue_windows_5km_fixedMc.csv`
+  - `bvalue_windows_5km_dynamicMc.csv`
+  - `bvalue_windows_5km_exploratory_fixedMc.csv` if triggered
+  - `bvalue_windows_5km_exploratory_dynamicMc.csv` if triggered
+  - `bvalue_windows_radius_sensitivity_fixedMc.csv`
+  - `bvalue_windows_radius_sensitivity_dynamicMc.csv`
+  - `window_reliability_mc_diagnostics.csv`
+  - `bootstrap_run_metadata.csv`
+  - progress log for window/bootstrap execution
+
+### Task 3 — Compute inter-core temporal contrasts and pre/post-separator summaries
+- Task description
+  - Match Mw 7.1-core and Mw 6.4-core windowed estimates by nearest center time, compute the contrast `b_Mw7.1_core - b_Mw6.4_core`, and summarize pre- versus post-separator behavior without fitting any predefined trend.
+- Required data sources
+  - Primary and exploratory window outputs from Task 2
+  - Marker metadata from Task 1
+- Parameter selection strategy
+  - Main comparison uses 5 km primary windows first for:
+    - fixed `Mc = 1.5`
+    - dynamic Mc
+  - Keep exploratory `N=50, step=10` comparisons separate and explicitly labeled.
+  - Match windows between cores by nearest center time within the same window family and Mc mode.
+  - Set maximum allowable time mismatch to half the median spacing of center times in the denser series; record mismatch for every match.
+  - For each matched pair compute:
+    - `delta_b = b_Mw7.1_core - b_Mw6.4_core`
+    - matched center time
+    - hours since Mw 6.4
+    - mismatch in time
+    - contrast uncertainty
+    - joint reliability label based on the weaker of the two paired windows
+  - Contrast uncertainty:
+    - prefer paired bootstrap difference distributions when both bootstrap samples are available
+    - otherwise propagate conservatively from independent bootstrap summaries and flag the method used
+  - Pre/post summaries:
+    - divide windows by whether center time is before or after the separator time
+    - compute for each core and each Mc scheme:
+      - number of windows
+      - counts by reliability class
+      - median b-value
+      - mean b-value
+      - median CI width
+      - median `Mc_dynamic` where applicable
+    - compute corresponding summaries for the contrast series
+  - Report timing and direction of departures by identifying windows where:
+    - contrast CI excludes zero, and
+    - both paired windows are at least usable
+  - If no such windows exist, report absence of reliable separation rather than inferring a trend.
+- Constraints
+  - Do not impose monotonic, linear, or breakpoint models.
+  - Do not use highly unreliable windows to support conclusions.
+  - Interpret any low b-value only as consistent with localized stress loading, not as a deterministic precursor.
+  - Add pre/post summary levels to the contrast figure only when supported by enough usable or robust windows.
+- Key outputs
+  - `bvalue_temporal_contrast_5km_fixedMc.csv`
+  - `bvalue_temporal_contrast_5km_dynamicMc.csv`
+  - `bvalue_temporal_contrast_5km_exploratory_fixedMc.csv` if triggered
+  - `bvalue_temporal_contrast_5km_exploratory_dynamicMc.csv` if triggered
+  - `pre_post_separator_summary_5km.csv`
+  - `pre_post_separator_summary_radius_sensitivity.csv`
+  - `contrast_significance_summary.csv`
+
+### Task 4 — Generate required figures and figure-source tables
+- Task description
+  - Build the full requested figure suite directly from saved tabular outputs, using consistent time markers, uncertainty bands, and reliability-aware presentation.
+- Required data sources
+  - Outputs from Tasks 1–3
+- Parameter selection strategy
+  - Figure 1: interevent map
+    - cleaned interevent events
+    - Mw 6.4 and Mw 7.1 hypocenters
+    - 5 km core boundaries
+    - separator event marker
+  - Figure 2: primary 5 km fixed-Mc time series
+    - x-axis: hours since Mw 6.4
+    - curves: Mw 6.4 core and Mw 7.1 core
+    - uncertainty bands from bootstrap intervals
+    - separator as vertical dashed line
+    - Mw 7.1 endpoint as vertical dotted line
+  - Figure 3: primary 5 km dynamic-Mc time series
+    - same time axis, markers, and uncertainty style as Figure 2
+  - Figure 4: 5 km contrast curve
+    - `b_Mw7.1_core - b_Mw6.4_core`
+    - uncertainty band
+    - separator dashed line
+    - Mw 7.1 endpoint dotted line
+    - pre/post summary levels only if supported by reliable windows
+  - Figure 5: Mc and `n>=Mc` diagnostics
+    - per core diagnostic curves for dynamic Mc and eligible counts
+    - fixed-Mc eligible counts where useful
+    - reliability threshold reference lines at 30, 50, and 100
+  - Figure 6: optional radius sensitivity
+    - radii `4, 5, 6, 7 km`
+    - preserve 5 km as the main reference
+    - indicate overlap/reassignment relevance where sensitivity radii overlap
+  - Save figure-source tables used for each panel for auditability.
+- Constraints
+  - All time-series figures must mark the separator event and Mw 7.1 endpoint.
+  - The separator event must not contribute to any estimate displayed.
+  - Exploratory `N=50, step=10` results must be clearly distinguished from primary results.
+  - Figures should directly support comparison of temporal evolution before and after the separator.
+- Key outputs
+  - `figure_source_data_map.csv`
+  - `figure_source_data_fixedMc_5km.csv`
+  - `figure_source_data_dynamicMc_5km.csv`
+  - `figure_source_data_contrast_5km.csv`
+  - `figure_source_data_diagnostics_5km.csv`
+  - `figure_source_data_radius_sensitivity.csv`
+  - Interevent map figure
+  - Primary fixed-Mc 5 km time-series figure
+  - Dynamic-Mc 5 km time-series figure
+  - 5 km contrast figure
+  - Mc and `n>=Mc` diagnostics figure
+  - Radius-sensitivity figure
+
+### Task 5 — Validate outputs and save reproducibility metadata
+- Task description
+  - Perform end-to-end validation of catalog filtering, separator exclusion, spatial assignment, window construction, statistical outputs, and figure completeness; save machine-readable metadata and inventory files.
+- Required data sources
+  - All inputs and outputs from Tasks 1–4
+- Parameter selection strategy
+  - Record:
+    - absolute input file paths
+    - row counts before and after each filter
+    - identified Mw 6.4 and Mw 7.1 metadata
+    - separator event metadata and hours since Mw 6.4
+    - selected CRS
+    - inferred `delta_m`
+    - radius list
+    - overlap counts and reassignment counts
+    - window families used
+    - bootstrap count
+    - random seed
+    - worker count
+    - package versions
+  - Validate:
+    - both mainshocks absent from cleaned interevent catalog
+    - separator event absent from all window inputs
+    - raw window counts equal requested `N`
+    - `n_ge_mc <= N` for every estimate
+    - dynamic Mc stored only when valid
+    - contrast rows linked only to valid matched pairs
+    - pre/post separator grouping uses center time relative to separator
+    - required 5 km figure and CSV products are non-empty when event counts permit
+  - If primary `N=100, step=20` 5 km outputs are empty or too sparse, record failure evidence and trigger clearly labeled exploratory `N=50, step=10` outputs rather than treating the run as fully successful.
+- Constraints
+  - Keep the workflow in one primary executable script so loading, cleaning, estimation, diagnostics, plotting, and validation remain tightly coupled.
+  - Do not treat schema-only, empty, or fallback-only outputs as successful primary scientific execution.
+- Key outputs
+  - `run_metadata.json`
+  - `output_inventory.csv`
+  - `validation_summary.csv`
+  - `run_log.txt`
+  - `failure_evidence.txt` if needed
+
+### Task script organization
+- Task script 1: primary interevent b-value workflow
+  - Execution flow
+    - load both input CSVs
+    - identify mainshocks and separator
+    - build cleaned interevent catalog
+    - project coordinates and assign 5 km and sensitivity cores
+    - infer `delta_m`
+    - construct sliding windows
+    - compute fixed-Mc and dynamic-Mc b-values
+    - run bootstrap uncertainty in parallel with progress logs
+    - assign reliability labels
+    - match inter-core windows and compute contrasts
+    - compute pre/post summaries
+    - generate all required figures and figure-source tables
+    - validate outputs and write metadata/inventory files
+  - Data dependencies
+    - all later stages depend on Task 1 catalog cleaning, separator exclusion, CRS projection, and core assignments
+    - contrast and summary products depend on validated window-level outputs
+    - figures depend only on saved CSV outputs from earlier stages within the same script
+  - Success evidence
+    - non-empty cleaned catalog
+    - non-empty primary 5 km fixed-Mc and dynamic-Mc outputs when event counts permit
+    - required contrast and diagnostic tables present
+    - required figures generated and validated

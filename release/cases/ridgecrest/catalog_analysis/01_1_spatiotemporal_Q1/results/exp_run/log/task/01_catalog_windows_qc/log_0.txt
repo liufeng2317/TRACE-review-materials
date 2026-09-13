@@ -1,0 +1,15 @@
+[INFO] Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc
+[INFO] MAX_CORES setting available for downstream tasks: 64
+[INFO] Reading CSV: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+[INFO] Reading CSV: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+[INFO] Cleaned ridgecrest_catalog: original=94803, final=94803, dropped_missing=0, dropped_invalid_time=0, dropped_invalid_numeric=0, dropped_nonfinite_coords=0
+[INFO] Cleaned mainshock_reference: original=2, final=2, dropped_missing=0, dropped_invalid_time=0, dropped_invalid_numeric=0, dropped_nonfinite_coords=0
+[INFO] Verifying mainshock reference rows
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/ridgecrest_catalog_clean.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/mainshock_reference_verified.csv
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/analysis_extent.json
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_whole_sequence.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_post64_hourly.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_comparison_intervals.csv
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/catalog_qc_summary.json
+[INFO] Task 01_catalog_windows_qc completed successfully

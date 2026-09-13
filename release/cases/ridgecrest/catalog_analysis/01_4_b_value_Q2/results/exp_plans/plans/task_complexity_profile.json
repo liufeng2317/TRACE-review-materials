@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single scientific objective using three observational catalogs, but requires time-window partitioning, local projection, fixed-radius spatial gridding, bootstrap node uncertainties, sensitivity over four radii, regional-reference Mc/b-value QC, cross-section/profile extraction, and multiple figure/table products. Workflow is cohesive and can be executed mainly in one primary analysis script plus one optional figure assembly/validation script.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate due to sparse pre-separator spatial coverage, Mc/QC choices, projection consistency, and computational cost of 500+ bootstrap samples across many grid nodes/radii.",
+  "expected_script_count": 2
+}

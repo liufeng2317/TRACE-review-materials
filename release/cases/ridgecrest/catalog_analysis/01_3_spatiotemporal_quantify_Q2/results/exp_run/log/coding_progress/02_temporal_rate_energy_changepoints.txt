@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_temporal_rate_energy_changepoints
+Status: success
+Execution stage: analysis_done
+Debug rounds: 4
+Result check rounds: 2
+Elapsed seconds: 692.22
+Started at: 2026-07-06T09:47:42.792567+00:00
+Finished at: 2026-07-06T09:59:15.012984+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_temporal_rate_energy_changepoints/log_3.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_temporal_rate_energy_changepoints.md
+Runtime action: pass
+Code changes: 4
+Last activity: 2026-07-06T09:59:15.012847+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=45.183, coding_agent_sec=236.422, preflight_sec=1.42, result_check_sec=129.163, script_execution_sec=117.697, task_analysis_sec=155.888, total_sec=692.22
+Coding plan context: mode=full_experiment_plan, original_chars=17643, compact_chars=17643
+Coding tool usage: total=18, read_file=5, unique_files=2, used_retrieve=False, tools={'bash_executor': 1, 'read_file': 5, 'python_executor': 4, 'write_file': 1, 'apply_diff': 7}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

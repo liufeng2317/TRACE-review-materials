@@ -1,0 +1,13 @@
+parameter,value
+catalog_path,<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+mainshock_path,<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+fault_path,<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+output_dir,<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis
+time_window_start_utc,2019-07-04 17:33:49.040000+00:00
+time_window_end_utc,2019-07-06 03:19:53.040000+00:00
+grid_spacing_km,1.0
+buffer_km,5.0
+time_bin_minutes,30
+onset_rule,first 30-minute bin with count>=2 and sustained activation defined by either candidate+next>=3 or candidate+next_two>=3 with nonzero post-candidate activity
+parallel_workers,64
+local_projection,+proj=aeqd +lat_0=35.74022 +lon_0=-117.54339 +x_0=0 +y_0=0 +datum=WGS84 +units=km +no_defs +type=crs

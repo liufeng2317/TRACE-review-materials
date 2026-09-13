@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_reference_framework",
+    "generated_at": "2026-07-06T01:52:39.994443+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 239.069,
+    "timing": {
+      "total_sec": 239.069,
+      "coding_agent_sec": 89.551,
+      "code_review_sec": 8.122,
+      "preflight_sec": 0.426,
+      "script_execution_sec": 27.089,
+      "result_check_sec": 51.949,
+      "task_analysis_sec": 60.66
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_reference_framework.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_reference_framework/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "analysis_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/analysis_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "fault_segments_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/fault_segments_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "intermainshock_catalog_clean.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/intermainshock_catalog_clean.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "interval_definitions_kde_stage1.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage1.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "interval_definitions_kde_stage2.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage2.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "interval_definitions_morphology_1h.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_morphology_1h.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "mainshock_reference_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/mainshock_reference_table.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "analysis_metadata.json",
+      "fault_segments_table.csv",
+      "intermainshock_catalog_clean.csv",
+      "interval_definitions_kde_stage1.csv",
+      "interval_definitions_kde_stage2.csv",
+      "interval_definitions_morphology_1h.csv",
+      "mainshock_reference_table.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the shared inter-mainshock dataset, interval tables, and spatial metadata for Ridgecrest analyses.",
+    "result": "Build the shared inter-mainshock dataset, interval tables, and spatial metadata for Ridgecrest analyses. Status=success; outputs=7 discovered; primary=7.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

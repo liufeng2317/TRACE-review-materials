@@ -1,0 +1,359 @@
+# Goal
+Compute spatial b-value diagnostics for the Ridgecrest Mw 6.4–Mw 7.1 interevent period using fixed-radius circular sampling, compare the future Mw 7.1 hypocentral/rupture region against the Mw 6.4 control region, and assess whether the spatial pattern is consistent with Q0/Q1 local b-value results while explicitly reporting uncertainty, data support, and robustness without making a precursor claim.
+
+## Planning Assumptions
+- Observation catalogs are sufficient; no model data are needed.
+- Main-shock origin times and hypocentral markers must be read from `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`.
+- The fixed separator event is defined by time `2019-07-05T11:07:52.830000Z`; Mw 6.4, Mw 7.1, and the separator event must be excluded from all b-value and Mc estimates, but retained as spatial/temporal markers.
+- Main spatial products use fixed `Mc = 1.5` for all grid nodes and all three windows. Dynamic Mc is computed once per window, and once for the background catalog, for QC/context only.
+- SeismoStats package contract relevant here:
+  - `seismostats.analysis.estimate_b(magnitudes, mc, delta_m)` and `ClassicBValueEstimator().calculate(mags, mc, delta_m)` implement classical b-value estimation and automatically exclude magnitudes below `mc`.
+  - `estimate_mc_maxc` requires `fmd_bin`.
+  - `estimate_mc_ks` requires `delta_m` and supports `p_value_pass`; its documented default threshold is 0.1.
+  - `estimate_mc_b_stability` is available as a complementary Mc method.
+- Magnitude bin width `delta_M` must be inferred from the actual catalog discretization; do not infer it from decimal formatting alone if values indicate mixed precision. Record the chosen rule in metadata and validation outputs.
+- Spatial sampling must use a local projected metric coordinate system and circular horizontal neighborhoods on a regular grid. Primary radius is 5 km; sensitivity radii are 4, 5, 6, and 7 km only.
+- A valid node requires at least 30 events with `M >= Mc`; reliability classes are fixed as:
+  - 30–49: exploratory
+  - 50–99: moderately uncertain
+  - >=100: robust
+- Bootstrap uncertainty must use at least 500 resamples for valid nodes; progress logging is required and parallel execution may use up to 64 cores.
+- Scientific success requires non-empty cleaned catalogs, non-empty valid-node outputs for at least the 5 km `full_interevent` and `post_separator` products, and completed merged sensitivity outputs. Sparse `pre_separator` coverage is acceptable but must be flagged as exploratory.
+
+## Analysis Plan
+
+### Task 1 — End-to-end catalog preparation, spatial b-value computation, diagnostics, and output generation
+- Task description
+  - Use one primary analysis script to ingest all three catalogs, define windows and exclusions, infer magnitude discretization, project coordinates, compute window-level Mc QC, build the common grid, calculate node-wise/core-wise/profile-wise b-values with bootstrap uncertainty, derive difference/low-b/sensitivity products, generate figures, and run immediate output validation.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy
+  - Expose explicit runtime parameters:
+    - `fixed_mc = 1.5`
+    - `radii_km = [4, 5, 6, 7]`
+    - `primary_radius_km = 5`
+    - `grid_spacing_km = 0.5`, fallback `1.0` if required for runtime
+    - `min_events_ge_mc = 30`
+    - `bootstrap_samples_nodes >= 500`
+    - `bootstrap_samples_window_core >= 1000`
+    - `max_workers <= 64`
+    - `separator_time = 2019-07-05T11:07:52.830000Z`
+- Constraints
+  - Keep configuration, execution, immediate output checks, merged-result validation, and failure-evidence capture in the same script.
+  - Do not treat placeholder, NaN-only, or empty scientific outputs as success.
+- Key outputs
+  - All CSV, JSON, and figure files listed under subtasks below.
+  - Progress logs and validation reports.
+
+#### Task 1.1 — Input harmonization, marker identification, exclusions, and window construction
+- Task description
+  - Parse input CSVs, standardize schemas, identify the Mw 6.4 and Mw 7.1 main shocks from the main-shock file, remove forbidden marker events, and construct the three analysis windows.
+- Required data sources
+  - Interevent catalog, background catalog, main-shock file.
+- Parameter selection strategy
+  - Parse times as UTC-aware timestamps.
+  - Standardize to common fields: `time, latitude, longitude, depth_km, magnitude`.
+  - Define windows exactly as:
+    - `full_interevent`: `[t_Mw6.4, t_Mw7.1)`
+    - `pre_separator`: `[t_Mw6.4, t_sep)`
+    - `post_separator`: `(t_sep, t_Mw7.1)`
+  - Remove the Mw 6.4 and Mw 7.1 main shocks by exact origin time if available; if necessary, confirm by joint time-magnitude-location matching with recorded tolerances.
+  - Remove all interevent rows at the separator timestamp `2019-07-05T11:07:52.830000Z`; if the event is absent, keep the timestamp as a window boundary and log the absence.
+  - Apply the same exclusion logic before any Mc, b-value, FMD, count, bootstrap, or profile calculation.
+- Constraints
+  - Background catalog is for regional reference only and must not be merged into interevent spatial mapping.
+- Key outputs
+  - `catalog_full_interevent_clean.csv`
+  - `catalog_pre_separator_clean.csv`
+  - `catalog_post_separator_clean.csv`
+  - `catalog_background_reference_clean.csv`
+  - `excluded_events_log.csv`
+  - `catalog_validation_checks.csv`
+
+#### Task 1.2 — Magnitude discretization inference and b-value formula control
+- Task description
+  - Infer `delta_M` from catalog magnitude spacing and lock the analysis-wide binning used in fixed-Mc b-value calculations and FMD summaries.
+- Required data sources
+  - Cleaned interevent and background catalogs.
+- Parameter selection strategy
+  - Compute sorted unique magnitudes and positive magnitude differences.
+  - Choose the dominant small positive spacing when the distribution is near-uniform; if spacing is mixed, use the stable modal increment for the interevent catalog and record the decision.
+  - Verify the selected `delta_M` against the FMD binning behavior and consistency of `Mc = 1.5`.
+  - Use the Aki-Utsu/classical MLE with magnitude-bin correction:
+    - `b = log10(e) / (mean(M) - Mc + delta_M / 2)`
+  - Cross-check a subset of results against `seismostats.analysis.estimate_b(..., mc=1.5, delta_m=delta_M)` to confirm contract-consistent implementation.
+- Constraints
+  - Do not infer resolution solely from decimal places.
+- Key outputs
+  - `magnitude_precision_deltaM_check.csv`
+  - `analysis_metadata.json`
+
+#### Task 1.3 — Projection, active-region grid, and comparison geometry
+- Task description
+  - Project events and markers to local metric coordinates, define the common analysis grid, and construct the 5 km Mw 6.4 and Mw 7.1 core circles plus the Mw 7.1 fault-oriented profile geometry.
+- Required data sources
+  - Cleaned catalogs and main-shock markers.
+- Parameter selection strategy
+  - Use one local projected metric CRS centered on the sequence centroid or midpoint of the two main shocks; apply it consistently to all catalogs, grid nodes, markers, circles, and profile coordinates.
+  - Define the active interevent region from the cleaned `full_interevent` footprint with a modest spatial margin so edge nodes can sample nearby events.
+  - Use a regular grid with spacing in the user-required 0.5–1.0 km range; default to 0.5 km unless runtime/coverage checks require 1.0 km.
+  - Construct fixed 5 km circles centered on the Mw 6.4 and Mw 7.1 hypocenters.
+  - Define the Mw 7.1 post-separator fault-oriented profile by a reproducible structural rule independent of observed b-values:
+    - preferred: principal-axis orientation of post-separator seismicity in the Mw 7.1 neighborhood
+    - fallback: local mainshock alignment trend
+  - Save strike/azimuth, origin, and swath width explicitly.
+- Constraints
+  - Use the same grid for all windows and all radii for direct comparison.
+  - Distances for radius sampling and core membership must be computed in projected coordinates.
+- Key outputs
+  - `projection_and_grid_definition.csv`
+  - `grid_nodes.csv`
+  - `mainshock_markers_projected.csv`
+  - `core_regions_5km.csv`
+  - `fault_profile_definition.csv`
+
+#### Task 1.4 — Window-level Mc QC and regional reference b-value
+- Task description
+  - Estimate one dynamic Mc per interevent window and one regional background reference b-value for context only.
+- Required data sources
+  - Cleaned `full_interevent`, `pre_separator`, `post_separator`, and background catalogs.
+- Parameter selection strategy
+  - For each catalog, bin magnitudes using inferred `delta_M`.
+  - Compute Mc by:
+    - MAXC using `estimate_mc_maxc(fmd_bin=delta_M)` as the primary reported QC value
+    - KS using `estimate_mc_ks(delta_m=delta_M, p_value_pass=0.1)` as documented unless the user requests a stricter threshold
+    - b-stability using `estimate_mc_b_stability()` when sample size is adequate
+  - Report method agreement/disagreement and failures due to insufficient sample size.
+  - Compute window-level b-values at:
+    - fixed `Mc = 1.5`
+    - dynamic Mc for QC only
+  - Compute the background regional reference b-value using the background catalog and its dynamic Mc; also report a fixed-`Mc=1.5` comparison if sample size is sufficient.
+- Constraints
+  - Dynamic Mc must not replace fixed `Mc = 1.5` in any node-wise main map.
+- Key outputs
+  - `window_level_mc_qc.csv`
+  - `window_level_bvalue_qc.csv`
+  - `background_reference_bvalue.csv`
+  - `window_level_fmd_summary.csv`
+
+#### Task 1.5 — Node-wise spatial b-value, uncertainty, and reliability for radii 4–7 km
+- Task description
+  - Compute node-wise fixed-radius spatial b-values and support metrics on the common grid for all windows and all allowed radii.
+- Required data sources
+  - Cleaned window catalogs, grid nodes, projection metadata, `delta_M`.
+- Parameter selection strategy
+  - For each node, window, and radius in `{4, 5, 6, 7}` km:
+    - select events within the circular horizontal radius
+    - retain only events with `M >= 1.5`
+    - compute `n_total`, `n_ge_mc`, mean magnitude above Mc, and fixed-Mc b-value
+    - if `n_ge_mc < 30`, set b-value and uncertainty fields to `NaN`
+    - else run bootstrap resampling of magnitudes with at least 500 samples to obtain:
+      - bootstrap mean
+      - bootstrap standard deviation / standard error
+      - percentile confidence interval
+    - assign reliability class from `n_ge_mc`
+  - Parallelize across node-window-radius chunks up to 64 workers.
+  - Write progress logs by window/radius/batch.
+- Constraints
+  - Do not estimate node-specific Mc.
+  - Do not use radii > 7 km.
+  - Validity depends only on `n_ge_mc >= 30`.
+- Key outputs
+  - `grid_bvalues_full_interevent_r4.csv`
+  - `grid_bvalues_full_interevent_r5.csv`
+  - `grid_bvalues_full_interevent_r6.csv`
+  - `grid_bvalues_full_interevent_r7.csv`
+  - matching files for `pre_separator` and `post_separator`
+  - each table includes:
+    - `node_id, x_km, y_km, longitude, latitude, window_name, radius_km, n_total, n_ge_mc, mean_mag_ge_mc, b_value, b_boot_mean, b_boot_std, b_ci_low, b_ci_high, reliability_class, valid_flag`
+  - `bootstrap_progress_log.csv`
+  - `spatial_validation_checks.csv`
+
+#### Task 1.6 — Primary 5 km map products and reliability diagnostics
+- Task description
+  - Generate the required 5 km map-view b-value maps and reliability layers for the three windows.
+- Required data sources
+  - 5 km node tables, marker/projected geometry outputs.
+- Parameter selection strategy
+  - Use the 5 km node tables for:
+    - `full_interevent`
+    - `pre_separator`
+    - `post_separator`
+  - Use one common b-value color scale across the three primary maps derived from the pooled valid-node range and recorded in metadata.
+  - Mask invalid nodes with no interpolation.
+  - Overlay Mw 6.4, M5.37, Mw 7.1 markers and the two 5 km core circles on each map.
+  - Create separate reliability layers for:
+    - `n_ge_mc`
+    - bootstrap uncertainty
+    - reliability class
+- Constraints
+  - Sparse pre-separator coverage must remain clearly interpretable as exploratory.
+- Key outputs
+  - `map_bvalue_full_interevent_r5`
+  - `map_bvalue_pre_separator_r5`
+  - `map_bvalue_post_separator_r5`
+  - `map_reliability_ngeMc_full_interevent_r5`
+  - `map_reliability_ngeMc_pre_separator_r5`
+  - `map_reliability_ngeMc_post_separator_r5`
+  - `map_uncertainty_full_interevent_r5`
+  - `map_uncertainty_pre_separator_r5`
+  - `map_uncertainty_post_separator_r5`
+  - `map_reliability_class_full_interevent_r5`
+  - `map_reliability_class_pre_separator_r5`
+  - `map_reliability_class_post_separator_r5`
+
+#### Task 1.7 — Pre/post difference map on common valid nodes
+- Task description
+  - Compute and map `post_separator - pre_separator` b-value differences using only nodes valid in both windows.
+- Required data sources
+  - `grid_bvalues_pre_separator_r5.csv`
+  - `grid_bvalues_post_separator_r5.csv`
+- Parameter selection strategy
+  - Inner-join pre and post tables on common node IDs.
+  - Retain only rows where both windows have valid b-values.
+  - Compute:
+    - `delta_b = b_post - b_pre`
+    - component support counts
+    - component uncertainties
+    - combined uncertainty proxy assuming bootstrap independence, and record this assumption
+  - Use a symmetric color scale centered at zero.
+- Constraints
+  - Do not compute differences where either node is invalid.
+  - If overlap is sparse, report the overlap count explicitly and treat results as exploratory.
+- Key outputs
+  - `grid_bvalue_difference_post_minus_pre_r5.csv`
+  - `map_bvalue_difference_post_minus_pre_r5`
+  - `difference_map_coverage_summary.csv`
+
+#### Task 1.8 — Mw 6.4 and Mw 7.1 5 km core b-values and FMD diagnostics
+- Task description
+  - Compare the two 5 km core regions centered on the Mw 6.4 and Mw 7.1 hypocenters across all three windows.
+- Required data sources
+  - Cleaned window catalogs, projected core-region definitions, `delta_M`.
+- Parameter selection strategy
+  - For each core (`mw64_core`, `mw71_core`) and each window (`full`, `pre`, `post`):
+    - extract events inside the 5 km circle
+    - apply fixed `Mc = 1.5`
+    - compute `n_ge_mc`, b-value, bootstrap uncertainty, and reliability class
+    - generate cumulative and incremental FMD summaries using `delta_M`
+    - compute direct contrasts `b_71core - b_64core`
+  - If `n_ge_mc < 30`, retain the row with `NaN` b and explicit insufficiency flags while still providing raw FMD counts.
+- Constraints
+  - Keep the same 5 km radius as the main map overlays for direct comparability.
+- Key outputs
+  - `core_bvalues_fmd_summary.csv`
+  - `core_fmd_bins.csv`
+  - `core_region_event_counts.csv`
+  - `core_vs_control_comparison.csv`
+  - `figure_core_fmd_comparison`
+
+#### Task 1.9 — Mw 7.1 post-separator fault-oriented profile
+- Task description
+  - Evaluate whether post-separator b-values organize along the future Mw 7.1 rupture trend using a reproducible fault-oriented profile or swath.
+- Required data sources
+  - Post-separator 5 km node table, post-separator events, profile definition.
+- Parameter selection strategy
+  - Project valid post-separator nodes and events onto:
+    - along-strike distance
+    - across-strike distance
+  - Use a narrow swath width tied to the sampling scale so the profile remains interpretable.
+  - Report along-strike position, b-value, uncertainty, `n_ge_mc`, validity, and Mw 7.1 hypocenter position along profile.
+  - If helpful, aggregate nodes into along-strike bins while preserving original source data in the table.
+- Constraints
+  - The orientation rule must be saved and must not be tuned to maximize low-b appearance.
+- Key outputs
+  - `mw71_profile_post_separator_r5.csv`
+  - `profile_orientation_metadata.csv`
+  - `profile_mw71_post_separator_bvalue`
+
+#### Task 1.10 — Descriptive low-b summary
+- Task description
+  - Summarize low-b spatial patterns without presuming an anomaly, using the user-defined absolute and relative criteria.
+- Required data sources
+  - Primary 5 km node tables, core definitions, profile outputs.
+- Parameter selection strategy
+  - For each window:
+    - identify valid nodes with `b < 0.9`
+    - identify the lowest 20% of valid node b-values
+    - summarize counts, fraction of valid nodes, median b, median uncertainty, median `n_ge_mc`, and reliability-class composition
+    - quantify overlap with or proximity to the Mw 7.1 core and compare with the Mw 6.4 control core
+  - Provide a compact descriptive classification such as:
+    - future Mw 7.1 region lower / similar / higher relative to the valid-node distribution
+    - with uncertainty and reliability qualifiers
+- Constraints
+  - Interpret low b-values only as consistent with localized stress loading or relatively higher differential stress.
+  - Do not frame the result as deterministic prediction or independent precursor evidence.
+- Key outputs
+  - `low_b_nodes_by_window_r5.csv`
+  - `low_b_summary_by_window.csv`
+  - `future71_vs_control_lowb_comparison.csv`
+
+#### Task 1.11 — Radius sensitivity synthesis
+- Task description
+  - Test whether the main spatial comparison is stable across the allowed radii 4, 5, 6, and 7 km.
+- Required data sources
+  - All node tables, core summaries, low-b summaries.
+- Parameter selection strategy
+  - For each window and radius:
+    - compute valid-node fraction
+    - summarize b-value distribution
+    - compare Mw 7.1-core and Mw 6.4-core b-values
+    - summarize the fraction of valid nodes meeting low-b criteria
+  - Where nodes are jointly valid between radii, compute map correlation or rank consistency with the 5 km results.
+  - Highlight whether the future Mw 7.1 region remains relatively low-b, broadens, weakens, or disappears as radius changes.
+- Constraints
+  - Restrict the main sensitivity analysis to 4–7 km.
+- Key outputs
+  - `radius_sensitivity_summary.csv`
+  - `core_radius_sensitivity_summary.csv`
+  - `figure_radius_sensitivity`
+
+#### Task 1.12 — Immediate execution checks and scientific-output validation
+- Task description
+  - Validate that required outputs exist, are non-empty, and contain scientifically usable results.
+- Required data sources
+  - All outputs from Tasks 1.1–1.11.
+- Parameter selection strategy
+  - Check:
+    - cleaned catalogs are non-empty
+    - excluded events were removed and logged
+    - `delta_M` was inferred and recorded
+    - 5 km `full_interevent` and `post_separator` tables contain valid nodes
+    - pre-separator valid-node coverage and overlap-node coverage are quantified
+    - merged difference-map table is either non-empty or has an explicit insufficiency reason
+    - all required CSV outputs are present
+  - Write compact machine-readable result summaries capturing:
+    - future Mw 7.1 region lower / similar / higher than Mw 6.4 control
+    - uncertainty bounds
+    - reliability tags
+    - whether spatial support is consistent with Q0/Q1-style local b-value results
+- Constraints
+  - Do not count batch completion as success unless merged scientific outputs are valid and non-empty where expected.
+- Key outputs
+  - `validation_report.json`
+  - `required_output_checklist.csv`
+  - `output_manifest.csv`
+  - `result_summary.json`
+  - `comparison_summary.csv`
+
+### Task 2 — Optional lightweight figure reassembly from validated tables
+- Task description
+  - Use one secondary script only if needed to regenerate figures from validated tables without recomputing scientific quantities.
+- Required data sources
+  - Validated CSV/JSON outputs from Task 1.
+- Parameter selection strategy
+  - Read only table outputs and metadata from Task 1.
+  - Rebuild figures with the same common scales, masks, overlays, and legends defined in metadata.
+- Constraints
+  - Do not recompute Mc, b-values, uncertainty, or node validity in this stage.
+  - Stop with explicit failure evidence if required Task 1 outputs are missing or empty.
+- Key outputs
+  - Regenerated versions of:
+    - spatial b-value maps
+    - reliability maps
+    - difference map
+    - Mw 7.1 profile
+    - core FMD comparison
+    - radius sensitivity figure

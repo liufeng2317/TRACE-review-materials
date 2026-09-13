@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "The request requires a full-window observational workflow integrating GaMMA association/location, station-coordinate projection, day-wise catalog/phase-file reformatting with strict pairing logic, waveform-based magnitude recomputation from Wood-Anderson MiniSEED, parallel execution up to 64 cores, and multiple validation/visualization outputs. The workflow has nontrivial package-specific configuration and cross-linking between picks, stations, assignments, events, and waveform amplitudes.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate-high: success depends on correct station schema parsing, GaMMA input-column mapping, projection/bounds setup, assignment-to-pick joins, waveform-to-pick station matching, and event-wise phase pairing/magnitude rewrite.",
+  "expected_script_count": 2
+}

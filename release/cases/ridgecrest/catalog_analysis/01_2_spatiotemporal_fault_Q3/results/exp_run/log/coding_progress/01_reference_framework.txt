@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_reference_framework
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 239.069
+Started at: 2026-07-06T01:12:23.757260+00:00
+Finished at: 2026-07-06T01:16:22.826645+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_reference_framework/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_reference_framework.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-06T01:16:22.826531+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=8.122, coding_agent_sec=89.551, preflight_sec=0.426, result_check_sec=51.949, script_execution_sec=27.089, task_analysis_sec=60.66, total_sec=239.069
+Coding plan context: mode=full_experiment_plan, original_chars=16978, compact_chars=16978
+Coding tool usage: total=4, read_file=0, unique_files=0, used_retrieve=False, tools={'python_executor': 2, 'write_file': 1, 'apply_diff': 1}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

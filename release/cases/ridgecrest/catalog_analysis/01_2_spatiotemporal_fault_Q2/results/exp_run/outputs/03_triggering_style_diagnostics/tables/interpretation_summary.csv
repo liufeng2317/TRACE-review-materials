@@ -1,0 +1,12 @@
+topic,summary
+system_style,Mixed / complex activation pattern
+fault_segment_activation_within_60min_fraction,0.167
+fault_segment_activation_within_240min_fraction,0.250
+fault_segment_activation_iqr_minutes,832.50
+major_fault_progressive_fraction,nan
+major_fault_near_synchronous_fraction,nan
+major_fault_jump_like_fraction,nan
+cross_fault_jump_like_pairs_within_30min,11.0
+mw71_target_segment_activation_minutes,not activated
+mw71_target_anomalously_late_vs_local,False
+mw71_target_anomalously_late_vs_system,False

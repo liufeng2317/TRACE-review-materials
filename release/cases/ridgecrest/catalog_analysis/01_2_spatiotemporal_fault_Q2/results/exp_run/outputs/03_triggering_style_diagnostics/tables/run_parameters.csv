@@ -1,0 +1,10 @@
+parameter,value
+t0_mainshock64_utc,2019-07-04 17:33:49.040000+00:00
+t1_mainshock71_utc,2019-07-06 03:19:53.040000+00:00
+time_bin_minutes,30
+major_fault_min_activated_segments,8
+mw71_neighborhood_radius_km,3.0
+early_window_minutes,60.0
+mid_window_minutes,240.0
+bend_angle_threshold_deg,20.0
+max_cores,64

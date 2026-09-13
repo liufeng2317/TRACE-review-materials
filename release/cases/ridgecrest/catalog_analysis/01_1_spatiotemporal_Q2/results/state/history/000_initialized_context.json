@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "01_1_trigger_spatiotemporal_Q2-v1",
+  "run_name": "01_1_trigger_spatiotemporal_Q2-v1",
+  "root": "<PACKAGE_ROOT>/results",
+  "status": "running",
+  "next_stage": "input_guard",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-07-05T07:57:35.018043+00:00",
+  "updated_at": "2026-07-05T07:57:35.102797+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are a senior seismologist. \nYour objective is to investigate the spatiotemporal evolution of the earthquakes for the Ridgecrest earthquake sequence, spetial attention to the trigger mechanism from Mw 6.4 to Mw 7.1 mainshock.\n\n## 1. Data Sources\n- Catalog Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n    - the first row is the name of the columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Main-shock events Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n    - Mainshock64: magnitude 6.4\n    - Mainshock71: magnitude 7.1\n\n## 2. Time-Colored spatial point cloud\nVisually assess whether seismicity after Mw 6.4 exhibits organized temporal layering in space.\n\n- Prepare the time ranges for analysis:\n    - A shorter time window after Mw 6.4: [mainshock64, mainshock64 + 4 hours]\n    - A longer time window after Mw 6.4: [mainshock64, mainshock71]\n\n- Scatter plot epicenters in longitude–latitude space for each time range:\n    - Color events by their occurrence time relative to Mw 6.4\n    - Assign a single color to all events within the same time interval:\n        - 30-minute intervals for the shorter time window\n        - 2-hour intervals for the longer time window\n    - Overlay:\n        - Mw 6.4 epicenter\n        - Mw 7.1 epicenter\n    - Plot requirements:\n        - No color interpolation within each time bin\n\n## 3. Onset Time Analysis\nObjective:\nIdentify the aftershock activity after Mw 6.4 using the spatially map of the onset time\n    - If activation is synchronous:\n        - Colors are spatially mixed\n        - No large-scale spatial segregation by time bin\n    - If activation is staged or cascade-like:\n        - Early time-bin colors cluster in specific regions\n        - Later time-bin colors occupy distinct spatial zones\n        - Spatially coherent temporal layering emerges\n    \n1. Spatial discretization\n    - The study region is defined by the catalog data within the time window [mainshock64, mainshock71]\n    - Discretize the research region into a grid of 0.5 km × 0.5 km cells\n\n2. Local seismicity rate construction\n    - For each grid cell:\n        - Count the number of seismic events every 30 minutes\n        - Construct the local seismicity rate time series\n\n3. Onset time definition and recording\n    - Define a physically interpretable and reproducible activation time for each spatial unit:\n        - Based on a sustained increase in the local seismicity rate\n    - Record the onset time relative to Mw 6.4 for each spatial unit\n\n4. Spatial mapping of onset time\n    - Plot a spatial map where:\n        - Each grid cell (or subregion) is colored by its onset time\n        - Earlier activation = darker color\n        - Later activation = lighter color\n    - Overlay:\n        - Mw 6.4 epicenter\n        - Mw 7.1 epicenter\n    \n## 4. Computational and software requirements\n- Process each major analytical step independently and generate figures and outputs for that step.\n- Use parallel computation (up to 64 cores) for computationally intensive tasks, such as spatial visualization, onset time analysis, etc.\n- Display progress information (e.g., progress bars or logs) during long computations whenever possible.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<REPO_ROOT>/examples/ridgecrest/catalog_analysis/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_1_trigger_spatiotemporal_Q2-v1",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are a senior seismologist. \nYour objective is to investigate the spatiotemporal evolution of the earthquakes for the Ridgecrest earthquake sequence, spetial attention to the trigger mechanism from Mw 6.4 to Mw 7.1 mainshock.\n\n## 1. Data Sources\n- Catalog Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n    - the first row is the name of the columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Main-shock events Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n    - Mainshock64: magnitude 6.4\n    - Mainshock71: magnitude 7.1\n\n## 2. Time-Colored spatial point cloud\nVisually assess whether seismicity after Mw 6.4 exhibits organized temporal layering in space.\n\n- Prepare the time ranges for analysis:\n    - A shorter time window after Mw 6.4: [mainshock64, mainshock64 + 4 hours]\n    - A longer time window after Mw 6.4: [mainshock64, mainshock71]\n\n- Scatter plot epicenters in longitude–latitude space for each time range:\n    - Color events by their occurrence time relative to Mw 6.4\n    - Assign a single color to all events within the same time interval:\n        - 30-minute intervals for the shorter time window\n        - 2-hour intervals for the longer time window\n    - Overlay:\n        - Mw 6.4 epicenter\n        - Mw 7.1 epicenter\n    - Plot requirements:\n        - No color interpolation within each time bin\n\n## 3. Onset Time Analysis\nObjective:\nIdentify the aftershock activity after Mw 6.4 using the spatially map of the onset time\n    - If activation is synchronous:\n        - Colors are spatially mixed\n        - No large-scale spatial segregation by time bin\n    - If activation is staged or cascade-like:\n        - Early time-bin colors cluster in specific regions\n        - Later time-bin colors occupy distinct spatial zones\n        - Spatially coherent temporal layering emerges\n    \n1. Spatial discretization\n    - The study region is defined by the catalog data within the time window [mainshock64, mainshock71]\n    - Discretize the research region into a grid of 0.5 km × 0.5 km cells\n\n2. Local seismicity rate construction\n    - For each grid cell:\n        - Count the number of seismic events every 30 minutes\n        - Construct the local seismicity rate time series\n\n3. Onset time definition and recording\n    - Define a physically interpretable and reproducible activation time for each spatial unit:\n        - Based on a sustained increase in the local seismicity rate\n    - Record the onset time relative to Mw 6.4 for each spatial unit\n\n4. Spatial mapping of onset time\n    - Plot a spatial map where:\n        - Each grid cell (or subregion) is colored by its onset time\n        - Earlier activation = darker color\n        - Later activation = lighter color\n    - Overlay:\n        - Mw 6.4 epicenter\n        - Mw 7.1 epicenter\n    \n## 4. Computational and software requirements\n- Process each major analytical step independently and generate figures and outputs for that step.\n- Use parallel computation (up to 64 cores) for computationally intensive tasks, such as spatial visualization, onset time analysis, etc.\n- Display progress information (e.g., progress bars or logs) during long computations whenever possible.\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": []
+  },
+  "artifacts": {
+    "request_txt": "<PACKAGE_ROOT>/results/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs",
+    "run_log_path": "<PACKAGE_ROOT>/results/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<PACKAGE_ROOT>/results/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": null
+}

@@ -1,0 +1,142 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-05T08:15:11.831219+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 2
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 2,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 15538,
+        "mode": "full_experiment_plan",
+        "original_chars": 15538,
+        "task_name": "01_catalog_windows_and_time_colored_maps"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 1,
+          "python_executor": 2
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py": {
+            "count": 3,
+            "tools": {
+              "read_file": 3
+            }
+          }
+        },
+        "read_file_call_count": 3,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 1,
+          "bash_executor": 1,
+          "python_executor": 2,
+          "read_file": 3,
+          "write_file": 1
+        },
+        "total_tool_calls": 8,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 376.921,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-05T08:07:43.718017+00:00",
+      "last_activity_at": "2026-07-05T08:07:43.717894+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_and_time_colored_maps/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-05T08:01:26.797507+00:00",
+      "status": "success",
+      "task_name": "01_catalog_windows_and_time_colored_maps",
+      "timing": {
+        "code_review_sec": 28.604,
+        "coding_agent_sec": 121.04,
+        "preflight_sec": 0.447,
+        "result_check_sec": 112.494,
+        "script_execution_sec": 28.075,
+        "task_analysis_sec": 85.202,
+        "total_sec": 376.921
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 15538,
+        "mode": "full_experiment_plan",
+        "original_chars": 15538,
+        "task_name": "02_grid_onset_and_trigger_diagnostics"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 3
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py": {
+            "count": 2,
+            "tools": {
+              "read_file": 2
+            }
+          }
+        },
+        "read_file_call_count": 3,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 2,
+          "python_executor": 3,
+          "read_file": 3,
+          "write_file": 1
+        },
+        "total_tool_calls": 9,
+        "unique_file_read_count": 2,
+        "used_retrieve": false
+      },
+      "debug_round": 2,
+      "elapsed_sec": 532.417,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-05T08:15:11.675480+00:00",
+      "last_activity_at": "2026-07-05T08:15:11.675341+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-05T08:06:19.258408+00:00",
+      "status": "success",
+      "task_name": "02_grid_onset_and_trigger_diagnostics",
+      "timing": {
+        "code_review_sec": 32.161,
+        "coding_agent_sec": 132.569,
+        "preflight_sec": 0.772,
+        "result_check_sec": 68.883,
+        "script_execution_sec": 52.247,
+        "task_analysis_sec": 243.476,
+        "total_sec": 532.417
+      }
+    }
+  ]
+}

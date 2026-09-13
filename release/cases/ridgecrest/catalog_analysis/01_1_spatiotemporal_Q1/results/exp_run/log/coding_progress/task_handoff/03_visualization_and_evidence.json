@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "03_visualization_and_evidence",
+    "generated_at": "2026-07-05T07:46:16.146809+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 500.777,
+    "timing": {
+      "total_sec": 500.777,
+      "coding_agent_sec": 171.058,
+      "code_review_sec": 14.685,
+      "preflight_sec": 1.224,
+      "script_execution_sec": 67.326,
+      "result_check_sec": 121.04,
+      "task_analysis_sec": 122.586
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/03_visualization_and_evidence.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "before_after_change_metrics_64.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_64.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "before_after_change_metrics_71.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_71.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "figure_window_cross_reference.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figure_window_cross_reference.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "output_manifest.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/output_manifest.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "post64_branching_flags.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_branching_flags.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "post64_hourly_page_index.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_page_index.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "post64_hourly_render_log.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_render_log.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "ridgecrest_interval_interpretation_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/ridgecrest_interval_interpretation_table.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "before_after_change_metrics_64.json",
+      "before_after_change_metrics_71.json",
+      "compare_before_after_mw64.png",
+      "compare_before_after_mw71.png",
+      "figure_window_cross_reference.csv",
+      "output_manifest.csv",
+      "post64_branching_flags.csv",
+      "post64_hourly_page_index.csv",
+      "post64_hourly_render_log.json",
+      "ridgecrest_interval_interpretation_table.csv",
+      "ridgecrest_triggering_evidence_summary.json",
+      "run_log.txt",
+      "validation_report.json",
+      "whole_sequence_2h_page_index.csv",
+      "whole_sequence_6h_page_index.csv",
+      "whole_sequence_render_log.json",
+      "figures_post64_hourly/post64_hourly_page_001.png",
+      "figures_post64_hourly/post64_hourly_page_002.png",
+      "figures_post64_hourly/post64_hourly_page_003.png",
+      "figures_post64_hourly/post64_hourly_page_004.png",
+      "figures_post64_hourly/post64_hourly_page_005.png",
+      "figures_whole_sequence_2h/whole_sequence_2h_page_001.png",
+      "figures_whole_sequence_2h/whole_sequence_2h_page_002.png",
+      "figures_whole_sequence_2h/whole_sequence_2h_page_003.png",
+      "figures_whole_sequence_2h/whole_sequence_2h_page_004.png",
+      "figures_whole_sequence_6h/whole_sequence_6h_page_001.png",
+      "figures_whole_sequence_6h/whole_sequence_6h_page_002.png"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Generate all requested map figures, comparison plots, machine-readable evidence summaries, and final validation products.",
+    "result": "Generate all requested map figures, comparison plots, machine-readable evidence summaries, and final validation products. Status=success; outputs=27 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

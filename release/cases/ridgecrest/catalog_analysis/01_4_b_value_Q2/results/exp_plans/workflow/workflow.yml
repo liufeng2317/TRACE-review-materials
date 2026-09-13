@@ -1,0 +1,236 @@
+tasks:
+- name: 01_spatial_bvalue_diagnostics
+  description: Execute the full Ridgecrest interevent spatial b-value analysis, 
+    figure generation, and scientific validation in one script.
+  script: 01_spatial_bvalue_diagnostics.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_clean_catalogs
+    description: Read the interevent, background, and main-shock catalogs, 
+      standardize fields, define windows, and exclude marker events.
+    inputs:
+    - interevent_catalog
+    - background_catalog
+    - mainshock_catalog
+    - separator_time
+    outputs:
+    - full_interevent_clean_catalog
+    - pre_separator_clean_catalog
+    - post_separator_clean_catalog
+    - background_reference_clean_catalog
+    - excluded_events_log
+    - catalog_validation_checks
+    params:
+      required_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      standardized_fields:
+      - time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      analysis_windows:
+        full_interevent: '[mw64_time, mw71_time)'
+        pre_separator: '[mw64_time, separator_time)'
+        post_separator: (separator_time, mw71_time)
+      excluded_markers:
+      - mw64_mainshock
+      - mw71_mainshock
+      - separator_event
+      time_zone: UTC
+  - name: infer_magnitude_discretization_and_record_metadata
+    description: Infer the stable magnitude bin width, define the fixed-Mc 
+      b-value settings, and record analysis metadata.
+    inputs:
+    - full_interevent_clean_catalog
+    - pre_separator_clean_catalog
+    - post_separator_clean_catalog
+    - background_reference_clean_catalog
+    outputs:
+    - inferred_delta_m
+    - magnitude_precision_check
+    - analysis_metadata
+    params:
+      fixed_mc: 1.5
+      discretization_rule: 
+        dominant_small_positive_spacing_with_mixed_precision_check
+      bvalue_formula: aki_utsu_mle_with_bin_correction
+      seismostats_crosscheck:
+        estimator: estimate_b
+        method: classical
+  - name: project_coordinates_and_define_grid_geometry
+    description: Project catalogs to local metric coordinates, build a common 
+      analysis grid, and define core circles and the Mw 7.1 profile geometry.
+    inputs:
+    - full_interevent_clean_catalog
+    - pre_separator_clean_catalog
+    - post_separator_clean_catalog
+    - mainshock_catalog
+    - analysis_metadata
+    outputs:
+    - projected_catalogs
+    - projected_markers
+    - grid_nodes
+    - projection_and_grid_definition
+    - core_regions_5km
+    - fault_profile_definition
+    params:
+      projection_strategy: local_metric_crs_centered_on_sequence
+      grid_spacing_km:
+        preferred: 0.5
+        fallback: 1.0
+      active_region_source: full_interevent_footprint_with_margin
+      primary_core_radius_km: 5
+      profile_orientation_rule:
+        preferred: principal_axis_of_post_separator_seismicity_near_mw71
+        fallback: mainshock_alignment_trend
+  - name: compute_window_level_mc_qc_and_background_reference
+    description: Estimate one dynamic Mc per window and a regional background 
+      reference b-value for context using seismostats methods.
+    inputs:
+    - full_interevent_clean_catalog
+    - pre_separator_clean_catalog
+    - post_separator_clean_catalog
+    - background_reference_clean_catalog
+    - inferred_delta_m
+    outputs:
+    - window_level_mc_qc
+    - window_level_bvalue_qc
+    - background_reference_bvalue
+    - window_level_fmd_summary
+    params:
+      mc_methods:
+      - maxc
+      - ks
+      - b_stability
+      maxc_fmd_bin_source: inferred_delta_m
+      ks_p_value_pass: 0.1
+      fixed_mc_for_comparison: 1.5
+      use_dynamic_mc_for_maps: false
+  - name: compute_spatial_bvalues_uncertainty_and_reliability
+    description: Calculate node-wise fixed-radius b-values, bootstrap 
+      uncertainty, counts, and reliability classes for all windows and radii.
+    inputs:
+    - projected_catalogs
+    - grid_nodes
+    - inferred_delta_m
+    - analysis_metadata
+    outputs:
+    - grid_bvalues_all_windows_radii
+    - bootstrap_progress_log
+    - spatial_validation_checks
+    params:
+      radii_km:
+      - 4
+      - 5
+      - 6
+      - 7
+      fixed_mc: 1.5
+      min_events_ge_mc: 30
+      bootstrap_samples_nodes: 500
+      reliability_classes:
+        exploratory: 30-49
+        moderately_uncertain: 50-99
+        robust: 100_plus
+      max_workers: 64
+      parallelization_unit: node_window_radius_batches
+      invalid_node_behavior: nan_bvalue_and_uncertainty
+  - name: build_primary_maps_and_difference_products
+    description: Generate the required 5 km b-value maps, reliability maps, and 
+      post-minus-pre difference products on common valid nodes.
+    inputs:
+    - grid_bvalues_all_windows_radii
+    - projected_markers
+    - core_regions_5km
+    - fault_profile_definition
+    outputs:
+    - primary_bvalue_maps_r5
+    - reliability_maps_r5
+    - grid_bvalue_difference_post_minus_pre_r5
+    - difference_map
+    - difference_map_coverage_summary
+    params:
+      primary_radius_km: 5
+      common_bvalue_scale: pooled_valid_node_range_across_windows
+      mask_invalid_nodes: true
+      difference_definition: post_separator_minus_pre_separator
+      difference_overlap_requirement: both_nodes_valid
+      difference_uncertainty_rule: bootstrap_independence_proxy
+      difference_color_scale: symmetric_centered_on_zero
+  - name: compute_core_fmd_profile_lowb_and_sensitivity_summaries
+    description: Derive core-region b-values and FMDs, the Mw 7.1 post-separator
+      profile, low-b summaries, and radius sensitivity tables and figures.
+    inputs:
+    - projected_catalogs
+    - core_regions_5km
+    - fault_profile_definition
+    - grid_bvalues_all_windows_radii
+    - inferred_delta_m
+    outputs:
+    - core_bvalues_fmd_summary
+    - core_fmd_bins
+    - core_region_event_counts
+    - core_vs_control_comparison
+    - mw71_profile_post_separator_r5
+    - profile_orientation_metadata
+    - low_b_nodes_by_window_r5
+    - low_b_summary_by_window
+    - future71_vs_control_lowb_comparison
+    - radius_sensitivity_summary
+    - core_radius_sensitivity_summary
+    - core_fmd_comparison_figure
+    - mw71_profile_figure
+    - radius_sensitivity_figure
+    params:
+      fixed_core_radius_km: 5
+      fixed_mc: 1.5
+      bootstrap_samples_window_core: 1000
+      low_b_threshold: 0.9
+      relative_low_b_quantile: 0.2
+      profile_window: post_separator
+      sensitivity_radii_km:
+      - 4
+      - 5
+      - 6
+      - 7
+      insufficient_sample_behavior: retain_counts_and_fmd_with_nan_bvalue
+  - name: validate_outputs_and_write_machine_readable_summaries
+    description: Check that required outputs are present and scientifically 
+      usable, then write manifests and compact comparison summaries.
+    inputs:
+    - full_interevent_clean_catalog
+    - pre_separator_clean_catalog
+    - post_separator_clean_catalog
+    - magnitude_precision_check
+    - window_level_mc_qc
+    - grid_bvalues_all_windows_radii
+    - grid_bvalue_difference_post_minus_pre_r5
+    - core_vs_control_comparison
+    - low_b_summary_by_window
+    - radius_sensitivity_summary
+    outputs:
+    - validation_report
+    - required_output_checklist
+    - output_manifest
+    - result_summary
+    - comparison_summary
+    params:
+      required_success_conditions:
+      - cleaned_catalogs_non_empty
+      - excluded_events_logged
+      - delta_m_recorded
+      - valid_nodes_exist_for_full_interevent_r5
+      - valid_nodes_exist_for_post_separator_r5
+      - sensitivity_outputs_present
+      exploratory_conditions:
+      - sparse_pre_separator_coverage_allowed
+      - sparse_difference_overlap_must_be_flagged
+      interpretation_constraints:
+      - q2_support_only_for_q0_q1
+      - no_precursor_claim
+      - no_deterministic_prediction
+      - low_b_interpretation_limited_to_stress_consistency

@@ -1,0 +1,15 @@
+[2026-07-06 08:09:29] Writing outputs to <PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics
+[2026-07-06 08:09:29] Loading antecedent outputs from Tasks 01 and 02
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 740, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 675, in main
+    data = load_inputs()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 99, in load_inputs
+    event_assoc = load_csv(
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 63, in load_csv
+    require_columns(df, required, name)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py", line 56, in require_columns
+    raise ValueError(f'{df_name} missing required columns: {missing}')
+ValueError: event_to_fault_segment_association missing required columns: ['associated']
+

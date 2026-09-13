@@ -1,0 +1,77 @@
+Script path: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_metrics_preparation.py
+Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation
+Loading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Catalog loaded with 84,474 events
+Loading mainshocks: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Mainshocks loaded and validated
+Loading fault polylines: <REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+Loaded 17,792 valid fault polylines
+
+Building fault segment table:   0%|          | 0/17792 [00:00<?, ?it/s]
+Building fault segment table:   2%|▏         | 383/17792 [00:00<00:04, 3819.59it/s]
+Building fault segment table:   4%|▍         | 765/17792 [00:00<00:05, 3159.61it/s]
+Building fault segment table:   7%|▋         | 1287/17792 [00:00<00:04, 4003.49it/s]
+Building fault segment table:  11%|█         | 1978/17792 [00:00<00:03, 5076.44it/s]
+Building fault segment table:  15%|█▌        | 2731/17792 [00:00<00:02, 5922.17it/s]
+Building fault segment table:  20%|█▉        | 3505/17792 [00:00<00:02, 6521.32it/s]
+Building fault segment table:  24%|██▍       | 4270/17792 [00:00<00:01, 6882.09it/s]
+Building fault segment table:  29%|██▊       | 5085/17792 [00:00<00:01, 7278.81it/s]
+Building fault segment table:  33%|███▎      | 5905/17792 [00:00<00:01, 7562.87it/s]
+Building fault segment table:  37%|███▋      | 6666/17792 [00:01<00:01, 7559.51it/s]
+Building fault segment table:  42%|████▏     | 7425/17792 [00:01<00:01, 5882.51it/s]
+Building fault segment table:  45%|████▌     | 8072/17792 [00:01<00:01, 4940.78it/s]
+Building fault segment table:  48%|████▊     | 8627/17792 [00:01<00:02, 4352.37it/s]
+Building fault segment table:  51%|█████     | 9111/17792 [00:01<00:02, 3876.40it/s]
+Building fault segment table:  54%|█████▎    | 9536/17792 [00:01<00:02, 3611.17it/s]
+Building fault segment table:  56%|█████▌    | 9930/17792 [00:02<00:02, 3681.40it/s]
+Building fault segment table:  58%|█████▊    | 10318/17792 [00:02<00:02, 3415.16it/s]
+Building fault segment table:  60%|█████▉    | 10674/17792 [00:02<00:02, 3249.01it/s]
+Building fault segment table:  62%|██████▏   | 11008/17792 [00:02<00:02, 3121.96it/s]
+Building fault segment table:  64%|██████▍   | 11402/17792 [00:02<00:01, 3318.70it/s]
+Building fault segment table:  66%|██████▌   | 11742/17792 [00:02<00:01, 3190.22it/s]
+Building fault segment table:  68%|██████▊   | 12066/17792 [00:02<00:01, 2890.84it/s]
+Building fault segment table:  69%|██████▉   | 12362/17792 [00:02<00:02, 2667.32it/s]
+Building fault segment table:  71%|███████   | 12635/17792 [00:03<00:02, 2562.79it/s]
+Building fault segment table:  74%|███████▍  | 13177/17792 [00:03<00:01, 3286.41it/s]
+Building fault segment table:  78%|███████▊  | 13803/17792 [00:03<00:00, 4075.84it/s]
+Building fault segment table:  81%|████████  | 14451/17792 [00:03<00:00, 4736.48it/s]
+Building fault segment table:  84%|████████▍ | 14946/17792 [00:03<00:00, 4788.69it/s]
+Building fault segment table:  88%|████████▊ | 15584/17792 [00:03<00:00, 5244.05it/s]
+Building fault segment table:  91%|█████████ | 16219/17792 [00:03<00:00, 5563.60it/s]
+Building fault segment table:  95%|█████████▍| 16864/17792 [00:03<00:00, 5821.78it/s]
+Building fault segment table:  98%|█████████▊| 17489/17792 [00:03<00:00, 5948.13it/s]
+Building fault segment table: 100%|██████████| 17792/17792 [00:03<00:00, 4612.83it/s]
+Built fault tables with 17,792 polylines and 189,737 segments
+Computing nearest-fault metrics for pre71: 4,716 events
+
+Nearest-fault pre71:   0%|          | 0/1 [00:00<?, ?it/s]
+Nearest-fault pre71: 100%|██████████| 1/1 [00:05<00:00,  5.71s/it]
+Nearest-fault pre71: 100%|██████████| 1/1 [00:05<00:00,  5.71s/it]
+Completed nearest-fault metrics for pre71
+Computing nearest-fault metrics for post71: 7,641 events
+
+Nearest-fault post71:   0%|          | 0/2 [00:00<?, ?it/s]
+Nearest-fault post71:  50%|█████     | 1/2 [00:04<00:04,  4.99s/it]
+Nearest-fault post71: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]
+Nearest-fault post71: 100%|██████████| 2/2 [00:07<00:00,  3.83s/it]
+Completed nearest-fault metrics for post71
+Computing bin-level directional and along-strike metrics
+
+Bin summaries:   0%|          | 0/23 [00:00<?, ?it/s]
+Bin summaries: 100%|██████████| 23/23 [00:00<00:00, 334.88it/s]
+Saved catalog_clean_projected.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/catalog_clean_projected.csv
+Saved mainshock_reference.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/mainshock_reference.csv
+Saved fault_polylines_summary.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/fault_polylines_summary.csv
+Saved fault_segments_projected.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/fault_segments_projected.csv
+Saved canonical_map_extent.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/canonical_map_extent.csv
+Saved canonical_time_bins.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/canonical_time_bins.csv
+Saved event_fault_metrics_pre71.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/event_fault_metrics_pre71.csv
+Saved event_fault_metrics_post71.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/event_fault_metrics_post71.csv
+Saved bin_directional_summary.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/bin_directional_summary.csv
+Saved along_strike_first_activation.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/along_strike_first_activation.csv
+Saved question_metric_summary.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/question_metric_summary.csv
+Saved validation_summary.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/validation_summary.csv
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pyproj/crs/crs.py:1293: UserWarning: You will likely lose important projection information when converting to a PROJ string from another format. See: https://proj.org/faq.html#what-is-the-best-format-for-describing-coordinate-reference-systems
+  proj = self._crs.to_proj4(version=version)
+Saved run_metadata.csv: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/run_metadata.csv
+01_ridgecrest_metrics_preparation completed successfully

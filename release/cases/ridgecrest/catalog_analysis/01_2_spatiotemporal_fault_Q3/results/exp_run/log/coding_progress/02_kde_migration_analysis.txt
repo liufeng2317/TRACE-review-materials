@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_kde_migration_analysis
+Status: success
+Execution stage: analysis_done
+Debug rounds: 3
+Result check rounds: 2
+Elapsed seconds: 1837.391
+Started at: 2026-07-06T01:15:27.908470+00:00
+Finished at: 2026-07-06T01:46:05.299710+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_kde_migration_analysis/log_2.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_kde_migration_analysis.md
+Runtime action: pass
+Code changes: 3
+Last activity: 2026-07-06T01:46:05.299535+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=19.898, coding_agent_sec=213.825, preflight_sec=1.081, result_check_sec=245.098, script_execution_sec=1187.085, task_analysis_sec=166.603, total_sec=1837.391
+Coding plan context: mode=full_experiment_plan, original_chars=16978, compact_chars=16978
+Coding tool usage: total=12, read_file=2, unique_files=4, used_retrieve=False, tools={'python_executor': 4, 'read_file': 2, 'write_file': 1, 'apply_diff': 3, 'analyze_image_file': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

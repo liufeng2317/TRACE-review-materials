@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 03_visualization_and_evidence
+Status: success
+Execution stage: analysis_done
+Debug rounds: 2
+Result check rounds: 1
+Elapsed seconds: 500.777
+Started at: 2026-07-05T07:37:55.117152+00:00
+Finished at: 2026-07-05T07:46:15.894559+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/03_visualization_and_evidence.md
+Runtime action: pass
+Code changes: 2
+Last activity: 2026-07-05T07:46:15.894466+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=14.685, coding_agent_sec=171.058, preflight_sec=1.224, result_check_sec=121.04, script_execution_sec=67.326, task_analysis_sec=122.586, total_sec=500.777
+Coding plan context: mode=full_experiment_plan, original_chars=17230, compact_chars=17230
+Coding tool usage: total=11, read_file=5, unique_files=2, used_retrieve=False, tools={'python_executor': 3, 'read_file': 5, 'write_file': 1, 'apply_diff': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

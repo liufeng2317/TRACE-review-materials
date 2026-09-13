@@ -1,0 +1,77 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 3806,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 62071,
+      "output_tokens": 12376
+    },
+    "Planing": {
+      "input_tokens": 59414,
+      "output_tokens": 17723
+    },
+    "Plan Merging": {
+      "input_tokens": 29117,
+      "output_tokens": 3956
+    },
+    "Workflow Agent": {
+      "input_tokens": 33667,
+      "output_tokens": 5500
+    },
+    "Coding Agent (01_region_geometry_assignment)": {
+      "input_tokens": 203421,
+      "output_tokens": 9579
+    },
+    "Result Check Agent (01_region_geometry_assignment)": {
+      "input_tokens": 54768,
+      "output_tokens": 1738
+    },
+    "Task Analysis Agent (01_region_geometry_assignment)": {
+      "input_tokens": 16412,
+      "output_tokens": 5598
+    },
+    "Coding Agent (03_gridded_activation_ordering)": {
+      "input_tokens": 488585,
+      "output_tokens": 16165
+    },
+    "Result Check Agent (03_gridded_activation_ordering)": {
+      "input_tokens": 43790,
+      "output_tokens": 2132
+    },
+    "Task Analysis Agent (03_gridded_activation_ordering)": {
+      "input_tokens": 55686,
+      "output_tokens": 7115
+    },
+    "Coding Agent (02_temporal_rate_energy_changepoints)": {
+      "input_tokens": 906206,
+      "output_tokens": 19115
+    },
+    "Result Check Agent (02_temporal_rate_energy_changepoints)": {
+      "input_tokens": 118897,
+      "output_tokens": 3134
+    },
+    "Task Analysis Agent (02_temporal_rate_energy_changepoints)": {
+      "input_tokens": 45154,
+      "output_tokens": 8629
+    },
+    "Evaluation": {
+      "input_tokens": 28345,
+      "output_tokens": 927
+    },
+    "Report Synthesis": {
+      "input_tokens": 125138,
+      "output_tokens": 12093
+    }
+  },
+  "total": {
+    "input_tokens": 2274477,
+    "output_tokens": 125795,
+    "total_tokens": 2400272
+  }
+}

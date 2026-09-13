@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_spatiotemporal_metrics
+Status: success
+Execution stage: analysis_done
+Debug rounds: 3
+Result check rounds: 1
+Elapsed seconds: 517.309
+Started at: 2026-07-05T07:30:52.569255+00:00
+Finished at: 2026-07-05T07:39:29.878686+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_spatiotemporal_metrics.md
+Runtime action: pass
+Code changes: 3
+Last activity: 2026-07-05T07:39:29.878596+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=25.853, coding_agent_sec=191.084, preflight_sec=1.135, result_check_sec=43.387, script_execution_sec=154.304, task_analysis_sec=98.632, total_sec=517.309
+Coding plan context: mode=full_experiment_plan, original_chars=17230, compact_chars=17230
+Coding tool usage: total=11, read_file=4, unique_files=2, used_retrieve=False, tools={'read_file': 4, 'bash_executor': 1, 'python_executor': 2, 'write_file': 1, 'apply_diff': 3}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

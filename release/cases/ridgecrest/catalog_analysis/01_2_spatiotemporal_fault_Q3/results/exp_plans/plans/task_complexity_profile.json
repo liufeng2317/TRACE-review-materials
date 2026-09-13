@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single study region with three observation data sources, but requires two coordinated spatiotemporal analyses (fixed-bandwidth KDE migration and geometric envelope evolution), interval-based batching, shared map constraints, and figure-series design with consistent comparability across time windows.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate: success depends on correctly parsing time windows from the two mainshocks, enforcing identical spatial/KDE settings across many intervals, handling sparse intervals for hull/alpha-shape construction, and keeping outputs scientifically comparable.",
+  "expected_script_count": 2
+}

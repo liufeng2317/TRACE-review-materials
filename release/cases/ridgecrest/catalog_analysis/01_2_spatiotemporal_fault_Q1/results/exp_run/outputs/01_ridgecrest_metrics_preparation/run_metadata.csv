@@ -1,0 +1,7 @@
+key,value
+local_projected_crs,+proj=aeqd +lat_0=35.74 +lon_0=-117.55 +x_0=0 +y_0=0 +datum=WGS84 +units=km +no_defs +type=crs
+max_workers,64
+event_chunk_size,5000
+along_strike_bin_km,2.0
+sparse_bin_min_events,10
+near_fault_thresholds_km,"0.25,0.5,1.0,2.0,5.0"

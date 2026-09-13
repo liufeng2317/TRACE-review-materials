@@ -1,0 +1,238 @@
+tasks:
+- name: 01_ridgecrest_directional_ripley_analysis
+  description: Build the Ridgecrest analysis dataset, compute directional Ripley
+    K and L statistics through time, derive transition metrics, generate the 
+    requested figures, and export validated machine-readable outputs.
+  script: 01_ridgecrest_directional_ripley_analysis.py
+  ancestors: []
+  subtasks:
+  - name: load_and_validate_inputs
+    description: Load the catalog, mainshock table, and fault polylines and 
+      validate their schema and required fields.
+    inputs:
+    - relocated_catalog
+    - mainshock_event_table
+    - surface_fault_polylines
+    outputs:
+    - validated_catalog_records
+    - validated_mainshock_records
+    - validated_fault_polylines
+    - input_qc_summary
+    params:
+      catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      time_parse_standard: UTC
+      fault_coordinate_order: lon_lat
+  - name: build_analysis_windows_and_coordinates
+    description: Define the fixed analysis window, assign 30-minute intervals, 
+      create representative windows, and project coordinates for pair 
+      calculations.
+    inputs:
+    - validated_catalog_records
+    - validated_mainshock_records
+    - validated_fault_polylines
+    outputs:
+    - analysis_catalog
+    - mainshock_metadata
+    - interval_definition_table
+    - representative_window_table
+    - projected_fault_polylines
+    params:
+      analysis_window_definition: mainshock64_to_mainshock71_plus_10h
+      base_interval_minutes: 30
+      interval_closure: left_closed_right_open
+      representative_windows:
+        whole_window_count: 8
+        whole_window_duration_hours: 4
+        near_mainshock64_count: 8
+        near_mainshock64_duration: single_30min_interval
+        near_mainshock71_count: 8
+        near_mainshock71_duration: single_30min_interval
+      empty_window_adjustment: nearest_non_empty_deterministic
+      projection_strategy: local_cartesian_centered_on_sequence
+  - name: define_study_window_and_scale_selection
+    description: Define the fixed study region, normalization protocol, 
+      candidate radii, and characteristic radius used across all directional 
+      analyses.
+    inputs:
+    - analysis_catalog
+    - projected_fault_polylines
+    outputs:
+    - study_window_definition
+    - radius_diagnostic_table
+    - directional_parameter_table
+    - scale_selection_summary
+    params:
+      sector_width_degrees: 5
+      azimuth_domain_degrees:
+        start: 0
+        stop: 360
+      study_window_strategy: buffered_sequence_footprint
+      normalization_basis: fixed_area_and_interval_density
+      candidate_radius_strategy: 
+        data_driven_from_neighbor_and_pair_distance_diagnostics
+      characteristic_radius_rule: 
+        smallest_stable_radius_with_adequate_interval_support
+      insufficient_data_thresholds:
+        min_events_per_interval: data_driven_documented
+        min_pairs_within_characteristic_radius: data_driven_documented
+      edge_treatment: 
+        fixed_comparative_domain_with_documented_limitation_if_no_formal_correction
+  - name: compute_interval_directional_ripley_statistics
+    description: Compute interval-wise sector-based directional Ripley K and L 
+      statistics in parallel and summarize dominant directional features.
+    inputs:
+    - analysis_catalog
+    - interval_definition_table
+    - study_window_definition
+    - directional_parameter_table
+    outputs:
+    - full_directional_ripley_statistics
+    - characteristic_scale_direction_matrix
+    - interval_directional_summary
+    - interval_runtime_log
+    params:
+      parallel_workers_max: 64
+      parallelization_unit: time_interval
+      sector_count: 72
+      compute_products:
+      - K_by_radius_and_sector
+      - L_by_radius_and_sector
+      - L_at_characteristic_radius
+      - dominant_azimuth
+      - secondary_azimuth
+      - anisotropy_metric
+      - event_count
+      - qualifying_pair_count
+      - validity_flag
+      progress_reporting: enabled
+      sparse_interval_policy: retain_with_explicit_invalid_flags
+  - name: derive_transition_metrics
+    description: Derive temporal directional metrics and compare them with 
+      mainshock-to-mainshock alignment and fault orientation families.
+    inputs:
+    - characteristic_scale_direction_matrix
+    - interval_directional_summary
+    - mainshock_metadata
+    - projected_fault_polylines
+    outputs:
+    - directional_transition_timeseries
+    - transition_point_table
+    - fault_mainshock_alignment_summary
+    params:
+      sequence_partitions:
+      - immediate_post_mainshock64
+      - inter_mainshock_buildup
+      - immediate_pre_mainshock71
+      - post_mainshock71_plus_10h
+      comparison_metrics:
+      - dominant_secondary_angular_separation
+      - dominant_to_mainshock64_to_71_azimuth
+      - dominant_to_fault_orientation_families
+      abrupt_change_detection: rule_based_on_angular_shift_and_anisotropy_change
+  - name: generate_time_direction_heatmap
+    description: Build the requested time-direction heatmap and aligned support 
+      timeline products from the characteristic-scale directional matrix.
+    inputs:
+    - characteristic_scale_direction_matrix
+    - interval_directional_summary
+    - directional_transition_timeseries
+    - mainshock_metadata
+    outputs:
+    - time_direction_heatmap_figure
+    - interval_support_timeline_figure
+    - heatmap_annotation_table
+    params:
+      heatmap_x_axis: ordered_30min_intervals
+      heatmap_y_axis: azimuth_sector_centers
+      heatmap_color_field: L_at_characteristic_radius
+      overlays:
+      - mainshock64_timeline_marker
+      - mainshock71_timeline_marker
+      - dominant_direction_trajectory
+      - secondary_direction_trajectory
+      invalid_interval_display: explicit_masking
+  - name: generate_map_and_rose_figures
+    description: Create the three requested 2x4 map-plus-polar-rose figure 
+      families and compute exact window-level directional summaries where 
+      needed.
+    inputs:
+    - analysis_catalog
+    - representative_window_table
+    - projected_fault_polylines
+    - mainshock_metadata
+    - study_window_definition
+    - directional_parameter_table
+    - characteristic_scale_direction_matrix
+    - interval_directional_summary
+    outputs:
+    - whole_window_map_rose_figure
+    - near_mainshock64_map_rose_figure
+    - near_mainshock71_map_rose_figure
+    - representative_window_summary
+    - representative_window_runtime_log
+    params:
+      panel_grid:
+        rows: 2
+        columns: 4
+      map_overlays:
+      - fault_polylines
+      - mainshock64_epicenter
+      - mainshock71_epicenter
+      map_coloring:
+        whole_window_reference: time_relative_to_mainshock64
+        near_mainshock64_reference: time_relative_to_mainshock64
+        near_mainshock71_reference: time_relative_to_mainshock71
+      rose_inset_position: top_right
+      rose_statistic: L_at_characteristic_radius
+      shared_directional_settings: true
+      recompute_exact_window_statistics_for_nonmatching_windows: true
+      parallel_workers_max: 64
+      low_support_window_policy: retain_and_mark
+      progress_reporting: enabled
+  - name: validate_and_export_outputs
+    description: Validate merged dimensions and consistency across all products 
+      and export reusable machine-readable tables and logs.
+    inputs:
+    - analysis_catalog
+    - mainshock_metadata
+    - interval_definition_table
+    - representative_window_table
+    - full_directional_ripley_statistics
+    - characteristic_scale_direction_matrix
+    - interval_directional_summary
+    - representative_window_summary
+    - scale_selection_summary
+    - input_qc_summary
+    outputs:
+    - validated_analysis_catalog
+    - validated_interval_definitions
+    - validated_representative_window_definitions
+    - validated_full_directional_statistics
+    - validated_characteristic_scale_matrix
+    - validated_interval_directional_summary
+    - validated_representative_window_summary
+    - validated_scale_selection_qc
+    - final_validation_log
+    params:
+      expected_sector_count: 72
+      validation_checks:
+      - mainshock_anchor_consistency
+      - interval_count_consistency
+      - interval_by_sector_matrix_dimensions
+      - explicit_invalid_interval_flags
+      - representative_window_assignment_consistency
+      - dominant_secondary_consistency_with_underlying_matrix
+      export_formats:
+      - csv
+      - parquet
+      - json
+      success_requirements:
+      - non_empty_interval_direction_products
+      - non_empty_characteristic_scale_matrix
+      - requested_figures_present
+      - flagged_sparse_or_failed_windows_enumerated

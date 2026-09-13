@@ -1,0 +1,219 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-06T01:52:39.975280+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 3
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 3,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 16978,
+        "mode": "full_experiment_plan",
+        "original_chars": 16978,
+        "task_name": "01_reference_framework"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 2
+        },
+        "file_reads": {},
+        "read_file_call_count": 0,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 1,
+          "python_executor": 2,
+          "write_file": 1
+        },
+        "total_tool_calls": 4,
+        "unique_file_read_count": 0,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 239.069,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T01:16:22.826645+00:00",
+      "last_activity_at": "2026-07-06T01:16:22.826531+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_reference_framework/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-06T01:12:23.757260+00:00",
+      "status": "success",
+      "task_name": "01_reference_framework",
+      "timing": {
+        "code_review_sec": 8.122,
+        "coding_agent_sec": 89.551,
+        "preflight_sec": 0.426,
+        "result_check_sec": 51.949,
+        "script_execution_sec": 27.089,
+        "task_analysis_sec": 60.66,
+        "total_sec": 239.069
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 16978,
+        "mode": "full_experiment_plan",
+        "original_chars": 16978,
+        "task_name": "02_kde_migration_analysis"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {
+          "analyze_image_file": 2
+        },
+        "executor_calls": {
+          "python_executor": 4
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_stage1.png": {
+            "count": 1,
+            "tools": {
+              "analyze_image_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage1_panels_page01.png": {
+            "count": 1,
+            "tools": {
+              "analyze_image_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          }
+        },
+        "read_file_call_count": 2,
+        "retrieve_calls": {},
+        "tools": {
+          "analyze_image_file": 2,
+          "apply_diff": 3,
+          "python_executor": 4,
+          "read_file": 2,
+          "write_file": 1
+        },
+        "total_tool_calls": 12,
+        "unique_file_read_count": 4,
+        "used_retrieve": false
+      },
+      "debug_round": 3,
+      "elapsed_sec": 1837.391,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T01:46:05.299710+00:00",
+      "last_activity_at": "2026-07-06T01:46:05.299535+00:00",
+      "last_no_progress_sec": 0.0,
+      "last_observed_line": "Saved hotspot migration metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_met...[truncated]",
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_kde_migration_analysis/log_2.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 2,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-06T01:15:27.908470+00:00",
+      "status": "success",
+      "task_name": "02_kde_migration_analysis",
+      "timing": {
+        "code_review_sec": 19.898,
+        "coding_agent_sec": 213.825,
+        "preflight_sec": 1.081,
+        "result_check_sec": 245.098,
+        "script_execution_sec": 1187.085,
+        "task_analysis_sec": 166.603,
+        "total_sec": 1837.391
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 16978,
+        "mode": "full_experiment_plan",
+        "original_chars": 16978,
+        "task_name": "03_morphology_and_synthesis"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 4
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py": {
+            "count": 2,
+            "tools": {
+              "read_file": 2
+            }
+          }
+        },
+        "read_file_call_count": 4,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 2,
+          "python_executor": 4,
+          "read_file": 4,
+          "write_file": 1
+        },
+        "total_tool_calls": 11,
+        "unique_file_read_count": 3,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 559.036,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T01:52:39.772732+00:00",
+      "last_activity_at": "2026-07-06T01:52:39.772618+00:00",
+      "last_no_progress_sec": 0.0,
+      "last_observed_line": "03_morphology_and_synthesis completed successfully.",
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_morphology_and_synthesis/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-06T01:43:20.737026+00:00",
+      "status": "success",
+      "task_name": "03_morphology_and_synthesis",
+      "timing": {
+        "code_review_sec": 19.895,
+        "coding_agent_sec": 158.757,
+        "preflight_sec": 0.406,
+        "result_check_sec": 119.853,
+        "script_execution_sec": 122.471,
+        "task_analysis_sec": 134.862,
+        "total_sec": 559.036
+      }
+    }
+  ]
+}

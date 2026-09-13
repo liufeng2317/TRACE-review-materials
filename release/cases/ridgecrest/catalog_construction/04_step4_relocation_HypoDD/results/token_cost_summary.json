@@ -1,0 +1,53 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2234,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 113094,
+      "output_tokens": 25265
+    },
+    "Planing": {
+      "input_tokens": 88081,
+      "output_tokens": 10579
+    },
+    "Plan Merging": {
+      "input_tokens": 47584,
+      "output_tokens": 4737
+    },
+    "Workflow Agent": {
+      "input_tokens": 54440,
+      "output_tokens": 3294
+    },
+    "Coding Agent (01_hypodd_relocation_analysis)": {
+      "input_tokens": 1546639,
+      "output_tokens": 21631
+    },
+    "Result Check Agent (01_hypodd_relocation_analysis)": {
+      "input_tokens": 225533,
+      "output_tokens": 4609
+    },
+    "Task Analysis Agent (01_hypodd_relocation_analysis)": {
+      "input_tokens": 60486,
+      "output_tokens": 7634
+    },
+    "Evaluation": {
+      "input_tokens": 13784,
+      "output_tokens": 846
+    },
+    "Report Synthesis": {
+      "input_tokens": 64467,
+      "output_tokens": 5724
+    }
+  },
+  "total": {
+    "input_tokens": 2216342,
+    "output_tokens": 84334,
+    "total_tokens": 2300676
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "bandwidth_rule": "scott",
+  "estimated_fixed_bandwidth_m": 1415.4363885255098,
+  "grid_shape": [
+    220,
+    220
+  ],
+  "projected_extent_m": {
+    "min_x": 428139.99315332016,
+    "max_x": 471640.0066383064,
+    "min_y": 3923153.077077456,
+    "max_y": 3977354.641779894
+  },
+  "plot_extent_degrees": {
+    "min_longitude": -117.84240063769927,
+    "max_longitude": -117.262835696215,
+    "min_latitude": 35.39951379518505,
+    "max_latitude": 35.9885750704832
+  },
+  "global_peak_density_max": 1.529500068877522e-08,
+  "color_scale_vmin": 0.0,
+  "color_scale_vmax": 1.529500068877522e-08
+}

@@ -1,0 +1,142 @@
+# Goal
+Investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence from the Mw 6.4 mainshock to 10 hours after the Mw 7.1 mainshock, with special emphasis on whether directional clustering transitions reveal a plausible triggering pathway from the Mw 6.4 rupture regime to the Mw 7.1 rupture regime, using sector-based directional Ripley’s K/L analysis and targeted map-polar visualization.
+
+## Planning Assumptions
+- Use only the provided observational datasets: relocated catalog, two-row mainshock reference table, and mapped surface-fault geometry.
+- The primary scientific window is fixed by the user: from mainshock64 origin time to mainshock71 origin time plus 10 hours.
+- Base temporal discretization is fixed by the user: 30-minute intervals for the rolling sequence analysis.
+- Sector binning is fixed by the user: 5° sectors over [0°, 360°), producing 72 directional bins.
+- Directional statistic for visualization should be the sector-based Ripley L-function at a characteristic distance scale r, derived from the sector-limited K-function. If multiple r values are computed, the heatmap should use one explicitly selected characteristic scale and the others remain available for diagnostics.
+- Because the user requested normalized Ripley K, normalization must account for observation window area and sector width; edge correction should be applied or, if unavailable, events near the convex hull/bounding window edge should be flagged as a limitation and the same rule used consistently across all intervals.
+- Epicentral mapping can use longitude-latitude directly for figures, but pair-distance and orientation calculations should use a local projected Cartesian system centered on the sequence to avoid angular distortion.
+- Sparse 30-minute bins may contain too few events for stable K/L estimation; such bins should be retained in the timeline but marked as insufficient-data bins using a minimum-event threshold decided before production runs.
+- Parallel computation should be used for per-interval directional K/L calculations and heavy figure assembly, with merged outputs validated before the workflow is considered successful.
+- Success evidence for the primary computation is: non-empty per-interval directional statistics table, non-empty characteristic-scale heatmap matrix, and the three requested figure groups with valid panel population.
+
+## Analysis Plan
+
+### Task 1 — Build the spatiotemporal analysis dataset and define reproducible windows
+- Task description
+  - Load the relocated catalog, mainshock table, and fault geometry.
+  - Construct the full analysis window from mainshock64 to mainshock71 + 10 hours.
+  - Generate the complete sequence of 30-minute intervals and the three representative-window collections requested for later visualization.
+  - Produce validated intermediate tables used by all downstream tasks.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - Parse `event_time` as UTC datetime.
+  - Identify mainshock64 and mainshock71 rows from the two-row table by magnitude values 6.4 and 7.1; if duplicate magnitudes exist, use exact event times from the table order as authoritative.
+  - Subset catalog to the fixed user window: `[mainshock64_time, mainshock71_time + 10 hours]`.
+  - Build consecutive 30-minute bins with left-closed, right-open convention, except the final bin may include the right endpoint.
+  - Create projected x-y coordinates from longitude-latitude using a single local projection centered near the catalog centroid or midpoint of the two mainshocks.
+  - Precompute each event’s elapsed time relative to mainshock64 and relative to mainshock71 for later color mapping.
+  - Define three representative-window groups:
+    - Whole-window figure: eight 4-hour windows approximately uniformly spaced across the total analysis window.
+    - Near-mainshock64 figure: eight 30-minute windows after mainshock64, approximately uniformly spaced from immediate post-Mw6.4 time to the latest feasible early-stage interval before Mw7.1.
+    - Near-mainshock71 figure: eight 30-minute windows before mainshock71, approximately uniformly spaced over the pre-Mw7.1 approach interval.
+  - If a representative window has zero events, shift to the nearest non-empty window while preserving chronological order and record the adjustment.
+- Constraints
+  - Do not change the user-specified main analysis window or 30-minute base interval.
+  - Preserve all catalog events in the analysis window; no magnitude filtering unless a clearly documented quality issue is found.
+  - Treat the fault JSON as polyline geometry in `[longitude, latitude]` order and do not assume GeoJSON schema.
+  - Keep representative-window selection deterministic so later reruns reproduce the same panels.
+- Key outputs
+  - Cleaned event table with UTC times, x-y coordinates, relative times, and assigned 30-minute interval IDs.
+  - Mainshock reference table with projected coordinates and labels.
+  - Interval definition table for all 30-minute bins.
+  - Representative-window definition table for the three figure groups.
+  - Data-validation summary table: event counts, temporal coverage, spatial bounds, missing-value checks.
+
+### Task 2 — Compute sector-based directional Ripley K/L through time
+- Task description
+  - For each 30-minute interval, compute sector-based directional Ripley’s K-function and corresponding L-function, then extract characteristic-scale directional intensity for the requested heatmap and rose diagrams.
+  - Save both full directional-distance results and reduced products for plotting and interpretation.
+- Required data sources
+  - Cleaned event table and interval table from Task 1
+  - Mainshock reference table from Task 1
+- Parameter selection strategy
+  - For each interval, use all events inside that 30-minute bin.
+  - Compute pairwise inter-event vectors in projected x-y space.
+  - For each pair, calculate:
+    - Euclidean distance
+    - Orientation azimuth in degrees over [0°, 360°)
+  - Bin azimuths into 72 sectors of width 5°.
+  - Compute directional K(r, θ) using only pairs with azimuth in each sector and distance ≤ r.
+  - Convert to directional L(r, θ) using the same normalization convention across all bins.
+  - Use a discrete distance grid rather than a single r only, so the characteristic scale can be chosen from data-aware diagnostics. The distance grid should span from a small nonzero lower bound to a sequence-relevant upper bound based on the catalog spatial extent and typical fault-zone width; choose the upper bound conservatively to avoid saturation.
+  - Select the characteristic scale r for the final heatmap by one fixed rule applied sequence-wide, such as:
+    - the distance where directional contrast is strongest in the aggregated whole-window catalog, or
+    - a fault-zone-relevant mid-scale identified from the sequence pair-distance distribution.
+  - Store for each interval:
+    - event count
+    - K(r, θ) and L(r, θ) arrays
+    - directional peak azimuth
+    - secondary peak azimuth
+    - peak sharpness / anisotropy index
+    - whether the interval passed minimum-count stability criteria
+  - For sparse bins below the minimum-event threshold, return NA-filled directional metrics and retain metadata.
+- Constraints
+  - Distances and azimuths must be computed in projected coordinates, not raw degree units.
+  - The same spatial normalization and edge-treatment rule must be used for every interval.
+  - The workflow must run in parallel across intervals, with progress logging and merged-output validation.
+  - Do not treat per-batch completion as success unless the merged time-by-direction matrix is non-empty and aligned to the interval table.
+  - If the edge correction method is simplified rather than formal isotropic/translation correction, record this as a methodological constraint in the metadata and apply it consistently.
+- Key outputs
+  - Full per-interval directional statistics table or array set containing K(r, θ) and L(r, θ).
+  - Characteristic-scale matrix: intervals × 72 azimuth sectors with L(r*, θ).
+  - Summary table of dominant/secondary azimuths, anisotropy strength, event counts, and validity flags per interval.
+  - Diagnostic table for the selected characteristic scale r and the rule used to choose it.
+
+### Task 3 — Generate heatmap and map-plus-rose figure products for interpretation of triggering evolution
+- Task description
+  - Produce the requested figure suite to diagnose temporal transitions in directional clustering and to visually compare seismicity migration, fault alignment, and mainshock anchors.
+  - Emphasize intervals around the Mw 6.4 and Mw 7.1 mainshocks and identify directional transitions consistent with possible triggering.
+- Required data sources
+  - Fault geometry from source JSON
+  - Mainshock reference table from Task 1
+  - Representative-window tables from Task 1
+  - Characteristic-scale and summary directional products from Task 2
+  - Cleaned event table from Task 1
+- Parameter selection strategy
+  - Heatmap figure:
+    - X-axis: consecutive 30-minute intervals through the fixed analysis window.
+    - Y-axis: azimuth sector centers from 0° to 355°.
+    - Color: directional L(r*, θ).
+    - Annotate vertical lines or markers at mainshock64 and mainshock71 times.
+    - Overlay or annotate dominant and secondary azimuth trajectories derived from the summary table.
+    - Use an additional count strip or masking to distinguish sparse/invalid intervals from low clustering intensity.
+  - Whole-window 2×4 panel figure:
+    - Use the eight 4-hour windows from Task 1.
+    - In each panel, map event epicenters colored by time relative to mainshock64.
+    - Overlay fault polylines and both mainshock epicenters.
+    - Embed a rose diagram at top-right using directional L(r*, θ) aggregated over that panel window.
+    - Add panel labels with window start/end and event count.
+  - Near-mainshock64 2×4 panel figure:
+    - Use the eight representative 30-minute windows after Mw 6.4.
+    - Same map and rose construction, but color by time relative to mainshock64.
+    - Emphasize whether dominant directions organize toward the future Mw 7.1 zone.
+  - Near-mainshock71 2×4 panel figure:
+    - Use the eight representative 30-minute windows before Mw 7.1.
+    - Same map and rose construction, but color by time relative to mainshock71.
+    - Emphasize directional tightening, rotation, or bifurcation immediately before the Mw 7.1 event.
+  - Add one compact summary table linked to the figures listing for each representative panel:
+    - window bounds
+    - event count
+    - dominant azimuth
+    - secondary azimuth
+    - anisotropy index
+    - angular separation between dominant direction and local fault-trace trend if measured
+- Constraints
+  - All map panels should use the same geographic extent for direct visual comparison unless a zoomed inset is explicitly added as a secondary diagnostic.
+  - Mainshock64 and mainshock71 epicenters must be overlaid in every map panel and marked on the heatmap timeline.
+  - Rose diagrams must use the same azimuth convention as the directional K/L calculation.
+  - The figure workflow should be independent from the heavy computation stage except for reading validated outputs from Task 2.
+  - Interpretation-oriented annotations should be derived from computed metrics, not manual visual selection.
+- Key outputs
+  - Time-direction heatmap of L(r*, θ) with mainshock timeline markers and dominant/secondary direction overlays.
+  - One 2×4 whole-window map-plus-rose figure.
+  - One 2×4 near-mainshock64 map-plus-rose figure.
+  - One 2×4 near-mainshock71 map-plus-rose figure.
+  - Panel-level summary CSV/table for all representative windows.

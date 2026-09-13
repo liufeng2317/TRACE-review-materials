@@ -1,0 +1,210 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-05T07:46:16.103884+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 3
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 3,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 17230,
+        "mode": "full_experiment_plan",
+        "original_chars": 17230,
+        "task_name": "01_catalog_windows_qc"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 1,
+          "python_executor": 1
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py": {
+            "count": 3,
+            "tools": {
+              "read_file": 3
+            }
+          }
+        },
+        "read_file_call_count": 3,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 3,
+          "bash_executor": 1,
+          "python_executor": 1,
+          "read_file": 3,
+          "write_file": 1
+        },
+        "total_tool_calls": 9,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 257.687,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-05T07:31:46.524200+00:00",
+      "last_activity_at": "2026-07-05T07:31:46.524109+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-05T07:27:28.837101+00:00",
+      "status": "success",
+      "task_name": "01_catalog_windows_qc",
+      "timing": {
+        "code_review_sec": 27.036,
+        "coding_agent_sec": 93.318,
+        "preflight_sec": 0.45,
+        "result_check_sec": 53.622,
+        "script_execution_sec": 22.087,
+        "task_analysis_sec": 60.006,
+        "total_sec": 257.687
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 17230,
+        "mode": "full_experiment_plan",
+        "original_chars": 17230,
+        "task_name": "02_spatiotemporal_metrics"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 1,
+          "python_executor": 2
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py": {
+            "count": 3,
+            "tools": {
+              "read_file": 3
+            }
+          }
+        },
+        "read_file_call_count": 4,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 3,
+          "bash_executor": 1,
+          "python_executor": 2,
+          "read_file": 4,
+          "write_file": 1
+        },
+        "total_tool_calls": 11,
+        "unique_file_read_count": 2,
+        "used_retrieve": false
+      },
+      "debug_round": 3,
+      "elapsed_sec": 517.309,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-05T07:39:29.878686+00:00",
+      "last_activity_at": "2026-07-05T07:39:29.878596+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-05T07:30:52.569255+00:00",
+      "status": "success",
+      "task_name": "02_spatiotemporal_metrics",
+      "timing": {
+        "code_review_sec": 25.853,
+        "coding_agent_sec": 191.084,
+        "preflight_sec": 1.135,
+        "result_check_sec": 43.387,
+        "script_execution_sec": 154.304,
+        "task_analysis_sec": 98.632,
+        "total_sec": 517.309
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 17230,
+        "mode": "full_experiment_plan",
+        "original_chars": 17230,
+        "task_name": "03_visualization_and_evidence"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 3
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py": {
+            "count": 4,
+            "tools": {
+              "read_file": 4
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          }
+        },
+        "read_file_call_count": 5,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 2,
+          "python_executor": 3,
+          "read_file": 5,
+          "write_file": 1
+        },
+        "total_tool_calls": 11,
+        "unique_file_read_count": 2,
+        "used_retrieve": false
+      },
+      "debug_round": 2,
+      "elapsed_sec": 500.777,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-05T07:46:15.894559+00:00",
+      "last_activity_at": "2026-07-05T07:46:15.894466+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-05T07:37:55.117152+00:00",
+      "status": "success",
+      "task_name": "03_visualization_and_evidence",
+      "timing": {
+        "code_review_sec": 14.685,
+        "coding_agent_sec": 171.058,
+        "preflight_sec": 1.224,
+        "result_check_sec": 121.04,
+        "script_execution_sec": 67.326,
+        "task_analysis_sec": 122.586,
+        "total_sec": 500.777
+      }
+    }
+  ]
+}

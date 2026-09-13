@@ -1,0 +1,174 @@
+# Goal
+Quantify the spatiotemporal evolution of Ridgecrest seismicity between the Mw 6.4 and Mw 7.1 mainshocks, and determine whether activation along mapped faults is broadly synchronous, staged/cascade-like, or spatially complex using relocated catalog observations and mapped surface-fault geometry.
+
+## Planning Assumptions
+- Use only the provided observational datasets: relocated earthquake catalog, two-event mainshock reference table, and mapped surface-fault polylines.
+- Analysis window is fixed to the interval from Mw 6.4 origin time to Mw 7.1 origin time; all activation times are reported relative to the Mw 6.4 mainshock.
+- Spatial study bounds are derived from the full mapped fault distribution and expanded outward by 5 km in all horizontal directions.
+- Regular spatial discretization uses 1 km × 1 km cells in a locally projected Cartesian coordinate system; geographic coordinates should be transformed before distance, gridding, segment length, and strike calculations.
+- Local seismicity-rate time series use non-overlapping 30-minute bins.
+- Fault-segment association uses nearest segment within 3 km; events farther than 3 km from all segments are excluded from fault-segment analyses but retained for gridded regional analyses if inside the study region.
+- Fault-segment activation time follows the user-defined rule: first 30-minute bin whose rate exceeds 10 events/hour; with 30-minute bins this is equivalent to at least 5 events in a bin.
+- Grid-cell onset should be physically interpretable and reproducible using a sustained-rate increase rule rather than a single-bin spike; the exact decision rule must be fixed once before execution and applied uniformly to all cells.
+- Parallel processing up to 64 cores should be used only for computationally heavy independent loops such as grid-cell counting, fault discretization, nearest-segment queries, and per-segment time-series assembly.
+- Successful outputs require non-empty onset maps and non-empty activated-fault summaries within the Mw 6.4–Mw 7.1 interval; empty diagnostic artifacts are not acceptable as final scientific outputs.
+
+## Analysis Plan
+### Task 1: Build the common analysis domain and event subset
+- Task description
+  - Load the catalog, mainshock table, and fault polylines; define the study window and region; project all geometry to a metric coordinate system; generate the event subset used by downstream analyses.
+  - This task should also compute reusable geometric products for later tasks.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - Identify the Mw 6.4 and Mw 7.1 rows from the mainshock table by magnitude.
+  - Set the time window from Mw 6.4 event_time inclusive to Mw 7.1 event_time inclusive.
+  - Build the study-region bounding box from all fault coordinates and buffer it by 5 km in projected coordinates.
+  - Select catalog events whose times fall in the window and whose epicenters fall inside the buffered study region.
+  - Construct a local projection centered on the Ridgecrest area for all x-y distance calculations.
+- Constraints
+  - Preserve original event_time values and create elapsed time since Mw 6.4 in minutes and hours.
+  - Remove or flag malformed rows, duplicated events, missing coordinates, non-finite depth/magnitude, and out-of-window events.
+  - Use the same projected coordinate system for gridding, point-to-segment distances, and segment arclength calculations.
+- Key outputs
+  - Cleaned event subset table with geographic coordinates, projected x-y coordinates, elapsed time since Mw 6.4, and in-region flag.
+  - Mainshock reference table with projected coordinates and elapsed times.
+  - Buffered study-region bounds and summary counts of total events, in-window events, and in-region events.
+  - Basemap preview figure showing faults, all selected events, and the two mainshocks.
+
+### Task 2: Grid-based onset-time mapping of regional activation
+- Task description
+  - Discretize the buffered study region into 1 km × 1 km cells, assemble local seismicity-rate time series in 30-minute bins for each occupied cell, define a sustained-onset time for each cell, and map the onset pattern.
+- Required data sources
+  - Reusable outputs from Task 1.
+  - Original fault polylines for map overlays.
+- Parameter selection strategy
+  - Generate a regular 1 km Cartesian grid spanning the buffered fault-defined study region.
+  - Bin event times from 0 to the Mw 7.1 time relative to Mw 6.4 using fixed 30-minute intervals.
+  - For each cell, count events per bin and convert to events/hour.
+  - Define the grid-cell onset rule before execution, using a sustained increase criterion such as:
+    - a candidate bin must exceed a baseline derived from early pre-activation bins within the study window or from the cell’s lower-activity distribution,
+    - and the increase must persist for at least 2 consecutive bins or be followed by continued elevated cumulative growth.
+  - Restrict onset assignment to cells with enough events to support a stable rate estimate; cells lacking sufficient observations remain unassigned.
+- Constraints
+  - The onset rule must be fully deterministic, documented, and applied uniformly across all cells.
+  - Do not infer activation from a single isolated spike if not followed by sustained activity.
+  - Empty cells should be masked, not assigned late onset by default.
+  - Parallelize cell-wise bin counting and onset detection if needed.
+- Key outputs
+  - Grid-cell table containing cell ID, center coordinates, event counts, per-bin rates, cumulative counts, onset time, and quality flag.
+  - Spatial onset map of 1 km cells colored by onset time with overlays of Mw 6.4 epicenter, Mw 7.1 epicenter, and fault traces.
+  - Complementary map of cumulative event count or peak local rate per cell for context.
+  - Diagnostic figures for onset definition:
+    - histogram of assigned onset times,
+    - selected example cell time series showing sustained-onset picks,
+    - map of unassigned/low-confidence cells.
+  - Summary metrics supporting interpretation:
+    - fraction of cells activated within the first 30, 60, 120 minutes,
+    - onset-time quantiles,
+    - spatial gradient of onset time relative to the Mw 6.4 source region.
+
+### Task 3: Fault discretization, earthquake association, and fault-segment activation sequence
+- Task description
+  - Convert mapped fault polylines to contiguous ~1 km segments, compute segment geometry and strike, associate earthquakes to nearest segments within 3 km, build segment time series, determine activation times, and diagnose triggering style.
+- Required data sources
+  - Reusable outputs from Task 1.
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - For each polyline, resample by arclength into contiguous ~1 km segments; if a polyline is shorter than 1 km, retain its end-to-end representation as one segment.
+  - Assign line ID and segment ID; compute segment midpoint, length, azimuth/strike, and local along-fault coordinate within each parent line.
+  - Optionally split additional segments at strong curvature/strike-change points if a documented turning-angle threshold is exceeded; retain both original line ID and derived subsegment lineage.
+  - Build an efficient nearest-neighbor search structure on segment geometries or representative points with exact point-to-segment distance refinement.
+  - Associate each event in the Mw 6.4–Mw 7.1 interval to its nearest segment if distance < 3 km; otherwise mark unassociated.
+  - For each segment, count events in 30-minute bins, compute rate and cumulative count, and assign activation time as first bin with count >= 5.
+  - Normalize strike to an orientation convention suited for line features (e.g., 0–180°) so antiparallel directions are treated consistently.
+- Constraints
+  - Use true projected distances for the 3 km threshold, not angular separation.
+  - Preserve both event-to-segment distance and parent-fault ID for later interpretation.
+  - Segments with no associated events or no threshold exceedance remain inactive/unassigned.
+  - Parallelize polyline resampling, nearest-segment assignment, and per-segment binning.
+  - Immediate validation must confirm non-empty associated-event and activated-segment outputs.
+- Key outputs
+  - Fault-segment table with line ID, segment ID, endpoints, midpoint coordinates, length, strike/orientation, and optional along-fault distance.
+  - Event-to-segment association table with event ID or row index, nearest line/segment IDs, distance to segment, elapsed time, and association flag.
+  - Segment time-series table with per-bin event count, rate, cumulative count, and activation time.
+  - Fault activation map with segments colored by activation time, overlaid with mainshocks, fault traces, and associated events shown with low alpha and small marker size.
+  - Activated-segment count versus time figure:
+    - x-axis: 30-minute bins or elapsed hours since Mw 6.4,
+    - y-axis: number of newly activated segments and/or cumulative activated segments,
+    - color: activated-segment density or normalized count.
+  - Strike × activation-time density figure:
+    - x-axis: elapsed time bins,
+    - y-axis: corrected strike/orientation,
+    - color: activated-segment count or normalized density.
+  - Optional along-fault propagation figures for major parent faults:
+    - x-axis: elapsed time,
+    - y-axis: along-fault distance,
+    - points or density colored by event time or local activation status.
+
+### Task 4: Quantitative assessment of synchronous versus staged/cascade-like triggering
+- Task description
+  - Convert mapped and segment-based activation results into explicit diagnostics that test whether activation was synchronous, progressive along faults, jumping across faults, or concentrated in structural complexities, with emphasis on the transition from Mw 6.4 to Mw 7.1.
+- Required data sources
+  - Outputs from Tasks 2 and 3.
+  - Mainshock table from Task 1.
+- Parameter selection strategy
+  - Define summary windows relative to Mw 6.4, for example first 30 minutes, 1 hour, 2 hours, 4 hours, and the final pre-Mw 7.1 interval.
+  - Group activated segments by parent fault, strike class, distance from the Mw 6.4 epicenter, distance from the Mw 7.1 epicenter, and local fault-network complexity indicators such as high curvature or segment intersections if derivable from the mapped geometry.
+  - Evaluate synchrony using dispersion statistics of activation times across segments within comparable distance or strike classes.
+  - Evaluate cascade-like behavior using activation-time gradients along individual parent faults and along contiguous segment chains.
+  - Evaluate jump-like or complex triggering by identifying temporally close activations on spatially separated or differently oriented faults.
+  - Specifically test whether the segment nearest the Mw 7.1 epicenter activated unusually late relative to other nearby segments and relative to the sequence-wide onset distribution.
+- Constraints
+  - Interpret triggering style from multiple convergent metrics rather than a single figure.
+  - Keep all tests observational and descriptive unless a formal null model is explicitly introduced.
+  - Comparisons should use only the fixed Mw 6.4–Mw 7.1 interval.
+- Key outputs
+  - Quantitative summary table including:
+    - onset-time dispersion across all activated cells and segments,
+    - per-fault activation span,
+    - along-fault activation slope or rank-correlation with along-fault distance,
+    - fraction of activated segments occurring in bursts versus gradual progression,
+    - activation timing of the segment nearest the Mw 7.1 epicenter and its percentile rank.
+  - Comparative figures:
+    - cumulative fraction of activated segments versus time,
+    - activation time versus distance from Mw 6.4 epicenter,
+    - activation time versus distance from Mw 7.1 epicenter,
+    - activation time versus along-fault distance for major faults,
+    - map highlighting early, intermediate, and late activated segments.
+  - Decision-ready interpretation outputs:
+    - labels or scorecards indicating evidence for near-synchronous activation, intra-fault cascading, inter-fault jumps, and activation concentration in geometrically complex zones.
+
+### Task 5: Cross-step validation and reproducibility packaging
+- Task description
+  - Validate that each major analytical product is internally consistent, preserve reusable machine-readable outputs, and organize independent execution stages so each major step can be run and checked separately.
+- Required data sources
+  - Outputs from Tasks 1–4.
+- Parameter selection strategy
+  - Validate event totals across stages: in-window regional events, associated events, excluded distant events, occupied grid cells, and activated segments.
+  - Check time-bin consistency between grid-based and segment-based analyses.
+  - Confirm activation maps align spatially with the fault network and mainshock locations.
+  - Save compact tabular summaries for all reusable products.
+- Constraints
+  - Major analytical steps should remain independently executable:
+    - Script 1: data ingest, projection, study-region setup, event subset creation.
+    - Script 2: grid-based onset analysis and onset-map diagnostics.
+    - Script 3: fault discretization, event association, segment activation, and triggering-style diagnostics.
+  - Each script should emit non-empty validated scientific outputs before being considered successful.
+  - Long loops should provide progress logs and record failure counts for malformed geometries or unassociated events.
+- Key outputs
+  - Validated intermediate tables for event subset, grid-cell onset metrics, fault segments, event-segment associations, and segment activations.
+  - Run summary table listing core parameters used:
+    - time window,
+    - grid size 1 km,
+    - time bin 30 minutes,
+    - association threshold 3 km,
+    - segment length target 1 km,
+    - segment activation threshold 10 events/hour.
+  - Quality-control figures:
+    - event-count conservation chart across filters,
+    - nearest-distance distribution for event-to-segment associations,
+    - segment-length and strike distributions,
+    - comparison of activated-area map and activated-fault map.

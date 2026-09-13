@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single scientific objective with three observational catalogs, fixed temporal/spatial windows, repeated b-value estimation across domains/radii/Mc modes, bootstrap uncertainty, overlap handling, and several diagnostic outputs. Workflow is cohesive and can be executed reliably in one main analysis script plus one focused plotting/validation script.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate",
+  "expected_script_count": 2
+}

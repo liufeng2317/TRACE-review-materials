@@ -1,0 +1,77 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2798,
+      "output_tokens": 17
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 26121,
+      "output_tokens": 6093
+    },
+    "Planing": {
+      "input_tokens": 48252,
+      "output_tokens": 8577
+    },
+    "Plan Merging": {
+      "input_tokens": 18890,
+      "output_tokens": 3924
+    },
+    "Workflow Agent": {
+      "input_tokens": 96116,
+      "output_tokens": 15295
+    },
+    "Coding Agent (01_catalog_windows_qc)": {
+      "input_tokens": 250235,
+      "output_tokens": 7736
+    },
+    "Result Check Agent (01_catalog_windows_qc)": {
+      "input_tokens": 15843,
+      "output_tokens": 1289
+    },
+    "Task Analysis Agent (01_catalog_windows_qc)": {
+      "input_tokens": 37501,
+      "output_tokens": 5317
+    },
+    "Coding Agent (02_spatiotemporal_metrics)": {
+      "input_tokens": 516022,
+      "output_tokens": 16472
+    },
+    "Result Check Agent (02_spatiotemporal_metrics)": {
+      "input_tokens": 19909,
+      "output_tokens": 1586
+    },
+    "Task Analysis Agent (02_spatiotemporal_metrics)": {
+      "input_tokens": 110476,
+      "output_tokens": 8430
+    },
+    "Coding Agent (03_visualization_and_evidence)": {
+      "input_tokens": 466289,
+      "output_tokens": 16789
+    },
+    "Result Check Agent (03_visualization_and_evidence)": {
+      "input_tokens": 59122,
+      "output_tokens": 1841
+    },
+    "Task Analysis Agent (03_visualization_and_evidence)": {
+      "input_tokens": 102282,
+      "output_tokens": 9434
+    },
+    "Evaluation": {
+      "input_tokens": 27973,
+      "output_tokens": 994
+    },
+    "Report Synthesis": {
+      "input_tokens": 75687,
+      "output_tokens": 8296
+    }
+  },
+  "total": {
+    "input_tokens": 1873516,
+    "output_tokens": 112090,
+    "total_tokens": 1985606
+  }
+}

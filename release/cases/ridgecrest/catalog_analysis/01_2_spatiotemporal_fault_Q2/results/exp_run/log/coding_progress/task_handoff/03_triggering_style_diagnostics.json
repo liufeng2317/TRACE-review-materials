@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "03_triggering_style_diagnostics",
+    "generated_at": "2026-07-06T00:18:55.633228+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 759.522,
+    "timing": {
+      "total_sec": 759.522,
+      "coding_agent_sec": 348.524,
+      "code_review_sec": 9.617,
+      "preflight_sec": 2.109,
+      "script_execution_sec": 132.894,
+      "result_check_sec": 126.837,
+      "task_analysis_sec": 131.657
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/03_triggering_style_diagnostics.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/03_triggering_style_diagnostics.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/03_triggering_style_diagnostics/log_4.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/activation_dispersion_by_class.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/activation_dispersion_by_class.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/cross_fault_complexity_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/cross_fault_complexity_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/event_count_conservation.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/event_count_conservation.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_classification_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/fault_classification_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_segment_activation_enriched.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/fault_segment_activation_enriched.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/grid_cell_onset_enriched.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/grid_cell_onset_enriched.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/interpretation_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/interpretation_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/mw71_nucleation_neighborhood_segments.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_triggering_style_diagnostics/tables/mw71_nucleation_neighborhood_segments.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/activation_time_vs_distance_mw64.png",
+      "figures/activation_time_vs_distance_mw71.png",
+      "figures/along_fault_distance_vs_activation_time_major_faults.png",
+      "figures/early_intermediate_late_fault_segment_map.png",
+      "figures/gridded_vs_fault_activation_map_comparison.png",
+      "figures/mw71_nucleation_local_context.png",
+      "tables/activation_dispersion_by_class.csv",
+      "tables/cross_fault_complexity_metrics.csv",
+      "tables/event_count_conservation.csv",
+      "tables/fault_classification_table.csv",
+      "tables/fault_segment_activation_enriched.csv",
+      "tables/grid_cell_onset_enriched.csv",
+      "tables/interpretation_summary.csv",
+      "tables/mw71_nucleation_neighborhood_segments.csv",
+      "tables/mw71_nucleation_segment_summary.csv",
+      "tables/per_fault_propagation_metrics.csv",
+      "tables/run_parameters.csv",
+      "tables/system_synchrony_metrics.csv",
+      "tables/validation_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Quantify synchrony, along-fault cascading, cross-fault complexity, and the Mw 7.1 nucleation-area activation history and package validated deliverables.",
+    "result": "Quantify synchrony, along-fault cascading, cross-fault complexity, and the Mw 7.1 nucleation-area activation history and package validated deliverables. Status=success; outputs=19 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

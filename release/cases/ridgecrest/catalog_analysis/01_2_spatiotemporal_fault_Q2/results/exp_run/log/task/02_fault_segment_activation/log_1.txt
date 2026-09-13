@@ -1,0 +1,18 @@
+[2026-07-06 08:04:41] Starting fault-segment activation analysis
+[2026-07-06 08:04:51] Building fault-segment backbone
+[2026-07-06 08:04:51] Discretizing 977 fault polylines into ~1.0 km segments with n_jobs=64
+[2026-07-06 08:04:51]   segmenting polyline chunk 0:500
+[2026-07-06 08:04:54]   segmenting polyline chunk 500:977
+[2026-07-06 08:04:56] Associating earthquakes to nearest fault segments
+[2026-07-06 08:04:56] Associating 4627 events to 1019 segments with n_jobs=19, n_chunks=19, chunk_size=250, candidate_radius_km=3.74
+[2026-07-06 08:04:59] Constructing fault-segment time series
+[2026-07-06 08:05:00] Summarizing segment activation
+<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:524: FutureWarning: Downcasting object dtype arrays on .fillna, .ffill, .bfill is deprecated and will change in a future version. Call result.infer_objects(copy=False) instead. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  summary['activated'] = summary['activated'].fillna(False)
+[2026-07-06 08:05:00] Building activation density products
+[2026-07-06 08:05:00] Generating figures
+<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:602: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  cmap = plt.cm.get_cmap('tab20', min(20, max(1, n_lines)))
+<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py:736: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  fig.tight_layout()
+[2026-07-06 08:05:07] Finished fault-segment activation analysis in 26.0 s

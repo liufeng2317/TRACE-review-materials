@@ -1,0 +1,4 @@
+question,metric_name,metric_value,interpretation_hint
+Is the triggered earthquakes along the fault direction?,median_angular_misfit_deg,11.342335307716269,Smaller values indicate stronger alignment between event-cloud orientation and local mapped fault strike.
+Is the triggered earthquakes along the fault direction changing over time?,orientation_range_deg,173.16739954099245,Larger range suggests stronger temporal evolution in event-cloud orientation.
+Is the triggered earthquakes cover all the fault direction simultaneously or evolving over time?,final_cumulative_occupied_range_km,54.0,Compare cumulative occupied range growth through time to distinguish simultaneous broad activation from progressive expansion.

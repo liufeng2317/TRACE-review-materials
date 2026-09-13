@@ -1,0 +1,7 @@
+check,passed,details
+mainshocks_excluded_from_clean_catalog,True,interevent catalog excludes Mw6.4 and Mw7.1
+separator_excluded_from_clean_catalog,True,separator removed before analysis windows
+n_ge_mc_le_event_count,True,eligible counts bounded by raw window size
+primary_fixed_nonempty,True,rows=114
+primary_dynamic_nonempty,True,rows=114
+required_map_generated,True,map figure exists

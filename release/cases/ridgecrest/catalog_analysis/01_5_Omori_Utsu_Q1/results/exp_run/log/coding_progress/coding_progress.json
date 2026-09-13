@@ -1,0 +1,144 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-07T02:30:09.856937+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 2
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 2,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 15428,
+        "mode": "full_experiment_plan",
+        "original_chars": 15428,
+        "task_name": "01_domain_preparation"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 1,
+          "python_executor": 3
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py": {
+            "count": 1,
+            "tools": {
+              "read_file": 1
+            }
+          }
+        },
+        "read_file_call_count": 1,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 3,
+          "bash_executor": 1,
+          "python_executor": 3,
+          "read_file": 1,
+          "write_file": 1
+        },
+        "total_tool_calls": 9,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 3,
+      "elapsed_sec": 459.273,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-07T02:24:56.922911+00:00",
+      "last_activity_at": "2026-07-07T02:24:56.922818+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-07T02:17:17.650164+00:00",
+      "status": "success",
+      "task_name": "01_domain_preparation",
+      "timing": {
+        "code_review_sec": 13.339,
+        "coding_agent_sec": 218.166,
+        "preflight_sec": 0.968,
+        "result_check_sec": 105.322,
+        "script_execution_sec": 67.238,
+        "task_analysis_sec": 52.063,
+        "total_sec": 459.273
+      }
+    },
+    {
+      "coding_plan_context": {
+        "compact_chars": 15428,
+        "mode": "full_experiment_plan",
+        "original_chars": 15428,
+        "task_name": "02_omori_fitting_and_figures"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 2,
+          "python_executor": 3
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py": {
+            "count": 2,
+            "tools": {
+              "read_file": 2
+            }
+          },
+          "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py": {
+            "count": 2,
+            "tools": {
+              "read_file": 2
+            }
+          }
+        },
+        "read_file_call_count": 4,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 2,
+          "bash_executor": 2,
+          "python_executor": 3,
+          "read_file": 4,
+          "write_file": 1
+        },
+        "total_tool_calls": 12,
+        "unique_file_read_count": 2,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 363.124,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-07T02:30:09.689127+00:00",
+      "last_activity_at": "2026-07-07T02:30:09.689032+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-07T02:24:06.565025+00:00",
+      "status": "success",
+      "task_name": "02_omori_fitting_and_figures",
+      "timing": {
+        "code_review_sec": 61.584,
+        "coding_agent_sec": 112.679,
+        "preflight_sec": 0.359,
+        "result_check_sec": 53.819,
+        "script_execution_sec": 31.099,
+        "task_analysis_sec": 102.222,
+        "total_sec": 363.124
+      }
+    }
+  ]
+}

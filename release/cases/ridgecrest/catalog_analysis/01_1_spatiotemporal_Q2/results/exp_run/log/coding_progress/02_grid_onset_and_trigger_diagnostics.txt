@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_grid_onset_and_trigger_diagnostics
+Status: success
+Execution stage: analysis_done
+Debug rounds: 2
+Result check rounds: 1
+Elapsed seconds: 532.417
+Started at: 2026-07-05T08:06:19.258408+00:00
+Finished at: 2026-07-05T08:15:11.675480+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_grid_onset_and_trigger_diagnostics.md
+Runtime action: pass
+Code changes: 2
+Last activity: 2026-07-05T08:15:11.675341+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=32.161, coding_agent_sec=132.569, preflight_sec=0.772, result_check_sec=68.883, script_execution_sec=52.247, task_analysis_sec=243.476, total_sec=532.417
+Coding plan context: mode=full_experiment_plan, original_chars=15538, compact_chars=15538
+Coding tool usage: total=9, read_file=3, unique_files=2, used_retrieve=False, tools={'python_executor': 3, 'read_file': 3, 'write_file': 1, 'apply_diff': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

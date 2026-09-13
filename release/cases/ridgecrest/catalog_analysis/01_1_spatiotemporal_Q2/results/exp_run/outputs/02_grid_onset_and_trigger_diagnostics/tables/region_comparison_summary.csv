@@ -1,0 +1,4 @@
+region_label,n_cells,n_occupied_cells,n_robust_onset_cells,earliest_onset_hr,median_onset_hr,mean_distance_to_mw71_km,mean_alongstrike_km
+Mw6.4_vicinity,707,358,103,0.0,6.5,12.594975965658938,-0.00640946486107636
+Mw7.1_vicinity,629,173,30,6.5,17.5,4.832304578001663,12.689296901889989
+Intervening_corridor,89,9,1,24.0,24.0,9.070418593019484,5.925976271111868

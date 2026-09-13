@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single observational catalog workflow, but requires event-window derivation from mainshocks, spatial-temporal binning, reproducible onset-time definition on a fine grid, and multiple figure products with parallelized computation and validation.",
+  "data_source_count": 2,
+  "workflow_risk": "medium: onset-time results depend on robust grid construction, sparse-cell handling, and a reproducible sustained-rate increase criterion rather than a visually chosen threshold.",
+  "expected_script_count": 3
+}

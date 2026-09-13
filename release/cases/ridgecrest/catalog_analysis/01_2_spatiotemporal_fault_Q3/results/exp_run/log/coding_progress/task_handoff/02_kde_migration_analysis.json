@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_kde_migration_analysis",
+    "generated_at": "2026-07-06T01:52:40.003412+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 1837.391,
+    "timing": {
+      "total_sec": 1837.391,
+      "coding_agent_sec": 213.825,
+      "code_review_sec": 19.898,
+      "preflight_sec": 1.081,
+      "script_execution_sec": 1187.085,
+      "result_check_sec": 245.098,
+      "task_analysis_sec": 166.603
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_kde_migration_analysis.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_kde_migration_analysis/log_2.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "hotspot_migration_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_global_normalization.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_global_normalization.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_interval_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_interval_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_stage1_hotspots.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage1_hotspots.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_stage2_hotspots.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage2_hotspots.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_arrays/stage1_01_density.npy",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_arrays/stage1_01_density.npy",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_arrays/stage1_02_density.npy",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_arrays/stage1_02_density.npy",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "kde_arrays/stage1_03_density.npy",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_arrays/stage1_03_density.npy",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "hotspot_migration_metrics.csv",
+      "hotspot_migration_stage1.png",
+      "hotspot_migration_stage2.png",
+      "kde_global_normalization.json",
+      "kde_interval_summary.csv",
+      "kde_stage1_hotspots.csv",
+      "kde_stage1_panels_page01.png",
+      "kde_stage2_hotspots.csv",
+      "kde_stage2_panels_page01.png",
+      "kde_stage2_panels_page02.png",
+      "kde_arrays/stage1_01_density.npy",
+      "kde_arrays/stage1_02_density.npy",
+      "kde_arrays/stage1_03_density.npy",
+      "kde_arrays/stage1_04_density.npy",
+      "kde_arrays/stage1_05_density.npy",
+      "kde_arrays/stage1_06_density.npy",
+      "kde_arrays/stage1_07_density.npy",
+      "kde_arrays/stage1_08_density.npy",
+      "kde_arrays/stage2_01_density.npy",
+      "kde_arrays/stage2_02_density.npy",
+      "kde_arrays/stage2_03_density.npy",
+      "kde_arrays/stage2_04_density.npy",
+      "kde_arrays/stage2_05_density.npy",
+      "kde_arrays/stage2_06_density.npy",
+      "kde_arrays/stage2_07_density.npy",
+      "kde_arrays/stage2_08_density.npy",
+      "kde_arrays/stage2_09_density.npy",
+      "kde_arrays/stage2_10_density.npy",
+      "kde_arrays/stage2_11_density.npy",
+      "kde_arrays/stage2_12_density.npy",
+      "kde_arrays/stage2_13_density.npy",
+      "kde_arrays/stage2_14_density.npy",
+      "kde_arrays/stage2_15_density.npy"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Compute fixed-bandwidth interval KDEs, generate stage panel figures, and track hotspot migration between the two mainshocks.",
+    "result": "Compute fixed-bandwidth interval KDEs, generate stage panel figures, and track hotspot migration between the two mainshocks. Status=success; outputs=33 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

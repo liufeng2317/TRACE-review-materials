@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-07-06T03:08:39.421388+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [
+      "01_ridgecrest_directional_ripley_analysis"
+    ],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [
+    {
+      "execution_stage": "analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+      "priority_rank": 40,
+      "priority_reason": "repeated_failure_signature",
+      "severity": "medium",
+      "status": "success",
+      "task_name": "01_ridgecrest_directional_ripley_analysis"
+    }
+  ],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 1,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_directional_ripley_analysis.md",
+      "code_change_count": 3,
+      "debug_attempt_count": 3,
+      "debug_round": 3,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 24,
+        "coding_response_summary": "Fixed the second preflight syntax failure.\n\nWhat changed:\n- Removed leftover diff-marker artifacts and the duplicated malformed `validation_df` block near the end of the script.\n- Replaced it with one clean, properly indented `validation_df = pd.DataFrame(...)` definition.\n\nThis directly addresses t...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 40418,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 41164,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 3,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "All requested analysis products generated successfully.",
+            "log_size_bytes": 6762,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_anal...[truncated]",
+              "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_anal...[truncated]"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+          "message": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Mino...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_ridgecrest_directional_ripley_analysis",
+          "timestamp": "2026-07-06T03:06:08.124920+00:00"
+        },
+        "script_hash_after": "4b8dca47501fa9686b58733bd3eb99ef6d32b207a017271be927e7e1930f6b30",
+        "script_hash_before": "0918495367abd79892772cfa679eb67640cb3142582ac0d0acae2a2aa8487376",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+        "task_name": "01_ridgecrest_directional_ripley_analysis",
+        "timestamp": "2026-07-06T02:56:24.060749+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "All requested analysis products generated successfully.",
+          "log_size_bytes": 6762,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_anal...[truncated]",
+            "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_anal...[truncated]"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+        "message": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Mino...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_ridgecrest_directional_ripley_analysis",
+        "timestamp": "2026-07-06T03:06:08.124920+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_directional_ripley_analysis.md"
+      ],
+      "priority_rank": 40,
+      "priority_reason": "repeated_failure_signature",
+      "repeated_failure_signatures": [
+        {
+          "count": 2,
+          "signature": "34b7cb4dfabc"
+        }
+      ],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+      "severity": "medium",
+      "status": "success",
+      "task_name": "01_ridgecrest_directional_ripley_analysis"
+    }
+  ]
+}

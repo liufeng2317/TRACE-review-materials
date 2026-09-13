@@ -1,0 +1,252 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\title{Spatiotemporal Evolution of the Ridgecrest Earthquake Sequence Between the Mw 6.4 and Mw 7.1 Mainshocks}
+\author{TRACE}
+\date{}
+
+
+% --- EarthLink enforced font settings (XeLaTeX) ---
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{unicode-math}
+\setmainfont{DejaVu Serif}
+\setCJKmainfont{Noto Serif CJK SC}
+\setmathfont{XITS Math}
+\usepackage[htt]{hyphenat}
+% --- end enforced font settings ---
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report investigates the evolution of seismicity in the Ridgecrest sequence from the Mw 6.4 mainshock to the Mw 7.1 mainshock, with emphasis on whether triggered earthquakes were aligned with mapped fault directions, whether that alignment changed through time, and whether activation occurred across the full fault system simultaneously or expanded progressively. Using a relocated earthquake catalog, mapped Ridgecrest surface faults, and the two mainshock reference events, the workflow first computed event-level nearest-fault geometry and bin-level directional metrics in a local azimuthal equidistant coordinate system, then generated the requested map series and distribution figures. The analyzed dataset contains 84,474 catalog events in total, including 4,716 events between the two mainshocks and 7,641 events in the two days after Mw 7.1. Across the pre-Mw 7.1 interval, the event clouds were generally organized parallel to mapped fault structure, with a reported median angular misfit of 11.34$^{\circ}$ between event-cloud principal orientation and dominant local fault strike. However, orientation evolved strongly through time, with a reported orientation range of 173.17$^{\circ}$ across the 23 canonical time bins. Along-strike occupancy also expanded progressively rather than appearing everywhere at once, reaching a final cumulative occupied range of 54 km before the Mw 7.1 mainshock. Nearest-fault distances remained small throughout the sequence, with pre-Mw 7.1 median distance 0.567 km and post-Mw 7.1 median distance 0.661 km, indicating persistent concentration near mapped faults. These conclusions are descriptive and should be interpreted with moderate confidence because the directional summaries simplify a complex multi-fault system and no formal uncertainty analysis was reported.
+\end{abstract}
+
+\section{Scientific Objective}
+The purpose of this study is to evaluate the spatiotemporal evolution of triggered seismicity in the Ridgecrest earthquake sequence between the Mw 6.4 and Mw 7.1 mainshocks. The specific scientific questions were:
+\begin{enumerate}[label=\arabic*.]
+    \item Are the triggered earthquakes aligned with mapped fault directions?
+    \item Does the preferred fault-parallel orientation of triggered seismicity change through time?
+    \item Does triggered seismicity occupy the full fault system simultaneously, or does it expand progressively along strike over time?
+\end{enumerate}
+
+The requested analysis also required time-sliced spatial maps between the two mainshocks, a pre- versus post-Mw 7.1 comparison figure, and statistics describing the distance of each earthquake to the nearest mapped fault.
+
+\section{Data and Implemented Workflow}
+\subsection{Input data}
+The analysis used three supplied datasets:
+\begin{itemize}
+    \item Relocated catalog: \url{<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv}
+    \item Mainshock table: \url{<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv}
+    \item Surface-fault polylines: \url{<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json}
+\end{itemize}
+
+Task 01 produced the analysis-ready metrics and Task 02 generated the requested figures and summary tables. The output validation summary confirms 84,474 catalog events, 4,716 pre-Mw 7.1 events, 7,641 post-Mw 7.1 events, 23 canonical pre-Mw 7.1 time bins, zero empty bins, and 64 workers used for parallel computation.
+
+\subsection{Actual implementation}
+The implemented workflow followed the evidence package rather than a hypothetical plan. The key steps were:
+\begin{enumerate}[label=\arabic*.]
+    \item Parse the relocated catalog and mainshock reference events.
+    \item Project the catalog and fault geometry into a local azimuthal equidistant coordinate system centered on the Ridgecrest area for kilometer-scale calculations. The documented CRS was \texttt{+proj=aeqd +lat\_0=35.74 +lon\_0=-117.55 +x\_0=0 +y\_0=0 +datum=WGS84 +units=km +no\_defs +type=crs}.
+    \item Compute event-level nearest-fault metrics relative to the mapped surface-fault network.
+    \item Partition the interval between the Mw 6.4 and Mw 7.1 mainshocks into 23 canonical bins: 8 bins of 30 minutes in Stage 1 (first 4 hours) and 15 bins of 2 hours in Stage 2 (remainder of the pre-Mw 7.1 interval).
+    \item For each bin, estimate cloud orientation, spread, elongation, local dominant fault strike, angular misfit, and along-strike occupancy metrics.
+    \item Generate the requested map pages, pre/post comparison figure, nearest-fault distance distributions, and summary figures for orientation and along-strike expansion.
+\end{enumerate}
+
+This structure directly supports the three target questions: fault-parallel organization, temporal directional change, and simultaneous versus progressive coverage.
+
+\section{Evidence Base and Output Inventory}
+The principal evidence products used in this report are listed below.
+
+\begin{table}[H]
+\centering
+\caption{Primary machine-readable outputs used for interpretation.}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.28\textwidth}X}
+\toprule
+Artifact & Purpose \\
+\midrule
+\url{../exp_run/outputs/01_ridgecrest_metrics_preparation/validation_summary.csv} & Counts and validation for the prepared dataset, including event totals, time bins, and worker count. \\
+\url{../exp_run/outputs/01_ridgecrest_metrics_preparation/bin_directional_summary.csv} & Bin-level orientation, angular misfit, nearest-fault distance, and along-strike occupancy statistics. \\
+\url{../exp_run/outputs/01_ridgecrest_metrics_preparation/along_strike_first_activation.csv} & First activation times for along-strike bins used to assess progressive expansion. \\
+\url{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/figure_manifest.csv} & Absolute paths for all generated figures. \\
+\url{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/question_metric_summary_copy.csv} & Summary metrics mapped directly to the three scientific questions. \\
+\url{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/comparison_summary.csv} & Pre/post Mw 7.1 event counts, median fault distance, and centroid locations. \\
+\url{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/nearest_fault_distance_bin_statistics.csv} & Time-dependent nearest-fault distance summaries. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Results}
+\subsection{Overview of event coverage and time slicing}
+The prepared dataset is internally consistent and complete for the target interval. Validation shows 4,716 events occurred between the Mw 6.4 and Mw 7.1 mainshocks and 7,641 occurred in the two days after the Mw 7.1 event. The pre-Mw 7.1 interval was fully represented by 23 non-empty bins. This is important because the temporal evolution claims below are not based on sparse or missing-bin behavior.
+
+The requested time-sliced maps were generated as three pages of 2$\times$4 panels, with the first page covering the initial four hours at 30-minute resolution and later pages covering the remaining interval at 2-hour resolution. These maps are shown in Figures~\ref{fig:maps1}--\ref{fig:maps3}.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/ridgecrest_time_sliced_maps_page_01.png}
+    \caption{Time-sliced spatial maps, page 1. This page covers Stage 1, the first 4 hours after the Mw 6.4 mainshock, using 30-minute bins. Each panel shows events in the active bin highlighted relative to prior events in silver, with mapped faults and both mainshock epicenters overlaid.}
+    \label{fig:maps1}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/ridgecrest_time_sliced_maps_page_02.png}
+    \caption{Time-sliced spatial maps, page 2. This page shows the early Stage 2 evolution using 2-hour bins after the initial 4-hour burst.}
+    \label{fig:maps2}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/ridgecrest_time_sliced_maps_page_03.png}
+    \caption{Time-sliced spatial maps, page 3. This page covers the final pre-Mw 7.1 bins. The evidence notes that the last page includes one effectively unused/reference panel because 23 bins do not fill 24 slots.}
+    \label{fig:maps3}
+\end{figure}
+
+\subsection{Question 1: Were triggered earthquakes aligned with mapped fault directions?}
+The quantitative answer is yes, at broad scale. The summary metric for this question is a median angular misfit of 11.34$^{\circ}$ between the principal axis of each time-bin event cloud and the dominant local mapped fault strike. In this framework, smaller misfit indicates stronger alignment between triggered seismicity and mapped faults.
+
+The bin-level results support this interpretation. Many bins show single-digit to low-teen angular misfit values, including 2.01$^{\circ}$ in bin 0, 3.62$^{\circ}$ in bin 2, 6.92$^{\circ}$ in bin 5, 6.94$^{\circ}$ in bin 8, 2.59$^{\circ}$ in bin 10, 0.20$^{\circ}$ in bin 11, 2.20$^{\circ}$ in bin 16, 8.06$^{\circ}$ in bin 19, and 2.39$^{\circ}$ in bin 20. These low-misfit intervals indicate that much of the triggered seismicity evolved in a fault-parallel manner.
+
+At the same time, fault-parallel organization was not uniform. Several bins have much larger angular misfit, for example 36.48$^{\circ}$ in bin 3, 30.74$^{\circ}$ in bin 4, 29.10$^{\circ}$ in bin 7, 22.48$^{\circ}$ in bin 12, 18.57$^{\circ}$ in bin 14, 41.06$^{\circ}$ in bin 15, 19.40$^{\circ}$ in bin 17, and 23.83$^{\circ}$ in bin 21. Thus, the best-supported statement is that triggered earthquakes were generally guided by the mapped fault system, but with intermittent departures that likely reflect branching geometry, multi-strand activation, or simplification in the local strike metric.
+
+Figure~\ref{fig:orientation} visualizes the bin-by-bin orientation and misfit history.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.92\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/orientation_and_misfit_vs_time.png}
+    \caption{Temporal evolution of event-cloud orientation and angular misfit relative to dominant local mapped fault strike. This figure provides the main evidence for both overall fault alignment and time-varying directional behavior.}
+    \label{fig:orientation}
+\end{figure}
+
+\subsection{Question 2: Did the fault-parallel direction change through time?}
+Yes. The evidence indicates substantial temporal evolution in the preferred orientation of the triggered seismicity. The question-level summary reports an orientation range of 173.17$^{\circ}$ across the 23 canonical bins. Because line orientations are axial rather than directional, this large range should be interpreted as strong variation in the principal trend estimated from successive earthquake clouds, not as literal rotation through the full circle of vector azimuth.
+
+The bin-level values show that the estimated principal strike varied from approximately 7--8$^{\circ}$ in some bins (e.g., bins 16, 18, and 20), to about 22--40$^{\circ}$ in many early and middle bins, and to nearly 180$^{\circ}$ in bin 15. This pattern indicates that the sequence did not maintain a single stable preferred orientation from the Mw 6.4 to the Mw 7.1 mainshock. Instead, the active seismicity sampled different strands or differently weighted subsets of the fault network through time.
+
+The time-sliced maps in Figures~\ref{fig:maps1}--\ref{fig:maps3} provide the visual context for this evolution, while Figure~\ref{fig:orientation} condenses it into a quantitative timeline. Together, they support the conclusion that directional organization changed through time rather than remaining fixed.
+
+\subsection{Question 3: Was the full fault extent activated simultaneously or progressively?}
+The evidence favors progressive expansion rather than instantaneous occupation of the full analyzed fault extent. The summary metric for this question is a final cumulative occupied range of 54.0 km prior to the Mw 7.1 mainshock. However, the key point is not only the final range, but how that range grew through time.
+
+The earliest bin already occupied 28 km along the reference axis, showing that the Mw 6.4 sequence immediately activated a substantial but incomplete portion of the fault system. By bin 3, the cumulative occupied range had expanded to 36 km; by bin 7 it reached 38 km; by bin 8 it increased to 44 km; by bin 9 it reached 50 km; and by bin 12 it reached the full pre-Mw 7.1 cumulative range of 54 km. This stepwise growth demonstrates that coverage expanded with time instead of appearing everywhere at once.
+
+The first-activation table provides additional evidence. Along-strike bins near the center activated almost immediately, within minutes of the Mw 6.4 mainshock. For example, the bins spanning 2--4 km, 6--8 km, and nearby intervals activated at 0.0 h, 0.020 h, and 0.047--0.193 h. In contrast, several farther bins activated only after multiple hours: 12--14 km at 3.52 h, 14--16 km at 4.13 h, -28 to -26 km at 5.82 h, 18--20 km at 6.87 h, 20--22 km at 7.16 h, and 24--26 km at 13.01 h. Some still more peripheral bins were first activated only after about 24 h. This sequence is inconsistent with simultaneous system-wide triggering at the scale represented by the mapped faults and analysis axis.
+
+Figures~\ref{fig:migration} and \ref{fig:occupancy} summarize the centroid migration and cumulative along-strike occupancy through time.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.92\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/centroid_and_along_strike_migration.png}
+    \caption{Centroid position and along-strike migration metrics through time. This figure supports interpretation of evolving spatial concentration prior to the Mw 7.1 mainshock.}
+    \label{fig:migration}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.92\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/along_strike_occupancy_through_time.png}
+    \caption{Along-strike occupancy through time. Progressive widening of the occupied range indicates that the triggered sequence expanded along the fault system rather than covering the full extent simultaneously.}
+    \label{fig:occupancy}
+\end{figure}
+
+\subsection{Nearest-fault distance statistics}
+The nearest-fault distance calculations show that Ridgecrest seismicity remained strongly concentrated near mapped faults throughout the analyzed interval. For the full pre-Mw 7.1 window, the median nearest-fault distance was 0.5669 km; for the two days after the Mw 7.1 mainshock, the median was 0.6612 km. Thus, both before and after the larger mainshock, the sequence remained structurally localized.
+
+The time-dependent statistics reinforce this interpretation. Across the 23 pre-Mw 7.1 bins, median nearest-fault distance ranged from about 0.394 km to 0.826 km, most commonly near 0.5--0.6 km. In many bins, roughly 45--61\% of events fell within 0.5 km of the nearest mapped fault, and about 57--79\% fell within 1 km. For example:
+\begin{itemize}
+    \item Bin 4 had median distance 0.406 km, with 61.3\% within 0.5 km and 78.7\% within 1 km.
+    \item Bin 10 had median distance 0.488 km, with 50.5\% within 0.5 km and 74.2\% within 1 km.
+    \item Bin 15 showed one of the larger medians, 0.826 km, yet still had 59.5\% within 1 km and 85.0\% within 2 km.
+\end{itemize}
+These values indicate persistent near-fault clustering even during periods of stronger directional complexity.
+
+Figures~\ref{fig:nfd_overall} and \ref{fig:nfd_time} provide the corresponding visual summaries.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.88\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/nearest_fault_distance_overall.png}
+    \caption{Overall nearest-fault distance distribution for the analyzed earthquake sets. The strong concentration at small values indicates that earthquakes cluster close to mapped faults.}
+    \label{fig:nfd_overall}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.88\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/nearest_fault_distance_over_time.png}
+    \caption{Nearest-fault distance distribution through time for the pre-Mw 7.1 interval. The lack of large systematic drift away from faults supports sustained structural control through the sequence.}
+    \label{fig:nfd_time}
+\end{figure}
+
+\subsection{Pre- versus post-Mw 7.1 comparison}
+The requested comparison between the interval before Mw 7.1 and the two days after Mw 7.1 shows both continuity and change. Event counts increased from 4,716 before Mw 7.1 to 7,641 in the following two days. Median nearest-fault distance increased slightly from 0.5669 km to 0.6612 km, but both values remain small. The centroid also shifted from longitude -117.5440, latitude 35.6840 before Mw 7.1 to longitude -117.6103, latitude 35.8046 afterward, indicating a clear spatial reorganization after the larger mainshock.
+
+Figure~\ref{fig:prepost} shows the pre/post map comparison that underlies this summary.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.95\textwidth]{../exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/pre_post_mainshock71_comparison.png}
+    \caption{Comparison of seismicity before and after the Mw 7.1 mainshock. The event cloud shifts spatially after Mw 7.1 while remaining concentrated near the mapped fault network.}
+    \label{fig:prepost}
+\end{figure}
+
+\section{Integrated Interpretation}
+Taken together, the evidence supports the following scientific interpretation of the Ridgecrest sequence between the two mainshocks.
+
+First, triggered seismicity was not spatially random. It remained concentrated close to mapped faults and, in aggregate, was broadly aligned with mapped fault directions. The median angular misfit of 11.34$^{\circ}$ and median nearest-fault distances near 0.5--0.7 km are both consistent with strong structural control.
+
+Second, the active orientation of seismicity was not constant. Some bins were tightly aligned with a local mapped fault trend, whereas others showed much larger misfit or very different principal strikes. This indicates that the pre-Mw 7.1 sequence involved temporally changing participation of different strands or differently shaped subclusters rather than a single stable rupture-parallel trend.
+
+Third, the triggered sequence expanded progressively across the fault system. Immediate activation occurred near a central portion of the analyzed along-strike axis, but additional bins were occupied only after hours, and some extremal bins not until much later. Therefore, the fault system was not activated everywhere simultaneously at the scale represented by this analysis.
+
+In practical terms, the evidence is most consistent with a cascading, spatially organized preparation of the larger Mw 7.1 rupture: fault-guided activity started on a restricted subset of the system, changed orientation as different strands became involved, and widened along strike over time before the later mainshock.
+
+\section{Limitations and Confidence}
+The conclusions above should be interpreted with the limitations explicitly documented in the evidence package.
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Simplified directional metric.} ``Along fault direction'' was operationalized mainly through the principal-axis orientation of the event cloud and comparison with a dominant local mapped fault strike. In a complex multi-strand network, a single orientation may underrepresent simultaneous activation on multiple branches.
+    \item \textbf{Fixed along-strike reference axis.} Progressive activation was measured using a fixed reference axis with strike 147.653931$^{\circ}$. This is useful for a consistent summary, but the exact timing and magnitude of expansion could vary with a branch-specific or adaptive axis.
+    \item \textbf{No explicit uncertainty propagation.} The workflow did not report formal uncertainty intervals for earthquake relocation error, fault mapping uncertainty, nearest-fault assignment, or principal-orientation estimation. Quantitative values should therefore be treated as descriptive rather than tightly constrained inferential estimates.
+    \item \textbf{Surface-fault reference only.} Nearest-fault distance was calculated relative to mapped surface faults. Events on unmapped, buried, subsidiary, or geometrically simplified structures may appear artificially far from the nearest mapped fault, even if they were physically fault-controlled.
+    \item \textbf{Minor presentation issue.} The last page of time-sliced maps contains one effectively unused/reference panel because 23 bins do not fill 24 subplot slots. This does not affect the analysis but should be noted when visually counting bins.
+\end{enumerate}
+
+Given these constraints, the overall scientific confidence is best described as \textbf{moderate}. The broad conclusions are well supported by internally consistent metrics and figures, but they do not resolve all branch-scale complexities of the Ridgecrest fault system.
+
+\section{Conclusions}
+This study addressed three questions about the Ridgecrest sequence between the Mw 6.4 and Mw 7.1 mainshocks.
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Were triggered earthquakes aligned with fault direction?} Yes, generally. The sequence showed broad fault-parallel organization, summarized by a median event-cloud versus local-fault angular misfit of 11.34$^{\circ}$ and consistently small nearest-fault distances.
+    \item \textbf{Did that direction change through time?} Yes. The preferred orientation varied strongly across the 23 time bins, indicating evolving participation of different fault strands or subclusters rather than a fixed single trend.
+    \item \textbf{Was the full fault system activated simultaneously?} No, not in this analysis. Along-strike occupancy expanded stepwise to a final cumulative pre-Mw 7.1 range of 54 km, with outer sectors activating hours later than the central early-active region.
+\end{enumerate}
+
+The resulting picture is of a structurally controlled but dynamically evolving earthquake sequence: seismicity after the Mw 6.4 mainshock was largely fault-guided, changed orientation through time, and expanded progressively across the fault network before the Mw 7.1 mainshock.
+
+\section*{Reproducibility Notes}
+All key claims in this report are tied to outputs located under:
+\url{../exp_run/outputs}
+
+The report source itself was written to:
+\url{../exp_run/report/report.tex}
+
+\end{document}

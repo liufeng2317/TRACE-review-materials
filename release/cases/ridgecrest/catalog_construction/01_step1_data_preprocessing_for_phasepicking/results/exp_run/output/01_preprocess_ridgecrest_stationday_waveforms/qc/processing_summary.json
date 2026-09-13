@@ -1,0 +1,25 @@
+{
+  "start_time": "2019-07-04T00:00:00.000000Z",
+  "end_time": "2019-07-26T00:00:00.000000Z",
+  "n_stationxml_files": 50,
+  "n_selected_stations": 47,
+  "n_jobs": 1034,
+  "n_success": 853,
+  "n_skipped": 173,
+  "n_failed": 8,
+  "phase_outputs": 853,
+  "magnitude_outputs": 853,
+  "diagnostic_figure": "<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/output/01_preprocess_ridgecrest_stationday_waveforms/figures/preprocessing_diagnostic_ZY.SV07_20190719.png",
+  "deliverables": {
+    "station_sta": "<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/output/01_preprocess_ridgecrest_stationday_waveforms/station.sta",
+    "phase_dir": "<DATA_ROOT>/processed_picking",
+    "magnitude_dir": "<DATA_ROOT>/Science2019_Ross_Ridgecrest/processed_magnitude",
+    "qc_dir": "<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/output/01_preprocess_ridgecrest_stationday_waveforms/qc",
+    "figure_dir": "<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/output/01_preprocess_ridgecrest_stationday_waveforms/figures"
+  },
+  "production_scope": "full Ridgecrest production window",
+  "expected_station_day_jobs": 1034,
+  "validated_station_day_products": 853,
+  "selected_station_count": 47,
+  "daily_windows": 22
+}

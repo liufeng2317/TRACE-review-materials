@@ -1,0 +1,13 @@
+Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation
+Reading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Reading mainshocks: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Mw 6.4 origin time: 2019-07-04T17:33:49.040000+00:00
+Mw 7.1 origin time: 2019-07-06T03:19:53.040000+00:00
+Interevent events retained: 4714
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py", line 368, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py", line 319, in main
+    raise ValueError('Primary strict north/south split accounting does not match entire corridor count.')
+ValueError: Primary strict north/south split accounting does not match entire corridor count.
+

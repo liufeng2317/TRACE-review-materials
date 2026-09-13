@@ -1,0 +1,2 @@
+center_lon,center_lat,crs_proj4,grid_spacing_km,node_count
+-117.5435765975892,35.72146737313156,+proj=aeqd +lat_0=35.7214673731316 +lon_0=-117.543576597589 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs,1.0,3920

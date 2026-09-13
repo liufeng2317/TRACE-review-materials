@@ -1,0 +1,14 @@
+Loading catalog: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/intermainshock_catalog_clean.csv
+Loading mainshocks: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/mainshock_reference_table.csv
+Loading faults: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/fault_segments_table.csv
+Loading stage 1 intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage1.csv
+Loading stage 2 intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage2.csv
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py", line 544, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py", line 452, in main
+    extent_deg = get_extent(metadata)
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_kde_migration_analysis.py", line 150, in get_extent
+    float(extent["min_longitude"]),
+KeyError: 'min_longitude'
+

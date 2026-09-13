@@ -1,0 +1,228 @@
+tasks:
+- name: 01_hypodd_relocation_analysis
+  description: Read the full-window Gamma products, prepare PAL_HypoDD inputs, run 
+    HypoDD relocation, validate outputs, compute relocation statistics, and 
+    generate comparison figures.
+  script: 01_hypodd_relocation_analysis.py
+  ancestors: []
+  subtasks:
+  - name: load_and_filter_inputs
+    description: Load the requested Gamma phase and catalog files plus station 
+      metadata and restrict events to the full-window UTC window.
+    inputs:
+    - gamma_phase_files
+    - gamma_catalog_files
+    - station_metadata
+    - time_window_utc
+    outputs:
+    - filtered_event_pick_records
+    - combined_original_catalog
+    - parsed_station_table
+    - input_exclusion_log
+    params:
+      start_time: UTCDateTime("2019-07-04T00:00:00Z")
+      end_time: UTCDateTime("2019-07-26T00:00:00Z")
+      phase_days:
+      - '20190704'
+      - '20190705'
+      - '20190706'
+      - '20190707'
+      - '20190708'
+      - '20190709'
+      - '20190710'
+      - '20190711'
+      - '20190712'
+      - '20190713'
+      - '20190714'
+      - '20190715'
+      - '20190716'
+      - '20190717'
+      - '20190718'
+      - '20190719'
+      - '20190720'
+      - '20190721'
+      - '20190722'
+      - '20190723'
+      - '20190724'
+      - '20190725'
+      require_station_match: true
+      missing_pick_marker: '-1'
+  - name: derive_station_bounds
+    description: Compute the relocation latitude and longitude bounds from the 
+      station extent with the requested padding.
+    inputs:
+    - parsed_station_table
+    outputs:
+    - lat_range
+    - lon_range
+    - station_extent_summary
+    params:
+      padding_degrees: 0.1
+      bound_source: station_extent
+      keep_grids: false
+  - name: prepare_pal_hypodd_phase_input
+    description: Build a prepared full-window PAL_HypoDD phase file with 
+      deterministic event IDs and validate that read_fpha parses nonzero events.
+    inputs:
+    - filtered_event_pick_records
+    - combined_original_catalog
+    - parsed_station_table
+    outputs:
+    - prepared_phase_file
+    - event_id_mapping_table
+    - phase_parse_validation
+    params:
+      event_sort_key: origin_time_utc
+      preserve_pick_time_format: UTCDateTime_or_iso_utc
+      direct_read_fpha_check: true
+      fallback_conversion_if_needed: true
+  - name: preflight_validation
+    description: Check executable availability, counts, selection bounds, and 
+      one-run feasibility before invoking native relocation.
+    inputs:
+    - prepared_phase_file
+    - parsed_station_table
+    - combined_original_catalog
+    - lat_range
+    - lon_range
+    outputs:
+    - preflight_summary
+    - run_decision
+    - final_relocation_config
+    params:
+      hypo_root: 
+        <PROJECT_ROOT>/software/hypoDD/HYPODD/src
+      ot_range: 20190704-20190726
+      compiled_limits:
+        MAXEVE: 10800
+        MAXDATA: 3100000
+        MAXSTA: 1300
+        MAXCL: 100
+      num_grids:
+      - 1
+      - 1
+      xy_pad:
+      - 0.0
+      - 0.0
+  - name: run_pal_hypodd_workflow
+    description: Execute the documented Config, read_fpha, mk_sta, mk_pha, 
+      run_ph2dt, Run_HypoDD, and merge_hypodd_output workflow with visible 
+      progress logging.
+    inputs:
+    - prepared_phase_file
+    - parsed_station_table
+    - final_relocation_config
+    - lat_range
+    - lon_range
+    outputs:
+    - hypodd_original_catalog
+    - hypodd_relocated_catalog
+    - relocation_native_outputs
+    - relocation_logs
+    params:
+      package_name: pal_hypodd
+      fallback_sys_path: 
+        <PROJECT_ROOT>/seismoagent/library/basic_fun/PALM/PAL_HypoDD
+      ctlg_code: ridgecrest_20190704_20190726
+      dep_corr: 5
+      ot_range: 20190704-20190726
+      num_grids:
+      - 1
+      - 1
+      xy_pad:
+      - 0.0
+      - 0.0
+      num_workers: 5
+      keep_grids: false
+      ph2dt_params:
+        MINWGHT: 0
+        MAXDIST: 70
+        MAXSEP: 5
+        MAXNGH: 10
+        MINLNK: 8
+        MINOBS: 4
+        MAXOBS: 30
+      hypoDD_reloc_params:
+        idat: 2
+        ipha: 3
+        dist: 100
+  - name: validate_relocation_outputs
+    description: Confirm that native ph2dt and HypoDD products are nonempty and 
+      preserve failure evidence if relocation did not succeed.
+    inputs:
+    - relocation_native_outputs
+    - relocation_logs
+    - hypodd_original_catalog
+    - hypodd_relocated_catalog
+    - preflight_summary
+    outputs:
+    - relocation_validation_summary
+    - failure_evidence_bundle
+    - validated_relocated_catalog
+    params:
+      required_native_products:
+      - dt_ct_files
+      - ctlg_code_loc
+      - ctlg_code_reloc
+      - ctlg_code_pha
+      - ph2dt_log
+      - hypoDD_log
+      require_nonzero_relocated_events: true
+  - name: match_and_summarize_events
+    description: Match original and relocated events using preserved event IDs 
+      or verified within-run correspondence and compute relocation statistics.
+    inputs:
+    - combined_original_catalog
+    - hypodd_original_catalog
+    - validated_relocated_catalog
+    - event_id_mapping_table
+    outputs:
+    - matched_event_comparison_table
+    - unrelocated_event_summary
+    - relocation_summary_table
+    - relocation_distribution_table
+    params:
+      matching_priority:
+      - preserved_event_id
+      - verified_within_run_origin_time
+      statistics:
+      - original_event_count
+      - selected_event_count
+      - relocated_event_count
+      - relocation_success_rate
+      - latitude_range_before_after
+      - longitude_range_before_after
+      - depth_range_before_after
+      - centroid_shift
+      - horizontal_shift_per_event
+      - depth_change_per_event
+      - shift_summary_statistics
+      - counts_by_day
+  - name: generate_comparison_figures
+    description: Create figures comparing the original Gamma catalog and 
+      relocated HypoDD catalog for maps, cross-sections, displacements, and 
+      event counts.
+    inputs:
+    - combined_original_catalog
+    - validated_relocated_catalog
+    - matched_event_comparison_table
+    - parsed_station_table
+    - relocation_summary_table
+    outputs:
+    - original_vs_relocated_map_figure
+    - overlay_displacement_figure
+    - cross_section_figure_set
+    - relocation_distance_histogram_figure
+    - event_count_summary_figure
+    params:
+      map_panels:
+      - original_catalog
+      - relocated_catalog
+      - overlay_comparison
+      cross_sections:
+      - longitude_depth
+      - latitude_depth
+      include_station_locations: true
+      use_identical_map_extent: true
+      limit_to_time_window: true
+      show_progress: true

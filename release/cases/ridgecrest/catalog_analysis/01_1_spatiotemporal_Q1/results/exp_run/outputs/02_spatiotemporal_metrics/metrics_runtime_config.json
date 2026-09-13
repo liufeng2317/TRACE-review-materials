@@ -1,0 +1,16 @@
+{
+  "area_min_events": 3,
+  "cluster_min_events": 5,
+  "dbscan_eps_km": 2.5,
+  "dbscan_min_samples": 12,
+  "grid_step_km": 2.0,
+  "hotspot_bandwidth_km": 3.0,
+  "input_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+  "mainshock64_to_mainshock71_axis_azimuth_deg": 311.90430296900206,
+  "mainshock64_to_mainshock71_axis_length_km": 11.990413356631171,
+  "max_cores": 64,
+  "n_jobs_used": 16,
+  "orientation_min_events": 3,
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py"
+}

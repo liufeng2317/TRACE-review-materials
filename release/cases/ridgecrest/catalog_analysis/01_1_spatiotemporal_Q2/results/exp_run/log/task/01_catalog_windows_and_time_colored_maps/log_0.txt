@@ -1,0 +1,16 @@
+Using up to 64 CPU cores where applicable
+Prepared clean output directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps (removed 0 top-level files)
+Loading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Loaded catalog rows: 94,803
+Loading mainshock table: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Deriving relative-time fields and projected coordinates
+Extracting analysis windows
+Short-window events: 607
+Long-window events: 5,206
+Creating figure: time_colored_epicenters_64_to_4h.png
+Creating figure: time_colored_epicenters_64_to_71.png
+Computing per-bin projected spatial summaries
+Computing per-bin projected spatial summaries
+All outputs written successfully
+Tables directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps/tables
+Figures directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps/figures

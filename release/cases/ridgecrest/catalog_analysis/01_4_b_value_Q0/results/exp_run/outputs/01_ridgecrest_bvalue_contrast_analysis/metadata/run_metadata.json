@@ -1,0 +1,63 @@
+{
+  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+  "input_interevent": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv",
+  "input_background": "<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv",
+  "input_mainshocks": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv",
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+  "fixed_mc_primary": 1.5,
+  "radii_km": [
+    4.0,
+    5.0,
+    6.0,
+    7.0
+  ],
+  "primary_radius_km": 5.0,
+  "separator_time_utc": "2019-07-05T11:07:52.830000+00:00",
+  "bootstrap_samples": 2000,
+  "max_workers": 64,
+  "base_seed": 20240719,
+  "delta_m_interevent": 0.01,
+  "delta_m_background": 0.01,
+  "delta_m_used": 0.01,
+  "delta_m_interevent_metadata": {
+    "strategy": "smallest_stable_repeated_increment",
+    "delta_m": 0.01,
+    "min_diff_raw": 0.00010100000000001774,
+    "median_diff_raw": 0.010000000000000009,
+    "top_rounded_diffs": {
+      "0.01": 501,
+      "0.02": 18,
+      "0.03": 7,
+      "0.06": 2,
+      "0.04": 2,
+      "0.0076": 1,
+      "0.0036": 1,
+      "0.0064": 1,
+      "0.0084": 1,
+      "0.0016": 1
+    }
+  },
+  "delta_m_background_metadata": {
+    "strategy": "smallest_stable_repeated_increment",
+    "delta_m": 0.01,
+    "min_diff_raw": 0.009999999999999787,
+    "median_diff_raw": 0.010000000000000009,
+    "top_rounded_diffs": {
+      "0.01": 238,
+      "0.02": 21,
+      "0.03": 6,
+      "0.06": 6,
+      "0.04": 4,
+      "0.13": 1,
+      "0.11": 1,
+      "0.07": 1,
+      "0.16": 1,
+      "0.09": 1
+    }
+  },
+  "local_crs": "+proj=aeqd +lat_0=35.74022 +lon_0=-117.54339 +datum=WGS84 +units=m +no_defs +type=crs",
+  "center_separation_km": 11.998190690226501,
+  "run_start_unix": 1783347797.574693,
+  "run_end_unix": 1783347812.6128433,
+  "runtime_sec": 15.038150787353516
+}

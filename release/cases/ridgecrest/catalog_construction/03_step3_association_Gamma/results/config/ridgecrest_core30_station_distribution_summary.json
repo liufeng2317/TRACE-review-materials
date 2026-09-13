@@ -1,0 +1,16 @@
+{
+  "allowlist_count": 30,
+  "selected_count": 30,
+  "missing_from_selected": [],
+  "networks": {
+    "CI": 13,
+    "ZY": 8,
+    "GS": 5,
+    "PB": 4
+  },
+  "distance_to_midpoint_km": {
+    "min": 3.2479001970401247,
+    "median": 22.053432857813505,
+    "max": 59.273350842738566
+  }
+}

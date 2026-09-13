@@ -1,0 +1,1716 @@
+{
+  "schema_version": 1,
+  "run_id": "01_4_trigger_b_value_Q0-v1",
+  "run_name": "01_4_trigger_b_value_Q0-v1",
+  "root": "<PACKAGE_ROOT>/results",
+  "status": "completed",
+  "next_stage": "done",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-07-06T14:09:39.300651+00:00",
+  "updated_at": "2026-07-06T14:32:39.456143+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are a senior seismologist and earthquake-catalog analyst.\nYour objective is to compute fixed-window b-value contrasts for the Ridgecrest sequence in a simple, reproducible and diagnostic way.\n\n# Scientific question\nHow do b-values in the future Mw 7.1 hypocentral region compare with the Mw 6.4 hypocentral control region, the full interevent region and the long-term regional background?\nReport the contrast direction, magnitude, uncertainty and reliability without assuming the Mw 7.1 region must be lower or higher.\n\n# Data sources\n- Interevent catalog: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n  - columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Background catalog: `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`\n  - map columns: `datetime` -> `event_time`, `latR` -> `latitude`, `lonR` -> `longitude`, `depR` -> `depth_km`, `mag` -> `magnitude`\n- Main shocks: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n\n# Time windows\n- Background: use the background catalog only as one larger-area regional b-value reference. For the primary reported background reference, use fixed `Mc = 1.5` so it is directly comparable with the main interevent fixed-Mc results. Also report the catalog-derived Mc result as a QC/supporting value.\n- Full interevent: Mw 6.4 origin time to Mw 7.1 origin time, excluding the two mainshocks.\n- Early/late interevent: split the interevent period at the fixed separator event M5.37 at `2019-07-05T11:07:52.830000Z`. Use this event only as a boundary marker and exclude it from all b-value estimates.\n- Do not perform sliding-window or time-varying b-value analysis.\n\n# Spatial domains\n- Background: one larger Ridgecrest regional domain only. Do not subdivide background into Mw 6.4/Mw 7.1 local cores.\n- Interevent regional reference: full Ridgecrest interevent study region.\n- Interevent Mw 6.4 control: cylindrical hypocentral core centered on Mw 6.4.\n- Interevent Mw 7.1 target: cylindrical hypocentral core centered on Mw 7.1.\n- Primary local radius: 5 km. Radius sensitivity: 4, 5, 6 and 7 km only.\n- Project coordinates to a local metric CRS and use horizontal distance for the radius masks. Keep depth in output tables.\n- The Mw 6.4 and Mw 7.1 hypocenters are about 12 km apart; the primary 5 km cores do not overlap. Report overlap counts for all sensitivity radii and use exclusive nearest-hypocenter assignment if any sensitivity radius overlaps.\n\n# b-value method\nFor every requested subset, report total events, Mc, n >= Mc, b-value, bootstrap uncertainty, magnitude range and reliability.\n- Estimate Mc by maximum curvature.\n- Also compute conservative Mc per temporal window: `Mc_conservative = max(subset Mc, full-window Mc)`.\n- For the main fixed-window comparison, compute fixed-Mc results with `Mc = 1.5` for both interevent subsets and the larger-area background reference. Treat fixed `Mc = 1.5` as the primary value for cross-window/domain comparison; report automatic/conservative Mc results as QC/supporting diagnostics.\n- Use the Aki-Utsu maximum-likelihood estimator with magnitude-bin correction:\n  `b = log10(e) / (mean(M) - Mc + delta_M / 2)`.\n- Infer `delta_M` from magnitude precision.\n- Use >=1000 bootstrap samples when feasible and report median, 16th-84th percentile and standard deviation.\n\n# Reliability rules\nCompute b-values whenever at least two events remain above Mc, but classify reliability by `n >= Mc`:\n- `n >= 100`: robust for primary diagnostics.\n- `50 <= n < 100`: usable but moderately uncertain.\n- `30 <= n < 50`: exploratory; report the value, but discuss it only if bootstrap intervals and sensitivity tests are consistent.\n- `n < 30`: highly unreliable; report only for completeness.\nTreat these thresholds as reporting labels rather than sharp scientific boundaries, and interpret estimates near a threshold with extra caution.\nDo not use highly unreliable subsets to support conclusions. Interpret any observed low b-value only as consistent with localized stress loading, not as a deterministic precursor.\n\n# Required outputs\nGenerate CSV tables for:\n- cleaned catalog summaries and separator event metadata,\n- unified aggregate b-values by window, domain, radius and Mc mode,\n- b-value contrasts: Mw7.1-Mw6.4, Mw7.1-full region and late-early within each core,\n- radius sensitivity and overlap diagnostics.\n\nGenerate figures for:\n1. Interevent map with Mw6.4/Mw7.1 hypocenters and 5 km cores; optionally show 4, 6 and 7 km sensitivity circles.\n2. Magnitude-frequency distributions with catalog-derived Mc, fixed `Mc = 1.5`, and fitted Gutenberg-Richter lines.\n3. Main fixed-window b-value comparison using fixed `Mc = 1.5`.\n   - This must explicitly show the 5 km Mw6.4 and Mw7.1 core b-values for three windows: full interevent, pre-separator, and post-separator.\n   - The separator is the M5.37 event at `2019-07-05T11:07:52.830000Z`; exclude this event from b-value estimates and use it only to divide pre/post windows.\n   - Plot Mw6.4 and Mw7.1 cores side by side within each window, with bootstrap uncertainty intervals and `n >= Mc` labels.\n   - Include the larger-area background reference as a separate horizontal line or separate panel, not mixed in a way that obscures the pre/post core comparison.\n4. Contrast plot with uncertainty intervals.\n5. Radius sensitivity for interevent local cores only.\n6. Time-magnitude completeness diagnostic for the interevent catalog.\n7. Overlap diagnostic for 4, 5, 6 and 7 km radii.\n\n# Computational requirements\n- Keep the workflow reproducible and save all scripts, tables, figures and metadata.\n- Use parallel computation up to 64 cores where useful.\n- Show progress logs for long bootstrap computations.\n- Use `seismostats` where appropriate for Mc, b-value, a-value calculation.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<REPO_ROOT>/examples/ridgecrest/catalog_analysis/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_4_trigger_b_value_Q0-v1",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are a senior seismologist and earthquake-catalog analyst.\nYour objective is to compute fixed-window b-value contrasts for the Ridgecrest sequence in a simple, reproducible and diagnostic way.\n\n# Scientific question\nHow do b-values in the future Mw 7.1 hypocentral region compare with the Mw 6.4 hypocentral control region, the full interevent region and the long-term regional background?\nReport the contrast direction, magnitude, uncertainty and reliability without assuming the Mw 7.1 region must be lower or higher.\n\n# Data sources\n- Interevent catalog: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n  - columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Background catalog: `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`\n  - map columns: `datetime` -> `event_time`, `latR` -> `latitude`, `lonR` -> `longitude`, `depR` -> `depth_km`, `mag` -> `magnitude`\n- Main shocks: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n\n# Time windows\n- Background: use the background catalog only as one larger-area regional b-value reference. For the primary reported background reference, use fixed `Mc = 1.5` so it is directly comparable with the main interevent fixed-Mc results. Also report the catalog-derived Mc result as a QC/supporting value.\n- Full interevent: Mw 6.4 origin time to Mw 7.1 origin time, excluding the two mainshocks.\n- Early/late interevent: split the interevent period at the fixed separator event M5.37 at `2019-07-05T11:07:52.830000Z`. Use this event only as a boundary marker and exclude it from all b-value estimates.\n- Do not perform sliding-window or time-varying b-value analysis.\n\n# Spatial domains\n- Background: one larger Ridgecrest regional domain only. Do not subdivide background into Mw 6.4/Mw 7.1 local cores.\n- Interevent regional reference: full Ridgecrest interevent study region.\n- Interevent Mw 6.4 control: cylindrical hypocentral core centered on Mw 6.4.\n- Interevent Mw 7.1 target: cylindrical hypocentral core centered on Mw 7.1.\n- Primary local radius: 5 km. Radius sensitivity: 4, 5, 6 and 7 km only.\n- Project coordinates to a local metric CRS and use horizontal distance for the radius masks. Keep depth in output tables.\n- The Mw 6.4 and Mw 7.1 hypocenters are about 12 km apart; the primary 5 km cores do not overlap. Report overlap counts for all sensitivity radii and use exclusive nearest-hypocenter assignment if any sensitivity radius overlaps.\n\n# b-value method\nFor every requested subset, report total events, Mc, n >= Mc, b-value, bootstrap uncertainty, magnitude range and reliability.\n- Estimate Mc by maximum curvature.\n- Also compute conservative Mc per temporal window: `Mc_conservative = max(subset Mc, full-window Mc)`.\n- For the main fixed-window comparison, compute fixed-Mc results with `Mc = 1.5` for both interevent subsets and the larger-area background reference. Treat fixed `Mc = 1.5` as the primary value for cross-window/domain comparison; report automatic/conservative Mc results as QC/supporting diagnostics.\n- Use the Aki-Utsu maximum-likelihood estimator with magnitude-bin correction:\n  `b = log10(e) / (mean(M) - Mc + delta_M / 2)`.\n- Infer `delta_M` from magnitude precision.\n- Use >=1000 bootstrap samples when feasible and report median, 16th-84th percentile and standard deviation.\n\n# Reliability rules\nCompute b-values whenever at least two events remain above Mc, but classify reliability by `n >= Mc`:\n- `n >= 100`: robust for primary diagnostics.\n- `50 <= n < 100`: usable but moderately uncertain.\n- `30 <= n < 50`: exploratory; report the value, but discuss it only if bootstrap intervals and sensitivity tests are consistent.\n- `n < 30`: highly unreliable; report only for completeness.\nTreat these thresholds as reporting labels rather than sharp scientific boundaries, and interpret estimates near a threshold with extra caution.\nDo not use highly unreliable subsets to support conclusions. Interpret any observed low b-value only as consistent with localized stress loading, not as a deterministic precursor.\n\n# Required outputs\nGenerate CSV tables for:\n- cleaned catalog summaries and separator event metadata,\n- unified aggregate b-values by window, domain, radius and Mc mode,\n- b-value contrasts: Mw7.1-Mw6.4, Mw7.1-full region and late-early within each core,\n- radius sensitivity and overlap diagnostics.\n\nGenerate figures for:\n1. Interevent map with Mw6.4/Mw7.1 hypocenters and 5 km cores; optionally show 4, 6 and 7 km sensitivity circles.\n2. Magnitude-frequency distributions with catalog-derived Mc, fixed `Mc = 1.5`, and fitted Gutenberg-Richter lines.\n3. Main fixed-window b-value comparison using fixed `Mc = 1.5`.\n   - This must explicitly show the 5 km Mw6.4 and Mw7.1 core b-values for three windows: full interevent, pre-separator, and post-separator.\n   - The separator is the M5.37 event at `2019-07-05T11:07:52.830000Z`; exclude this event from b-value estimates and use it only to divide pre/post windows.\n   - Plot Mw6.4 and Mw7.1 cores side by side within each window, with bootstrap uncertainty intervals and `n >= Mc` labels.\n   - Include the larger-area background reference as a separate horizontal line or separate panel, not mixed in a way that obscures the pre/post core comparison.\n4. Contrast plot with uncertainty intervals.\n5. Radius sensitivity for interevent local cores only.\n6. Time-magnitude completeness diagnostic for the interevent catalog.\n7. Overlap diagnostic for 4, 5, 6 and 7 km radii.\n\n# Computational requirements\n- Keep the workflow reproducible and save all scripts, tables, figures and metadata.\n- Use parallel computation up to 64 cores where useful.\n- Show progress logs for long bootstrap computations.\n- Use `seismostats` where appropriate for Mc, b-value, a-value calculation.\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": "# Goal\nCompute fixed-window b-value contrasts for the Ridgecrest sequence in a reproducible, diagnostic workflow, comparing the future Mw 7.1 hypocentral core against the Mw 6.4 hypocentral control core, the full interevent region, and the long-term regional background, and report contrast direction, magnitude, uncertainty, overlap behavior, and reliability without assuming the Mw 7.1 core is lower or higher.\n\n## Planning Assumptions\n- Use only the provided observational catalogs and mainshock reference file; no model data are needed.\n- One primary task script should perform the end-to-end scientific workflow because catalog harmonization, temporal/spatial subset definition, Mc estimation, b-value estimation, bootstrap uncertainty, contrasts, overlap handling, and figure generation are tightly coupled.\n- SeismoStats package contract relevant here:\n  - maximum-curvature Mc estimation is available via `estimate_mc_maxc(fmd_bin=...)` or catalog-equivalent APIs;\n  - classical b-value estimation consistent with the Aki-Utsu MLE family is available via `estimate_b(..., method=ClassicBValueEstimator)` or equivalent catalog methods;\n  - magnitudes must be supplied with an explicit discretization `delta_m`, and events below `Mc` are excluded by the estimator.\n- The requested headline comparison is fixed `Mc = 1.5` for interevent subsets and the larger-area background reference. Automatic Mc from maximum curvature and conservative Mc are QC/supporting diagnostics.\n- Conservative Mc rule: `Mc_conservative = max(subset Mc, corresponding full-window Mc)` where the full-window reference is the same spatial domain over the unsplit full interevent window; for background, fixed `Mc = 1.5` remains primary and catalog-derived Mc is QC.\n- `delta_M` must be inferred from actual magnitude discretization after cleaning, not from decimal display alone. If catalogs differ, store per-catalog `delta_M`; if a common stable increment exists, use it consistently for comparable products and record the decision.\n- Full interevent window spans Mw 6.4 origin time to Mw 7.1 origin time, excluding both mainshocks. Early/late windows are split at `2019-07-05T11:07:52.830000Z`; the separator event is excluded from all b-value estimates and retained only as metadata/boundary information.\n- Spatial local subsets are horizontal cylindrical cores centered on the Mw 6.4 and Mw 7.1 hypocenters. Project coordinates to a local metric CRS and use horizontal distance only for radius masks; keep depth in all outputs.\n- Sensitivity radii are restricted to 4, 5, 6, and 7 km. Primary local radius is 5 km.\n- The Mw 6.4 and Mw 7.1 hypocenters are expected to be about 12 km apart; overlap counts must still be reported for all radii. If any sensitivity radius overlaps, local-core outputs for that radius must use exclusive nearest-hypocenter assignment while also preserving raw overlap diagnostics.\n- Compute b-values whenever at least two events remain above Mc. Reliability labels are based only on `n >= Mc`: robust (`>=100`), usable but moderately uncertain (`50–99`), exploratory (`30–49`), highly unreliable (`<30`).\n- Bootstrap summaries must use at least 1000 samples where feasible and report median, 16th percentile, 84th percentile, standard deviation, and replicate count. Parallel execution may use up to 64 cores, with progress logs and recorded random seeds.\n- Successful execution requires non-empty cleaned summary tables, aggregate b-value tables, contrast tables, overlap diagnostics, and all requested figures populated from valid scientific results. Diagnostic-only or partially empty outputs are not sufficient unless a subset is truly inestimable because fewer than two events remain above Mc.\n\n## Analysis Plan\n\n### Task 1 — End-to-end catalog preparation, fixed-window subset construction, b-value analysis, contrasts, diagnostics, and output validation\n- Task description\n  - Build one primary analysis script that reads the three input CSVs, standardizes schemas, identifies mainshocks and separator metadata, defines all temporal/spatial subsets, estimates Mc and b-values under fixed/automatic/conservative modes, bootstraps uncertainty, computes contrasts, quantifies overlap behavior across radii, generates all required CSV tables and figures, and performs merged-output validation.\n- Required data sources\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n- Parameter selection strategy\n  - 1.1 Input harmonization and traceable cleaning\n    - Read the interevent catalog with canonical fields `event_time, latitude, longitude, depth_km, magnitude`.\n    - Read the background catalog and remap `datetime -> event_time`, `latR -> latitude`, `lonR -> longitude`, `depR -> depth_km`, `mag -> magnitude`.\n    - Read the mainshock file and identify the Mw 6.4 and Mw 7.1 events directly from the file contents.\n    - Parse all event times as UTC-aware timestamps.\n    - Preserve source file, original row index, and a stable event identifier for traceability; if no event ID exists, create one deterministically.\n    - Remove rows with missing or non-finite canonical fields and record counts removed by reason.\n    - Remove exact duplicates if present and log duplicate counts and retained row policy.\n    - Sort each cleaned catalog by `event_time`.\n  - 1.2 Mainshock and separator handling\n    - Store Mw 6.4 and Mw 7.1 origin times, latitude, longitude, depth, and magnitude explicitly from `main_shock_events.csv`.\n    - Define the full interevent bounds strictly between the two mainshock origin times.\n    - Search the interevent catalog for the separator event at `2019-07-05T11:07:52.830000Z`; retain its metadata separately.\n    - Exclude the Mw 6.4 mainshock, Mw 7.1 mainshock, and all catalog rows at the separator timestamp from every b-value subset.\n    - Save a separator metadata table containing timestamp, matched event attributes, exclusion rule, and the exact temporal window definitions used downstream.\n  - 1.3 Magnitude discretization and SeismoStats-compatible binning\n    - Infer `delta_M` from the cleaned magnitudes using unique sorted values and positive spacings after suppressing floating-point noise.\n    - Choose the smallest stable repeated increment supported by the catalog values rather than the minimum raw difference if outliers indicate numerical noise.\n    - Record inferred `delta_M` for interevent and background catalogs separately, and document whether a common harmonized increment is used for cross-domain comparability.\n    - Use the chosen `delta_M` explicitly in all Mc and b-value computations and in FMD construction.\n  - 1.4 Temporal windows\n    - Background regional reference:\n      - use the full supplied background catalog only;\n      - do not subdivide it into local cores or additional temporal windows.\n    - Interevent regional reference:\n      - `full`: Mw 6.4 time < event_time < Mw 7.1 time, excluding mainshocks and separator event;\n      - `early`: full interevent events with event_time strictly before separator time;\n      - `late`: full interevent events with event_time strictly after separator time and before Mw 7.1 time.\n  - 1.5 Local metric projection and radius masks\n    - Select a single local metric CRS centered on the Ridgecrest study area or mainshock pair, suitable for kilometer-scale distance calculations with negligible distortion.\n    - Project all interevent events and both mainshock hypocenters into that CRS.\n    - Compute horizontal distances from each interevent event to the Mw 6.4 and Mw 7.1 hypocenters.\n    - Build local core memberships for radii 4, 5, 6, and 7 km.\n    - Retain depth in event-level outputs and summaries but do not use depth in mask selection.\n  - 1.6 Overlap and assignment diagnostics\n    - For each radius, compute:\n      - count in Mw 6.4 core only,\n      - count in Mw 7.1 core only,\n      - count in both cores before exclusivity,\n      - center separation distance,\n      - fraction of local-core candidates affected by overlap.\n    - If overlap occurs for any radius, apply exclusive nearest-hypocenter assignment for that radius’s local-core scientific products.\n    - Resolve exact ties deterministically by smallest horizontal distance, then stable event ID; record tie counts explicitly.\n    - Preserve both raw overlap counts and exclusive-assignment counts in diagnostics.\n  - 1.7 Subset matrix for statistics\n    - Evaluate the following subset families:\n      - background regional full catalog;\n      - interevent full-region for full, early, and late windows;\n      - Mw 6.4 local core for radii 4, 5, 6, 7 km and windows full, early, late;\n      - Mw 7.1 local core for radii 4, 5, 6, 7 km and windows full, early, late.\n    - For each subset, compute results under:\n      - `fixed_1p5` Mc mode;\n      - `auto_maxc` Mc mode;\n      - `conservative_maxc` Mc mode.\n  - 1.8 Mc estimation\n    - Use maximum curvature as the required automatic Mc estimator for each subset with `fmd_bin = delta_M`.\n    - For conservative Mc:\n      - interevent full-region early/late subsets use `max(subset Mc, full interevent region Mc)`;\n      - Mw 6.4 early/late subsets at each radius use `max(subset Mc, Mw 6.4 full-window Mc at same radius)`;\n      - Mw 7.1 early/late subsets at each radius use `max(subset Mc, Mw 7.1 full-window Mc at same radius)`;\n      - full-window subsets use their own automatic Mc as conservative Mc;\n      - background fixed `Mc = 1.5` is primary and background automatic Mc is reported as QC/supporting value.\n  - 1.9 b-value and supporting statistics\n    - For every estimable subset and Mc mode, report:\n      - total events in subset,\n      - Mc used,\n      - automatic Mc and conservative Mc where applicable,\n      - `n >= Mc`,\n      - minimum and maximum magnitude in subset,\n      - minimum and maximum magnitude among events above Mc,\n      - mean magnitude above Mc,\n      - b-value using the requested Aki-Utsu MLE with bin correction:\n        `b = log10(e) / (mean(M) - Mc + delta_M / 2)`,\n      - a-value if needed for fitted Gutenberg-Richter lines in diagnostics,\n      - reliability label from `n >= Mc`.\n    - If fewer than two events remain above Mc, store counts and Mc but return missing b-value/uncertainty fields and mark the subset inestimable.\n  - 1.10 Bootstrap uncertainty\n    - For each estimable subset, bootstrap the above-Mc magnitudes with replacement using at least 1000 replicates.\n    - Record:\n      - bootstrap median b,\n      - 16th percentile,\n      - 84th percentile,\n      - standard deviation,\n      - replicate count,\n      - random seed,\n      - runtime and warning flags.\n    - Parallelize across subsets and/or bootstrap batches up to 64 cores, with periodic progress logging.\n    - Do not treat partial bootstrap completion as final success for a subset unless the requested summary statistics are valid and non-empty.\n  - 1.11 Contrast calculations\n    - Primary contrast products must use fixed `Mc = 1.5`.\n    - Compute:\n      - `Mw7.1 - Mw6.4` for each interevent window and each radius;\n      - `Mw7.1 - full_region` for each interevent window and each radius;\n      - `late - early` within Mw 6.4 core for each radius;\n      - `late - early` within Mw 7.1 core for each radius.\n    - Mark 5 km results as the primary local comparison while retaining 4, 6, and 7 km as sensitivity products.\n    - Derive contrast uncertainty from bootstrap difference distributions when both component subsets are estimable; record the method used.\n    - For each contrast, report:\n      - point difference,\n      - bootstrap median contrast,\n      - 16th–84th percentile interval,\n      - standard deviation,\n      - direction label relative to zero: higher, lower, or indistinguishable within interval,\n      - component subset identifiers,\n      - component `n >= Mc`,\n      - contrast reliability inherited from the weaker subset.\n    - Do not use highly unreliable contrasts to support conclusions; still report them for completeness.\n  - 1.12 Required CSV outputs\n    - `cleaned_catalog_summaries.csv`\n      - one row per catalog and major subset family with source path, time span, row counts before/after cleaning, duplicate removals, exclusion counts, inferred `delta_M`, and CRS identifier.\n    - `separator_event_metadata.csv`\n      - exact separator timestamp, matched event metadata, boundary role, and exclusion rule.\n    - `bvalue_aggregates_unified.csv`\n      - one row per catalog/window/domain/radius/assignment mode/Mc mode with counts, Mc values, b-value statistics, magnitude ranges, bootstrap summaries, and reliability label.\n    - `bvalue_contrasts.csv`\n      - one row per requested contrast with identifiers, radius, window, point contrast, bootstrap interval, standard deviation, direction label, and reliability gate.\n    - `radius_overlap_diagnostics.csv`\n      - per radius raw membership counts, overlap counts, exclusive-assignment counts, tie counts, and overlap-impact flags.\n    - `bootstrap_run_metadata.csv`\n      - subset identifier, replicate count, seed, worker count, runtime, and warnings.\n    - `run_validation_summary.csv`\n      - required-output checks and pass/fail status.\n  - 1.13 Required figures\n    - Figure 1: interevent map\n      - plot interevent epicenters with Mw 6.4 and Mw 7.1 hypocenters;\n      - draw 5 km cores and optionally 4, 6, 7 km sensitivity circles;\n      - annotate center separation and overlap status.\n    - Figure 2: magnitude-frequency distributions\n      - show FMDs for:\n        - full interevent region,\n        - background regional reference,\n        - 5 km Mw 6.4 core,\n        - 5 km Mw 7.1 core;\n      - include catalog-derived Mc, fixed `Mc = 1.5`, and fitted Gutenberg-Richter lines.\n    - Figure 3: main fixed-window b-value comparison using fixed `Mc = 1.5`\n      - explicitly show 5 km Mw 6.4 and Mw 7.1 core b-values for full interevent, pre-separator, and post-separator windows;\n      - show bootstrap uncertainty intervals and `n >= Mc` labels;\n      - include background as a separate horizontal line or separate panel so it does not obscure the core comparison.\n    - Figure 4: contrast plot\n      - show requested primary contrasts with uncertainty intervals and zero reference.\n    - Figure 5: radius sensitivity\n      - local interevent cores only, radii 4, 5, 6, 7 km;\n      - indicate if exclusive assignment was required.\n    - Figure 6: time-magnitude completeness diagnostic\n      - interevent magnitude versus time with Mw 6.4 time, separator time, Mw 7.1 time, and fixed `Mc = 1.5`;\n      - annotate automatic Mc for full/early/late interevent windows as QC.\n    - Figure 7: overlap diagnostic\n      - show overlap counts and exclusive assignment counts for radii 4, 5, 6, and 7 km.\n  - 1.14 Output validation and reproducibility metadata\n    - Validate that required fixed-`Mc=1.5` rows exist for:\n      - background full reference,\n      - interevent full-region full/early/late,\n      - 5 km Mw 6.4 core full/early/late,\n      - 5 km Mw 7.1 core full/early/late.\n    - Validate that every contrast row links to existing aggregate rows and that all requested figures are generated from non-empty plotted data.\n    - Save run metadata including input file paths, column mappings, chosen CRS, inferred `delta_M`, excluded-event rules, bootstrap parameters, worker count, seed policy, and run timestamp.\n- Constraints\n  - Use observation data only.\n  - Do not perform sliding-window or time-varying b-value analysis.\n  - Do not subdivide the background catalog into Mw 6.4/Mw 7.1 local cores.\n  - Exclude both mainshocks and the separator event from all b-value estimates.\n  - Use horizontal distance only for core membership.\n  - Treat fixed `Mc = 1.5` as the primary value for cross-window/domain comparison; automatic and conservative Mc results are QC/supporting only.\n  - Keep all subset identifiers explicit: catalog, window, domain, radius_km, assignment_mode, mc_mode.\n  - Do not interpret any observed low b-value as a deterministic precursor; at most, report it as consistent with localized stress loading when supported by reliable subsets.\n- Key outputs\n  - One primary analysis script covering ingestion, cleaning, subset definition, Mc/b-value/bootstraps, contrasts, figure generation, and validation\n  - `cleaned_catalog_summaries.csv`\n  - `separator_event_metadata.csv`\n  - `bvalue_aggregates_unified.csv`\n  - `bvalue_contrasts.csv`\n  - `radius_overlap_diagnostics.csv`\n  - `bootstrap_run_metadata.csv`\n  - `run_validation_summary.csv`\n  - Seven required figures\n  - Run metadata manifest capturing reproducibility settings and execution evidence",
+    "language": "English",
+    "user_data_description": null,
+    "data_descriptions_summary": "<source=TRACE_ridgecrest_relocated.csv>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\nThis Ridgecrest data folder contains two CSV earthquake catalogs plus a small two-row mainshock reference file. The interevent catalog is a relocated event list with 84,474 events and the exact fields needed for fixed-window spatial/temporal subsetting (`event_time, latitude, longitude, depth_km, magnitude`), while the background catalog is a larger-metadata CSV with 1,536 events that includes remappable equivalents for those same core fields.\n</source>\n\n<source=catalog_2year_background_before_64.csv>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`\nThis file is a 30-column CSV background earthquake catalog with 1,536 events spanning 2019-01-04 to 2019-07-04, intended as the larger Ridgecrest regional reference prior to the Mw 6.4 mainshock. For the requested workflow, the essential fields are `datetime, latR, lonR, depR, mag`, which map cleanly to the canonical schema `event_time, latitude, longitude, depth_km, magnitude`; these core fields have no missing values.\n</source>\n\n<source=main_shock_events.csv>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\nThis file is a very small 2-row CSV containing the Mw 6.4 and Mw 7.1 Ridgecrest mainshock hypocenters and origin times. It already uses the same canonical schema as the interevent catalog (`event_time, latitude, longitude, depth_km, magnitude`), making it the direct reference table for temporal bounds and local-core spatial centers.\n</source>",
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [
+      "input_guard",
+      "data_desc",
+      "plan",
+      "workflow",
+      "coding",
+      "evaluate"
+    ],
+    "active_round": 0,
+    "rounds": [
+      {
+        "round_index": 0,
+        "plan_path": "<PACKAGE_ROOT>/results/exp_plans/plans/plan_final_round_0.md",
+        "tasks": [
+          {
+            "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+            "description": "Execute the complete Ridgecrest fixed-window b-value contrast workflow from catalog harmonization through diagnostics, figures, and validation.",
+            "status": "analysis_done",
+            "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+            "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+            "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_bvalue_contrast_analysis.md",
+            "last_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+            "failed_reason": null,
+            "debug_round": 2,
+            "result_check_round": 1,
+            "execution_stage": "analysis_done",
+            "last_preflight": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "script_exists",
+                  "passed": true,
+                  "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_command_startable",
+                  "passed": true,
+                  "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                  "evidence": []
+                },
+                {
+                  "name": "py_compile",
+                  "passed": true,
+                  "message": "Target runtime py_compile passed.",
+                  "evidence": []
+                },
+                {
+                  "name": "subprocess_timeout_contract",
+                  "passed": true,
+                  "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                  "evidence": []
+                },
+                {
+                  "name": "output_dir_writable",
+                  "passed": true,
+                  "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_python_version",
+                  "passed": true,
+                  "message": "Runtime Python version: 3.9 (cached)",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_annotation_compatibility",
+                  "passed": true,
+                  "message": "Runtime annotation compatibility check passed.",
+                  "evidence": []
+                }
+              ],
+              "diagnosis": null,
+              "recommended_action": ""
+            },
+            "last_diagnosis": null,
+            "last_result_check_diagnosis": null,
+            "diagnosis_history": [
+              {
+                "stage": "preflight",
+                "debug_round": 1,
+                "result_check_round": 0,
+                "resolved": false,
+                "timestamp": "2026-07-06T14:22:42.289750+00:00",
+                "diagnosis": {
+                  "failed": true,
+                  "failure_type": "syntax_error",
+                  "severity": "error",
+                  "stage": "preflight",
+                  "retry_allowed": false,
+                  "recommended_action": "fix_python_version_annotation_compatibility_before_rerun",
+                  "evidence": [
+                    "PEP604 union type annotations require Python >= 3.10 when annotations are evaluated at runtime; configured runtime is Python 3.9.",
+                    "Use typing.Optional/typing.Union or add `from __future__ import annotations`.",
+                    "PEP604 annotation lines: [51, 58, 59, 99, 182, 189, 199, 274, 548]"
+                  ],
+                  "source_files": [
+                    "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py"
+                  ],
+                  "metadata": {
+                    "retry_decision": {
+                      "retry_allowed": false,
+                      "strategy": "fix_script_syntax_before_rerun",
+                      "reason": "The script cannot be executed until syntax errors are fixed.",
+                      "max_additional_attempts": 0
+                    }
+                  }
+                }
+              }
+            ],
+            "last_debug_context": {
+              "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+              "stage": "result_check_input",
+              "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+              "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+              "returncode": 0,
+              "failure_type": null,
+              "recommended_action": null,
+              "log_size_bytes": 19435,
+              "core_error": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+              "traceback_tail": "",
+              "error_lines": [],
+              "warning_lines": [],
+              "required_outputs": [],
+              "recommended_outputs": [],
+              "optional_outputs": [],
+              "missing_outputs": [],
+              "output_inventory": [
+                {
+                  "path": "figures",
+                  "type": "dir"
+                },
+                {
+                  "path": "metadata",
+                  "type": "dir"
+                },
+                {
+                  "path": "tables",
+                  "type": "dir"
+                },
+                {
+                  "path": "figures/figure_1_interevent_map.png",
+                  "type": "file",
+                  "size_bytes": 244487
+                },
+                {
+                  "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                  "type": "file",
+                  "size_bytes": 275293
+                },
+                {
+                  "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                  "type": "file",
+                  "size_bytes": 98152
+                },
+                {
+                  "path": "figures/figure_4_contrast_plot.png",
+                  "type": "file",
+                  "size_bytes": 78074
+                },
+                {
+                  "path": "figures/figure_5_radius_sensitivity.png",
+                  "type": "file",
+                  "size_bytes": 82392
+                },
+                {
+                  "path": "figures/figure_6_time_magnitude_completeness.png",
+                  "type": "file",
+                  "size_bytes": 335979
+                },
+                {
+                  "path": "figures/figure_7_overlap_diagnostic.png",
+                  "type": "file",
+                  "size_bytes": 62468
+                },
+                {
+                  "path": "metadata/run_metadata.json",
+                  "type": "file",
+                  "size_bytes": 2312
+                },
+                {
+                  "path": "tables/bootstrap_run_metadata.csv",
+                  "type": "file",
+                  "size_bytes": 5027
+                },
+                {
+                  "path": "tables/bvalue_aggregates_unified.csv",
+                  "type": "file",
+                  "size_bytes": 23674
+                },
+                {
+                  "path": "tables/bvalue_contrasts.csv",
+                  "type": "file",
+                  "size_bytes": 7767
+                },
+                {
+                  "path": "tables/cleaned_catalog_summaries.csv",
+                  "type": "file",
+                  "size_bytes": 2696
+                },
+                {
+                  "path": "tables/radius_overlap_diagnostics.csv",
+                  "type": "file",
+                  "size_bytes": 503
+                },
+                {
+                  "path": "tables/run_validation_summary.csv",
+                  "type": "file",
+                  "size_bytes": 570
+                },
+                {
+                  "path": "tables/separator_event_metadata.csv",
+                  "type": "file",
+                  "size_bytes": 530
+                },
+                {
+                  "path": "tables/subset_event_membership_primary.csv",
+                  "type": "file",
+                  "size_bytes": 1899212
+                }
+              ],
+              "output_inventory_truncated": false,
+              "artifact_validations": [
+                {
+                  "path": "figures/figure_1_interevent_map.png",
+                  "kind": "image",
+                  "size_bytes": 244487,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 1440,
+                    "height": 1440
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                  "kind": "image",
+                  "size_bytes": 275293,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 2160,
+                    "height": 1620
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                  "kind": "image",
+                  "size_bytes": 98152,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 2160,
+                    "height": 1260
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_4_contrast_plot.png",
+                  "kind": "image",
+                  "size_bytes": 78074,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 1980,
+                    "height": 1080
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_5_radius_sensitivity.png",
+                  "kind": "image",
+                  "size_bytes": 82392,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 2160,
+                    "height": 900
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_6_time_magnitude_completeness.png",
+                  "kind": "image",
+                  "size_bytes": 335979,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 2160,
+                    "height": 900
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/figure_7_overlap_diagnostic.png",
+                  "kind": "image",
+                  "size_bytes": 62468,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 1440,
+                    "height": 900
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "metadata/run_metadata.json",
+                  "kind": "json",
+                  "size_bytes": 2312,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "root_type": "dict",
+                    "keys": 22
+                  },
+                  "warnings": [],
+                  "error": null
+                }
+              ],
+              "artifact_validations_truncated": true,
+              "external_log_signals": [],
+              "external_log_signals_truncated": false,
+              "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis"
+            },
+            "last_runtime_observation": {
+              "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+              "stage": "task_success",
+              "status": "success",
+              "timestamp": "2026-07-06T14:24:51.916515+00:00",
+              "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+              "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+              "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+              "returncode": 0,
+              "preflight": {
+                "passed": true,
+                "checks": [
+                  {
+                    "name": "script_exists",
+                    "passed": true,
+                    "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_command_startable",
+                    "passed": true,
+                    "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                    "evidence": []
+                  },
+                  {
+                    "name": "py_compile",
+                    "passed": true,
+                    "message": "Target runtime py_compile passed.",
+                    "evidence": []
+                  },
+                  {
+                    "name": "subprocess_timeout_contract",
+                    "passed": true,
+                    "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                    "evidence": []
+                  },
+                  {
+                    "name": "output_dir_writable",
+                    "passed": true,
+                    "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_python_version",
+                    "passed": true,
+                    "message": "Runtime Python version: 3.9 (cached)",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_annotation_compatibility",
+                    "passed": true,
+                    "message": "Runtime annotation compatibility check passed.",
+                    "evidence": []
+                  }
+                ],
+                "diagnosis": null,
+                "recommended_action": ""
+              },
+              "diagnosis": null,
+              "result_check_diagnosis": null,
+              "debug_context": {
+                "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                "stage": "result_check_input",
+                "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+                "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                "returncode": 0,
+                "failure_type": null,
+                "recommended_action": null,
+                "log_size_bytes": 19435,
+                "core_error": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                "traceback_tail": "",
+                "error_lines": [],
+                "warning_lines": [],
+                "required_outputs": [],
+                "recommended_outputs": [],
+                "optional_outputs": [],
+                "missing_outputs": [],
+                "output_inventory": [
+                  {
+                    "path": "figures",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "metadata",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "tables",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "figures/figure_1_interevent_map.png",
+                    "type": "file",
+                    "size_bytes": 244487
+                  },
+                  {
+                    "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                    "type": "file",
+                    "size_bytes": 275293
+                  },
+                  {
+                    "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                    "type": "file",
+                    "size_bytes": 98152
+                  },
+                  {
+                    "path": "figures/figure_4_contrast_plot.png",
+                    "type": "file",
+                    "size_bytes": 78074
+                  },
+                  {
+                    "path": "figures/figure_5_radius_sensitivity.png",
+                    "type": "file",
+                    "size_bytes": 82392
+                  },
+                  {
+                    "path": "figures/figure_6_time_magnitude_completeness.png",
+                    "type": "file",
+                    "size_bytes": 335979
+                  },
+                  {
+                    "path": "figures/figure_7_overlap_diagnostic.png",
+                    "type": "file",
+                    "size_bytes": 62468
+                  },
+                  {
+                    "path": "metadata/run_metadata.json",
+                    "type": "file",
+                    "size_bytes": 2312
+                  },
+                  {
+                    "path": "tables/bootstrap_run_metadata.csv",
+                    "type": "file",
+                    "size_bytes": 5027
+                  },
+                  {
+                    "path": "tables/bvalue_aggregates_unified.csv",
+                    "type": "file",
+                    "size_bytes": 23674
+                  },
+                  {
+                    "path": "tables/bvalue_contrasts.csv",
+                    "type": "file",
+                    "size_bytes": 7767
+                  },
+                  {
+                    "path": "tables/cleaned_catalog_summaries.csv",
+                    "type": "file",
+                    "size_bytes": 2696
+                  },
+                  {
+                    "path": "tables/radius_overlap_diagnostics.csv",
+                    "type": "file",
+                    "size_bytes": 503
+                  },
+                  {
+                    "path": "tables/run_validation_summary.csv",
+                    "type": "file",
+                    "size_bytes": 570
+                  },
+                  {
+                    "path": "tables/separator_event_metadata.csv",
+                    "type": "file",
+                    "size_bytes": 530
+                  },
+                  {
+                    "path": "tables/subset_event_membership_primary.csv",
+                    "type": "file",
+                    "size_bytes": 1899212
+                  }
+                ],
+                "output_inventory_truncated": false,
+                "artifact_validations": [
+                  {
+                    "path": "figures/figure_1_interevent_map.png",
+                    "kind": "image",
+                    "size_bytes": 244487,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 1440,
+                      "height": 1440
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                    "kind": "image",
+                    "size_bytes": 275293,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 2160,
+                      "height": 1620
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                    "kind": "image",
+                    "size_bytes": 98152,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 2160,
+                      "height": 1260
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_4_contrast_plot.png",
+                    "kind": "image",
+                    "size_bytes": 78074,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 1980,
+                      "height": 1080
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_5_radius_sensitivity.png",
+                    "kind": "image",
+                    "size_bytes": 82392,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 2160,
+                      "height": 900
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_6_time_magnitude_completeness.png",
+                    "kind": "image",
+                    "size_bytes": 335979,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 2160,
+                      "height": 900
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/figure_7_overlap_diagnostic.png",
+                    "kind": "image",
+                    "size_bytes": 62468,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 1440,
+                      "height": 900
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "metadata/run_metadata.json",
+                    "kind": "json",
+                    "size_bytes": 2312,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "root_type": "dict",
+                      "keys": 22
+                    },
+                    "warnings": [],
+                    "error": null
+                  }
+                ],
+                "artifact_validations_truncated": true,
+                "external_log_signals": [],
+                "external_log_signals_truncated": false,
+                "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis"
+              },
+              "message": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation checks passed, and the figures are populated and readable overall. There are only minor presentation issues in some figures (annotation crowding, muted contrast, and a somewhat cluttered overlap diagnostic), but these do not prevent interpretation or indicate workflow failure.",
+              "metadata": {}
+            },
+            "last_runtime_action": {
+              "action_type": "pass",
+              "retry_allowed": false,
+              "priority": "low",
+              "reason": "The latest runtime observation passed.",
+              "prompt_focus": [
+                "Proceed to the next workflow step."
+              ],
+              "recommended_action": "no_retry_needed"
+            },
+            "runtime_action_history": [
+              {
+                "timestamp": "2026-07-06T14:22:42.236570+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T14:22:42.289786+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T14:22:50.503121+00:00",
+                "stage": "preflight",
+                "status": "passed",
+                "action": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                }
+              },
+              {
+                "timestamp": "2026-07-06T14:23:34.751485+00:00",
+                "stage": "result_check_input",
+                "status": "ready",
+                "action": {
+                  "action_type": "inspect_observation",
+                  "retry_allowed": false,
+                  "priority": "medium",
+                  "reason": "Inspect the unified runtime observation before deciding the next change.",
+                  "prompt_focus": [
+                    "Runtime observation, logs, outputs, handoffs, and retrieved/local evidence."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T14:24:51.916515+00:00",
+                "stage": "task_success",
+                "status": "success",
+                "action": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                }
+              }
+            ],
+            "debug_trace": {
+              "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+              "attempts": [
+                {
+                  "round_index": 1,
+                  "result_check_round": 0,
+                  "stage": "preflight",
+                  "status": "failed",
+                  "action_type": "inspect_preflight_evidence",
+                  "failure_signature": "34b7cb4dfabc",
+                  "root_failure_signature": "34b7cb4dfabc",
+                  "repeated_count": 1,
+                  "feedback": "<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py\n- runtime_command_startable: passed\n  message: Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n- py_compile: passed\n  message: Target runtime py_compile passed.\n- subprocess_ti...[truncated]",
+                  "outcome": "failed",
+                  "resolved": false,
+                  "timestamp": "2026-07-06T14:22:42.290014+00:00"
+                },
+                {
+                  "round_index": 2,
+                  "result_check_round": 1,
+                  "stage": "task_success",
+                  "status": "success",
+                  "action_type": "pass",
+                  "failure_signature": "fdcfcfbe7106",
+                  "root_failure_signature": "fdcfcfbe7106",
+                  "repeated_count": 1,
+                  "feedback": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation checks passed, and the figures are populated and readable overall. There are only minor presentation issues in some figures (annotation crowding, muted contrast, and a somewhat cluttered overlap diagnosti...[truncated]",
+                  "outcome": "success",
+                  "resolved": true,
+                  "timestamp": "2026-07-06T14:24:51.916973+00:00"
+                }
+              ],
+              "current_hypothesis": "Latest failure evidence: The latest runtime observation passed.",
+              "lessons": []
+            },
+            "last_debug_memory": "task_name: 01_ridgecrest_bvalue_contrast_analysis\nattempts_recorded: 2\nrecent_attempts:\n- round=1, stage=preflight, status=failed, signature=34b7cb4dfabc, root_signature=34b7cb4dfabc, repeated=1, outcome=failed, feedback=<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <REPO_ROOT>/examples/ridgecrest/...[truncated]\n- round=2, stage=task_success, status=success, signature=fdcfcfbe7106, root_signature=fdcfcfbe7106, repeated=1, outcome=success, feedback=The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically...[truncated]\ncurrent_hypothesis: Latest failure evidence: The latest runtime observation passed.",
+            "last_code_change": {
+              "round_index": 2,
+              "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+              "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+              "timestamp": "2026-07-06T14:22:49.974967+00:00",
+              "script_hash_before": "911eb14d410f5ec31bfeeee715c8cca6c47dfe757a94834a87809c4a81be1e2e",
+              "script_hash_after": "38f18d0818ea37385573110b730d81de335788134a163ee59d41e9e5517d4884",
+              "changed": true,
+              "changed_lines": 2,
+              "diff_summary": "--- before/01_ridgecrest_bvalue_contrast_analysis.py\n+++ after/01_ridgecrest_bvalue_contrast_analysis.py\n@@ -1,4 +1,6 @@\n #!<ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n+from __future__ import annotations\n+\n import json\n import math\n import os",
+              "diff_truncated": false,
+              "coding_response_summary": "Fixed the preflight failure by adding:\n\n- `from __future__ import annotations`\n\nat the top of the script, which makes the existing `| None` type annotations compatible with the Python 3.9 runtime.",
+              "runtime_action_before": {
+                "action_type": "inspect_preflight_evidence",
+                "retry_allowed": false,
+                "priority": "high",
+                "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                "prompt_focus": [
+                  "Preflight checks and evidence.",
+                  "Generated script path, runtime command, and output directory."
+                ],
+                "recommended_action": null
+              },
+              "runtime_observation_after": {
+                "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                "stage": "task_success",
+                "status": "success",
+                "timestamp": "2026-07-06T14:24:51.916515+00:00",
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+                "returncode": 0,
+                "preflight": {
+                  "passed": true,
+                  "checks": [
+                    {
+                      "name": "script_exists",
+                      "passed": true,
+                      "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_command_startable",
+                      "passed": true,
+                      "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                      "evidence": []
+                    },
+                    {
+                      "name": "py_compile",
+                      "passed": true,
+                      "message": "Target runtime py_compile passed.",
+                      "evidence": []
+                    },
+                    {
+                      "name": "subprocess_timeout_contract",
+                      "passed": true,
+                      "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                      "evidence": []
+                    },
+                    {
+                      "name": "output_dir_writable",
+                      "passed": true,
+                      "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_python_version",
+                      "passed": true,
+                      "message": "Runtime Python version: 3.9 (cached)",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_annotation_compatibility",
+                      "passed": true,
+                      "message": "Runtime annotation compatibility check passed.",
+                      "evidence": []
+                    }
+                  ],
+                  "diagnosis": null,
+                  "recommended_action": ""
+                },
+                "diagnosis": null,
+                "result_check_diagnosis": null,
+                "debug_context": {
+                  "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                  "stage": "result_check_input",
+                  "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                  "returncode": 0,
+                  "failure_type": null,
+                  "recommended_action": null,
+                  "log_size_bytes": 19435,
+                  "core_error": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                  "traceback_tail": "",
+                  "error_lines": [],
+                  "warning_lines": [],
+                  "required_outputs": [],
+                  "recommended_outputs": [],
+                  "optional_outputs": [],
+                  "missing_outputs": [],
+                  "output_inventory": [
+                    {
+                      "path": "figures",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "metadata",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "tables",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "figures/figure_1_interevent_map.png",
+                      "type": "file",
+                      "size_bytes": 244487
+                    },
+                    {
+                      "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                      "type": "file",
+                      "size_bytes": 275293
+                    },
+                    {
+                      "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                      "type": "file",
+                      "size_bytes": 98152
+                    },
+                    {
+                      "path": "figures/figure_4_contrast_plot.png",
+                      "type": "file",
+                      "size_bytes": 78074
+                    },
+                    {
+                      "path": "figures/figure_5_radius_sensitivity.png",
+                      "type": "file",
+                      "size_bytes": 82392
+                    },
+                    {
+                      "path": "figures/figure_6_time_magnitude_completeness.png",
+                      "type": "file",
+                      "size_bytes": 335979
+                    },
+                    {
+                      "path": "figures/figure_7_overlap_diagnostic.png",
+                      "type": "file",
+                      "size_bytes": 62468
+                    },
+                    {
+                      "path": "metadata/run_metadata.json",
+                      "type": "file",
+                      "size_bytes": 2312
+                    },
+                    {
+                      "path": "tables/bootstrap_run_metadata.csv",
+                      "type": "file",
+                      "size_bytes": 5027
+                    },
+                    {
+                      "path": "tables/bvalue_aggregates_unified.csv",
+                      "type": "file",
+                      "size_bytes": 23674
+                    },
+                    {
+                      "path": "tables/bvalue_contrasts.csv",
+                      "type": "file",
+                      "size_bytes": 7767
+                    },
+                    {
+                      "path": "tables/cleaned_catalog_summaries.csv",
+                      "type": "file",
+                      "size_bytes": 2696
+                    },
+                    {
+                      "path": "tables/radius_overlap_diagnostics.csv",
+                      "type": "file",
+                      "size_bytes": 503
+                    },
+                    {
+                      "path": "tables/run_validation_summary.csv",
+                      "type": "file",
+                      "size_bytes": 570
+                    },
+                    {
+                      "path": "tables/separator_event_metadata.csv",
+                      "type": "file",
+                      "size_bytes": 530
+                    },
+                    {
+                      "path": "tables/subset_event_membership_primary.csv",
+                      "type": "file",
+                      "size_bytes": 1899212
+                    }
+                  ],
+                  "output_inventory_truncated": false,
+                  "artifact_validations": [
+                    {
+                      "path": "figures/figure_1_interevent_map.png",
+                      "kind": "image",
+                      "size_bytes": 244487,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 1440,
+                        "height": 1440
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                      "kind": "image",
+                      "size_bytes": 275293,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 2160,
+                        "height": 1620
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                      "kind": "image",
+                      "size_bytes": 98152,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 2160,
+                        "height": 1260
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_4_contrast_plot.png",
+                      "kind": "image",
+                      "size_bytes": 78074,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 1980,
+                        "height": 1080
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_5_radius_sensitivity.png",
+                      "kind": "image",
+                      "size_bytes": 82392,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 2160,
+                        "height": 900
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_6_time_magnitude_completeness.png",
+                      "kind": "image",
+                      "size_bytes": 335979,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 2160,
+                        "height": 900
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/figure_7_overlap_diagnostic.png",
+                      "kind": "image",
+                      "size_bytes": 62468,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 1440,
+                        "height": 900
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "metadata/run_metadata.json",
+                      "kind": "json",
+                      "size_bytes": 2312,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "root_type": "dict",
+                        "keys": 22
+                      },
+                      "warnings": [],
+                      "error": null
+                    }
+                  ],
+                  "artifact_validations_truncated": true,
+                  "external_log_signals": [],
+                  "external_log_signals_truncated": false,
+                  "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis"
+                },
+                "message": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation checks passed, and the figures are populated and readable overall. There are only minor presentation issues in some figures (annotation crowding, muted contrast, and a somewhat cluttered overlap diagnostic), but these do not prevent interpretation or indicate workflow failure.",
+                "metadata": {}
+              },
+              "runtime_action_after": {
+                "action_type": "pass",
+                "retry_allowed": false,
+                "priority": "low",
+                "reason": "The latest runtime observation passed.",
+                "prompt_focus": [
+                  "Proceed to the next workflow step."
+                ],
+                "recommended_action": "no_retry_needed"
+              },
+              "outcome": "success",
+              "metadata": {
+                "before_exists": true,
+                "after_exists": true,
+                "before_size_bytes": 52290,
+                "after_size_bytes": 52326,
+                "before_truncated": false,
+                "after_truncated": false
+              }
+            },
+            "code_change_history": [
+              {
+                "round_index": 1,
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                "timestamp": "2026-07-06T14:22:41.573441+00:00",
+                "script_hash_before": null,
+                "script_hash_after": "911eb14d410f5ec31bfeeee715c8cca6c47dfe757a94834a87809c4a81be1e2e",
+                "changed": true,
+                "changed_lines": 969,
+                "diff_summary": "--- before/01_ridgecrest_bvalue_contrast_analysis.py\n+++ after/01_ridgecrest_bvalue_contrast_analysis.py\n@@ -0,0 +1,969 @@\n+#!<ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n+import json\n+import math\n+import os\n+import sys\n+import time\n+import traceback\n+from concurrent.futures import ProcessPoolExecutor, as_completed\n+from typing import Any\n+from dataclasses import dataclass\n+from pathlib import Path\n+\n+import matplotlib\n+matplotlib.use('Agg')\n+import matplotlib.pyplot as plt\n+import numpy as np\n+import pandas as pd\n+from pyproj import CRS, Transformer\n+from seismostats.analysis import estimate_mc_maxc\n+\n+INPUT_INTEREVENT = Path('<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv')\n+INPUT_BACKGROUND = Path('<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv')\n+INPUT_MAINSHOCKS = Path('<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv')\n+SCRIPT_PATH = Path('<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py')\n+OUTPUT_DIR = Path('<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis')\n+FIG_DIR = OUTPUT_DIR / 'figures'\n+TABLE_DIR = OUTPUT_DIR / 'tables'\n+META_DIR = OUTPUT_DIR / 'metadata'\n+\n+FIXED_MC = 1.5\n+RADIUS_LIST_KM = [4.0, 5.0, 6.0, 7.0]\n+PRIMARY_RADIUS_KM = 5.0\n+SEPARATOR_TIME = pd.Timestamp('2019-07-05T11:07:52.830000Z')\n+BOOTSTRAP_SAMPLES = 2000\n+MAX_WORKERS = min(64, max(1, (os.cpu_count() or 1)))\n+BASE_SEED = 20240719\n+PROGRESS_EVERY = 250\n+FIG_DPI = 180\n+\n+\n+def log(msg: str) -> None:\n+    print(msg, flush=True)\n+\n+\n+@dataclass(frozen=True)\n+class SubsetTask:\n+    subset_id: str\n+    catalog_name: str\n+    window: str\n+    domain: str\n+    radius_km: float | None\n+    assignment_mode: str\n+    mc_mode: str\n+    events_csv: str\n+    magnitudes_above_mc_csv: str\n+    total_events: int\n+    mc_used: float\n+    auto_mc: float | None\n+    conservative_mc: float | None\n+    delta_m: float\n+    seed: int\n+\n+\n+def ensure_dirs() -> None:\n+    for path in [OUTPUT_DIR, FIG_DIR, TABLE_DIR, META_DIR]:\n+        path.mkdir(parents=True, exist_ok=True)\n+\n+\n+def clean_previous_outputs() -> None:\n+    quick_files = [\n+        'cleaned_catalog_summaries.csv',\n+        'separator_event_metadata.csv',\n+        'bvalue_aggregates_unified.csv',\n+        'bvalue_contrasts.csv',\n+        'radius_overlap_diagnostics.csv',\n+        'bootstrap_run_metadata.csv',\n+        'run_validation_summary.csv',\n+        'run_metadata.json',\n+        'subset_event_membership_primary.csv',\n+    ]\n+    for name in quick_files:\n+        path = TABLE_DIR / name if name.endswith('.csv') else META_DIR / name\n+        if path.exists():\n+            path.unlink()\n+    for fig in FIG_DIR.glob('*.png'):\n+        fig.unlink()\n+\n+\n+def read_catalogs() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:\n+    log(f'Reading interevent catalog: {INPUT_INTEREVENT}')\n+    inter = pd.read_csv(INPUT_INTEREVENT)\n+    log(f'Reading background catalog: {INPUT_BACKGROUND}')\n+    bg = pd.read_csv(INPUT_BACKGROUND)\n+    log(f'Reading mainshocks: {INPUT_MAINSHOCKS}')\n+    ms = pd.read_csv(INPUT_MAINSHOCKS)\n+    return inter, bg, ms\n+\n+\n+def canonicalize_catalog(df: pd.DataFrame, catalog_name: str, mapping: dict[str, str] | None = None) -> tuple[pd.DataFrame, dict]:\n+    original_count = len(df)\n+    out = df.copy()\n+    if mapping:\n+        out = out.rename(columns=mapping)\n+    required = ['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude']\n+    missing = [c for c in required if c not in out.columns]\n+    if missing:\n+        raise ValueError(f'{catalog_name}: missing required columns {missing}')\n+    out = out.reset_index(drop=False).rename(columns={'index': 'source_row_index'})\n+    out['event_time'] = pd.to_datetime(out['event_time'], utc=True, errors='coerce')\n+    for col in ['latitude', 'longitude', 'depth_km', 'magnitude']:\n+        out[col] = pd.to_numeric(out[col], errors='coerce')\n+    before_dropna = len(out)\n+    out = out.dropna(subset=required).copy()\n+    removed_missing = before_dropna - len(out)\n+    out['event_id'] = [f'{catalog_name}_{i:07d}' for i in out['source_row_index'].to_numpy()]\n+    before_dupes = len(out)\n+    out = out.drop_duplicates(subset=['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude'], keep='first').copy()\n+    removed_dupes = before_dupes - len(out)\n+    out = out.sort_values(['event_time', 'event_id']).reset_index(drop=True)\n+    meta = {\n+        'catalog_name': catalog_name,\n+        'rows_original': original_count,\n+        'rows_cleaned': len(out),\n+        'removed_missing_or_nonfinite': removed_missing,\n+        'removed_exact_duplicates': removed_dupes,\n+        'time_min': out['event_time'].min(),\n+        'time_max': out['event_time'].max(),\n+    }\n+    return out, meta\n+\n+\n+def infer_delta_m(series: pd.Series) -> tuple[float, dict]:\n+    vals = np.sort(np.unique(np.round(series.dropna().to_numpy(dtype=float), 6)))\n+    diffs = np.diff(vals)\n+    diffs = diffs[diffs > 1e-5]\n+    if len(diffs) == 0:\n+        delta = 0.1\n+        return delta, {'strategy': 'fallback_single_value', 'delta_m': delta}\n+    rounded = np.round(diffs, 4)\n+    counts = pd.Series(rounded).value_counts().sort_values(ascending=False)\n+    stable = counts[counts >= max(3, int(0.01 * len(rounded)))]\n+    if not stable.empty:\n+        delta = float(stable.index.min())\n+        strategy = 'smallest_stable_repeated_increment'\n+    else:\n+        delta = float(np.quantile(diffs, 0.1))\n+        strategy = 'low_quantile_increment'\n+    delta = round(delta, 3 if delta >= 0.1 else 2)\n+    if delta <= 0:\n+        delta = 0.01\n+    return delta, {\n+        'strategy': strategy,\n+        'delta_m': delta,\n+        'min_diff_raw': float(diffs.min()),\n+        'median_diff_raw': float(np.median(diffs)),\n+        'top_rounded_diffs': {str(k): int(v) for k, v in counts.head(10).items()},\n+    }\n+\n+\n+def choose_local_crs(latitudes: list[float], longitudes: list[float]) -> CRS:\n+    lon0 = float(np.mean(longitudes))\n+    lat0 = float(np.mean(latitudes))\n+    proj4 = f'+proj=aeqd +lat_0={lat0} +lon_0={lon0} +datum=WGS84 +units=m +no_defs'\n+    return CRS.from_proj4(proj4)\n+\n+\n+def project_points(df: pd.DataFrame, crs: CRS) -> pd.DataFrame:\n+    transformer = Transformer.from_crs('EPSG:4326', crs, always_xy=True)\n+    x, y = transformer.transform(df['longitude'].to_numpy(), df['latitude'].to_numpy())\n+    out = df.copy()\n+    out['x_m'] = x\n+    out['y_m'] = y\n+    return out\n+\n+\n+def validate_required_columns(df: pd.DataFrame, required: list[str], context: str) -> None:\n+    missing = [c for c in required if c not in df.columns]\n+    if missing:\n+        raise KeyError(f'{context}: missing required columns {missing}')\n+\n+\n+def compute_mc_maxc(mags: np.ndarray, delta_m: float) -> float | None:\n+    if len(mags) == 0:\n+        return None\n+    mc, _ = estimate_mc_maxc(np.asarray(mags, dtype=float), fmd_bin=delta_m)\n+    return float(mc)\n+\n+\n+def aki_utsu_b(mags_above: np.ndarray, mc: float, delta_m: float) -> float | None:\n+    mags_above = np.asarray(mags_above, dtype=float)\n+    if len(mags_above) < 2:\n+        return None\n+    denom = mags_above.mean() - mc + delta_m / 2.0\n+    if denom <= 0:\n+        return None\n+    return float(np.log10(np.e) / denom)\n+\n+\n+def estimate_a_value(n_above: int, mc: float, b_value: float) -> float | None:\n+    if n_above < 1 or not np.isfinite(b_value):\n+        return None\n+    return float(np.log10(n_above) + b_value * mc)\n+\n+\n+def bootstrap_subset(task: SubsetTask) -> tuple[dict, dict]:\n+    start = time.time()\n+    mags_above = np.fromstring(task.magnitudes_above_mc_csv, sep=',') if task.magnitudes_above_mc_csv else np.array([], dtype=float)\n+    result = {\n+        'subset_id': task.subset_id,\n+        'bootstrap_replicates': BOOTSTRAP_SAMPLES,\n+        'bootstrap_seed': task.seed,\n+        'bootstrap_b_median': np.nan,\n+        'bootstrap_b_p16': np.nan,\n+        'bootstrap_b_p84': np.nan,\n+        'bootstrap_b_std': np.nan,\n+    }\n+    meta = {\n+        'subset_id': task.subset_id,\n+        'replicates_requested': BOOTSTRAP_SAMPLES,\n+        'replicates_completed': 0,\n+        'seed': task.seed,\n+        'worker_pid': os.getpid(),\n+        'runtime_sec': np.nan,\n+        'warning': '',\n+    }\n+    if len(mags_above) < 2:\n+        meta['warning'] = 'insufficient_events_above_mc_for_bootstrap'\n+        meta['runtime_sec'] = time.time() - start\n+        return result, meta\n+    rng = np.random.default_rng(task.seed)\n+    samples = np.empty(BOOTSTRAP_SAMPLES, dtype=float)\n+    progress_step = max(1, BOOTSTRAP_SAMPLES // 4)\n+    for i in range(BOOTSTRAP_SAMPLES):\n+        resampled = rng.choice(mags_above, size=len(mags_above), replace=True)\n+        b = aki_utsu_b(resampled, task.mc_used, task.delta_m)\n+        samples[i] = np.nan if b is None else b\n+        if (i + 1) % progress_step == 0 or i + 1 == BOOTSTRAP_SAMPLES:\n+            print(f'bootstrap_worker subset={task.subset_id} progress={i + 1}/{BOOTSTRAP_SAMPLES}', flush=True)\n+    valid = samples[np.isfinite(samples)]\n+    if len(valid) == 0:\n+        meta['warning'] = 'all_bootstrap_samples_invalid'\n+    else:\n+        result['bootstrap_b_median'] = float(np.nanmedian(valid))\n+        result['bootstrap_b_p16'] = float(np.nanpercentile(valid, 16))\n+        result['bootstrap_b_p84'] = float(np.nanpercentile(valid, 84))\n+        result['bootstrap_b_std'] = float(np.nanstd(valid, ddof=1)) if len(valid) > 1 else 0.0\n+        meta['replicates_completed'] = int(len(valid))\n+    meta['runtime_sec'] = time.time() - start\n+    return result, meta\n+\n+\n+def reliability_label(n_above_mc: int) -> str:\n+    if n_above_mc >= 100:\n+        return 'robust'\n+    if n_above_mc >= 50:\n+        return 'usable_moderately_uncertain'\n+    if n_above_mc >= 30:\n+        return 'exploratory'\n+    return 'highly_unreliable'\n+\n+\n+def make_fmd(magnitudes: np.ndarray, delta_m: float) -> pd.DataFrame:\n+    if len(magnitudes) == 0:\n+        return pd.DataFrame(columns=['mag_bin', 'count_non_cum', 'count_cum'])\n+    start = math.floor(magnitudes.min() / delta_m) * delta_m\n+    end = math.ceil(magnitudes.max() / delta_m) * delta_m + delta_m * 0.5\n+    bins = np.arange(start, end + delta_m, delta_m)\n+    counts, edges = np.histogram(magnitudes, bins=bins)\n+    centers = edges[:-1]\n+    cum = counts[::-1].cumsum()[::-1]\n+    return pd.DataFrame({'mag_bin': centers, 'count_non_cum': counts, 'count_cum': cum})\n+\n+\n+def compute_subset_row(events: pd.DataFrame, subset_info: dict, mc_used: float, auto_mc: float | None, conservative_mc: float | None, delta_m: float) -> tuple[dict, np.ndarray]:\n+    mags = events['magnitude'].to_numpy(dtype=float)\n+    mags_above = mags[mags >= mc_used - 1e-12]\n+    total_events = int(len(events))\n+    n_above = int(len(mags_above))\n+    b_value = aki_utsu_b(mags_above, mc_used, delta_m)\n+    a_value = estimate_a_value(n_above, mc_used, b_value) if b_value is not None else None\n+    row = {\n+        **subset_info,\n+        'total_events': total_events,\n+        'mc_used': mc_used,\n+        'mc_auto_maxc': auto_mc,\n+        'mc_conservative': conservative_mc,\n+        'n_ge_mc': n_above,\n+        'b_value': b_value,\n+        'a_value': a_value,\n+        'magnitude_min_all': float(np.min(mags)) if total_events else np.nan,\n+        'magnitude_max_all': float(np.max(mags)) if total_events else np.nan,\n+        'magnitude_min_ge_mc': float(np.min(mags_above)) if n_above else np.nan,\n+        'magnitude_max_ge_mc': float(np.max(mags_above)) if n_above else np.nan,\n+        'magnitude_mean_ge_mc': float(np.mean(mags_above)) if n_above else np.nan,\n+        'reliability': reliability_label(n_above),\n+        'estimable': bool(n_above >= 2 and b_value is not None),\n+        'delta_m': delta_m,\n+    }\n+    return row, mags_above\n+\n+\n+def draw_gr_line(ax, mc, b, a, mags, label, color):\n+    if b is None or a is None or len(mags) == 0 or not np.isfinite(b) or not np.isfinite(a) or not np.isfinite(mc):\n+        return\n+    x = np.linspace(mc, max(float(np.max(mags)), mc + 0.5), 100)\n+    y = 10 ** (a - b * x)\n+    ax.plot(x, y, color=color, linestyle='--', linewidth=1.5, label=label)\n+\n+\n+\n+def add_background_qc_summary_row(cleaning_rows: list[dict], bg: pd.DataFrame, delta_m: float, crs_str: str) -> None:\n+    bg_auto_mc = compute_mc_maxc(bg['magnitude'].to_numpy(dtype=float), delta_m)\n+    cleaning_rows.append({\n+        'catalog_name': 'background_qc_auto_mc',\n+        'source_path': str(INPUT_BACKGROUND),\n+        'rows_original': len(bg),\n+        'rows_cleaned': len(bg),\n+        'removed_missing_or_nonfinite': np.nan,\n+        'removed_exact_duplicates': np.nan,\n+        'time_min': bg['event_time'].min(),\n+        'time_max': bg['event_time'].max(),\n+        'delta_m_inferred': delta_m,\n+        'delta_m_used': delta_m,\n+        'delta_m_strategy': 'background_auto_mc_qc_summary',\n+        'crs': crs_str,\n+        'mc_qc_auto_maxc': bg_auto_mc,\n+    })\n+\n+\n+def save_cleaned_summary(cleaning_rows: list[dict]) -> None:\n+    pd.DataFrame(cleaning_rows).to_csv(TABLE_DIR / 'cleaned_catalog_summaries.csv', index=False)\n+\n+\n+def main() -> None:\n+    ensure_dirs()\n+    clean_previous_outputs()\n+    run_start = time.time()\n+    log('Starting Ridgecrest fixed-window b-value contrast workflow')\n+\n+    inter_raw, bg_raw, ms_raw = read_catalogs()\n+    inter, inter_meta = canonicalize_catalog(inter_raw, 'interevent')\n+    bg, bg_meta = canonicalize_catalog(\n+        bg_raw,\n+        'background',\n+        mapping={'datetime': 'event_time', 'latR': 'latitude', 'lonR': 'longitude', 'depR': 'depth_km', 'mag': 'magnitude'},\n+    )\n+    ms, ms_meta = canonicalize_catalog(ms_raw, 'mainshock')\n+    validate_required_columns(inter, ['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude', 'event_id'], 'inter cleaned catalog')\n+    validate_required_columns(bg, ['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude', 'event_id'], 'background cleaned catalog')\n+    validate_required_columns(ms, ['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude', 'event_id'], 'mainshock cleaned catalog')\n+\n+    if len(ms) != 2:\n+        raise ValueError(f'Expected 2 mainshock rows, found {len(ms)}')\n+    ms = ms.sort_values('magnitude').reset_index(drop=True)\n+    ms64 = ms.iloc[0].copy()\n+    ms71 = ms.iloc[1].copy()\n+    if not (abs(ms64['magnitude'] - 6.4) < 0.2 and abs(ms71['magnitude'] - 7.1) < 0.2):\n+        raise ValueError('Mainshock magnitudes do not match expected Mw 6.4 and Mw 7.1 rows')\n+\n+    delta_inter, delta_meta_inter = infer_delta_m(inter['magnitude'])\n+    delta_bg, delta_meta_bg = infer_delta_m(bg['magnitude'])\n+    common_delta_m = max(delta_inter, delta_bg)\n+    log(f'Inferred delta_m interevent={delta_inter}, background={delta_bg}, common={common_delta_m}')\n+\n+    local_crs = choose_local_crs([ms64['latitude'], ms71['latitude']], [ms64['longitude'], ms71['longitude']])\n+    crs_str = local_crs.to_string()\n+    inter = project_points(inter, local_crs)\n+    bg = project_points(bg, local_crs)\n+    main_xy = project_points(ms[['event_id', 'event_time', 'latitude', 'longitude', 'depth_km', 'magnitude']].copy(), local_crs)\n+    ms64_xy = main_xy.iloc[0]\n+    ms71_xy = main_xy.iloc[1]\n+    center_separation_km = float(np.hypot(ms64_xy['x_m'] - ms71_xy['x_m'], ms64_xy['y_m'] - ms71_xy['y_m']) / 1000.0)\n+    log(f'Center separation = {center_separation_km:.3f} km')\n+\n+    inter['dist_to_m64_km'] = np.hypot(inter['x_m'] - ms64_xy['x_m'], inter['y_m'] - ms64_xy['y_m']) / 1000.0\n+    inter['dist_to_m71_km'] = np.hypot(inter['x_m'] - ms71_xy['x_m'], inter['y_m'] - ms71_xy['y_m']) / 1000.0\n+\n+    t64 = pd.Timestamp(ms64['event_time'])\n+    t71 = pd.Timestamp(ms71['event_time'])\n+    interevent_mask_base = (inter['event_time'] > t64) & (inter['event_time'] < t71)\n+    separator_match = inter[np.isclose((inter['event_time'] - SEPARATOR_TIME).dt.total_seconds(), 0.0)]\n+    separator_rows = separator_match.copy()\n+    if separator_rows.empty:\n+        sep_meta_row = {\n+            'separator_time': SEPARATOR_TIME.isoformat(),\n+            'matched_event_count': 0,\n+            'matched_event_ids': '',\n+            'latitude': np.nan,\n+            'longitude': np.nan,\n+            'depth_km': np.nan,\n+            'magnitude': 5.37,\n+            'role': 'boundary_only',\n+            'exclusion_rule': 'exclude all events exactly at separator timestamp from all b-value subsets',\n+            'full_window_start': t64.isoformat(),\n+            'full_window_end': t71.isoformat(),\n+            'early_window_end_exclusive': SEPARATOR_TIME.isoformat(),\n+            'late_window_start_exclusive': SEPARATOR_TIME.isoformat(),\n+        }\n+    else:\n+        first = separator_rows.iloc[0]\n+        sep_meta_row = {\n+            'separator_time': SEPARATOR_TIME.isoformat(),\n+            'matched_event_count': int(len(separator_rows)),\n+            'matched_event_ids': ';'.join(separator_rows['event_id'].astype(str).tolist()),\n+            'latitude': float(first['latitude']),\n+            'longitude': float(first['longitude']),\n+            'depth_km': float(first['depth_km']),\n+            'magnitude': float(first['magnitude']),\n+            'role': 'boundary_only',\n+            'exclusion_rule': 'exclude all events exactly at separator timestamp from all b-value subsets',\n+            'full_window_start': t64.isoformat(),\n+            'full_window_end': t71.isoformat(),\n+            'early_window_end_exclusive': SEPARATOR_TIME.isoformat(),\n+            'late_window_start_exclusive': SEPARATOR_TIME.isoformat(),\n+        }\n+    pd.DataFrame([sep_meta_row]).to_csv(TABLE_DIR / 'separator_event_metadata.csv', index=False)\n+\n+    separator_exclusion = inter['event_time'] != SEPARATOR_TIME\n+    interevent_all = inter[interevent_mask_base & separator_exclusion].copy()\n+    windows = {\n+        'full': interevent_all.copy(),\n+        'early': interevent_all[interevent_all['event_time'] < SEPARATOR_TIME].copy(),\n+        'late': interevent_all[interevent_all['event_time'] > SEPARATOR_TIME].copy(),\n+    }\n+\n+    overlap_rows = []\n+    membership_rows = []\n+    raw_radius_membership = {}\n+    assigned_radius_membership = {}\n+    for radius_km in RADIUS_LIST_KM:\n+        in64 = interevent_all['dist_to_m64_km'] <= radius_km\n+        in71 = interevent_all['dist_to_m71_km'] <= radius_km\n+        both = in64 & in71\n+        only64 = in64 & ~in71\n+        only71 = in71 & ~in64\n+        tie = both & np.isclose(interevent_all['dist_to_m64_km'], interevent_all['dist_to_m71_km'])\n+        assign64 = only64 | (both & ((interevent_all['dist_to_m64_km'] < interevent_all['dist_to_m71_km']) | tie))\n+        assign71 = only71 | (both & (interevent_all['dist_to_m71_km'] < interevent_all['dist_to_m64_km']))\n+        raw_radius_membership[radius_km] = {\n+            'm64': in64.copy(),\n+            'm71': in71.copy(),\n+            'both': both.copy(),\n+        }\n+        assigned_radius_membership[radius_km] = {\n+            'm64': assign64.copy(),\n+            'm71': assign71.copy(),\n+        }\n+        overlap_rows.append({\n+            'radius_km': radius_km,\n+            'center_separation_km': center_separation_km,\n+            'm64_only_raw_count': int(only64.sum()),\n+            'm71_only_raw_count': int(only71.sum()),\n+            'overlap_raw_count': int(both.sum()),\n+            'm64_raw_total': int(in64.sum()),\n+            'm71_raw_total': int(in71.sum()),\n+            'exclusive_m64_count': int(assign64.sum()),\n+            'exclusive_m71_count': int(assign71.sum()),\n+            'tie_count': int(tie.sum()),\n+            'overlap_fraction_local_candidates': float(both.sum() / max(1, (in64 | in71).sum())),\n+            'exclusive_assignment_required': bool(both.any()),\n+        })\n+        sub = interevent_all.loc[in64 | in71, ['event_id', 'event_time', 'latitude', 'longitude', 'depth_km', 'magnitude', 'dist_to_m64_km', 'dist_to_m71_km']].copy()\n+        if not sub.empty:\n+            sub['radius_km'] = radius_km\n+            sub['raw_in_m64'] = in64.loc[sub.index].to_numpy()\n+            sub['raw_in_m71'] = in71.loc[sub.index].to_numpy()\n+            sub['raw_in_both'] = both.loc[sub.index].to_numpy()\n+            sub['exclusive_to_m64'] = assign64.loc[sub.index].to_numpy()\n+            sub['exclusive_to_m71'] = assign71.loc[sub.index].to_numpy()\n+            membership_rows.append(sub)\n+    overlap_df = pd.DataFrame(overlap_rows)\n+    overlap_df.to_csv(TABLE_DIR / 'radius_overlap_diagnostics.csv', index=False)\n+    if membership_rows:\n+        pd.concat(membership_rows, ignore_index=True).to_csv(TABLE_DIR / 'subset_event_membership_primary.csv', index=False)\n+\n+    cleaning_rows = []\n+    for meta, source, delta_meta, delta_used in [\n+        (inter_meta, str(INPUT_INTEREVENT), delta_meta_inter, common_delta_m),\n+        (bg_meta, str(INPUT_BACKGROUND), delta_meta_bg, common_delta_m),\n+        (ms_meta, str(INPUT_MAINSHOCKS), {'strategy': 'not_applicable', 'delta_m': np.nan}, np.nan),\n+    ]:\n+        cleaning_rows.append({\n+            'catalog_name': meta['catalog_name'],\n+            'source_path': source,\n+            'rows_original': meta['rows_original'],\n+            'rows_cleaned': meta['rows_cleaned'],\n+            'removed_missing_or_nonfinite': meta['removed_missing_or_nonfinite'],\n+            'removed_exact_duplicates': meta['removed_exact_duplicates'],\n+            'time_min': meta['time_min'],\n+            'time_max': meta['time_max'],\n+            'delta_m_inferred': delta_meta.get('delta_m', np.nan),\n+            'delta_m_used': delta_used,\n+            'delta_m_strategy': delta_meta.get('strategy', ''),\n+            'crs': crs_str,\n+        })\n+    cleaning_rows.extend([\n+        {\n+            'catalog_name': 'interevent_full_window',\n+            'source_path': str(INPUT_INTEREVENT),\n+            'rows_original': len(inter_raw),\n+            'rows_cleaned': len(windows['full']),\n+            'removed_missing_or_nonfinite': np.nan,\n+            'removed_exact_duplicates': np.nan,\n+            'time_min': windows['full']['event_time'].min(),\n+            'time_max': windows['full']['event_time'].max(),\n+            'delta_m_inferred': common_delta_m,\n+            'delta_m_used': common_delta_m,\n+            'delta_m_strategy': 'common_harmonized_increment',\n+            'crs': crs_str,\n+        },\n+        {\n+            'catalog_name': 'interevent_early_window',\n+            'source_path': str(INPUT_INTEREVENT),\n+            'rows_original': len(inter_raw),\n+            'rows_cleaned': len(windows['early']),\n+            'removed_missing_or_nonfinite': np.nan,\n+            'removed_exact_duplicates': np.nan,\n+            'time_min': windows['early']['event_time'].min() if not windows['early'].empty else pd.NaT,\n+            'time_max': windows['early']['event_time'].max() if not windows['early'].empty else pd.NaT,\n+            'delta_m_inferred': common_delta_m,\n+            'delta_m_used': common_delta_m,\n+            'delta_m_strategy': 'common_harmonized_increment',\n+            'crs': crs_str,\n+        },\n+        {\n+            'catalog_name': 'interevent_late_window',\n+            'source_path': str(INPUT_INTEREVENT),\n+            'rows_original': len(inter_raw),\n+            'rows_cleaned': len(windows['late']),\n+            'removed_missing_or_nonfinite': np.nan,\n+            'removed_exact_duplicates': np.nan,\n+            'time_min': windows['late']['event_time'].min() if not windows['late'].empty else pd.NaT,\n+            'time_max': windows['late']['event_time'].max() if not windows['late'].empty else pd.NaT,\n+            'delta_m_inferred': common_delta_m,\n+            'delta_m_used': common_delta_m,\n+            'delta_m_strategy': 'common_harmonized_increment',\n+            'crs': crs_str,\n+        },\n+    ])\n+    add_background_qc_summary_row(cleaning_rows, bg, common_delta_m, crs_str)\n+    save_cleaned_summary(cleaning_rows)\n+\n+    full_domain_auto_mc = {'full_region': {}, 'm64_core': {}, 'm71_core': {}}\n+    aggregate_rows = []\n+    tasks = []\n+    subset_counter = 0\n+\n+    def add_subset_family(events: pd.DataFrame, catalog_name: str, window: str, domain: str, radius_km: float | None, assignment_mode: str, full_window_auto_mc_ref: float | None = None):\n+        nonlocal subset_counter\n+        auto_mc = compute_mc_maxc(events['magnitude'].to_numpy(dtype=float), common_delta_m)\n+        if window == 'full':\n+            if domain == 'full_region':\n+                full_domain_auto_mc['full_region'][radius_km] = auto_mc\n+            elif domain == 'm64_core':\n+                full_domain_auto_mc['m64_core'][radius_km] = auto_mc\n+            elif domain == 'm71_core':\n+                full_domain_auto_mc['m71_core'][radius_km] = auto_mc\n+        conservative = auto_mc if window == 'full' else max(x for x in [auto_mc, full_window_auto_mc_ref] if x is not None) if any(x is not None for x in [auto_mc, full_window_auto_mc_ref]) else None\n+        subset_info = {\n+            'catalog_name': catalog_name,\n+            'window': window,\n+            'domain': domain,\n+            'radius_km': radius_km,\n+            'assignment_mode': assignment_mode,\n+        }\n+        mc_specs = [('fixed_1p5', FIXED_MC), ('auto_maxc', auto_mc), ('conservative_maxc', conservative)]\n+        for mc_mode, mc_used in mc_specs:\n+            subset_counter += 1\n+            row, mags_above = compute_subset_row(events, {**subset_info, 'mc_mode': mc_mode}, mc_used if mc_used is not None else np.nan, auto_mc, conservative, common_delta_m) if mc_used is not None else ({**subset_info, 'mc_mode': mc_mode, 'total_events': len(events), 'mc_used': np.nan, 'mc_auto_maxc': auto_mc, 'mc_conservative': conservative, 'n_ge_mc': 0, 'b_value': np.nan, 'a_value': np.nan, 'magnitude_min_all': float(events['magnitude'].min()) if len(events) else np.nan, 'magnitude_max_all': float(events['magnitude'].max()) if len(events) else np.nan, 'magnitude_min_ge_mc': np.nan, 'magnitude_max_ge_mc': np.nan, 'magnitude_mean_ge_mc': np.nan, 'reliability': 'highly_unreliable', 'estimable': False, 'delta_m': common_delta_m}, np.array([], dtype=float))\n+            subset_id = f'subset_{subset_counter:04d}'\n+            row['subset_id'] = subset_id\n+            aggregate_rows.append(row)\n+            task = SubsetTask(\n+                subset_id=subset_id,\n+                catalog_name=catalog_name,\n+                window=window,\n+                domain=domain,\n+                radius_km=radius_km,\n+                assignment_mode=assignment_mode,\n+                mc_mode=mc_mode,\n+                events_csv=','.join(map(str, events['magnitude'].to_numpy(dtype=float))),\n+                magnitudes_above_mc_csv=','.join(map(str, mags_above.tolist())),\n+                total_events=int(len(events)),\n+                mc_used=float(row['mc_used']) if pd.notna(row['mc_used']) else np.nan,\n+                auto_mc=float(auto_mc) if auto_mc is not None else None,\n+                conservative_mc=float(conservative) if conservative is not None else None,\n+                delta_m=common_delta_m,\n+                seed=BASE_SEED + subset_counter,\n+            )\n+            tasks.append(task)\n+\n+    add_subset_family(bg.copy(), 'background', 'full', 'background_region', None, 'none', None)\n+\n+    add_subset_family(windows['full'].copy(), 'interevent', 'full', 'full_region', None, 'none', None)\n+    add_subset_family(windows['early'].copy(), 'interevent', 'early', 'full_region', None, 'none', full_domain_auto_mc['full_region'].get(None))\n+    add_subset_family(windows['late'].copy(), 'interevent', 'late', 'full_region', None, 'none', full_domain_auto_mc['full_region'].get(None))\n+\n+    for radius_km in RADIUS_LIST_KM:\n+        assign_needed = bool(overlap_df.loc[overlap_df['radius_km'] == radius_km, 'exclusive_assignment_required'].iloc[0])\n+        assignment_mode = 'exclusive_nearest' if assign_needed else 'raw_nonoverlap'\n+        for domain_key, label in [('m64', 'm64_core'), ('m71', 'm71_core')]:\n+            mask_full = assigned_radius_membership[radius_km][domain_key]\n+            ev_full = interevent_all[mask_full].copy()\n+            add_subset_family(ev_full, 'interevent', 'full', label, radius_km, assignment_mode, None)\n+        for domain_key, label in [('m64', 'm64_core'), ('m71', 'm71_core')]:\n+            mask_all = assigned_radius_membership[radius_km][domain_key]\n+            for window in ['early', 'late']:\n+                ev = windows[window].copy()\n+                ev = ev[mask_all.reindex(ev.index, fill_value=False)].copy()\n+                full_ref = full_domain_auto_mc[label].get(radius_km)\n+                add_subset_family(ev, 'interevent', window, label, radius_km, assignment_mode, full_ref)\n+\n+    log(f'Prepared {len(tasks)} subset statistics rows and bootstrap tasks')\n+\n+    bootstrap_meta_rows = []\n+    bootstrap_lookup = {}\n+    task_map = {t.subset_id: t for t in tasks}\n+    if tasks:\n+        log(f'Bootstrapping subsets with up to {MAX_WORKERS} workers and {BOOTSTRAP_SAMPLES} replicates each')\n+        completed = 0\n+        with ProcessPoolExecutor(max_workers=MAX_WORKERS) as ex:\n+            futures = {ex.submit(bootstrap_subset, task): task.subset_id for task in tasks}\n+            for future in as_completed(futures):\n+                subset_id = futures[future]\n+                result, meta = future.result()\n+                bootstrap_lookup[subset_id] = result\n+                bootstrap_meta_rows.append(meta)\n+                completed += 1\n+                if completed % max(1, min(PROGRESS_EVERY, len(tasks))) == 0 or completed == len(tasks):\n+                    log(f'Bootstrap progress: {completed}/{len(tasks)} subsets complete')\n+    aggregate_df = pd.DataFrame(aggregate_rows).sort_values(['catalog_name', 'domain', 'radius_km', 'window', 'mc_mode']).reset_index(drop=True)\n+    validate_required_columns(aggregate_df, ['subset_id', 'catalog_name', 'window', 'domain', 'radius_km', 'mc_mode', 'b_value', 'n_ge_mc', 'delta_m'], 'aggregate dataframe before bootstrap merge')\n+    if bootstrap_lookup:\n+        boot_df = pd.DataFrame(bootstrap_lookup.values())\n+        validate_required_columns(boot_df, ['subset_id', 'bootstrap_seed', 'bootstrap_b_median', 'bootstrap_b_p16', 'bootstrap_b_p84', 'bootstrap_b_std'], 'bootstrap dataframe')\n+        aggregate_df = aggregate_df.merge(boot_df, on='subset_id', how='left', validate='one_to_one')\n+    else:\n+        for col in ['bootstrap_replicates', 'bootstrap_seed', 'bootstrap_b_median', 'bootstrap_b_p16', 'bootstrap_b_p84', 'bootstrap_b_std']:\n+            aggregate_df[col] = np.nan\n+    validate_required_columns(aggregate_df, ['subset_id', 'bootstrap_seed', 'bootstrap_b_median', 'bootstrap_b_p16', 'bootstrap_b_p84', 'bootstrap_b_std'], 'aggregate dataframe after bootstrap merge')\n+    aggregate_df.to_csv(TABLE_DIR / 'bvalue_aggregates_unified.csv', index=False)\n+    pd.DataFrame(bootstrap_meta_rows).sort_values('subset_id').to_csv(TABLE_DIR / 'bootstrap_run_metadata.csv', index=False)\n+\n+    contrast_rows = []\n+    fixed_df = aggregate_df[aggregate_df['mc_mode'] == 'fixed_1p5'].copy()\n+\n+    def get_fixed_row(window, domain, radius_km=None, catalog_name='interevent'):\n+        df = fixed_df[(fixed_df['catalog_name'] == catalog_name) & (fixed_df['window'] == window) & (fixed_df['domain'] == domain)]\n+        if radius_km is None:\n+            df = df[df['radius_km'].isna()]\n+        else:\n+            df = df[np.isclose(df['radius_km'], radius_km)]\n+        if df.empty:\n+            return None\n+        return df.iloc[0]\n+\n+    def bootstrap_diff_summary(row_a, row_b):\n+        if row_a is None or row_b is None:\n+            return (np.nan, np.nan, np.nan, np.nan, 'missing_component')\n+        task_a = task_map[row_a['subset_id']]\n+        task_b = task_map[row_b['subset_id']]\n+        mags_a = np.fromstring(task_a.magnitudes_above_mc_csv, sep=',') if task_a.magnitudes_above_mc_csv else np.array([], dtype=float)\n+        mags_b = np.fromstring(task_b.magnitudes_above_mc_csv, sep=',') if task_b.magnitudes_above_mc_csv else np.array([], dtype=float)\n+        if len(mags_a) < 2 or len(mags_b) < 2:\n+            return (np.nan, np.nan, np.nan, np.nan, 'insufficient_component_events')\n+        rng_a = np.random.default_rng(int(row_a['bootstrap_seed']))\n+        rng_b = np.random.default_rng(int(row_b['bootstrap_seed']) + 100000)\n+        diffs = np.empty(BOOTSTRAP_SAMPLES, dtype=float)\n+        for i in range(BOOTSTRAP_SAMPLES):\n+            ba = aki_utsu_b(rng_a.choice(mags_a, size=len(mags_a), replace=True), row_a['mc_used'], row_a['delta_m'])\n+            bb = aki_utsu_b(rng_b.choice(mags_b, size=len(mags_b), replace=True), row_b['mc_used'], row_b['delta_m'])\n+            diffs[i] = np.nan if (ba is None or bb is None) else (ba - bb)\n+        diffs = diffs[np.isfinite(diffs)]\n+        if len(diffs) == 0:\n+            return (np.nan, np.nan, np.nan, np.nan, 'no_valid_bootstrap_differences')\n+        return (float(np.nanmedian(diffs)), float(np.nanpercentile(diffs, 16)), float(np.nanpercentile(diffs, 84)), float(np.nanstd(diffs, ddof=1)) if len(diffs) > 1 else 0.0, 'ok')\n+\n+    for radius_km in RADIUS_LIST_KM:\n+        for window in ['full', 'early', 'late']:\n+            row71 = get_fixed_row(window, 'm71_core', radius_km)\n+            row64 = get_fixed_row(window, 'm64_core', radius_km)\n+            rowfull = get_fixed_row(window, 'full_region', None)\n+            for contrast_name, a, b in [\n+                ('mw71_minus_mw64', row71, row64),\n+                ('mw71_minus_full_region', row71, rowfull),\n+            ]:\n+                med, p16, p84, std, status = bootstrap_diff_summary(a, b)\n+                point = float(a['b_value'] - b['b_value']) if a is not None and b is not None and pd.notna(a['b_value']) and pd.notna(b['b_value']) else np.nan\n+                weaker_n = int(min(a['n_ge_mc'], b['n_ge_mc'])) if a is not None and b is not None else 0\n+                direction = 'indistinguishable_within_interval'\n+                if np.isfinite(p16) and np.isfinite(p84):\n+                    if p16 > 0:\n+                        direction = 'higher_than_reference'\n+                    elif p84 < 0:\n+                        direction = 'lower_than_reference'\n+                contrast_rows.append({\n+                    'contrast_name': contrast_name,\n+                    'window': window,\n+                    'radius_km': radius_km,\n+                    'component_a_subset_id': a['subset_id'] if a is not None else '',\n+                    'component_b_subset_id': b['subset_id'] if b is not None else '',\n+                    'component_a_domain': a['domain'] if a is not None else '',\n+                    'component_b_domain': b['domain'] if b is not None else '',\n+                    'point_difference_b': point,\n+                    'bootstrap_median_difference_b': med,\n+                    'bootstrap_p16_difference_b': p16,\n+                    'bootstrap_p84_difference_b': p84,\n+                    'bootstrap_std_difference_b': std,\n+                    'direction_label': direction,\n+                    'component_a_n_ge_mc': int(a['n_ge_mc']) if a is not None else 0,\n+                    'component_b_n_ge_mc': int(b['n_ge_mc']) if b is not None else 0,\n+                    'contrast_reliability': reliability_label(weaker_n),\n+                    'difference_bootstrap_status': status,\n+                    'mc_mode': 'fixed_1p5',\n+                })\n+        for domain in ['m64_core', 'm71_core']:\n+            early = get_fixed_row('early', domain, radius_km)\n+            late = get_fixed_row('late', domain, radius_km)\n+            med, p16, p84, std, status = bootstrap_diff_summary(late, early)\n+            point = float(late['b_value'] - early['b_value']) if late is not None and early is not None and pd.notna(late['b_value']) and pd.notna(early['b_value']) else np.nan\n+            weaker_n = int(min(late['n_ge_mc'], early['n_ge_mc'])) if late is not None and early is not None else 0\n+            direction = 'indistinguishable_within_interval'\n+            if np.isfinite(p16) and np.isfinite(p84):\n+                if p16 > 0:\n+                    direction = 'late_higher_than_early'\n+                elif p84 < 0:\n+                    direction = 'late_lower_than_early'\n+            contrast_rows.append({\n+                'contrast_name': 'late_minus_early',\n+                'window': 'late_vs_early',\n+                'radius_km': radius_km,\n+                'component_a_subset_id': late['subset_id'] if late is not None else '',\n+                'component_b_subset_id': early['subset_id'] if early is not None else '',\n+                'component_a_domain': domain,\n+                'component_b_domain': domain,\n+                'point_difference_b': point,\n+                'bootstrap_median_difference_b': med,\n+                'bootstrap_p16_difference_b': p16,\n+                'bootstrap_p84_difference_b': p84,\n+                'bootstrap_std_difference_b': std,\n+                'direction_label': direction,\n+                'component_a_n_ge_mc': int(late['n_ge_mc']) if late is not None else 0,\n+                'component_b_n_ge_mc': int(early['n_ge_mc']) if early is not None else 0,\n+                'contrast_reliability': reliability_label(weaker_n),\n+                'difference_bootstrap_status': status,\n+                'mc_mode': 'fixed_1p5',\n+            })\n+    contrast_df = pd.DataFrame(contrast_rows)\n+    contrast_df.to_csv(TABLE_DIR / 'bvalue_contrasts.csv', index=False)\n+\n+    log('Generating figures')\n+    plt.style.use('seaborn-v0_8-whitegrid')\n+\n+    fig, ax = plt.subplots(figsize=(8, 8))\n+    ax.scatter(interevent_all['longitude'], interevent_all['latitude'], s=3, c='0.75', alpha=0.5, label='Interevent events')\n+    ax.scatter([ms64['longitude']], [ms64['latitude']], c='tab:blue', s=80, marker='*', label='Mw 6.4 hypocenter')\n+    ax.scatter([ms71['longitude']], [ms71['latitude']], c='tab:red', s=80, marker='*', label='Mw 7.1 hypocenter')\n+    deg_per_km_lat = 1.0 / 111.32\n+    deg_per_km_lon = 1.0 / (111.32 * math.cos(math.radians((ms64['latitude'] + ms71['latitude']) / 2)))\n+    for r in RADIUS_LIST_KM:\n+        for center, color, name in [(ms64, 'tab:blue', '64'), (ms71, 'tab:red', '71')]:\n+            theta = np.linspace(0, 2 * np.pi, 400)\n+            x = center['longitude'] + r * deg_per_km_lon * np.cos(theta)\n+            y = center['latitude'] + r * deg_per_km_lat * np.sin(theta)\n+            ax.plot(x, y, color=color, alpha=0.8 if r == PRIMARY_RADIUS_KM else 0.35, linewidth=1.8 if r == PRIMARY_RADIUS_KM else 1.0)\n+    ax.set_xlabel('Longitude')\n+    ax.set_ylabel('Latitude')\n+    ax.set_title('Interevent Ridgecrest map with Mw 6.4 / Mw 7.1 cores')\n+    ax.legend(loc='best', fontsize=8)\n+    ax.text(0.01, 0.01, f'Center separation = {center_separation_km:.2f} km', transform=ax.transAxes, ha='left', va='bottom')\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_1_interevent_map.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig, axes = plt.subplots(2, 2, figsize=(12, 9), sharex=False, sharey=False)\n+    fmd_specs = [\n+        ('Interevent full region', windows['full'], get_fixed_row('full', 'full_region', None), aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'full_region') & (aggregate_df['mc_mode'] == 'auto_maxc')].iloc[0] if not aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'full_region') & (aggregate_df['mc_mode'] == 'auto_maxc')].empty else None),\n+        ('Background region', bg, get_fixed_row('full', 'background_region', None, catalog_name='background'), aggregate_df[(aggregate_df['catalog_name'] == 'background') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'background_region') & (aggregate_df['mc_mode'] == 'auto_maxc')].iloc[0] if not aggregate_df[(aggregate_df['catalog_name'] == 'background') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'background_region') & (aggregate_df['mc_mode'] == 'auto_maxc')].empty else None),\n+        ('Mw 6.4 core 5 km full', interevent_all[assigned_radius_membership[PRIMARY_RADIUS_KM]['m64']], get_fixed_row('full', 'm64_core', PRIMARY_RADIUS_KM), aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'm64_core') & (np.isclose(aggregate_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (aggregate_df['mc_mode'] == 'auto_maxc')].iloc[0] if not aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'm64_core') & (np.isclose(aggregate_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (aggregate_df['mc_mode'] == 'auto_maxc')].empty else None),\n+        ('Mw 7.1 core 5 km full', interevent_all[assigned_radius_membership[PRIMARY_RADIUS_KM]['m71']], get_fixed_row('full', 'm71_core', PRIMARY_RADIUS_KM), aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'm71_core') & (np.isclose(aggregate_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (aggregate_df['mc_mode'] == 'auto_maxc')].iloc[0] if not aggregate_df[(aggregate_df['catalog_name'] == 'interevent') & (aggregate_df['window'] == 'full') & (aggregate_df['domain'] == 'm71_core') & (np.isclose(aggregate_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (aggregate_df['mc_mode'] == 'auto_maxc')].empty else None),\n+    ]\n+    for ax, (title, df_sub, row_fixed, row_auto) in zip(axes.flat, fmd_specs):\n+        fmd = make_fmd(df_sub['magnitude'].to_numpy(dtype=float), common_delta_m)\n+        if not fmd.empty:\n+            ax.step(fmd['mag_bin'], fmd['count_cum'], where='post', color='k', label='Cumulative FMD')\n+            ax.scatter(fmd['mag_bin'], fmd['count_non_cum'], s=14, color='0.4', label='Incremental FMD')\n+        if row_auto is not None and pd.notna(row_auto['mc_auto_maxc']):\n+            ax.axvline(row_auto['mc_auto_maxc'], color='tab:orange', linestyle='-', label='Mc max curvature')\n+        ax.axvline(FIXED_MC, color='tab:green', linestyle='--', label='Fixed Mc = 1.5')\n+        if row_fixed is not None and pd.notna(row_fixed['b_value']) and pd.notna(row_fixed['a_value']):\n+            draw_gr_line(ax, FIXED_MC, row_fixed['b_value'], row_fixed['a_value'], df_sub['magnitude'].to_numpy(dtype=float), 'GR fit fixed Mc', 'tab:green')\n+        if row_auto is not None and pd.notna(row_auto['mc_auto_maxc']) and pd.notna(row_auto['b_value']) and pd.notna(row_auto['a_value']):\n+            draw_gr_line(ax, row_auto['mc_auto_maxc'], row_auto['b_value'], row_auto['a_value'], df_sub['magnitude'].to_numpy(dtype=float), 'GR fit auto Mc', 'tab:orange')\n+        ax.set_yscale('log')\n+        ax.set_title(title)\n+        ax.set_xlabel('Magnitude')\n+        ax.set_ylabel('Count')\n+        ax.legend(fontsize=7)\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_2_magnitude_frequency_distributions.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig = plt.figure(figsize=(12, 7))\n+    gs = fig.add_gridspec(1, 2, width_ratios=[4, 1.5])\n+    ax = fig.add_subplot(gs[0, 0])\n+    ax_bg = fig.add_subplot(gs[0, 1])\n+    windows_plot = ['full', 'early', 'late']\n+    x_positions = np.arange(len(windows_plot))\n+    offsets = [-0.16, 0.16]\n+    colors = {'m64_core': 'tab:blue', 'm71_core': 'tab:red'}\n+    labels = {'m64_core': 'Mw 6.4 core (5 km)', 'm71_core': 'Mw 7.1 core (5 km)'}\n+    for domain, offset in [('m64_core', offsets[0]), ('m71_core', offsets[1])]:\n+        xs, ys, yerr_low, yerr_high = [], [], [], []\n+        for i, window in enumerate(windows_plot):\n+            row = get_fixed_row(window, domain, PRIMARY_RADIUS_KM)\n+            xs.append(i + offset)\n+            ys.append(row['b_value'] if row is not None else np.nan)\n+            yerr_low.append((row['b_value'] - row['bootstrap_b_p16']) if row is not None and pd.notna(row['bootstrap_b_p16']) and pd.notna(row['b_value']) else np.nan)\n+            yerr_high.append((row['bootstrap_b_p84'] - row['b_value']) if row is not None and pd.notna(row['bootstrap_b_p84']) and pd.notna(row['b_value']) else np.nan)\n+            if row is not None and pd.notna(row['b_value']):\n+                ax.text(i + offset, row['b_value'] + 0.03, f\"n={int(row['n_ge_mc'])}\", ha='center', va='bottom', fontsize=8)\n+        yerr = np.vstack([np.nan_to_num(yerr_low, nan=0.0), np.nan_to_num(yerr_high, nan=0.0)])\n+        ax.errorbar(xs, ys, yerr=yerr, fmt='o', color=colors[domain], capsize=4, linewidth=1.5, label=labels[domain])\n+    ax.set_xticks(x_positions)\n+    ax.set_xticklabels(['Full interevent', 'Pre-separator', 'Post-separator'])\n+    ax.set_ylabel('b-value (fixed Mc = 1.5)')\n+    ax.set_title('Primary fixed-window core comparison at 5 km radius')\n+    ax.legend(loc='best')\n+    bg_row = get_fixed_row('full', 'background_region', None, catalog_name='background')\n+    if bg_row is not None and pd.notna(bg_row['b_value']):\n+        ax_bg.axhline(bg_row['b_value'], color='tab:purple', linewidth=2)\n+        ax_bg.fill_between([0, 1], bg_row['bootstrap_b_p16'], bg_row['bootstrap_b_p84'], color='tab:purple', alpha=0.2)\n+        ax_bg.text(0.5, bg_row['b_value'], f\"Background\\nb={bg_row['b_value']:.2f}\\nn={int(bg_row['n_ge_mc'])}\", ha='center', va='bottom')\n+    ax_bg.set_xlim(0, 1)\n+    ax_bg.set_xticks([])\n+    ax_bg.set_ylabel('b-value')\n+    ax_bg.set_title('Regional background')\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_3_fixed_window_bvalue_comparison.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig, ax = plt.subplots(figsize=(11, 6))\n+    plot_df = contrast_df[(contrast_df['radius_km'] == PRIMARY_RADIUS_KM) & (contrast_df['contrast_name'].isin(['mw71_minus_mw64', 'mw71_minus_full_region']))].copy()\n+    y_labels = []\n+    valid_plot_counter = 0\n+    for _, row in plot_df.iterrows():\n+        if pd.isna(row['bootstrap_median_difference_b']) or pd.isna(row['bootstrap_p16_difference_b']) or pd.isna(row['bootstrap_p84_difference_b']):\n+            continue\n+        ax.errorbar(row['bootstrap_median_difference_b'], valid_plot_counter, xerr=[[row['bootstrap_median_difference_b'] - row['bootstrap_p16_difference_b']], [row['bootstrap_p84_difference_b'] - row['bootstrap_median_difference_b']]], fmt='o', color='tab:gray', capsize=4)\n+        y_labels.append(f\"{row['contrast_name']}\\n{row['window']}\")\n+        valid_plot_counter += 1\n+    ax.axvline(0.0, color='k', linestyle='--')\n+    ax.set_yticks(np.arange(valid_plot_counter))\n+    ax.set_yticklabels(y_labels)\n+    ax.set_xlabel('Contrast in b-value')\n+    ax.set_title('Primary 5 km contrasts with bootstrap intervals')\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_4_contrast_plot.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)\n+    for ax, domain in zip(axes, ['m64_core', 'm71_core']):\n+        for window, color in [('full', 'k'), ('early', 'tab:orange'), ('late', 'tab:green')]:\n+            rows = [get_fixed_row(window, domain, r) for r in RADIUS_LIST_KM]\n+            x = np.array(RADIUS_LIST_KM)\n+            y = np.array([row['b_value'] if row is not None else np.nan for row in rows], dtype=float)\n+            ax.plot(x, y, marker='o', color=color, label=window)\n+        ax.set_title(domain)\n+        ax.set_xlabel('Radius (km)')\n+        ax.set_ylabel('b-value fixed Mc = 1.5')\n+        ax.legend()\n+    fig.suptitle('Radius sensitivity for local interevent cores')\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_5_radius_sensitivity.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig, ax = plt.subplots(figsize=(12, 5))\n+    ax.scatter(windows['full']['event_time'], windows['full']['magnitude'], s=5, alpha=0.4, color='0.35')\n+    ax.axhline(FIXED_MC, color='tab:green', linestyle='--', label='Fixed Mc = 1.5')\n+    for t, label, color in [(t64, 'Mw 6.4', 'tab:blue'), (SEPARATOR_TIME, 'Separator M5.37', 'tab:orange'), (t71, 'Mw 7.1', 'tab:red')]:\n+        ax.axvline(t, color=color, linestyle='-')\n+        ax.text(t, ax.get_ylim()[1] if ax.get_ylim()[1] > 0 else 1, label, rotation=90, va='top', ha='right', fontsize=8)\n+    for window, color in [('full', 'k'), ('early', 'tab:orange'), ('late', 'tab:red')]:\n+        row = get_fixed_row(window, 'full_region', None)\n+        if row is not None and pd.notna(row['mc_auto_maxc']):\n+            ax.text(0.01, 0.95 - 0.06 * ['full', 'early', 'late'].index(window), f'{window} auto Mc={row[\"mc_auto_maxc\"]:.2f}', transform=ax.transAxes, color=color)\n+    ax.set_ylabel('Magnitude')\n+    ax.set_title('Interevent time-magnitude completeness diagnostic')\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_6_time_magnitude_completeness.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    fig, ax = plt.subplots(figsize=(8, 5))\n+    x = np.arange(len(overlap_df))\n+    width = 0.22\n+    ax.bar(x - width, overlap_df['m64_raw_total'], width=width, label='Mw 6.4 raw total', color='tab:blue', alpha=0.7)\n+    ax.bar(x, overlap_df['overlap_raw_count'], width=width, label='Overlap raw count', color='tab:purple', alpha=0.7)\n+    ax.bar(x + width, overlap_df['m71_raw_total'], width=width, label='Mw 7.1 raw total', color='tab:red', alpha=0.7)\n+    for i, row in overlap_df.iterrows():\n+        ax.text(i, row['overlap_raw_count'] + 0.5, f\"excl: {int(row['exclusive_m64_count'])}/{int(row['exclusive_m71_count'])}\", ha='center', va='bottom', fontsize=8)\n+    ax.set_xticks(x)\n+    ax.set_xticklabels([str(r) for r in overlap_df['radius_km']])\n+    ax.set_xlabel('Radius (km)')\n+    ax.set_ylabel('Event count')\n+    ax.set_title('Overlap and exclusive-assignment diagnostic')\n+    ax.legend(fontsize=8)\n+    fig.tight_layout()\n+    fig.savefig(FIG_DIR / 'figure_7_overlap_diagnostic.png', dpi=FIG_DPI)\n+    plt.close(fig)\n+\n+    validation_rows = []\n+    required_checks = [\n+        ('background_fixed_full', not fixed_df[(fixed_df['catalog_name'] == 'background') & (fixed_df['domain'] == 'background_region') & (fixed_df['window'] == 'full')].empty),\n+        ('interevent_full_region_all_windows', len(fixed_df[(fixed_df['catalog_name'] == 'interevent') & (fixed_df['domain'] == 'full_region') & (fixed_df['window'].isin(['full', 'early', 'late']))]) == 3),\n+        ('m64_primary_5km_all_windows', len(fixed_df[(fixed_df['domain'] == 'm64_core') & (np.isclose(fixed_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (fixed_df['window'].isin(['full', 'early', 'late']))]) == 3),\n+        ('m71_primary_5km_all_windows', len(fixed_df[(fixed_df['domain'] == 'm71_core') & (np.isclose(fixed_df['radius_km'].fillna(-1), PRIMARY_RADIUS_KM)) & (fixed_df['window'].isin(['full', 'early', 'late']))]) == 3),\n+        ('contrast_rows_nonempty', not contrast_df.empty),\n+    ]\n+    for fig_name in [\n+        'figure_1_interevent_map.png',\n+        'figure_2_magnitude_frequency_distributions.png',\n+        'figure_3_fixed_window_bvalue_comparison.png',\n+        'figure_4_contrast_plot.png',\n+        'figure_5_radius_sensitivity.png',\n+        'figure_6_time_magnitude_completeness.png',\n+        'figure_7_overlap_diagnostic.png',\n+    ]:\n+        required_checks.append((f'figure_exists::{fig_name}', (FIG_DIR / fig_name).exists()))\n+    for name, passed in required_checks:\n+        validation_rows.append({'check_name': name, 'passed': bool(passed)})\n+    pd.DataFrame(validation_rows).to_csv(TABLE_DIR / 'run_validation_summary.csv', index=False)\n+\n+    run_metadata = {\n+        'script_path': str(SCRIPT_PATH),\n+        'input_interevent': str(INPUT_INTEREVENT),\n+        'input_background': str(INPUT_BACKGROUND),\n+        'input_mainshocks': str(INPUT_MAINSHOCKS),\n+        'output_dir': str(OUTPUT_DIR),\n+        'fixed_mc_primary': FIXED_MC,\n+        'radii_km': RADIUS_LIST_KM,\n+        'primary_radius_km': PRIMARY_RADIUS_KM,\n+        'separator_time_utc': SEPARATOR_TIME.isoformat(),\n+        'bootstrap_samples': BOOTSTRAP_SAMPLES,\n+        'max_workers': MAX_WORKERS,\n+        'base_seed': BASE_SEED,\n+        'delta_m_interevent': delta_inter,\n+        'delta_m_background': delta_bg,\n+        'delta_m_used': common_delta_m,\n+        'delta_m_interevent_metadata': delta_meta_inter,\n+        'delta_m_background_metadata': delta_meta_bg,\n+        'local_crs': crs_str,\n+        'center_separation_km': center_separation_km,\n+        'run_start_unix': run_start,\n+        'run_end_unix': time.time(),\n+        'runtime_sec': time.time() - run_start,\n+    }\n+    with open(META_DIR / 'run_metadata.json', 'w', encoding='utf-8') as f:\n+        json.dump(run_metadata, f, indent=2, default=str)\n+\n+    log('Workflow complete')\n+    log(f'Outputs written to: {OUTPUT_DIR}')\n+\n+\n+if __name__ == '__main__':\n+    try:\n+        main()\n+    except Exception:\n+        print(traceback.format_exc(), file=sys.stderr, flush=True)\n+        sys.exit(1)",
+                "diff_truncated": false,
+                "coding_response_summary": "Implemented the full task script at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py`\n\nWhat it now does:\n- Reads and harmonizes the interevent, background, and mainshock catalogs.\n- Cleans and summarizes catalogs with traceable metadata.\n- Identifies Mw 6.4 / Mw 7.1 hypocenters and the separator event/time.\n- Projects coordinates to a local metric CRS and computes radius-based core memberships.\n- Computes overlap diagnostics for 4, 5, 6, and 7 km, with exclusive nearest-hypocenter assignment where overlap occurs.\n- Builds all requested temporal/spatial subsets.\n- Estimates Mc by maximum curvature, conservative Mc, and fixed `Mc = 1.5`.\n- Computes Aki-Utsu b-values with bin correction.\n- Runs parallel bootstrap uncertainty estimation.\n- Computes requested b-value contrasts and reliability labels.\n- Writes the required CSV tables and reproducibility metadata.\n- Generates the 7 requested diagnostic figures.\n- Writes a validation summary for key required outputs.\n\nNotes on the implementation:\n- Uses a harmonized `delta_M` inferred from catalog precision.\n- Keeps fixed `Mc = 1.5` as the primary comparison mode.\n- Excludes the separator event from all b-value subsets and stores its metadata separately.\n- Includes flushed progress logging and fatal traceback handling per your runtime rules.\n----------\nCode Review:\nReviewed and fixed several issues.\n\nMain changes:\n- Removed silent exception handling in `compute_mc_maxc`; errors now surface properly instead of being hidden.\n- Added explicit DataFrame schema checks after key transformations/merges.\n- Fixed Figure 2 so the “auto Mc” FMD rows actually use `mc_mode='auto_maxc'` rows, not the fixed-Mc rows.\n- Added worker-side flushed bootstrap progress logging for long loops.\n- Made the contrast plot robust to missing bootstrap intervals, avoiding invalid errorbar plotting.\n- Added a background auto-Mc QC summary row to the cleaned summary table.\n\nSo the script is now much closer to the checklist, especially for:\n- error handling,\n- downstream schema validation,\n- scientific correctness of the auto-Mc figure content,\n- long-loop progress visibility.",
+                "runtime_action_before": null,
+                "runtime_observation_after": {
+                  "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                  "stage": "preflight",
+                  "status": "failed",
+                  "timestamp": "2026-07-06T14:22:42.289786+00:00",
+                  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                  "log_path": null,
+                  "returncode": null,
+                  "preflight": {
+                    "passed": false,
+                    "checks": [
+                      {
+                        "name": "script_exists",
+                        "passed": true,
+                        "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_command_startable",
+                        "passed": true,
+                        "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                        "evidence": []
+                      },
+                      {
+                        "name": "py_compile",
+                        "passed": true,
+                        "message": "Target runtime py_compile passed.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "subprocess_timeout_contract",
+                        "passed": true,
+                        "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "output_dir_writable",
+                        "passed": true,
+                        "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_python_version",
+                        "passed": true,
+                        "message": "Runtime Python version: 3.9",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_annotation_compatibility",
+                        "passed": false,
+                        "message": "PEP604 union type annotations require Python >= 3.10 when annotations are evaluated at runtime; configured runtime is Python 3.9.",
+                        "evidence": [
+                          "PEP604 union type annotations require Python >= 3.10 when annotations are evaluated at runtime; configured runtime is Python 3.9.",
+                          "Use typing.Optional/typing.Union or add `from __future__ import annotations`.",
+                          "PEP604 annotation lines: [51, 58, 59, 99, 182, 189, 199, 274, 548]"
+                        ]
+                      }
+                    ],
+                    "diagnosis": {
+                      "failed": true,
+                      "failure_type": "syntax_error",
+                      "severity": "error",
+                      "stage": "preflight",
+                      "retry_allowed": false,
+                      "recommended_action": "fix_python_version_annotation_compatibility_before_rerun",
+                      "evidence": [
+                        "PEP604 union type annotations require Python >= 3.10 when annotations are evaluated at runtime; configured runtime is Python 3.9.",
+                        "Use typing.Optional/typing.Union or add `from __future__ import annotations`.",
+                        "PEP604 annotation lines: [51, 58, 59, 99, 182, 189, 199, 274, 548]"
+                      ],
+                      "source_files": [
+                        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py"
+                      ],
+                      "metadata": {
+                        "retry_decision": {
+                          "retry_allowed": false,
+                          "strategy": "fix_script_syntax_before_rerun",
+                          "reason": "The script cannot be executed until syntax errors are fixed.",
+                          "max_additional_attempts": 0
+                        }
+                      }
+                    },
+                    "recommended_action": "fix_python_version_annotation_compatibility_before_rerun"
+                  },
+                  "diagnosis": {
+                    "failed": true,
+                    "failure_type": "syntax_error",
+                    "severity": "error",
+                    "stage": "preflight",
+                    "retry_allowed": false,
+                    "recommended_action": "fix_python_version_annotation_compatibility_before_rerun",
+                    "evidence": [
+                      "PEP604 union type annotations require Python >= 3.10 when annotations are evaluated at runtime; configured runtime is Python 3.9.",
+                      "Use typing.Optional/typing.Union or add `from __future__ import annotations`.",
+                      "PEP604 annotation lines: [51, 58, 59, 99, 182, 189, 199, 274, 548]"
+                    ],
+                    "source_files": [
+                      "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py"
+                    ],
+                    "metadata": {
+                      "retry_decision": {
+                        "retry_allowed": false,
+                        "strategy": "fix_script_syntax_before_rerun",
+                        "reason": "The script cannot be executed until syntax errors are fixed.",
+                        "max_additional_attempts": 0
+                      }
+                    }
+                  },
+                  "result_check_diagnosis": null,
+                  "debug_context": null,
+                  "message": "Preflight failed before script execution.",
+                  "metadata": {}
+                },
+                "runtime_action_after": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "outcome": "preflight_failed",
+                "metadata": {
+                  "before_exists": false,
+                  "after_exists": true,
+                  "before_size_bytes": null,
+                  "after_size_bytes": 52290,
+                  "before_truncated": false,
+                  "after_truncated": false
+                }
+              },
+              {
+                "round_index": 2,
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                "timestamp": "2026-07-06T14:22:49.974967+00:00",
+                "script_hash_before": "911eb14d410f5ec31bfeeee715c8cca6c47dfe757a94834a87809c4a81be1e2e",
+                "script_hash_after": "38f18d0818ea37385573110b730d81de335788134a163ee59d41e9e5517d4884",
+                "changed": true,
+                "changed_lines": 2,
+                "diff_summary": "--- before/01_ridgecrest_bvalue_contrast_analysis.py\n+++ after/01_ridgecrest_bvalue_contrast_analysis.py\n@@ -1,4 +1,6 @@\n #!<ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n+from __future__ import annotations\n+\n import json\n import math\n import os",
+                "diff_truncated": false,
+                "coding_response_summary": "Fixed the preflight failure by adding:\n\n- `from __future__ import annotations`\n\nat the top of the script, which makes the existing `| None` type annotations compatible with the Python 3.9 runtime.",
+                "runtime_action_before": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "runtime_observation_after": {
+                  "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                  "stage": "task_success",
+                  "status": "success",
+                  "timestamp": "2026-07-06T14:24:51.916515+00:00",
+                  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                  "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+                  "returncode": 0,
+                  "preflight": {
+                    "passed": true,
+                    "checks": [
+                      {
+                        "name": "script_exists",
+                        "passed": true,
+                        "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_bvalue_contrast_analysis.py",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_command_startable",
+                        "passed": true,
+                        "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                        "evidence": []
+                      },
+                      {
+                        "name": "py_compile",
+                        "passed": true,
+                        "message": "Target runtime py_compile passed.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "subprocess_timeout_contract",
+                        "passed": true,
+                        "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "output_dir_writable",
+                        "passed": true,
+                        "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_python_version",
+                        "passed": true,
+                        "message": "Runtime Python version: 3.9 (cached)",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_annotation_compatibility",
+                        "passed": true,
+                        "message": "Runtime annotation compatibility check passed.",
+                        "evidence": []
+                      }
+                    ],
+                    "diagnosis": null,
+                    "recommended_action": ""
+                  },
+                  "diagnosis": null,
+                  "result_check_diagnosis": null,
+                  "debug_context": {
+                    "task_name": "01_ridgecrest_bvalue_contrast_analysis",
+                    "stage": "result_check_input",
+                    "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_bvalue_contrast_analysis/log_0.txt",
+                    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                    "returncode": 0,
+                    "failure_type": null,
+                    "recommended_action": null,
+                    "log_size_bytes": 19435,
+                    "core_error": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis",
+                    "traceback_tail": "",
+                    "error_lines": [],
+                    "warning_lines": [],
+                    "required_outputs": [],
+                    "recommended_outputs": [],
+                    "optional_outputs": [],
+                    "missing_outputs": [],
+                    "output_inventory": [
+                      {
+                        "path": "figures",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "metadata",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "tables",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "figures/figure_1_interevent_map.png",
+                        "type": "file",
+                        "size_bytes": 244487
+                      },
+                      {
+                        "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                        "type": "file",
+                        "size_bytes": 275293
+                      },
+                      {
+                        "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                        "type": "file",
+                        "size_bytes": 98152
+                      },
+                      {
+                        "path": "figures/figure_4_contrast_plot.png",
+                        "type": "file",
+                        "size_bytes": 78074
+                      },
+                      {
+                        "path": "figures/figure_5_radius_sensitivity.png",
+                        "type": "file",
+                        "size_bytes": 82392
+                      },
+                      {
+                        "path": "figures/figure_6_time_magnitude_completeness.png",
+                        "type": "file",
+                        "size_bytes": 335979
+                      },
+                      {
+                        "path": "figures/figure_7_overlap_diagnostic.png",
+                        "type": "file",
+                        "size_bytes": 62468
+                      },
+                      {
+                        "path": "metadata/run_metadata.json",
+                        "type": "file",
+                        "size_bytes": 2312
+                      },
+                      {
+                        "path": "tables/bootstrap_run_metadata.csv",
+                        "type": "file",
+                        "size_bytes": 5027
+                      },
+                      {
+                        "path": "tables/bvalue_aggregates_unified.csv",
+                        "type": "file",
+                        "size_bytes": 23674
+                      },
+                      {
+                        "path": "tables/bvalue_contrasts.csv",
+                        "type": "file",
+                        "size_bytes": 7767
+                      },
+                      {
+                        "path": "tables/cleaned_catalog_summaries.csv",
+                        "type": "file",
+                        "size_bytes": 2696
+                      },
+                      {
+                        "path": "tables/radius_overlap_diagnostics.csv",
+                        "type": "file",
+                        "size_bytes": 503
+                      },
+                      {
+                        "path": "tables/run_validation_summary.csv",
+                        "type": "file",
+                        "size_bytes": 570
+                      },
+                      {
+                        "path": "tables/separator_event_metadata.csv",
+                        "type": "file",
+                        "size_bytes": 530
+                      },
+                      {
+                        "path": "tables/subset_event_membership_primary.csv",
+                        "type": "file",
+                        "size_bytes": 1899212
+                      }
+                    ],
+                    "output_inventory_truncated": false,
+                    "artifact_validations": [
+                      {
+                        "path": "figures/figure_1_interevent_map.png",
+                        "kind": "image",
+                        "size_bytes": 244487,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 1440,
+                          "height": 1440
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_2_magnitude_frequency_distributions.png",
+                        "kind": "image",
+                        "size_bytes": 275293,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 2160,
+                          "height": 1620
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_3_fixed_window_bvalue_comparison.png",
+                        "kind": "image",
+                        "size_bytes": 98152,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 2160,
+                          "height": 1260
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_4_contrast_plot.png",
+                        "kind": "image",
+                        "size_bytes": 78074,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 1980,
+                          "height": 1080
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_5_radius_sensitivity.png",
+                        "kind": "image",
+                        "size_bytes": 82392,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 2160,
+                          "height": 900
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_6_time_magnitude_completeness.png",
+                        "kind": "image",
+                        "size_bytes": 335979,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 2160,
+                          "height": 900
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/figure_7_overlap_diagnostic.png",
+                        "kind": "image",
+                        "size_bytes": 62468,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 1440,
+                          "height": 900
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "metadata/run_metadata.json",
+                        "kind": "json",
+                        "size_bytes": 2312,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "root_type": "dict",
+                          "keys": 22
+                        },
+                        "warnings": [],
+                        "error": null
+                      }
+                    ],
+                    "artifact_validations_truncated": true,
+                    "external_log_signals": [],
+                    "external_log_signals_truncated": false,
+                    "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_bvalue_contrast_analysis"
+                  },
+                  "message": "The output directory contains the expected workflow products for catalog harmonization, diagnostics, figures, contrast tables, and validation, and the results appear scientifically coherent. The workflow completed 84/84 bootstrap subsets with no incomplete replicates or warnings, all validation checks passed, and the figures are populated and readable overall. There are only minor presentation issues in some figures (annotation crowding, muted contrast, and a somewhat cluttered overlap diagnostic), but these do not prevent interpretation or indicate workflow failure.",
+                  "metadata": {}
+                },
+                "runtime_action_after": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                },
+                "outcome": "success",
+                "metadata": {
+                  "before_exists": true,
+                  "after_exists": true,
+                  "before_size_bytes": 52290,
+                  "after_size_bytes": 52326,
+                  "before_truncated": false,
+                  "after_truncated": false
+                }
+              }
+            ],
+            "last_heartbeat_at": null,
+            "started_at": null,
+            "finished_at": null,
+            "elapsed_sec": 612.486,
+            "timing": {},
+            "coding_plan_context": null,
+            "coding_tool_usage": null,
+            "result_check_tool_usage": null,
+            "tool_usage_summary": null,
+            "last_observed_line": null,
+            "last_activity_at": "2026-07-06T14:27:51.410162+00:00",
+            "last_progress_event": "task_analysis_done",
+            "progress_message": "Task-level analysis file was generated."
+          }
+        ],
+        "evaluation_path": "<PACKAGE_ROOT>/results/exp_run/analysis/eval_round_0.json",
+        "evaluation_satisfactory": true
+      }
+    ]
+  },
+  "artifacts": {
+    "request_txt": "<PACKAGE_ROOT>/results/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs",
+    "run_log_path": "<PACKAGE_ROOT>/results/log/run_log.log",
+    "final_report_md": "<PACKAGE_ROOT>/results/research_report/report.md",
+    "final_report_pdf": "<PACKAGE_ROOT>/results/research_report/report.pdf",
+    "final_report_tex": "<PACKAGE_ROOT>/results/research_report/report.tex",
+    "token_summary_json": "<PACKAGE_ROOT>/results/token_cost_summary.json",
+    "trajectory_dir": "<PACKAGE_ROOT>/results/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {
+      "Input Guard": {
+        "input_tokens": 3054,
+        "output_tokens": 15
+      },
+      "Data Descriptions Judgement": {
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "Data Descriptions": {
+        "input_tokens": 59203,
+        "output_tokens": 13683
+      },
+      "Planing": {
+        "input_tokens": 90461,
+        "output_tokens": 11211
+      },
+      "Plan Merging": {
+        "input_tokens": 21550,
+        "output_tokens": 3872
+      },
+      "Workflow Agent": {
+        "input_tokens": 52999,
+        "output_tokens": 3781
+      },
+      "Coding Agent (01_ridgecrest_bvalue_contrast_analysis)": {
+        "input_tokens": 481679,
+        "output_tokens": 19855
+      },
+      "Result Check Agent (01_ridgecrest_bvalue_contrast_analysis)": {
+        "input_tokens": 58259,
+        "output_tokens": 2501
+      },
+      "Task Analysis Agent (01_ridgecrest_bvalue_contrast_analysis)": {
+        "input_tokens": 185343,
+        "output_tokens": 9804
+      },
+      "Evaluation": {
+        "input_tokens": 14953,
+        "output_tokens": 922
+      },
+      "Report Synthesis": {
+        "input_tokens": 409394,
+        "output_tokens": 11400
+      }
+    },
+    "total_input_tokens": 1376895,
+    "total_output_tokens": 77044,
+    "total_tokens": 1453939
+  },
+  "failure": null
+}

@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single observational catalog with clearly defined plotting objectives, but many time-sliced map products, event-window bookkeeping around two mainshocks, and quantitative migration diagnostics are required. Workflow is mostly catalog preprocessing plus repeated spatial visualization and summary statistics, with moderate risk in keeping extents/colors/windows consistent across many panels.",
+  "data_source_count": 2,
+  "workflow_risk": "medium",
+  "expected_script_count": 3
+}

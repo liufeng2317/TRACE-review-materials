@@ -1,0 +1,5 @@
+radius_km,raw_count_mw64,raw_count_mw71,raw_overlap_count,assigned_count_mw64,assigned_count_mw71,outside_count
+4,1311,507,0,1311,507,2895
+5,1746,704,0,1746,704,2263
+6,2272,857,0,2272,857,1584
+7,2528,1163,403,2401,887,1425

@@ -1,0 +1,680 @@
+Script path: <PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow
+Loading catalogs
+Inferred delta_m=0.01
+Preparing 61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 6/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 12/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 18/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 24/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 30/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 36/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 42/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 48/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 54/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 60/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 61/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Preparing 61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 1/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 6/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 12/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 18/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 24/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 30/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 36/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 42/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 48/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 54/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 60/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 61/61 windows for core=mw64, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 12/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 24/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 36/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 48/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 60/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 72/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 84/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 96/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 108/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 120/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 127/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 12/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 24/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 36/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 48/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 60/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 72/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 84/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 96/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 108/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 120/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 127/127 windows for core=mw64, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 1/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 2/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 4/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 6/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 8/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 10/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 12/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 14/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 16/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 18/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 20/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Completed 21/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=fixed
+Preparing 21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 1/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 2/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 4/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 6/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 8/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 10/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 12/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 14/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 16/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 18/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 20/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Completed 21/21 windows for core=mw71, radius=4, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 1/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 4/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 8/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 12/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 16/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 20/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 24/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 28/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 32/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 36/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 40/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 44/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 46/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 4/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 8/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 12/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 16/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 20/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 24/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 28/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 32/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 36/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 40/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 44/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 46/46 windows for core=mw71, radius=4, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 8/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 16/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 24/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 32/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 40/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 48/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 56/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 64/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 72/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 80/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 83/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Preparing 83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 1/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 8/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 16/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 24/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 32/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 40/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 48/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 56/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 64/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 72/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 80/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 83/83 windows for core=mw64, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 17/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 34/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 51/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 68/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 85/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 102/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 119/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 136/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 153/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 170/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 17/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 34/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 51/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 68/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 85/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 102/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 119/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 136/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 153/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 170/170 windows for core=mw64, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 1/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 3/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 6/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 9/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 12/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 15/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 18/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 21/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 24/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 27/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 30/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Completed 31/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=fixed
+Preparing 31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 1/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 3/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 6/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 9/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 12/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 15/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 18/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 21/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 24/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 27/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 30/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Completed 31/31 windows for core=mw71, radius=5, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 1/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 6/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 12/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 18/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 24/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 30/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 36/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 42/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 48/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 54/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 60/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 66/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 6/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 12/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 18/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 24/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 30/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 36/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 42/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 48/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 54/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 60/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 66/66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 10/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 20/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 30/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 40/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 50/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 60/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 70/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 80/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 90/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 100/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 109/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Preparing 109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 1/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 10/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 20/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 30/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 40/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 50/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 60/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 70/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 80/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 90/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 100/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 109/109 windows for core=mw64, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 22/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 44/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 66/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 88/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 110/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 132/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 154/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 176/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 198/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 220/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 223/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 22/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 44/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 66/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 88/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 110/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 132/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 154/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 176/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 198/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 220/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 223/223 windows for core=mw64, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 1/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 3/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 6/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 9/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 12/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 15/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 18/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 21/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 24/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 27/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 30/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 33/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 36/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Completed 38/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=fixed
+Preparing 38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 3/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 6/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 9/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 12/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 15/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 18/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 21/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 24/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 27/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 30/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 33/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 36/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Completed 38/38 windows for core=mw71, radius=6, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 1/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 8/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 16/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 24/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 32/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 40/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 48/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 56/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 64/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 72/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 80/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 81/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 8/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 16/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 24/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 32/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 40/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 48/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 56/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 64/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 72/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 80/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 81/81 windows for core=mw71, radius=6, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 11/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 22/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 33/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 44/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 55/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 66/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 77/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 88/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 99/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 110/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 116/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Preparing 116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 11/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 22/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 33/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 44/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 55/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 66/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 77/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 88/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 99/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 110/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 116/116 windows for core=mw64, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 1/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/base.py:119: UserWarning: No magnitudes in the lowest magnitude bin are present.Check if mc is chosen correctly.
+  warnings.warn(
+Completed 23/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 46/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 69/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 92/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 115/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 138/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 161/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 184/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 207/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 230/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 236/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 23/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 46/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 69/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 92/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 115/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 138/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 161/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 184/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 207/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 230/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 236/236 windows for core=mw64, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Preparing 40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 1/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 4/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 8/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 12/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 16/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 20/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 24/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 28/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 32/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 36/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Completed 40/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=fixed
+Preparing 40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 4/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 8/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 12/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 16/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 20/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 24/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 28/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 32/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 36/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Completed 40/40 windows for core=mw71, radius=7, spec=primary_N100_step20, mc_mode=dynamic
+Preparing 84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 1/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 8/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 16/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 24/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 32/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 40/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 48/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 56/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 64/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 72/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 80/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Completed 84/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=fixed
+Preparing 84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide
+  p = 1 + delta_m / np.average(magnitudes - mc, weights=weights)
+Completed 1/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 8/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 16/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 24/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 32/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 40/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 48/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 56/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 64/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 72/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 80/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic
+Completed 84/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic

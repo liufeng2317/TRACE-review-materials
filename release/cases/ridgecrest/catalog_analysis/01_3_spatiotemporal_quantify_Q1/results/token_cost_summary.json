@@ -1,0 +1,53 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2599,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 46581,
+      "output_tokens": 11091
+    },
+    "Planing": {
+      "input_tokens": 53336,
+      "output_tokens": 16753
+    },
+    "Plan Merging": {
+      "input_tokens": 26955,
+      "output_tokens": 4105
+    },
+    "Workflow Agent": {
+      "input_tokens": 30641,
+      "output_tokens": 3701
+    },
+    "Coding Agent (01_ridgecrest_directional_ripley_analysis)": {
+      "input_tokens": 640720,
+      "output_tokens": 16290
+    },
+    "Result Check Agent (01_ridgecrest_directional_ripley_analysis)": {
+      "input_tokens": 23602,
+      "output_tokens": 1436
+    },
+    "Task Analysis Agent (01_ridgecrest_directional_ripley_analysis)": {
+      "input_tokens": 87419,
+      "output_tokens": 8275
+    },
+    "Evaluation": {
+      "input_tokens": 14956,
+      "output_tokens": 900
+    },
+    "Report Synthesis": {
+      "input_tokens": 70994,
+      "output_tokens": 8447
+    }
+  },
+  "total": {
+    "input_tokens": 997803,
+    "output_tokens": 71013,
+    "total_tokens": 1068816
+  }
+}

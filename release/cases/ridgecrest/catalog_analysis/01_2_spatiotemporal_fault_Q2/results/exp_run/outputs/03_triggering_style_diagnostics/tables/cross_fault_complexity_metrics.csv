@@ -1,0 +1,16 @@
+metric,value
+early_activated_segments,4.0
+early_activated_lines,4.0
+early_bend_fraction,0.0
+mid_activated_segments,2.0
+mid_activated_lines,2.0
+mid_bend_fraction,0.0
+late_activated_segments,18.0
+late_activated_lines,18.0
+late_bend_fraction,0.0
+n_active_lines,22.0
+line_first_activation_q25_minutes,337.5
+line_first_activation_median_minutes,855.0
+line_first_activation_q75_minutes,1162.5
+n_adjacent_first_line_activations_within_30min,11.0
+cross_fault_jump_like_pairs_within_30min,11.0

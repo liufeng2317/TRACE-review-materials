@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_ridgecrest_figures_and_distribution_plots",
+    "generated_at": "2026-07-05T18:18:20.710349+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 1055.746,
+    "timing": {
+      "total_sec": 1055.746,
+      "coding_agent_sec": 183.585,
+      "code_review_sec": 40.541,
+      "preflight_sec": 1.075,
+      "script_execution_sec": 536.326,
+      "result_check_sec": 139.636,
+      "task_analysis_sec": 150.81
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_ridgecrest_figures_and_distribution_plots.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_ridgecrest_figures_and_distribution_plots.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_ridgecrest_figures_and_distribution_plots/log_2.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "comparison_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/comparison_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "figure_manifest.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/figure_manifest.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "map_panel_manifest.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/map_panel_manifest.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "nearest_fault_distance_bin_statistics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/nearest_fault_distance_bin_statistics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "question_metric_summary_copy.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/question_metric_summary_copy.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "run_metadata.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/run_metadata.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "validation_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/validation_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "along_strike_occupancy_through_time.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_ridgecrest_figures_and_distribution_plots/along_strike_occupancy_through_time.png",
+        "kind": "figure"
+      }
+    ],
+    "all": [
+      "along_strike_occupancy_through_time.png",
+      "centroid_and_along_strike_migration.png",
+      "comparison_summary.csv",
+      "figure_manifest.csv",
+      "map_panel_manifest.csv",
+      "nearest_fault_distance_bin_statistics.csv",
+      "nearest_fault_distance_over_time.png",
+      "nearest_fault_distance_overall.png",
+      "orientation_and_misfit_vs_time.png",
+      "pre_post_mainshock71_comparison.png",
+      "question_metric_summary_copy.csv",
+      "ridgecrest_time_sliced_maps_page_01.png",
+      "ridgecrest_time_sliced_maps_page_02.png",
+      "ridgecrest_time_sliced_maps_page_03.png",
+      "run_metadata.csv",
+      "validation_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Generate the requested Ridgecrest map series, comparison figure, nearest-fault distance plots, and directional-evolution synthesis figures from saved metrics.",
+    "result": "Generate the requested Ridgecrest map series, comparison figure, nearest-fault distance plots, and directional-evolution synthesis figures from saved metrics. Status=success; outputs=16 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

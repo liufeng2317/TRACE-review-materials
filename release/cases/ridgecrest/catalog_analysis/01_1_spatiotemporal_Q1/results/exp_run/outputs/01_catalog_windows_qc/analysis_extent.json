@@ -1,0 +1,10 @@
+{
+  "derived_from": "full_clean_catalog",
+  "latitude_max": 36.36162779518504,
+  "latitude_min": 35.22090479518505,
+  "longitude_max": -116.9439567617556,
+  "longitude_min": -118.11486693463452,
+  "padding_degrees": 0.05,
+  "projection_origin_latitude": 35.791266295185046,
+  "projection_origin_longitude": -117.52941184819505
+}

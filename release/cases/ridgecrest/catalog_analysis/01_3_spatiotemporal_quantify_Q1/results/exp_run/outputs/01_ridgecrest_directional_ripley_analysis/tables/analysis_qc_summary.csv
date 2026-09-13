@@ -1,0 +1,2 @@
+n_catalog_events,n_intervals,analysis_start_utc,analysis_end_utc,t64_utc,t71_utc,local_crs,fault_segments
+6333,88,2019-07-04 17:33:49.040000+00:00,2019-07-06 13:19:53.040000+00:00,2019-07-04 17:33:49.040000+00:00,2019-07-06 03:19:53.040000+00:00,EPSG:32611,17792

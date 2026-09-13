@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_interevent_bvalue_workflow",
+    "generated_at": "2026-07-06T14:58:11.688960+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 683.221,
+    "timing": {
+      "total_sec": 683.221,
+      "coding_agent_sec": 232.016,
+      "code_review_sec": 51.362,
+      "preflight_sec": 0.548,
+      "script_execution_sec": 110.17,
+      "result_check_sec": 127.226,
+      "task_analysis_sec": 161.048
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_interevent_bvalue_workflow.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "bootstrap_run_metadata.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bootstrap_run_metadata.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_temporal_contrast_5km_dynamicMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_temporal_contrast_5km_dynamicMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_temporal_contrast_5km_exploratory_dynamicMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_temporal_contrast_5km_exploratory_dynamicMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_temporal_contrast_5km_exploratory_fixedMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_temporal_contrast_5km_exploratory_fixedMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_temporal_contrast_5km_fixedMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_temporal_contrast_5km_fixedMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_windows_5km_dynamicMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_windows_5km_dynamicMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_windows_5km_exploratory_dynamicMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_windows_5km_exploratory_dynamicMc.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bvalue_windows_5km_exploratory_fixedMc.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow/bvalue_windows_5km_exploratory_fixedMc.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "bootstrap_run_metadata.csv",
+      "bvalue_temporal_contrast_5km_dynamicMc.csv",
+      "bvalue_temporal_contrast_5km_exploratory_dynamicMc.csv",
+      "bvalue_temporal_contrast_5km_exploratory_fixedMc.csv",
+      "bvalue_temporal_contrast_5km_fixedMc.csv",
+      "bvalue_windows_5km_dynamicMc.csv",
+      "bvalue_windows_5km_exploratory_dynamicMc.csv",
+      "bvalue_windows_5km_exploratory_fixedMc.csv",
+      "bvalue_windows_5km_fixedMc.csv",
+      "bvalue_windows_radius_sensitivity_dynamicMc.csv",
+      "bvalue_windows_radius_sensitivity_fixedMc.csv",
+      "cleaned_interevent_catalog.csv",
+      "contrast_5km_fixedMc.png",
+      "contrast_significance_summary.csv",
+      "core_assignment_5km.csv",
+      "core_assignment_radius_sensitivity.csv",
+      "diagnostics_5km.png",
+      "event_markers_metadata.csv",
+      "figure_source_data_contrast_5km.csv",
+      "figure_source_data_diagnostics_5km.csv",
+      "figure_source_data_dynamicMc_5km.csv",
+      "figure_source_data_fixedMc_5km.csv",
+      "figure_source_data_map.csv",
+      "figure_source_data_radius_sensitivity.csv",
+      "interevent_map_5km.png",
+      "magnitude_discretization_metadata.csv",
+      "output_inventory.csv",
+      "pre_post_separator_summary_5km.csv",
+      "pre_post_separator_summary_radius_sensitivity.csv",
+      "radius_sensitivity_fixedMc.png",
+      "run_log.txt",
+      "run_metadata.json",
+      "spatial_overlap_summary.csv",
+      "timeseries_5km_dynamicMc.png",
+      "timeseries_5km_fixedMc.png",
+      "validation_summary.csv",
+      "window_reliability_mc_diagnostics.csv"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Execute the full interevent sliding-window b-value analysis for the Mw 6.4 and Mw 7.1 core regions, including cleaning, assignment, estimation, contrasts, figures, and validation.",
+    "result": "Execute the full interevent sliding-window b-value analysis for the Mw 6.4 and Mw 7.1 core regions, including cleaning, assignment, estimation, contrasts, figures, and validation. Status=success; outputs=37 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

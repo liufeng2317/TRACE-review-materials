@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Two observational data sources plus one derived product are used to build a station table and preprocess continuous station-day waveforms into two downstream-ready products (phase-picking and Wood-Anderson magnitude streams). The workflow requires metadata-driven channel/gain extraction, day-bounded completeness checks, merging, preprocessing, parallel execution, and validation/plotting, but does not require event association or advanced inversion.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate",
+  "expected_script_count": 2
+}

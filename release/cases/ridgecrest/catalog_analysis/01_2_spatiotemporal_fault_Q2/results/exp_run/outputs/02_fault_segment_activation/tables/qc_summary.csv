@@ -1,0 +1,14 @@
+category,metric,value
+faults,n_projected_polylines,977.0
+segments,n_segments,1019.0
+segments,median_segment_length_km,0.12212658683867851
+segments,mean_segment_length_km,0.22238501949490774
+association,n_events_input,4627.0
+association,n_assigned_events,4490.0
+association,fraction_assigned_events,0.9703911821914848
+association,median_distance_km,0.5924065289664662
+activation,n_segments_with_any_associated_events,407.0
+activation,n_activated_segments,24.0
+activation,fraction_activated_of_all_segments,0.023552502453385672
+activation,fraction_activated_of_associated_segments,0.05896805896805897
+run,elapsed_seconds,19.353389739990234

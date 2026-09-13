@@ -1,0 +1,1917 @@
+{
+  "schema_version": 1,
+  "run_id": "01_3_trigger_spatiotemporal_quantify_Q1-v1",
+  "run_name": "01_3_trigger_spatiotemporal_quantify_Q1-v1",
+  "root": "<PACKAGE_ROOT>/results",
+  "status": "completed",
+  "next_stage": "done",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-07-06T02:48:06.689064+00:00",
+  "updated_at": "2026-07-06T03:10:53.359791+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are a senior seismologist. \nYour objective is to investigate the spatiotemporal evolution of the earthquakes for the Ridgecrest earthquake sequence, spetial attention to the trigger mechanism from Mw 6.4 to Mw 7.1 mainshock.\n\n## 1. Data Sources\n- Catalog Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n    - the first row is the name of the columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Main-shock events Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n    - Mainshock64: magnitude 6.4\n    - Mainshock71: magnitude 7.1\n- Fault Path: `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`\n    - the format is a list of lists of [longitude, latitude]\n\n## 2. Sector-based Ripley’s K-function analysis\n\n1. Time Window and Time Intervals Definition\n- Analysis window: [mainshock64, mainshock71+10 hours]\n- Time Intervals: 30 minutes\n\n2. Compute sector-based directional Ripley’s K-functions for each time interval.\n    - For each time interval:\n        1. Identify all event pairs with inter-event distance ≤ r.\n        2. Compute the orientation angle of each inter-event vector.\n        3. Bin orientations into sectors of 5° over [0°, 360°).\n        4. For each sector, compute the normalized Ripley’s K-function using only event pairs within that angular range.\n        5. Store K(r, θ) as the directional clustering statistic for the current time interval.\n\n3. Visualize the Time-Direction Heatmap:\n- X-axis: time intervals\n- Y-axis: azimuthal direction (0–360 degrees)\n- Color: sector-based Ripley’s L-function evaluated at a characteristic scale r\n- Other features:\n    - Highlight dominant and secondary seismic clustering directions and their temporal transitions.\n    - Overlay the mainshock64 and mainshock71 epicenters timelines.\n\n4. Visualize the Polar Rose Diagrams\n- One figure for the whole time windows\n    - Split the time windows into 8 representative time windows (each time window is 4 hours), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock64\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n    \n- One figure for the time nearest to the mainshock64\n    - Select 8 representative windows after the mainshock64, time intervals (30 minutes interval), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock64\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n\n- One figure for the time nearest to the mainshock71\n    - Select 8 representative windows before the mainshock71, time intervals (30 minutes interval), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock71\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n\n## 3. Computational and software requirements\n- Process each major analytical step independently and generate figures and outputs for that step.\n- Use parallel computation (up to 64 cores) for computationally intensive tasks, such as spatial visualization, sector-based Ripley’s K-function calculation etc.\n- Display progress information (e.g., progress bars or logs) during long computations whenever possible.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<REPO_ROOT>/examples/ridgecrest/catalog_analysis/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_3_trigger_spatiotemporal_quantify_Q1-v1",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are a senior seismologist. \nYour objective is to investigate the spatiotemporal evolution of the earthquakes for the Ridgecrest earthquake sequence, spetial attention to the trigger mechanism from Mw 6.4 to Mw 7.1 mainshock.\n\n## 1. Data Sources\n- Catalog Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n    - the first row is the name of the columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Main-shock events Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n    - Mainshock64: magnitude 6.4\n    - Mainshock71: magnitude 7.1\n- Fault Path: `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`\n    - the format is a list of lists of [longitude, latitude]\n\n## 2. Sector-based Ripley’s K-function analysis\n\n1. Time Window and Time Intervals Definition\n- Analysis window: [mainshock64, mainshock71+10 hours]\n- Time Intervals: 30 minutes\n\n2. Compute sector-based directional Ripley’s K-functions for each time interval.\n    - For each time interval:\n        1. Identify all event pairs with inter-event distance ≤ r.\n        2. Compute the orientation angle of each inter-event vector.\n        3. Bin orientations into sectors of 5° over [0°, 360°).\n        4. For each sector, compute the normalized Ripley’s K-function using only event pairs within that angular range.\n        5. Store K(r, θ) as the directional clustering statistic for the current time interval.\n\n3. Visualize the Time-Direction Heatmap:\n- X-axis: time intervals\n- Y-axis: azimuthal direction (0–360 degrees)\n- Color: sector-based Ripley’s L-function evaluated at a characteristic scale r\n- Other features:\n    - Highlight dominant and secondary seismic clustering directions and their temporal transitions.\n    - Overlay the mainshock64 and mainshock71 epicenters timelines.\n\n4. Visualize the Polar Rose Diagrams\n- One figure for the whole time windows\n    - Split the time windows into 8 representative time windows (each time window is 4 hours), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock64\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n    \n- One figure for the time nearest to the mainshock64\n    - Select 8 representative windows after the mainshock64, time intervals (30 minutes interval), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock64\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n\n- One figure for the time nearest to the mainshock71\n    - Select 8 representative windows before the mainshock71, time intervals (30 minutes interval), spaced approximately uniformly through time\n    - Arrange the subplots in a 2 × 4 grid (ordered chronologically).\n    - In each panel:\n        - Plot the events in longitude-latitude space, colored by the event time relative to the mainshock71\n        - Generate a polar rose diagram showing directional clustering intensity derived from sector-based Ripley’s K-function on the \"top right\" of the panel.\n        - overlay the mainshock64 and mainshock71 epicenters\n\n## 3. Computational and software requirements\n- Process each major analytical step independently and generate figures and outputs for that step.\n- Use parallel computation (up to 64 cores) for computationally intensive tasks, such as spatial visualization, sector-based Ripley’s K-function calculation etc.\n- Display progress information (e.g., progress bars or logs) during long computations whenever possible.\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": "# Goal\nInvestigate the spatiotemporal evolution of the Ridgecrest earthquake sequence over `[mainshock64, mainshock71 + 10 hours]`, with special focus on whether directional clustering reorganizes in space and time in a manner consistent with triggering from the Mw 6.4 event toward the Mw 7.1 mainshock, using sector-based directional Ripley’s K/L analysis and the requested heatmap and map-plus-rose visualizations.\n\n## Planning Assumptions\n- Use only the provided observational data:\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`\n- One primary task script should handle data loading, preprocessing, scale selection, interval-wise directional Ripley computation, QC, parallel execution, and requested figure generation so that all outputs share identical definitions and validated intermediates.\n- Catalog schema is fixed as `event_time,latitude,longitude,depth_km,magnitude`; `event_time` must be parsed as UTC datetime.\n- The fault file is a plain JSON list of fault polylines, each polyline being a list of `[longitude, latitude]`; do not assume GeoJSON structure.\n- Main analysis window is fixed by the user: `[mainshock64_time, mainshock71_time + 10 hours]`.\n- Base interval for the time-resolved analysis is fixed by the user: non-overlapping 30-minute bins.\n- Directional sectors are fixed by the user: 5° bins over `[0°, 360°)`, yielding 72 sectors.\n- Pair distance and azimuth calculations must use a single local projected Cartesian coordinate system for all events and mainshocks; lon/lat should be retained for mapping only.\n- The user requested normalized directional Ripley K and heatmap coloring by directional L at a characteristic scale `r*`; therefore compute directional `K(r, θ)` on a small candidate radius grid first, choose one fixed `r*` by a documented data-driven rule, then use that same `r*` for all heatmaps and rose diagrams.\n- The same normalization, azimuth convention, study window, and edge-treatment rule must be applied across all intervals and representative windows. If a full formal edge correction is not implemented, treat the outputs as comparative directional clustering indices under a fixed domain and record that limitation consistently.\n- Sparse 30-minute intervals can produce unstable pair statistics; such intervals must remain in the time series with explicit insufficient-data flags rather than being silently removed.\n- Parallel computation up to 64 CPU cores should be used for interval-wise pair-statistic calculations and any independent representative-window recomputations; progress logs or progress bars should report interval/window completion and skipped low-support bins.\n- Required success evidence is: non-empty interval-by-direction directional statistics, non-empty characteristic-scale heatmap matrix aligned to the interval table, and the three requested figure families plus their supporting summary tables.\n\n## Analysis Plan\n\n### Task 1 — Build the analysis-ready Ridgecrest dataset and fixed time-window definitions\n- Task description\n  - Load the relocated catalog, the mainshock reference file, and the surface-fault geometry.\n  - Derive the exact analysis window from the Mw 6.4 event to 10 hours after the Mw 7.1 event.\n  - Assign every event to the regular 30-minute interval grid and define all representative windows needed for later figures.\n- Required data sources\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`\n- Parameter selection strategy\n  - Parse `event_time` as timezone-aware UTC.\n  - Identify `mainshock64` and `mainshock71` from `main_shock_events.csv` by magnitude 6.4 and 7.1; preserve their exact times and epicenters as authoritative anchors.\n  - Subset the catalog to `[t64, t71 + 10 hours]`.\n  - Sort events chronologically and remove only rows with missing required fields.\n  - Build consecutive 30-minute bins using left-closed, right-open intervals, with the last interval including the right endpoint if needed.\n  - Create one local projected x-y coordinate system centered on the sequence centroid or midpoint between the two mainshocks; keep original longitude/latitude for maps.\n  - Precompute each event’s time relative to `t64` and relative to `t71`.\n  - Define three representative-window sets:\n    - Whole-window figure: 8 windows of 4 hours, approximately uniformly spaced through the full analysis window.\n    - Near-mainshock64 figure: 8 representative 30-minute intervals after `t64`, approximately uniformly spaced through the post-6.4, pre-7.1 period.\n    - Near-mainshock71 figure: 8 representative 30-minute intervals before `t71`, approximately uniformly spaced through the pre-7.1 approach period.\n  - If a selected representative window is empty, shift to the nearest non-empty candidate while preserving chronology and recording the adjustment.\n- Constraints\n  - Do not alter the user-defined global time window or 30-minute base interval.\n  - Do not apply magnitude filtering unless a documented data-quality issue requires exclusion.\n  - Treat the fault JSON strictly as nested coordinate lists in `[longitude, latitude]` order.\n  - Keep all representative-window selection rules deterministic and reproducible.\n- Key outputs\n  - Cleaned analysis catalog with UTC times, projected coordinates, relative times, and interval IDs.\n  - Mainshock metadata table with times, lon/lat, and projected coordinates.\n  - Full 30-minute interval-definition table.\n  - Representative-window definition table for the three requested figure groups.\n  - Initial QC summary table with event counts, temporal coverage, and missing-value checks.\n\n### Task 2 — Define the fixed spatial study window, Ripley normalization protocol, and characteristic scale `r*`\n- Task description\n  - Establish the exact directional Ripley framework used throughout the analysis, including the study region, azimuth convention, normalization, candidate radii, and final characteristic radius for visualization.\n- Required data sources\n  - Cleaned projected catalog from Task 1\n  - Fault geometry from Task 1 for spatial-context diagnostics\n- Parameter selection strategy\n  - Define one fixed 2D study window in projected coordinates using the full clipped sequence footprint, such as a buffered convex hull or buffered bounding polygon that also covers mapped fault traces used for context.\n  - Record the corresponding study-window area `A` and use it consistently for all interval-wise comparisons.\n  - Use a fixed azimuth convention for inter-event vectors over `[0°, 360°)` and keep the same convention in heatmaps and rose diagrams.\n  - Build a small candidate radius grid spanning short to intermediate spatial scales relevant to the Ridgecrest fault-zone width and event spacing.\n  - Select candidate radii from data diagnostics using:\n    - nearest-neighbor distance distribution,\n    - short-range pair-distance distribution,\n    - support metrics showing how many 30-minute intervals have adequate pair counts at each radius.\n  - Choose one final `r*` by a single fixed rule applied sequence-wide, for example the smallest radius that captures stable directional contrast while still yielding adequate pair support across most valid intervals.\n  - Define insufficient-data thresholds before production runs, including:\n    - minimum event count per 30-minute interval,\n    - minimum qualifying pair count within `r*`.\n  - Specify whether directional smoothing across neighboring sectors will be used for peak extraction; if used, keep it mild and fixed.\n- Constraints\n  - The final heatmap and all rose diagrams must use one fixed `r*`.\n  - Do not choose `r*` by plotting convenience alone; it must come from catalog geometry and support diagnostics.\n  - Use one consistent normalization and one consistent edge-treatment method for all intervals and representative windows.\n  - If no formal edge correction is implemented, record this explicitly and interpret the results as relative directional clustering under a fixed domain.\n- Key outputs\n  - Study-window geometry and area summary.\n  - Radius-diagnostic table with candidate radii and interval support statistics.\n  - Formal parameter/specification table for sector bins, azimuth convention, normalization, validity thresholds, and chosen `r*`.\n  - Scale-selection diagnostic products suitable for later validation.\n\n### Task 3 — Compute 30-minute sector-based directional Ripley K/L statistics through time\n- Task description\n  - For each 30-minute interval, compute sector-based directional Ripley `K(r, θ)` and transformed `L(r, θ)`, then extract the characteristic-scale directional field used for temporal interpretation.\n- Required data sources\n  - Projected event catalog and 30-minute intervals from Task 1\n  - Study-window and parameter specification from Task 2\n- Parameter selection strategy\n  - Parallelize by interval, using up to 64 cores subject to memory limits.\n  - For each interval:\n    - subset events in the interval;\n    - if event count is below the predefined threshold, record the interval as insufficient-data and return NA-filled directional outputs plus metadata;\n    - compute pairwise inter-event distances and azimuths in projected coordinates, using chunked or neighborhood-limited processing if needed to control memory;\n    - retain pairs within the candidate radii and within the final `r*`;\n    - bin azimuths into 72 sectors of width 5°;\n    - compute sector-based normalized `K(r, θ)` and transformed `L(r, θ)` using the fixed study-window area and interval event density;\n    - extract at `r*`:\n      - sectoral `L(r*, θ)`,\n      - dominant azimuth,\n      - secondary non-adjacent azimuth,\n      - anisotropy/concentration metric,\n      - event count and qualifying pair count.\n  - Save both:\n    - full radius-dependent directional results for validation,\n    - reduced interval × sector matrix at `r*` for plotting.\n  - Emit progress information during processing and validate the merged output after all interval jobs complete.\n- Constraints\n  - Distances and azimuths must be computed in projected coordinates only.\n  - Keep interval order deterministic and aligned exactly to the interval-definition table.\n  - Do not treat batch completion as success unless the merged interval-by-direction product is non-empty and complete apart from explicitly flagged sparse intervals.\n  - Handle 0°/360° wraparound correctly for sector indexing and peak extraction.\n- Key outputs\n  - Full interval-level directional statistics table or array set containing `K(r, θ)` and `L(r, θ)`.\n  - Reduced characteristic-scale matrix: intervals × 72 sectors with `L(r*, θ)`.\n  - Interval summary table with dominant azimuth, secondary azimuth, anisotropy metric, event count, pair count, and validity flag.\n  - Runtime and QC log for interval processing.\n\n### Task 4 — Derive transition metrics relevant to Mw 6.4-to-Mw 7.1 triggering\n- Task description\n  - Convert the time-resolved directional statistics into compact temporal indicators that directly address whether directional organization migrates or reorients between the two mainshocks.\n- Required data sources\n  - Characteristic-scale matrix and interval summary products from Task 3\n  - Mainshock metadata from Task 1\n  - Fault geometry from Task 1\n- Parameter selection strategy\n  - Track through time:\n    - dominant azimuth,\n    - secondary azimuth,\n    - anisotropy strength,\n    - angular separation between dominant and secondary directions,\n    - angular separation between dominant direction and:\n      - the projected azimuth from Mw 6.4 epicenter to Mw 7.1 epicenter,\n      - major fault-trace orientation families estimated from the provided fault polylines.\n  - Partition the sequence for summary comparisons into at least:\n    - immediate post-Mw 6.4,\n    - inter-mainshock buildup,\n    - immediate pre-Mw 7.1,\n    - post-Mw 7.1 to +10 hours.\n  - Identify intervals showing abrupt directional changes, increasing anisotropy, or strengthening secondary branches before Mw 7.1.\n- Constraints\n  - Keep this task strictly derivative of the computed Ripley products; do not introduce separate physical stress-transfer modeling.\n  - Interpret directional consistency as evidence relevant to a triggering hypothesis, not as causal proof.\n  - Fault-orientation comparisons must be derived from the supplied fault geometry rather than assumed rupture strikes.\n- Key outputs\n  - Time-series table of dominant/secondary directions and anisotropy metrics.\n  - Transition-point table highlighting intervals with notable directional shifts.\n  - Fault- and mainshock-connection comparison summary table.\n\n### Task 5 — Generate the time-direction heatmap and summary timeline products\n- Task description\n  - Produce the requested heatmap showing the temporal evolution of directional clustering intensity and annotate it with the mainshock timeline and derived directional transitions.\n- Required data sources\n  - Characteristic-scale `L(r*, θ)` matrix from Task 3\n  - Interval directional metrics from Task 4\n  - Mainshock metadata from Task 1\n- Parameter selection strategy\n  - Heatmap configuration:\n    - X-axis: ordered 30-minute intervals over `[t64, t71 + 10 hours]`,\n    - Y-axis: azimuth sector centers from 0° to 355°,\n    - Color: sector-based `L(r*, θ)`.\n  - Overlay:\n    - vertical markers at `t64` and `t71`,\n    - dominant-direction trajectory,\n    - secondary-direction trajectory where valid,\n    - visible masking or marking for insufficient-data intervals.\n  - Add a companion count/quality strip or aligned summary panel showing event counts and pair counts per interval to distinguish physical changes from support changes.\n- Constraints\n  - Use the same azimuth convention and `r*` as in Tasks 2–3.\n  - Do not interpolate across invalid intervals.\n  - Keep dominant and secondary overlays driven entirely by computed interval metrics.\n- Key outputs\n  - Main time-direction heatmap figure.\n  - Companion interval-support/QC timeline figure or panel.\n  - Plot-ready heatmap matrix and annotation table.\n\n### Task 6 — Generate the three requested 2 × 4 map-plus-polar-rose figure families\n- Task description\n  - Produce the three requested figure groups that combine event maps with directional rose summaries for representative windows spanning the full sequence, the early post-Mw 6.4 stage, and the pre-Mw 7.1 stage.\n- Required data sources\n  - Representative-window table from Task 1\n  - Event catalog from Task 1\n  - Fault geometry from Task 1\n  - Mainshock metadata from Task 1\n  - Directional statistics from Task 3, with recomputation for exact representative windows when required\n- Parameter selection strategy\n  - Whole-window figure:\n    - Use the 8 representative 4-hour windows approximately uniformly spaced through the full analysis period.\n    - In each panel:\n      - plot events in longitude-latitude space,\n      - color by event time relative to Mw 6.4,\n      - overlay fault traces and both mainshock epicenters,\n      - compute or extract directional `L(r*, θ)` for the exact 4-hour window,\n      - place a polar rose inset at the panel top-right.\n  - Near-mainshock64 figure:\n    - Use the 8 selected 30-minute windows after Mw 6.4.\n    - In each panel:\n      - plot events in longitude-latitude space,\n      - color by event time relative to Mw 6.4,\n      - overlay fault traces and both mainshock epicenters,\n      - place a polar rose inset from `L(r*, θ)` for that window.\n  - Near-mainshock71 figure:\n    - Use the 8 selected 30-minute windows before Mw 7.1.\n    - In each panel:\n      - plot events in longitude-latitude space,\n      - color by event time relative to Mw 7.1,\n      - overlay fault traces and both mainshock epicenters,\n      - place a polar rose inset from `L(r*, θ)` for that window.\n  - Keep panel ordering chronological left-to-right, top-to-bottom.\n  - Keep common map extent within each figure family; use shared directional scaling for rose intensity within each family.\n- Constraints\n  - Mainshock64 and Mainshock71 epicenters must appear in every map panel.\n  - Rose diagrams must use the same sector width, azimuth convention, normalization, and `r*` as the main directional analysis.\n  - For representative windows with low support, retain the panel and mark it explicitly rather than silently dropping it.\n  - If 4-hour window statistics are not directly derivable from 30-minute outputs without inconsistency, recompute them directly for those exact 4-hour subsets using the same Task 3 method.\n- Key outputs\n  - One 2 × 4 whole-window map-plus-rose figure.\n  - One 2 × 4 near-Mw 6.4 map-plus-rose figure.\n  - One 2 × 4 near-Mw 7.1 map-plus-rose figure.\n  - Window-level summary table with window bounds, event count, pair count, dominant azimuth, secondary azimuth, anisotropy metric, and validity flag.\n\n### Task 7 — Validate merged outputs and export reusable machine-readable products\n- Task description\n  - Verify that each major analytical stage produced complete and scientifically usable outputs, then save compact tables for downstream interpretation.\n- Required data sources\n  - Outputs from Tasks 1–6\n- Parameter selection strategy\n  - Validate:\n    - mainshock parsing and time anchors,\n    - expected number of 30-minute intervals,\n    - interval-by-direction matrix dimensions equal intervals × 72 sectors,\n    - every valid interval has a complete sector vector,\n    - invalid intervals are explicitly flagged,\n    - each representative figure panel has the correct window assignment and corresponding rose statistic,\n    - dominant/secondary trajectories match maxima in the underlying directional matrix for sampled intervals.\n  - Export machine-readable products for:\n    - cleaned catalog with interval IDs,\n    - interval definitions,\n    - representative-window definitions,\n    - full directional Ripley statistics by interval/sector/radius,\n    - reduced `L(r*, θ)` interval matrix,\n    - interval directional summary metrics,\n    - representative-window summary statistics,\n    - scale-selection and QC summaries.\n- Constraints\n  - Final success requires the merged scientific outputs and requested figures, not just successful per-interval computation.\n  - Missing, sparse, or failed intervals/windows must be enumerated explicitly.\n  - Keep filenames explicit and content-specific; no generic placeholder outputs.\n- Key outputs\n  - Validated interval directional statistics table.\n  - Validated interval directional summary table.\n  - Validated representative-window statistics table.\n  - Scale-selection summary and QC tables.\n  - Final validation log covering completeness, consistency, and flagged limitations.",
+    "language": "English",
+    "user_data_description": null,
+    "data_descriptions_summary": "<source=TRACE_ridgecrest_relocated.csv>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\nThis Ridgecrest data bundle contains three relevant inputs for spatiotemporal earthquake-sequence analysis: a relocated earthquake catalog CSV, a two-row mainshock reference CSV, and a surface-fault geometry JSON. The catalog has 84,474 events with complete time, latitude, longitude, depth, and magnitude fields spanning 2019-07-04 to 2019-07-25 UTC, while the fault file stores 17,792 polyline segments as lists of [longitude, latitude] coordinates.\n</source>\n\n<source=main_shock_events.csv>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\nThis CSV is a compact reference table containing the two key Ridgecrest mainshocks used to anchor analysis windows and annotations: the Mw 6.4 event and the Mw 7.1 event. It has the same 5-column schema as the relocated event catalog, with complete UTC timestamps and hypocenter/epicenter information for both rows.\n</source>\n\n<source=ridgecrest_surface_faults.json>\n**Source path**: `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`\nThis JSON file contains mapped Ridgecrest surface-fault geometry as a plain nested list of polyline segments, not a GeoJSON feature collection. It includes 17,792 segments and 207,549 total coordinate points in `[longitude, latitude]` order, making it suitable for direct map overlay after standard JSON loading.\n</source>",
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [
+      "input_guard",
+      "data_desc",
+      "plan",
+      "workflow",
+      "coding",
+      "evaluate"
+    ],
+    "active_round": 0,
+    "rounds": [
+      {
+        "round_index": 0,
+        "plan_path": "<PACKAGE_ROOT>/results/exp_plans/plans/plan_final_round_0.md",
+        "tasks": [
+          {
+            "task_name": "01_ridgecrest_directional_ripley_analysis",
+            "description": "Build the Ridgecrest analysis dataset, compute directional Ripley K and L statistics through time, derive transition metrics, generate the requested figures, and export validated machine-readable outputs.",
+            "status": "analysis_done",
+            "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+            "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+            "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_directional_ripley_analysis.md",
+            "last_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+            "failed_reason": null,
+            "debug_round": 3,
+            "result_check_round": 1,
+            "execution_stage": "analysis_done",
+            "last_preflight": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "script_exists",
+                  "passed": true,
+                  "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_command_startable",
+                  "passed": true,
+                  "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                  "evidence": []
+                },
+                {
+                  "name": "py_compile",
+                  "passed": true,
+                  "message": "Target runtime py_compile passed.",
+                  "evidence": []
+                },
+                {
+                  "name": "subprocess_timeout_contract",
+                  "passed": true,
+                  "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                  "evidence": []
+                },
+                {
+                  "name": "output_dir_writable",
+                  "passed": true,
+                  "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_python_version",
+                  "passed": true,
+                  "message": "Runtime Python version: 3.9",
+                  "evidence": []
+                },
+                {
+                  "name": "runtime_annotation_compatibility",
+                  "passed": true,
+                  "message": "Runtime annotation compatibility check passed.",
+                  "evidence": []
+                }
+              ],
+              "diagnosis": null,
+              "recommended_action": ""
+            },
+            "last_diagnosis": null,
+            "last_result_check_diagnosis": null,
+            "diagnosis_history": [
+              {
+                "stage": "preflight",
+                "debug_round": 1,
+                "result_check_round": 0,
+                "resolved": false,
+                "timestamp": "2026-07-06T02:55:46.001457+00:00",
+                "diagnosis": {
+                  "failed": true,
+                  "failure_type": "syntax_error",
+                  "severity": "error",
+                  "stage": "preflight",
+                  "retry_allowed": false,
+                  "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                  "evidence": [
+                    "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 204\n    -        return counts, pair_counts_r, np.array([], dtype=float)\nIndentationError: expected an indented block\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: expected an indented block (01_ridgecrest_directional_ripley_analysis.py, line 204)"
+                  ],
+                  "source_files": [
+                    "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                  ],
+                  "metadata": {
+                    "retry_decision": {
+                      "retry_allowed": false,
+                      "strategy": "fix_script_syntax_before_rerun",
+                      "reason": "The script cannot be executed until syntax errors are fixed.",
+                      "max_additional_attempts": 0
+                    }
+                  }
+                }
+              },
+              {
+                "stage": "preflight",
+                "debug_round": 2,
+                "result_check_round": 0,
+                "resolved": false,
+                "timestamp": "2026-07-06T02:56:04.827192+00:00",
+                "diagnosis": {
+                  "failed": true,
+                  "failure_type": "syntax_error",
+                  "severity": "error",
+                  "stage": "preflight",
+                  "retry_allowed": false,
+                  "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                  "evidence": [
+                    "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 884\n    {\nIndentationError: unexpected indent\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: unexpected indent (01_ridgecrest_directional_ripley_analysis.py, line 884)"
+                  ],
+                  "source_files": [
+                    "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                  ],
+                  "metadata": {
+                    "retry_decision": {
+                      "retry_allowed": false,
+                      "strategy": "fix_script_syntax_before_rerun",
+                      "reason": "The script cannot be executed until syntax errors are fixed.",
+                      "max_additional_attempts": 0
+                    }
+                  }
+                }
+              }
+            ],
+            "last_debug_context": {
+              "task_name": "01_ridgecrest_directional_ripley_analysis",
+              "stage": "result_check_input",
+              "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+              "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+              "returncode": 0,
+              "failure_type": null,
+              "recommended_action": null,
+              "log_size_bytes": 6762,
+              "core_error": "All requested analysis products generated successfully.",
+              "traceback_tail": "",
+              "error_lines": [],
+              "warning_lines": [
+                "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:474: FutureWarning: The behavior of DatetimeProperties.to_pydatetime is deprecated, in a fut...[truncated]",
+                "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:512: UserWarning: This figure includes Axes that are not compatible with tight_layout, so re...[truncated]"
+              ],
+              "required_outputs": [],
+              "recommended_outputs": [],
+              "optional_outputs": [],
+              "missing_outputs": [],
+              "output_inventory": [
+                {
+                  "path": "figures",
+                  "type": "dir"
+                },
+                {
+                  "path": "intermediate",
+                  "type": "dir"
+                },
+                {
+                  "path": "logs",
+                  "type": "dir"
+                },
+                {
+                  "path": "tables",
+                  "type": "dir"
+                },
+                {
+                  "path": "figures/map_rose_near_mainshock64.png",
+                  "type": "file",
+                  "size_bytes": 838160
+                },
+                {
+                  "path": "figures/map_rose_near_mainshock71.png",
+                  "type": "file",
+                  "size_bytes": 835745
+                },
+                {
+                  "path": "figures/map_rose_whole_window_4h.png",
+                  "type": "file",
+                  "size_bytes": 1102352
+                },
+                {
+                  "path": "figures/radius_selection_diagnostics.png",
+                  "type": "file",
+                  "size_bytes": 108781
+                },
+                {
+                  "path": "figures/time_direction_heatmap_rstar.png",
+                  "type": "file",
+                  "size_bytes": 616871
+                },
+                {
+                  "path": "tables/analysis_catalog_with_intervals.csv",
+                  "type": "file",
+                  "size_bytes": 1051624
+                },
+                {
+                  "path": "tables/analysis_parameters.csv",
+                  "type": "file",
+                  "size_bytes": 350
+                },
+                {
+                  "path": "tables/analysis_qc_summary.csv",
+                  "type": "file",
+                  "size_bytes": 263
+                },
+                {
+                  "path": "tables/directional_L_matrix_rstar.csv",
+                  "type": "file",
+                  "size_bytes": 63412
+                },
+                {
+                  "path": "tables/directional_ripley_full_interval_radius_sector.csv",
+                  "type": "file",
+                  "size_bytes": 1928380
+                },
+                {
+                  "path": "tables/directional_transition_intervals.csv",
+                  "type": "file",
+                  "size_bytes": 4256
+                },
+                {
+                  "path": "tables/fault_orientation_families.csv",
+                  "type": "file",
+                  "size_bytes": 887
+                },
+                {
+                  "path": "tables/interval_definitions.csv",
+                  "type": "file",
+                  "size_bytes": 6094
+                },
+                {
+                  "path": "tables/interval_directional_summary.csv",
+                  "type": "file",
+                  "size_bytes": 15221
+                },
+                {
+                  "path": "tables/mainshock_metadata.csv",
+                  "type": "file",
+                  "size_bytes": 289
+                },
+                {
+                  "path": "tables/radius_selection_diagnostics.csv",
+                  "type": "file",
+                  "size_bytes": 351
+                }
+              ],
+              "output_inventory_truncated": true,
+              "artifact_validations": [
+                {
+                  "path": "figures/map_rose_near_mainshock64.png",
+                  "kind": "image",
+                  "size_bytes": 838160,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 4400,
+                    "height": 2200
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/map_rose_near_mainshock71.png",
+                  "kind": "image",
+                  "size_bytes": 835745,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 4400,
+                    "height": 2200
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/map_rose_whole_window_4h.png",
+                  "kind": "image",
+                  "size_bytes": 1102352,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 4400,
+                    "height": 2200
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/radius_selection_diagnostics.png",
+                  "kind": "image",
+                  "size_bytes": 108781,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 1760,
+                    "height": 1100
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "figures/time_direction_heatmap_rstar.png",
+                  "kind": "image",
+                  "size_bytes": 616871,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "width": 3520,
+                    "height": 1980
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "tables/analysis_catalog_with_intervals.csv",
+                  "kind": "csv",
+                  "size_bytes": 1051624,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "rows_sampled": 6334,
+                    "max_columns": 10
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "tables/analysis_parameters.csv",
+                  "kind": "csv",
+                  "size_bytes": 350,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "rows_sampled": 2,
+                    "max_columns": 10
+                  },
+                  "warnings": [],
+                  "error": null
+                },
+                {
+                  "path": "tables/analysis_qc_summary.csv",
+                  "kind": "csv",
+                  "size_bytes": 263,
+                  "readable": true,
+                  "empty": false,
+                  "valid": true,
+                  "summary": {
+                    "rows_sampled": 2,
+                    "max_columns": 8
+                  },
+                  "warnings": [],
+                  "error": null
+                }
+              ],
+              "artifact_validations_truncated": true,
+              "external_log_signals": [],
+              "external_log_signals_truncated": false,
+              "last_observed_line": "All requested analysis products generated successfully."
+            },
+            "last_runtime_observation": {
+              "task_name": "01_ridgecrest_directional_ripley_analysis",
+              "stage": "task_success",
+              "status": "success",
+              "timestamp": "2026-07-06T03:06:08.124920+00:00",
+              "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+              "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+              "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+              "returncode": 0,
+              "preflight": {
+                "passed": true,
+                "checks": [
+                  {
+                    "name": "script_exists",
+                    "passed": true,
+                    "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_command_startable",
+                    "passed": true,
+                    "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                    "evidence": []
+                  },
+                  {
+                    "name": "py_compile",
+                    "passed": true,
+                    "message": "Target runtime py_compile passed.",
+                    "evidence": []
+                  },
+                  {
+                    "name": "subprocess_timeout_contract",
+                    "passed": true,
+                    "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                    "evidence": []
+                  },
+                  {
+                    "name": "output_dir_writable",
+                    "passed": true,
+                    "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_python_version",
+                    "passed": true,
+                    "message": "Runtime Python version: 3.9",
+                    "evidence": []
+                  },
+                  {
+                    "name": "runtime_annotation_compatibility",
+                    "passed": true,
+                    "message": "Runtime annotation compatibility check passed.",
+                    "evidence": []
+                  }
+                ],
+                "diagnosis": null,
+                "recommended_action": ""
+              },
+              "diagnosis": null,
+              "result_check_diagnosis": null,
+              "debug_context": {
+                "task_name": "01_ridgecrest_directional_ripley_analysis",
+                "stage": "result_check_input",
+                "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+                "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                "returncode": 0,
+                "failure_type": null,
+                "recommended_action": null,
+                "log_size_bytes": 6762,
+                "core_error": "All requested analysis products generated successfully.",
+                "traceback_tail": "",
+                "error_lines": [],
+                "warning_lines": [
+                  "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:474: FutureWarning: The behavior of DatetimeProperties.to_pydatetime is deprecated, in a fut...[truncated]",
+                  "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:512: UserWarning: This figure includes Axes that are not compatible with tight_layout, so re...[truncated]"
+                ],
+                "required_outputs": [],
+                "recommended_outputs": [],
+                "optional_outputs": [],
+                "missing_outputs": [],
+                "output_inventory": [
+                  {
+                    "path": "figures",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "intermediate",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "logs",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "tables",
+                    "type": "dir"
+                  },
+                  {
+                    "path": "figures/map_rose_near_mainshock64.png",
+                    "type": "file",
+                    "size_bytes": 838160
+                  },
+                  {
+                    "path": "figures/map_rose_near_mainshock71.png",
+                    "type": "file",
+                    "size_bytes": 835745
+                  },
+                  {
+                    "path": "figures/map_rose_whole_window_4h.png",
+                    "type": "file",
+                    "size_bytes": 1102352
+                  },
+                  {
+                    "path": "figures/radius_selection_diagnostics.png",
+                    "type": "file",
+                    "size_bytes": 108781
+                  },
+                  {
+                    "path": "figures/time_direction_heatmap_rstar.png",
+                    "type": "file",
+                    "size_bytes": 616871
+                  },
+                  {
+                    "path": "tables/analysis_catalog_with_intervals.csv",
+                    "type": "file",
+                    "size_bytes": 1051624
+                  },
+                  {
+                    "path": "tables/analysis_parameters.csv",
+                    "type": "file",
+                    "size_bytes": 350
+                  },
+                  {
+                    "path": "tables/analysis_qc_summary.csv",
+                    "type": "file",
+                    "size_bytes": 263
+                  },
+                  {
+                    "path": "tables/directional_L_matrix_rstar.csv",
+                    "type": "file",
+                    "size_bytes": 63412
+                  },
+                  {
+                    "path": "tables/directional_ripley_full_interval_radius_sector.csv",
+                    "type": "file",
+                    "size_bytes": 1928380
+                  },
+                  {
+                    "path": "tables/directional_transition_intervals.csv",
+                    "type": "file",
+                    "size_bytes": 4256
+                  },
+                  {
+                    "path": "tables/fault_orientation_families.csv",
+                    "type": "file",
+                    "size_bytes": 887
+                  },
+                  {
+                    "path": "tables/interval_definitions.csv",
+                    "type": "file",
+                    "size_bytes": 6094
+                  },
+                  {
+                    "path": "tables/interval_directional_summary.csv",
+                    "type": "file",
+                    "size_bytes": 15221
+                  },
+                  {
+                    "path": "tables/mainshock_metadata.csv",
+                    "type": "file",
+                    "size_bytes": 289
+                  },
+                  {
+                    "path": "tables/radius_selection_diagnostics.csv",
+                    "type": "file",
+                    "size_bytes": 351
+                  }
+                ],
+                "output_inventory_truncated": true,
+                "artifact_validations": [
+                  {
+                    "path": "figures/map_rose_near_mainshock64.png",
+                    "kind": "image",
+                    "size_bytes": 838160,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 4400,
+                      "height": 2200
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/map_rose_near_mainshock71.png",
+                    "kind": "image",
+                    "size_bytes": 835745,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 4400,
+                      "height": 2200
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/map_rose_whole_window_4h.png",
+                    "kind": "image",
+                    "size_bytes": 1102352,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 4400,
+                      "height": 2200
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/radius_selection_diagnostics.png",
+                    "kind": "image",
+                    "size_bytes": 108781,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 1760,
+                      "height": 1100
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "figures/time_direction_heatmap_rstar.png",
+                    "kind": "image",
+                    "size_bytes": 616871,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "width": 3520,
+                      "height": 1980
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "tables/analysis_catalog_with_intervals.csv",
+                    "kind": "csv",
+                    "size_bytes": 1051624,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "rows_sampled": 6334,
+                      "max_columns": 10
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "tables/analysis_parameters.csv",
+                    "kind": "csv",
+                    "size_bytes": 350,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "rows_sampled": 2,
+                      "max_columns": 10
+                    },
+                    "warnings": [],
+                    "error": null
+                  },
+                  {
+                    "path": "tables/analysis_qc_summary.csv",
+                    "kind": "csv",
+                    "size_bytes": 263,
+                    "readable": true,
+                    "empty": false,
+                    "valid": true,
+                    "summary": {
+                      "rows_sampled": 2,
+                      "max_columns": 8
+                    },
+                    "warnings": [],
+                    "error": null
+                  }
+                ],
+                "artifact_validations_truncated": true,
+                "external_log_signals": [],
+                "external_log_signals_truncated": false,
+                "last_observed_line": "All requested analysis products generated successfully."
+              },
+              "message": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Minor layout crowding is present in the time-direction heatmap and some composite panels, but not enough to undermine usability or task completion.",
+              "metadata": {}
+            },
+            "last_runtime_action": {
+              "action_type": "pass",
+              "retry_allowed": false,
+              "priority": "low",
+              "reason": "The latest runtime observation passed.",
+              "prompt_focus": [
+                "Proceed to the next workflow step."
+              ],
+              "recommended_action": "no_retry_needed"
+            },
+            "runtime_action_history": [
+              {
+                "timestamp": "2026-07-06T02:55:45.951750+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T02:55:46.001490+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T02:56:04.772304+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T02:56:04.827227+00:00",
+                "stage": "preflight",
+                "status": "failed",
+                "action": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T02:56:24.798497+00:00",
+                "stage": "preflight",
+                "status": "passed",
+                "action": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                }
+              },
+              {
+                "timestamp": "2026-07-06T03:04:48.889094+00:00",
+                "stage": "result_check_input",
+                "status": "ready",
+                "action": {
+                  "action_type": "inspect_observation",
+                  "retry_allowed": false,
+                  "priority": "medium",
+                  "reason": "Inspect the unified runtime observation before deciding the next change.",
+                  "prompt_focus": [
+                    "Runtime observation, logs, outputs, handoffs, and retrieved/local evidence."
+                  ],
+                  "recommended_action": null
+                }
+              },
+              {
+                "timestamp": "2026-07-06T03:06:08.124920+00:00",
+                "stage": "task_success",
+                "status": "success",
+                "action": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                }
+              }
+            ],
+            "debug_trace": {
+              "task_name": "01_ridgecrest_directional_ripley_analysis",
+              "attempts": [
+                {
+                  "round_index": 1,
+                  "result_check_round": 0,
+                  "stage": "preflight",
+                  "status": "failed",
+                  "action_type": "inspect_preflight_evidence",
+                  "failure_signature": "34b7cb4dfabc",
+                  "root_failure_signature": "34b7cb4dfabc",
+                  "repeated_count": 1,
+                  "feedback": "<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\n- runtime_command_startable: passed\n  message: Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n- py_compile: failed\n  message: Traceback (most recent call la...[truncated]",
+                  "outcome": "failed",
+                  "resolved": false,
+                  "timestamp": "2026-07-06T02:55:46.001699+00:00"
+                },
+                {
+                  "round_index": 2,
+                  "result_check_round": 0,
+                  "stage": "preflight",
+                  "status": "failed",
+                  "action_type": "inspect_preflight_evidence",
+                  "failure_signature": "34b7cb4dfabc",
+                  "root_failure_signature": "34b7cb4dfabc",
+                  "repeated_count": 2,
+                  "feedback": "<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\n- runtime_command_startable: passed\n  message: Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python\n- py_compile: failed\n  message: Traceback (most recent call la...[truncated]",
+                  "outcome": "failed",
+                  "resolved": false,
+                  "timestamp": "2026-07-06T02:56:04.827453+00:00"
+                },
+                {
+                  "round_index": 3,
+                  "result_check_round": 1,
+                  "stage": "task_success",
+                  "status": "success",
+                  "action_type": "pass",
+                  "failure_signature": "15e10d31c910",
+                  "root_failure_signature": "15e10d31c910",
+                  "repeated_count": 1,
+                  "feedback": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Minor layout crowding is present in the time-direction heatmap and some composite panels, but not enough to undermine usability or task completion.",
+                  "outcome": "success",
+                  "resolved": true,
+                  "timestamp": "2026-07-06T03:06:08.125429+00:00"
+                }
+              ],
+              "current_hypothesis": "Latest failure evidence: The latest runtime observation passed.",
+              "lessons": [
+                "Failure signature 34b7cb4dfabc repeated 2 times; avoid repeating the same patch strategy."
+              ]
+            },
+            "last_debug_memory": "task_name: 01_ridgecrest_directional_ripley_analysis\nattempts_recorded: 3\nrepeated_failure_signatures:\n- 34b7cb4dfabc: 2\nrecent_attempts:\n- round=1, stage=preflight, status=failed, signature=34b7cb4dfabc, root_signature=34b7cb4dfabc, repeated=1, outcome=failed, feedback=<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <REPO_ROOT>/examples/ridgecrest/...[truncated]\n- round=2, stage=preflight, status=failed, signature=34b7cb4dfabc, root_signature=34b7cb4dfabc, repeated=2, outcome=failed, feedback=<preflight_failure>\npassed: False\nchecks:\n- script_exists: passed\n  message: Script file exists: <REPO_ROOT>/examples/ridgecrest/...[truncated]\n- round=3, stage=task_success, status=success, signature=15e10d31c910, root_signature=15e10d31c910, repeated=1, outcome=success, feedback=Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and...[truncated]\ncurrent_hypothesis: Latest failure evidence: The latest runtime observation passed.\nlessons:\n- Failure signature 34b7cb4dfabc repeated 2 times; avoid repeating the same patch strategy.",
+            "last_code_change": {
+              "round_index": 3,
+              "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+              "task_name": "01_ridgecrest_directional_ripley_analysis",
+              "timestamp": "2026-07-06T02:56:24.060749+00:00",
+              "script_hash_before": "0918495367abd79892772cfa679eb67640cb3142582ac0d0acae2a2aa8487376",
+              "script_hash_after": "4b8dca47501fa9686b58733bd3eb99ef6d32b207a017271be927e7e1930f6b30",
+              "changed": true,
+              "changed_lines": 24,
+              "diff_summary": "--- before/01_ridgecrest_directional_ripley_analysis.py\n+++ after/01_ridgecrest_directional_ripley_analysis.py\n@@ -859,28 +859,6 @@\n     save_dataframe(param_df, dirs['tables'] / 'analysis_parameters.csv')\n \n     validation_df = pd.DataFrame(\n-         {\n-             'check': [\n-                 'interval_count_matches_matrix',\n-                 'sector_count_is_72',\n-                 'mainshock64_present',\n-                 'mainshock71_present',\n-                 'representative_windows_nonempty',\n--                'valid_intervals_present',\n-+                'valid_intervals_present',\n-+                'interval_summary_count_matches_intervals',\n-             ],\n-             'passed': [\n-                 len(interval_df) == L_matrix.shape[0],\n-                 L_matrix.shape[1] == N_SECTORS,\n-                 (mainshock_df['label'] == 'Mainshock64').any(),\n-                 (mainshock_df['label'] == 'Mainshock71').any(),\n-                 len(rep_df) > 0,\n-                 bool(interval_summary['valid'].any()),\n-+                len(interval_summary) == len(interval_df),\n-             ],\n-         }\n-     )\n         {\n             'check': [\n                 'interval_count_matches_matrix',\n@@ -889,6 +867,7 @@\n                 'mainshock71_present',\n                 'representative_windows_nonempty',\n                 'valid_intervals_present',\n+                'interval_summary_count_matches_intervals',\n             ],\n             'passed': [\n                 len(interval_df) == L_matrix.shape[0],\n@@ -897,6 +876,7 @@\n                 (mainshock_df['label'] == 'Mainshock71').any(),\n                 len(rep_df) > 0,\n                 bool(interval_summary['valid'].any()),\n+                len(interval_summary) == len(interval_df),\n             ],\n         }\n     )",
+              "diff_truncated": false,
+              "coding_response_summary": "Fixed the second preflight syntax failure.\n\nWhat changed:\n- Removed leftover diff-marker artifacts and the duplicated malformed `validation_df` block near the end of the script.\n- Replaced it with one clean, properly indented `validation_df = pd.DataFrame(...)` definition.\n\nThis directly addresses the `IndentationError: unexpected indent` at line 884.",
+              "runtime_action_before": {
+                "action_type": "inspect_preflight_evidence",
+                "retry_allowed": false,
+                "priority": "high",
+                "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                "prompt_focus": [
+                  "Preflight checks and evidence.",
+                  "Generated script path, runtime command, and output directory."
+                ],
+                "recommended_action": null
+              },
+              "runtime_observation_after": {
+                "task_name": "01_ridgecrest_directional_ripley_analysis",
+                "stage": "task_success",
+                "status": "success",
+                "timestamp": "2026-07-06T03:06:08.124920+00:00",
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+                "returncode": 0,
+                "preflight": {
+                  "passed": true,
+                  "checks": [
+                    {
+                      "name": "script_exists",
+                      "passed": true,
+                      "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_command_startable",
+                      "passed": true,
+                      "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                      "evidence": []
+                    },
+                    {
+                      "name": "py_compile",
+                      "passed": true,
+                      "message": "Target runtime py_compile passed.",
+                      "evidence": []
+                    },
+                    {
+                      "name": "subprocess_timeout_contract",
+                      "passed": true,
+                      "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                      "evidence": []
+                    },
+                    {
+                      "name": "output_dir_writable",
+                      "passed": true,
+                      "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_python_version",
+                      "passed": true,
+                      "message": "Runtime Python version: 3.9",
+                      "evidence": []
+                    },
+                    {
+                      "name": "runtime_annotation_compatibility",
+                      "passed": true,
+                      "message": "Runtime annotation compatibility check passed.",
+                      "evidence": []
+                    }
+                  ],
+                  "diagnosis": null,
+                  "recommended_action": ""
+                },
+                "diagnosis": null,
+                "result_check_diagnosis": null,
+                "debug_context": {
+                  "task_name": "01_ridgecrest_directional_ripley_analysis",
+                  "stage": "result_check_input",
+                  "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                  "returncode": 0,
+                  "failure_type": null,
+                  "recommended_action": null,
+                  "log_size_bytes": 6762,
+                  "core_error": "All requested analysis products generated successfully.",
+                  "traceback_tail": "",
+                  "error_lines": [],
+                  "warning_lines": [
+                    "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:474: FutureWarning: The behavior of DatetimeProperties.to_pydatetime is deprecated, in a fut...[truncated]",
+                    "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:512: UserWarning: This figure includes Axes that are not compatible with tight_layout, so re...[truncated]"
+                  ],
+                  "required_outputs": [],
+                  "recommended_outputs": [],
+                  "optional_outputs": [],
+                  "missing_outputs": [],
+                  "output_inventory": [
+                    {
+                      "path": "figures",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "intermediate",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "logs",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "tables",
+                      "type": "dir"
+                    },
+                    {
+                      "path": "figures/map_rose_near_mainshock64.png",
+                      "type": "file",
+                      "size_bytes": 838160
+                    },
+                    {
+                      "path": "figures/map_rose_near_mainshock71.png",
+                      "type": "file",
+                      "size_bytes": 835745
+                    },
+                    {
+                      "path": "figures/map_rose_whole_window_4h.png",
+                      "type": "file",
+                      "size_bytes": 1102352
+                    },
+                    {
+                      "path": "figures/radius_selection_diagnostics.png",
+                      "type": "file",
+                      "size_bytes": 108781
+                    },
+                    {
+                      "path": "figures/time_direction_heatmap_rstar.png",
+                      "type": "file",
+                      "size_bytes": 616871
+                    },
+                    {
+                      "path": "tables/analysis_catalog_with_intervals.csv",
+                      "type": "file",
+                      "size_bytes": 1051624
+                    },
+                    {
+                      "path": "tables/analysis_parameters.csv",
+                      "type": "file",
+                      "size_bytes": 350
+                    },
+                    {
+                      "path": "tables/analysis_qc_summary.csv",
+                      "type": "file",
+                      "size_bytes": 263
+                    },
+                    {
+                      "path": "tables/directional_L_matrix_rstar.csv",
+                      "type": "file",
+                      "size_bytes": 63412
+                    },
+                    {
+                      "path": "tables/directional_ripley_full_interval_radius_sector.csv",
+                      "type": "file",
+                      "size_bytes": 1928380
+                    },
+                    {
+                      "path": "tables/directional_transition_intervals.csv",
+                      "type": "file",
+                      "size_bytes": 4256
+                    },
+                    {
+                      "path": "tables/fault_orientation_families.csv",
+                      "type": "file",
+                      "size_bytes": 887
+                    },
+                    {
+                      "path": "tables/interval_definitions.csv",
+                      "type": "file",
+                      "size_bytes": 6094
+                    },
+                    {
+                      "path": "tables/interval_directional_summary.csv",
+                      "type": "file",
+                      "size_bytes": 15221
+                    },
+                    {
+                      "path": "tables/mainshock_metadata.csv",
+                      "type": "file",
+                      "size_bytes": 289
+                    },
+                    {
+                      "path": "tables/radius_selection_diagnostics.csv",
+                      "type": "file",
+                      "size_bytes": 351
+                    }
+                  ],
+                  "output_inventory_truncated": true,
+                  "artifact_validations": [
+                    {
+                      "path": "figures/map_rose_near_mainshock64.png",
+                      "kind": "image",
+                      "size_bytes": 838160,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 4400,
+                        "height": 2200
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/map_rose_near_mainshock71.png",
+                      "kind": "image",
+                      "size_bytes": 835745,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 4400,
+                        "height": 2200
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/map_rose_whole_window_4h.png",
+                      "kind": "image",
+                      "size_bytes": 1102352,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 4400,
+                        "height": 2200
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/radius_selection_diagnostics.png",
+                      "kind": "image",
+                      "size_bytes": 108781,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 1760,
+                        "height": 1100
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "figures/time_direction_heatmap_rstar.png",
+                      "kind": "image",
+                      "size_bytes": 616871,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "width": 3520,
+                        "height": 1980
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "tables/analysis_catalog_with_intervals.csv",
+                      "kind": "csv",
+                      "size_bytes": 1051624,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "rows_sampled": 6334,
+                        "max_columns": 10
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "tables/analysis_parameters.csv",
+                      "kind": "csv",
+                      "size_bytes": 350,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "rows_sampled": 2,
+                        "max_columns": 10
+                      },
+                      "warnings": [],
+                      "error": null
+                    },
+                    {
+                      "path": "tables/analysis_qc_summary.csv",
+                      "kind": "csv",
+                      "size_bytes": 263,
+                      "readable": true,
+                      "empty": false,
+                      "valid": true,
+                      "summary": {
+                        "rows_sampled": 2,
+                        "max_columns": 8
+                      },
+                      "warnings": [],
+                      "error": null
+                    }
+                  ],
+                  "artifact_validations_truncated": true,
+                  "external_log_signals": [],
+                  "external_log_signals_truncated": false,
+                  "last_observed_line": "All requested analysis products generated successfully."
+                },
+                "message": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Minor layout crowding is present in the time-direction heatmap and some composite panels, but not enough to undermine usability or task completion.",
+                "metadata": {}
+              },
+              "runtime_action_after": {
+                "action_type": "pass",
+                "retry_allowed": false,
+                "priority": "low",
+                "reason": "The latest runtime observation passed.",
+                "prompt_focus": [
+                  "Proceed to the next workflow step."
+                ],
+                "recommended_action": "no_retry_needed"
+              },
+              "outcome": "success",
+              "metadata": {
+                "before_exists": true,
+                "after_exists": true,
+                "before_size_bytes": 41164,
+                "after_size_bytes": 40418,
+                "before_truncated": false,
+                "after_truncated": false
+              }
+            },
+            "code_change_history": [
+              {
+                "round_index": 1,
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                "task_name": "01_ridgecrest_directional_ripley_analysis",
+                "timestamp": "2026-07-06T02:55:45.545072+00:00",
+                "script_hash_before": null,
+                "script_hash_after": "d6d291edddabf4dc49451e5523a0656d633c482e66ee0318d5fb05c74c73391d",
+                "changed": true,
+                "changed_lines": 919,
+                "diff_summary": "--- before/01_ridgecrest_directional_ripley_analysis.py\n+++ after/01_ridgecrest_directional_ripley_analysis.py\n@@ -0,0 +1,919 @@\n+from __future__ import annotations\n+\n+import json\n+import math\n+import os\n+import sys\n+import traceback\n+from concurrent.futures import ProcessPoolExecutor, as_completed\n+from dataclasses import dataclass\n+from pathlib import Path\n+from typing import Dict, Iterable, List, Optional, Sequence, Tuple\n+\n+import matplotlib\n+matplotlib.use('Agg')\n+import matplotlib.dates as mdates\n+import matplotlib.pyplot as plt\n+import numpy as np\n+import pandas as pd\n+from matplotlib import colors\n+from mpl_toolkits.axes_grid1.inset_locator import inset_axes\n+from pyproj import CRS, Transformer\n+from scipy.spatial import ConvexHull\n+from scipy.spatial.distance import cdist\n+from tqdm import tqdm\n+\n+\n+SCRIPT_PATH = Path(__file__).resolve()\n+OUTPUT_DIR = Path(\n+    \"<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis\"\n+).resolve()\n+CATALOG_PATH = Path(\n+    \"<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv\"\n+).resolve()\n+MAINSHOCK_PATH = Path(\n+    \"<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv\"\n+).resolve()\n+FAULT_PATH = Path(\n+    \"<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json\"\n+).resolve()\n+\n+INTERVAL_MINUTES = 30\n+WHOLE_WINDOW_HOURS = 4\n+N_REP_WINDOWS = 8\n+SECTOR_WIDTH_DEG = 5.0\n+N_SECTORS = int(360 / SECTOR_WIDTH_DEG)\n+AZIMUTH_EDGES = np.linspace(0.0, 360.0, N_SECTORS + 1)\n+AZIMUTH_CENTERS = (AZIMUTH_EDGES[:-1] + AZIMUTH_EDGES[1:]) / 2.0\n+EARTH_RADIUS_KM = 6371.0\n+MAX_CORES = 64\n+MIN_EVENTS_INTERVAL = 8\n+MIN_PAIRS_REQUIRED = 20\n+BUFFER_KM = 3.0\n+PAIR_BLOCK_SIZE = 2500\n+FIG_DPI = 220\n+\n+\n+@dataclass(frozen=True)\n+class RipleyParams:\n+    study_area_km2: float\n+    r_values_km: np.ndarray\n+    r_star_km: float\n+    sector_width_deg: float\n+    min_events: int\n+    min_pairs: int\n+\n+\n+def log(msg: str) -> None:\n+    print(msg, flush=True)\n+\n+\n+def ensure_output_dirs() -> Dict[str, Path]:\n+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)\n+    subdirs = {\n+        'tables': OUTPUT_DIR / 'tables',\n+        'figures': OUTPUT_DIR / 'figures',\n+        'intermediate': OUTPUT_DIR / 'intermediate',\n+        'logs': OUTPUT_DIR / 'logs',\n+    }\n+    for path in subdirs.values():\n+        path.mkdir(parents=True, exist_ok=True)\n+    stale_patterns = [\n+        'tables/*.csv',\n+        'figures/*.png',\n+        'figures/*.jpg',\n+        'intermediate/*.csv',\n+        'intermediate/*.npy',\n+        'logs/*.log',\n+        'logs/*.txt',\n+    ]\n+    removed = 0\n+    for pattern in stale_patterns:\n+        for old_path in OUTPUT_DIR.glob(pattern):\n+            if old_path.is_file():\n+                old_path.unlink()\n+                removed += 1\n+    log(f'Prepared output directory and removed {removed} stale derived files from prior runs.')\n+    return subdirs\n+\n+\n+def load_faults(path: Path) -> List[np.ndarray]:\n+    with path.open('r', encoding='utf-8') as f:\n+        data = json.load(f)\n+    faults = []\n+    for seg in data:\n+        arr = np.asarray(seg, dtype=float)\n+        if arr.ndim == 2 and arr.shape[1] == 2 and len(arr) >= 2:\n+            faults.append(arr)\n+    return faults\n+\n+\n+def infer_local_crs(lon0: float, lat0: float) -> CRS:\n+    zone = int(math.floor((lon0 + 180.0) / 6.0) + 1)\n+    epsg = 32600 + zone if lat0 >= 0 else 32700 + zone\n+    return CRS.from_epsg(epsg)\n+\n+\n+def project_points(lons: np.ndarray, lats: np.ndarray, transformer: Transformer) -> Tuple[np.ndarray, np.ndarray]:\n+    x_m, y_m = transformer.transform(lons, lats)\n+    return np.asarray(x_m) / 1000.0, np.asarray(y_m) / 1000.0\n+\n+\n+def polygon_area_km2(points: np.ndarray) -> float:\n+    x = points[:, 0]\n+    y = points[:, 1]\n+    return 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))\n+\n+\n+def compute_buffered_hull_area(points_xy: np.ndarray, buffer_km: float) -> Tuple[float, np.ndarray]:\n+    if len(points_xy) < 3:\n+        x_min, y_min = points_xy.min(axis=0) - buffer_km\n+        x_max, y_max = points_xy.max(axis=0) + buffer_km\n+        box = np.array([[x_min, y_min], [x_max, y_min], [x_max, y_max], [x_min, y_max]])\n+        return polygon_area_km2(box), box\n+    hull = ConvexHull(points_xy)\n+    hull_points = points_xy[hull.vertices]\n+    perimeter = np.sum(np.sqrt(np.sum(np.diff(np.vstack([hull_points, hull_points[0]]), axis=0) ** 2, axis=1)))\n+    area = polygon_area_km2(hull_points)\n+    buffered_area = area + perimeter * buffer_km + math.pi * buffer_km * buffer_km\n+    return buffered_area, hull_points\n+\n+\n+def circular_difference_deg(a: float, b: float) -> float:\n+    d = abs(a - b) % 360.0\n+    return min(d, 360.0 - d)\n+\n+\n+def compute_orientation_family_from_faults(\n+    faults: List[np.ndarray], transformer: Transformer\n+) -> Tuple[pd.DataFrame, List[float]]:\n+    orientations = []\n+    lengths = []\n+    for seg in faults:\n+        x, y = project_points(seg[:, 0], seg[:, 1], transformer)\n+        dx = np.diff(x)\n+        dy = np.diff(y)\n+        seg_len = np.sqrt(dx ** 2 + dy ** 2)\n+        good = seg_len > 0\n+        if np.any(good):\n+            az = (np.degrees(np.arctan2(dy[good], dx[good])) + 360.0) % 180.0\n+            orientations.extend(az.tolist())\n+            lengths.extend(seg_len[good].tolist())\n+    if not orientations:\n+        return pd.DataFrame(columns=['orientation_deg', 'weight']), []\n+    orientations = np.asarray(orientations)\n+    lengths = np.asarray(lengths)\n+    bins = np.arange(0.0, 185.0, 5.0)\n+    bin_idx = np.digitize(orientations, bins) - 1\n+    rows = []\n+    for i in range(len(bins) - 1):\n+        mask = bin_idx == i\n+        if np.any(mask):\n+            rows.append({'orientation_deg': (bins[i] + bins[i + 1]) / 2.0, 'weight': float(lengths[mask].sum())})\n+    df = pd.DataFrame(rows).sort_values('weight', ascending=False)\n+    top_orients = df.head(4)['orientation_deg'].tolist()\n+    return df, top_orients\n+\n+\n+def choose_representative_indices(valid_indices: Sequence[int], n_select: int) -> List[int]:\n+    valid_indices = sorted(set(int(i) for i in valid_indices))\n+    if not valid_indices:\n+        return []\n+    if len(valid_indices) <= n_select:\n+        return valid_indices\n+    target = np.linspace(0, len(valid_indices) - 1, n_select)\n+    chosen = []\n+    used = set()\n+    for t in target:\n+        candidates = np.argsort(np.abs(np.arange(len(valid_indices)) - t))\n+        for c in candidates:\n+            idx = valid_indices[int(c)]\n+            if idx not in used:\n+                chosen.append(idx)\n+                used.add(idx)\n+                break\n+    return sorted(chosen)\n+\n+\n+def pairwise_directional_counts(coords_xy: np.ndarray, r_values_km: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:\n+     n = len(coords_xy)\n+     counts = np.zeros((len(r_values_km), N_SECTORS), dtype=np.float64)\n+     pair_counts_r = np.zeros(len(r_values_km), dtype=np.int64)\n+     pair_total = 0\n+     if n < 2:\n+-        return counts, pair_counts_r, np.array([], dtype=float)\n++        return counts, pair_counts_r, np.array([0], dtype=float)\n+    n = len(coords_xy)\n+    counts = np.zeros((len(r_values_km), N_SECTORS), dtype=np.float64)\n+    pair_counts_r = np.zeros(len(r_values_km), dtype=np.int64)\n+    pair_total = 0\n+    if n < 2:\n+        return counts, pair_counts_r, np.array([], dtype=float)\n+    max_r = float(np.max(r_values_km))\n+    for start in range(0, n - 1, PAIR_BLOCK_SIZE):\n+        end = min(n - 1, start + PAIR_BLOCK_SIZE)\n+        xi = coords_xy[start:end]\n+        for i_local, i in enumerate(range(start, end)):\n+            diff = coords_xy[i + 1:] - xi[i_local]\n+            if diff.size == 0:\n+                continue\n+            dist = np.sqrt(np.sum(diff ** 2, axis=1))\n+            keep = dist <= max_r\n+            if not np.any(keep):\n+                continue\n+            diff = diff[keep]\n+            dist = dist[keep]\n+            az = (np.degrees(np.arctan2(diff[:, 1], diff[:, 0])) + 360.0) % 360.0\n+            pair_total += len(dist)\n+            sector_idx = np.floor(az / SECTOR_WIDTH_DEG).astype(int) % N_SECTORS\n+            for ir, r in enumerate(r_values_km):\n+                m = dist <= r\n+                if not np.any(m):\n+                    continue\n+                pair_counts_r[ir] += int(np.count_nonzero(m))\n+                binc = np.bincount(sector_idx[m], minlength=N_SECTORS)\n+                counts[ir] += binc\n+    return counts, pair_counts_r, np.array([pair_total], dtype=float)\n+\n+\n+def sector_ripley_for_coords(coords_xy: np.ndarray, params: RipleyParams) -> Dict[str, np.ndarray]:\n+    n = len(coords_xy)\n+    empty = {\n+        'K_by_r_theta': np.full((len(params.r_values_km), N_SECTORS), np.nan, dtype=float),\n+        'L_by_r_theta': np.full((len(params.r_values_km), N_SECTORS), np.nan, dtype=float),\n+        'pair_counts_r': np.zeros(len(params.r_values_km), dtype=int),\n+        'event_count': np.array([n], dtype=int),\n+        'pair_total_within_rmax': np.array([0], dtype=int),\n+    }\n+    if n < 2:\n+        return empty\n+    counts, pair_counts_r, pair_total = pairwise_directional_counts(coords_xy, params.r_values_km)\n+    density_factor = params.study_area_km2 / (n * (n - 1))\n+    sector_fraction = params.sector_width_deg / 360.0\n+    K = density_factor * counts / sector_fraction\n+    L = np.sqrt(np.maximum(K, 0.0) / math.pi)\n+    return {\n+        'K_by_r_theta': K,\n+        'L_by_r_theta': L,\n+        'pair_counts_r': pair_counts_r,\n+        'event_count': np.array([n], dtype=int),\n+        'pair_total_within_rmax': pair_total.astype(int),\n+    }\n+\n+\n+def smooth_circular(values: np.ndarray, passes: int = 1) -> np.ndarray:\n+    out = values.astype(float).copy()\n+    for _ in range(passes):\n+        out = 0.25 * np.roll(out, 1) + 0.5 * out + 0.25 * np.roll(out, -1)\n+    return out\n+\n+\n+def extract_direction_metrics(L_theta: np.ndarray, pair_count: int, params: RipleyParams) -> Dict[str, float]:\n+    result = {\n+        'dominant_azimuth_deg': np.nan,\n+        'secondary_azimuth_deg': np.nan,\n+        'anisotropy_strength': np.nan,\n+        'circular_resultant': np.nan,\n+        'valid': False,\n+    }\n+    if np.all(~np.isfinite(L_theta)) or pair_count < params.min_pairs:\n+        return result\n+    sm = smooth_circular(L_theta, passes=1)\n+    dominant_idx = int(np.nanargmax(sm))\n+    dominant = float(AZIMUTH_CENTERS[dominant_idx])\n+    exclusion = 3\n+    candidate = sm.copy()\n+    for k in range(-exclusion, exclusion + 1):\n+        candidate[(dominant_idx + k) % N_SECTORS] = -np.inf\n+    secondary_idx = int(np.argmax(candidate)) if np.isfinite(candidate).any() else dominant_idx\n+    secondary = float(AZIMUTH_CENTERS[secondary_idx])\n+    mean_val = float(np.nanmean(sm))\n+    max_val = float(np.nanmax(sm))\n+    min_val = float(np.nanmin(sm))\n+    anis = (max_val - mean_val) / (abs(mean_val) + 1e-9)\n+    weights = np.maximum(sm - min_val, 0.0) + 1e-6\n+    ang = np.deg2rad(AZIMUTH_CENTERS)\n+    resultant = np.sqrt((np.sum(weights * np.cos(ang)) / np.sum(weights)) ** 2 + (np.sum(weights * np.sin(ang)) / np.sum(weights)) ** 2)\n+    result.update(\n+        {\n+            'dominant_azimuth_deg': dominant,\n+            'secondary_azimuth_deg': secondary,\n+            'anisotropy_strength': anis,\n+            'circular_resultant': float(resultant),\n+            'valid': True,\n+        }\n+    )\n+    return result\n+\n+\n+def compute_interval_job(args: Tuple[int, np.ndarray, RipleyParams]) -> Dict[str, object]:\n+    interval_id, coords_xy, params = args\n+    stats = sector_ripley_for_coords(coords_xy, params)\n+    r_star_idx = int(np.argmin(np.abs(params.r_values_km - params.r_star_km)))\n+    L_star = stats['L_by_r_theta'][r_star_idx]\n+    pair_count_star = int(stats['pair_counts_r'][r_star_idx])\n+    metrics = extract_direction_metrics(L_star, pair_count_star, params)\n+    return {\n+        'interval_id': interval_id,\n+        'K_by_r_theta': stats['K_by_r_theta'],\n+        'L_by_r_theta': stats['L_by_r_theta'],\n+        'pair_counts_r': stats['pair_counts_r'],\n+        'event_count': int(stats['event_count'][0]),\n+        'pair_total_within_rmax': int(stats['pair_total_within_rmax'][0]),\n+        'L_theta_rstar': L_star,\n+        'pair_count_rstar': pair_count_star,\n+        **metrics,\n+    }\n+\n+\n+def save_dataframe(df: pd.DataFrame, path: Path) -> None:\n+    df.to_csv(path, index=False)\n+    log(f'Saved table: {path}')\n+\n+\n+def build_representative_windows(\n+    interval_df: pd.DataFrame,\n+    analysis_start: pd.Timestamp,\n+    analysis_end: pd.Timestamp,\n+    t64: pd.Timestamp,\n+    t71: pd.Timestamp,\n+) -> pd.DataFrame:\n+    rows = []\n+\n+    total_duration_h = (analysis_end - analysis_start).total_seconds() / 3600.0\n+    if total_duration_h <= WHOLE_WINDOW_HOURS:\n+        start_times = [analysis_start]\n+    else:\n+        offsets_h = np.linspace(0.0, total_duration_h - WHOLE_WINDOW_HOURS, N_REP_WINDOWS)\n+        start_times = [analysis_start + pd.Timedelta(hours=float(h)) for h in offsets_h]\n+    for i, st in enumerate(start_times):\n+        et = min(st + pd.Timedelta(hours=WHOLE_WINDOW_HOURS), analysis_end)\n+        rows.append({'figure_group': 'whole_window_4h', 'window_rank': i + 1, 'window_start': st, 'window_end': et})\n+\n+    after64 = interval_df[(interval_df['start_time'] >= t64) & (interval_df['start_time'] < t71)]\n+    before71 = interval_df[(interval_df['start_time'] >= t64) & (interval_df['start_time'] < t71)]\n+\n+    idx_after64 = choose_representative_indices(after64['interval_id'].tolist(), N_REP_WINDOWS)\n+    idx_before71 = choose_representative_indices(before71['interval_id'].tolist(), N_REP_WINDOWS)\n+\n+    for i, iid in enumerate(idx_after64):\n+        row = interval_df.loc[interval_df['interval_id'] == iid].iloc[0]\n+        rows.append({'figure_group': 'near_mainshock64_30m', 'window_rank': i + 1, 'window_start': row['start_time'], 'window_end': row['end_time'], 'interval_id': iid})\n+    for i, iid in enumerate(idx_before71):\n+        row = interval_df.loc[interval_df['interval_id'] == iid].iloc[0]\n+        rows.append({'figure_group': 'near_mainshock71_30m', 'window_rank': i + 1, 'window_start': row['start_time'], 'window_end': row['end_time'], 'interval_id': iid})\n+\n+    rep_df = pd.DataFrame(rows)\n+    rep_df['window_label'] = rep_df['figure_group'] + '_w' + rep_df['window_rank'].astype(str)\n+    return rep_df\n+\n+\n+def compute_fault_and_connection_metrics(\n+    interval_summary: pd.DataFrame,\n+    mainshock_df: pd.DataFrame,\n+    top_fault_orients: List[float],\n+) -> pd.DataFrame:\n+    ms64 = mainshock_df.loc[mainshock_df['label'] == 'Mainshock64'].iloc[0]\n+    ms71 = mainshock_df.loc[mainshock_df['label'] == 'Mainshock71'].iloc[0]\n+    connection_az = (math.degrees(math.atan2(ms71['y_km'] - ms64['y_km'], ms71['x_km'] - ms64['x_km'])) + 360.0) % 360.0\n+    interval_summary = interval_summary.copy()\n+    interval_summary['dominant_to_ms64_ms71_deg'] = interval_summary['dominant_azimuth_deg'].apply(\n+        lambda x: circular_difference_deg(x, connection_az) if pd.notnull(x) else np.nan\n+    )\n+    if top_fault_orients:\n+        doubled = top_fault_orients + [o + 180.0 for o in top_fault_orients]\n+        interval_summary['dominant_to_fault_family_deg'] = interval_summary['dominant_azimuth_deg'].apply(\n+            lambda x: min(circular_difference_deg(x, o) for o in doubled) if pd.notnull(x) else np.nan\n+        )\n+    else:\n+        interval_summary['dominant_to_fault_family_deg'] = np.nan\n+    return interval_summary\n+\n+\n+def select_radii_from_catalog(coords_xy: np.ndarray) -> np.ndarray:\n+    sample_n = min(len(coords_xy), 4000)\n+    if len(coords_xy) > sample_n:\n+        rng = np.random.default_rng(42)\n+        idx = rng.choice(len(coords_xy), size=sample_n, replace=False)\n+        sample = coords_xy[idx]\n+    else:\n+        sample = coords_xy\n+    if len(sample) < 3:\n+        return np.array([1.0, 2.0, 3.0, 5.0, 8.0])\n+    dist_matrix = cdist(sample, sample)\n+    np.fill_diagonal(dist_matrix, np.inf)\n+    nn = np.min(dist_matrix, axis=1)\n+    finite_nn = nn[np.isfinite(nn)]\n+    q = np.quantile(finite_nn, [0.5, 0.75, 0.9]) if len(finite_nn) else np.array([0.5, 1.0, 2.0])\n+    base = np.unique(np.clip(np.array([q[0] * 2, q[1] * 3, q[2] * 4, 3.0, 5.0, 8.0, 12.0]), 0.5, 20.0))\n+    return np.round(np.sort(base), 2)\n+\n+\n+def choose_r_star(\n+    interval_groups: List[np.ndarray], study_area_km2: float, r_values_km: np.ndarray\n+) -> Tuple[float, pd.DataFrame]:\n+    rows = []\n+    sector_fraction = SECTOR_WIDTH_DEG / 360.0\n+    for r in r_values_km:\n+        support_events = 0\n+        support_pairs = 0\n+        anis_values = []\n+        for coords in interval_groups:\n+            n = len(coords)\n+            if n < MIN_EVENTS_INTERVAL:\n+                continue\n+            support_events += 1\n+            counts, pair_counts_r, _ = pairwise_directional_counts(coords, np.array([r]))\n+            pair_count = int(pair_counts_r[0])\n+            if pair_count >= MIN_PAIRS_REQUIRED:\n+                support_pairs += 1\n+                K = (study_area_km2 / (n * (n - 1))) * counts[0] / sector_fraction\n+                L = np.sqrt(np.maximum(K, 0.0) / math.pi)\n+                metrics = extract_direction_metrics(L, pair_count, RipleyParams(study_area_km2, np.array([r]), r, SECTOR_WIDTH_DEG, MIN_EVENTS_INTERVAL, MIN_PAIRS_REQUIRED))\n+                if metrics['valid']:\n+                    anis_values.append(metrics['anisotropy_strength'])\n+        rows.append(\n+            {\n+                'r_km': float(r),\n+                'intervals_with_min_events': support_events,\n+                'intervals_with_min_pairs': support_pairs,\n+                'support_fraction': support_pairs / max(len(interval_groups), 1),\n+                'median_anisotropy': float(np.median(anis_values)) if anis_values else np.nan,\n+            }\n+        )\n+    diag = pd.DataFrame(rows)\n+    candidates = diag[(diag['support_fraction'] >= 0.35) & (diag['median_anisotropy'].notna())].copy()\n+    if candidates.empty:\n+        r_star = float(diag.sort_values(['support_fraction', 'median_anisotropy'], ascending=[False, False]).iloc[0]['r_km'])\n+    else:\n+        candidates['score'] = candidates['median_anisotropy'] * (0.5 + candidates['support_fraction'])\n+        r_star = float(candidates.sort_values(['score', 'r_km'], ascending=[False, True]).iloc[0]['r_km'])\n+    return r_star, diag\n+\n+\n+def plot_scale_selection(diag: pd.DataFrame, r_star: float, out_path: Path) -> None:\n+    fig, ax1 = plt.subplots(figsize=(8, 5))\n+    ax1.plot(diag['r_km'], diag['support_fraction'], marker='o', color='tab:blue', label='Support fraction')\n+    ax1.set_xlabel('Radius r (km)')\n+    ax1.set_ylabel('Support fraction', color='tab:blue')\n+    ax1.tick_params(axis='y', labelcolor='tab:blue')\n+    ax2 = ax1.twinx()\n+    ax2.plot(diag['r_km'], diag['median_anisotropy'], marker='s', color='tab:red', label='Median anisotropy')\n+    ax2.set_ylabel('Median anisotropy', color='tab:red')\n+    ax2.tick_params(axis='y', labelcolor='tab:red')\n+    ax1.axvline(r_star, color='k', linestyle='--', lw=1.2, label=f'r*={r_star:.2f} km')\n+    ax1.grid(True, alpha=0.3)\n+    fig.suptitle('Characteristic radius selection for directional Ripley analysis')\n+    fig.tight_layout()\n+    fig.savefig(out_path, dpi=FIG_DPI)\n+    plt.close(fig)\n+    log(f'Saved figure: {out_path}')\n+\n+\n+def plot_heatmap(\n+    L_matrix: np.ndarray,\n+    interval_df: pd.DataFrame,\n+    interval_summary: pd.DataFrame,\n+    mainshock_df: pd.DataFrame,\n+    r_star: float,\n+    out_path: Path,\n+) -> None:\n+    times = mdates.date2num(interval_df['start_time'].dt.to_pydatetime())\n+    extent = [times[0], mdates.date2num(interval_df['end_time'].iloc[-1].to_pydatetime()), 0, 360]\n+    fig = plt.figure(figsize=(16, 9))\n+    gs = fig.add_gridspec(2, 1, height_ratios=[4, 1.2], hspace=0.08)\n+    ax = fig.add_subplot(gs[0])\n+    valid_vals = L_matrix[np.isfinite(L_matrix)]\n+    if valid_vals.size == 0:\n+        vmin, vmax = -1, 1\n+    else:\n+        vmin, vmax = np.nanpercentile(valid_vals, [5, 95])\n+        if vmin == vmax:\n+            vmin -= 1\n+            vmax += 1\n+    im = ax.imshow(L_matrix.T, origin='lower', aspect='auto', extent=extent, cmap='magma', vmin=vmin, vmax=vmax)\n+    ax.plot(times + (times[1] - times[0]) / 2 if len(times) > 1 else times, interval_summary['dominant_azimuth_deg'], color='cyan', lw=1.3, label='Dominant')\n+    ax.plot(times + (times[1] - times[0]) / 2 if len(times) > 1 else times, interval_summary['secondary_azimuth_deg'], color='lime', lw=1.0, alpha=0.8, label='Secondary')\n+    for _, row in mainshock_df.iterrows():\n+        t = mdates.date2num(row['event_time'].to_pydatetime())\n+        ax.axvline(t, color='white', linestyle='--', lw=1.1)\n+        ax.text(t, 350, row['label'], color='white', rotation=90, va='top', ha='right', fontsize=9)\n+    ax.set_ylabel('Azimuth (deg)')\n+    ax.set_title(f'Time-direction heatmap of directional Ripley L(r*, θ), r* = {r_star:.2f} km')\n+    ax.legend(loc='upper left', fontsize=9)\n+    ax.xaxis_date()\n+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d\\n%H:%M'))\n+    cb = fig.colorbar(im, ax=ax, pad=0.01)\n+    cb.set_label('Directional L(r*, θ)')\n+\n+    ax2 = fig.add_subplot(gs[1], sharex=ax)\n+    ax2.plot(interval_df['start_time'], interval_summary['event_count'], color='tab:blue', label='Events')\n+    ax2.set_ylabel('Events', color='tab:blue')\n+    ax2.tick_params(axis='y', labelcolor='tab:blue')\n+    ax3 = ax2.twinx()\n+    ax3.plot(interval_df['start_time'], interval_summary['pair_count_rstar'], color='tab:red', label='Pairs ≤ r*')\n+    ax3.set_ylabel('Pairs', color='tab:red')\n+    ax3.tick_params(axis='y', labelcolor='tab:red')\n+    ax2.set_xlabel('Time (UTC)')\n+    ax2.grid(True, alpha=0.3)\n+    fig.tight_layout()\n+    fig.savefig(out_path, dpi=FIG_DPI)\n+    plt.close(fig)\n+    log(f'Saved figure: {out_path}')\n+\n+\n+def add_rose_inset(ax, theta_values: np.ndarray, title: str = '') -> None:\n+    inset = inset_axes(ax, width='33%', height='33%', loc='upper right', axes_class=plt.PolarAxes)\n+    angles = np.deg2rad(np.r_[AZIMUTH_CENTERS, AZIMUTH_CENTERS[0]])\n+    vals = np.r_[theta_values, theta_values[0]]\n+    base = np.nanmin(vals[np.isfinite(vals)]) if np.isfinite(vals).any() else 0.0\n+    vals = vals - base + 1e-6\n+    inset.fill(angles, vals, color='tab:orange', alpha=0.6)\n+    inset.plot(angles, vals, color='tab:red', lw=1.0)\n+    inset.set_xticks(np.deg2rad([0, 90, 180, 270]))\n+    inset.set_yticks([])\n+    inset.set_title(title, fontsize=7, pad=2)\n+\n+\n+def compute_window_stats(window_events: pd.DataFrame, params: RipleyParams) -> Dict[str, object]:\n+    coords = window_events[['x_km', 'y_km']].to_numpy(dtype=float)\n+    stats = sector_ripley_for_coords(coords, params)\n+    r_idx = int(np.argmin(np.abs(params.r_values_km - params.r_star_km)))\n+    L_theta = stats['L_by_r_theta'][r_idx]\n+    pair_count = int(stats['pair_counts_r'][r_idx])\n+    metrics = extract_direction_metrics(L_theta, pair_count, params)\n+    return {\n+        'event_count': len(window_events),\n+        'pair_count_rstar': pair_count,\n+        'L_theta_rstar': L_theta,\n+        **metrics,\n+    }\n+\n+\n+def plot_map_rose_family(\n+    rep_df: pd.DataFrame,\n+    catalog_df: pd.DataFrame,\n+    faults: List[np.ndarray],\n+    mainshock_df: pd.DataFrame,\n+    params: RipleyParams,\n+    color_mode: str,\n+    figure_title: str,\n+    out_path: Path,\n+) -> pd.DataFrame:\n+    fig, axes = plt.subplots(2, 4, figsize=(20, 10), constrained_layout=True)\n+    axes = axes.ravel()\n+    summaries = []\n+    all_lon = catalog_df['longitude'].to_numpy()\n+    all_lat = catalog_df['latitude'].to_numpy()\n+    xlim = (all_lon.min() - 0.03, all_lon.max() + 0.03)\n+    ylim = (all_lat.min() - 0.03, all_lat.max() + 0.03)\n+\n+    if color_mode == 'relative_to_64_hours':\n+        cvals_all = catalog_df['hours_since_64']\n+        cbar_label = 'Hours since Mw 6.4'\n+    else:\n+        cvals_all = catalog_df['hours_since_71']\n+        cbar_label = 'Hours relative to Mw 7.1'\n+    norm = colors.Normalize(vmin=float(np.nanpercentile(cvals_all, 2)), vmax=float(np.nanpercentile(cvals_all, 98)))\n+\n+    for ax, (_, win) in zip(axes, rep_df.iterrows()):\n+        subset = catalog_df[(catalog_df['event_time'] >= win['window_start']) & (catalog_df['event_time'] < win['window_end'])].copy()\n+        stats = compute_window_stats(subset, params)\n+        summaries.append(\n+            {\n+                'figure_group': win['figure_group'],\n+                'window_rank': win['window_rank'],\n+                'window_label': win['window_label'],\n+                'window_start': win['window_start'],\n+                'window_end': win['window_end'],\n+                'event_count': stats['event_count'],\n+                'pair_count_rstar': stats['pair_count_rstar'],\n+                'dominant_azimuth_deg': stats['dominant_azimuth_deg'],\n+                'secondary_azimuth_deg': stats['secondary_azimuth_deg'],\n+                'anisotropy_strength': stats['anisotropy_strength'],\n+                'valid': stats['valid'],\n+            }\n+        )\n+        for seg in faults:\n+            ax.plot(seg[:, 0], seg[:, 1], color='0.75', lw=0.4, alpha=0.5, zorder=1)\n+        if len(subset) > 0:\n+            cvals = subset['hours_since_64'] if color_mode == 'relative_to_64_hours' else subset['hours_since_71']\n+            sc = ax.scatter(subset['longitude'], subset['latitude'], c=cvals, s=8, cmap='viridis', norm=norm, alpha=0.9, linewidths=0, zorder=2)\n+        for _, ms in mainshock_df.iterrows():\n+            marker = '*' if ms['label'] == 'Mainshock64' else 'P'\n+            color = 'red' if ms['label'] == 'Mainshock64' else 'gold'\n+            ax.scatter(ms['longitude'], ms['latitude'], s=120, marker=marker, c=color, edgecolor='k', zorder=5)\n+        title = f\"{win['window_rank']}: {pd.Timestamp(win['window_start']).strftime('%m-%d %H:%M')}\\nN={len(subset)}\"\n+        ax.set_title(title, fontsize=10)\n+        ax.set_xlim(*xlim)\n+        ax.set_ylim(*ylim)\n+        ax.set_xlabel('Longitude')\n+        ax.set_ylabel('Latitude')\n+        ax.grid(True, alpha=0.2)\n+        if np.isfinite(stats['L_theta_rstar']).any():\n+            add_rose_inset(ax, stats['L_theta_rstar'], title='Directional L')\n+        if not stats['valid']:\n+            ax.text(0.02, 0.98, 'Low support', transform=ax.transAxes, ha='left', va='top', fontsize=9, color='crimson', bbox=dict(boxstyle='round', fc='white', ec='crimson', alpha=0.8))\n+\n+    for j in range(len(rep_df), len(axes)):\n+        axes[j].axis('off')\n+    fig.suptitle(figure_title, fontsize=15)\n+    sm = plt.cm.ScalarMappable(norm=norm, cmap='viridis')\n+    cbar = fig.colorbar(sm, ax=axes.tolist(), shrink=0.75, pad=0.02)\n+    cbar.set_label(cbar_label)\n+    fig.savefig(out_path, dpi=FIG_DPI)\n+    plt.close(fig)\n+    log(f'Saved figure: {out_path}')\n+    return pd.DataFrame(summaries)\n+\n+\n+def main() -> None:\n+    dirs = ensure_output_dirs()\n+    log(f'Script path: {SCRIPT_PATH}')\n+    log(f'Output dir: {OUTPUT_DIR}')\n+    log('Loading input datasets...')\n+\n+    catalog_df = pd.read_csv(CATALOG_PATH, parse_dates=['event_time'])\n+    mainshock_df = pd.read_csv(MAINSHOCK_PATH, parse_dates=['event_time'])\n+    faults = load_faults(FAULT_PATH)\n+\n+    catalog_df = catalog_df.dropna(subset=['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude']).copy()\n+    mainshock_df = mainshock_df.dropna(subset=['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude']).copy()\n+    catalog_df['event_time'] = pd.to_datetime(catalog_df['event_time'], utc=True)\n+    mainshock_df['event_time'] = pd.to_datetime(mainshock_df['event_time'], utc=True)\n+\n+    ms64 = mainshock_df.iloc[(mainshock_df['magnitude'] - 6.4).abs().argsort()].iloc[0]\n+    ms71 = mainshock_df.iloc[(mainshock_df['magnitude'] - 7.1).abs().argsort()].iloc[0]\n+    t64 = pd.Timestamp(ms64['event_time'])\n+    t71 = pd.Timestamp(ms71['event_time'])\n+    analysis_start = t64\n+    analysis_end = t71 + pd.Timedelta(hours=10)\n+\n+    mainshock_df = mainshock_df.copy()\n+    mainshock_df['label'] = np.where(\n+        np.isclose(mainshock_df['magnitude'], 6.4, atol=0.05),\n+        'Mainshock64',\n+        np.where(np.isclose(mainshock_df['magnitude'], 7.1, atol=0.05), 'Mainshock71', 'OtherMainshock')\n+    )\n+    if (mainshock_df['label'] == 'Mainshock64').sum() != 1 or (mainshock_df['label'] == 'Mainshock71').sum() != 1:\n+        raise ValueError('Expected exactly one Mw 6.4 mainshock and one Mw 7.1 mainshock in main_shock_events.csv')\n+\n+    catalog_df = catalog_df[(catalog_df['event_time'] >= analysis_start) & (catalog_df['event_time'] <= analysis_end)].sort_values('event_time').reset_index(drop=True)\n+    log(f'Clipped catalog event count: {len(catalog_df)} from {analysis_start} to {analysis_end}')\n+\n+    lon0 = float(np.mean([catalog_df['longitude'].mean(), ms64['longitude'], ms71['longitude']]))\n+    lat0 = float(np.mean([catalog_df['latitude'].mean(), ms64['latitude'], ms71['latitude']]))\n+    local_crs = infer_local_crs(lon0, lat0)\n+    transformer = Transformer.from_crs(CRS.from_epsg(4326), local_crs, always_xy=True)\n+\n+    catalog_df['x_km'], catalog_df['y_km'] = project_points(catalog_df['longitude'].to_numpy(), catalog_df['latitude'].to_numpy(), transformer)\n+    mainshock_df['x_km'], mainshock_df['y_km'] = project_points(mainshock_df['longitude'].to_numpy(), mainshock_df['latitude'].to_numpy(), transformer)\n+    catalog_df['hours_since_64'] = (catalog_df['event_time'] - t64).dt.total_seconds() / 3600.0\n+    catalog_df['hours_since_71'] = (catalog_df['event_time'] - t71).dt.total_seconds() / 3600.0\n+\n+    interval_edges = pd.date_range(start=analysis_start, end=analysis_end, freq=f'{INTERVAL_MINUTES}min', tz='UTC')\n+    if interval_edges[-1] < analysis_end:\n+        interval_edges = interval_edges.append(pd.DatetimeIndex([analysis_end]))\n+    interval_rows = []\n+    for i in range(len(interval_edges) - 1):\n+        interval_rows.append({'interval_id': i, 'start_time': interval_edges[i], 'end_time': interval_edges[i + 1]})\n+    interval_df = pd.DataFrame(interval_rows)\n+    catalog_df['interval_id'] = pd.cut(catalog_df['event_time'], bins=interval_edges, labels=False, right=False, include_lowest=True)\n+    last_mask = catalog_df['event_time'] == analysis_end\n+    if last_mask.any():\n+        catalog_df.loc[last_mask, 'interval_id'] = len(interval_df) - 1\n+    catalog_df['interval_id'] = catalog_df['interval_id'].astype(int)\n+\n+    required_catalog_cols = ['event_time', 'latitude', 'longitude', 'depth_km', 'magnitude', 'x_km', 'y_km', 'hours_since_64', 'hours_since_71', 'interval_id']\n+    missing_catalog_cols = [c for c in required_catalog_cols if c not in catalog_df.columns]\n+    if missing_catalog_cols:\n+        raise ValueError(f'Missing required catalog columns after preprocessing: {missing_catalog_cols}')\n+\n+    rep_df = build_representative_windows(interval_df, analysis_start, analysis_end, t64, t71)\n+\n+    qc_df = pd.DataFrame(\n+        {\n+            'n_catalog_events': [len(catalog_df)],\n+            'n_intervals': [len(interval_df)],\n+            'analysis_start_utc': [analysis_start],\n+            'analysis_end_utc': [analysis_end],\n+            't64_utc': [t64],\n+            't71_utc': [t71],\n+            'local_crs': [local_crs.to_string()],\n+            'fault_segments': [len(faults)],\n+        }\n+    )\n+\n+    full_points = catalog_df[['x_km', 'y_km']].to_numpy()\n+    study_area_km2, hull_points = compute_buffered_hull_area(full_points, BUFFER_KM)\n+    fault_orient_df, top_fault_orients = compute_orientation_family_from_faults(faults, transformer)\n+    r_values_km = select_radii_from_catalog(full_points)\n+    interval_groups = [\n+        catalog_df.loc[catalog_df['interval_id'] == iid, ['x_km', 'y_km']].to_numpy(dtype=float)\n+        for iid in interval_df['interval_id']\n+    ]\n+    log(f'Candidate radii (km): {r_values_km.tolist()}')\n+    r_star_km, radius_diag_df = choose_r_star(interval_groups, study_area_km2, r_values_km)\n+    params = RipleyParams(study_area_km2, r_values_km, r_star_km, SECTOR_WIDTH_DEG, MIN_EVENTS_INTERVAL, MIN_PAIRS_REQUIRED)\n+    log(f'Selected characteristic radius r*: {r_star_km:.2f} km')\n+\n+    save_dataframe(qc_df, dirs['tables'] / 'analysis_qc_summary.csv')\n+    save_dataframe(interval_df, dirs['tables'] / 'interval_definitions.csv')\n+    save_dataframe(rep_df, dirs['tables'] / 'representative_windows.csv')\n+    save_dataframe(fault_orient_df, dirs['tables'] / 'fault_orientation_families.csv')\n+    save_dataframe(radius_diag_df, dirs['tables'] / 'radius_selection_diagnostics.csv')\n+    save_dataframe(catalog_df, dirs['tables'] / 'analysis_catalog_with_intervals.csv')\n+    save_dataframe(mainshock_df, dirs['tables'] / 'mainshock_metadata.csv')\n+    plot_scale_selection(radius_diag_df, r_star_km, dirs['figures'] / 'radius_selection_diagnostics.png')\n+\n+    log('Computing 30-minute directional Ripley statistics in parallel...')\n+    jobs = []\n+    for iid in interval_df['interval_id']:\n+        coords = catalog_df.loc[catalog_df['interval_id'] == iid, ['x_km', 'y_km']].to_numpy(dtype=float)\n+        jobs.append((int(iid), coords, params))\n+\n+    max_workers = min(MAX_CORES, os.cpu_count() or 1, max(1, len(jobs)))\n+    results = []\n+    with ProcessPoolExecutor(max_workers=max_workers) as ex:\n+        futures = [ex.submit(compute_interval_job, job) for job in jobs]\n+        for fut in tqdm(as_completed(futures), total=len(futures), desc='Intervals'):\n+            results.append(fut.result())\n+    results = sorted(results, key=lambda x: x['interval_id'])\n+\n+    r_table_rows = []\n+    summary_rows = []\n+    L_matrix = np.full((len(interval_df), N_SECTORS), np.nan, dtype=float)\n+    for res in results:\n+        iid = res['interval_id']\n+        K = res['K_by_r_theta']\n+        L = res['L_by_r_theta']\n+        for ir, r in enumerate(r_values_km):\n+            for isec, theta in enumerate(AZIMUTH_CENTERS):\n+                r_table_rows.append(\n+                    {\n+                        'interval_id': iid,\n+                        'r_km': float(r),\n+                        'azimuth_center_deg': float(theta),\n+                        'K_value': float(K[ir, isec]) if np.isfinite(K[ir, isec]) else np.nan,\n+                        'L_value': float(L[ir, isec]) if np.isfinite(L[ir, isec]) else np.nan,\n+                    }\n+                )\n+        L_matrix[iid, :] = res['L_theta_rstar']\n+        summary_rows.append(\n+            {\n+                'interval_id': iid,\n+                'event_count': res['event_count'],\n+                'pair_total_within_rmax': res['pair_total_within_rmax'],\n+                'pair_count_rstar': res['pair_count_rstar'],\n+                'dominant_azimuth_deg': res['dominant_azimuth_deg'],\n+                'secondary_azimuth_deg': res['secondary_azimuth_deg'],\n+                'anisotropy_strength': res['anisotropy_strength'],\n+                'circular_resultant': res['circular_resultant'],\n+                'valid': res['valid'],\n+            }\n+        )\n+    full_directional_df = pd.DataFrame(r_table_rows)\n+    interval_summary = pd.DataFrame(summary_rows).merge(interval_df, on='interval_id', how='left')\n+    required_interval_summary_cols = [\n+        'interval_id', 'event_count', 'pair_total_within_rmax', 'pair_count_rstar',\n+        'dominant_azimuth_deg', 'secondary_azimuth_deg', 'anisotropy_strength',\n+        'circular_resultant', 'valid', 'start_time', 'end_time'\n+    ]\n+    missing_interval_cols = [c for c in required_interval_summary_cols if c not in interval_summary.columns]\n+    if missing_interval_cols:\n+        raise ValueError(f'Missing required interval summary columns after merge: {missing_interval_cols}')\n+    interval_summary = compute_fault_and_connection_metrics(interval_summary, mainshock_df, top_fault_orients)\n+\n+    ms64row = mainshock_df.loc[mainshock_df['label'] == 'Mainshock64'].iloc[0]\n+    ms71row = mainshock_df.loc[mainshock_df['label'] == 'Mainshock71'].iloc[0]\n+    stage_conditions = [\n+        interval_summary['start_time'] < ms64row['event_time'] + pd.Timedelta(hours=4),\n+        (interval_summary['start_time'] >= ms64row['event_time'] + pd.Timedelta(hours=4)) & (interval_summary['start_time'] < ms71row['event_time'] - pd.Timedelta(hours=4)),\n+        (interval_summary['start_time'] >= ms71row['event_time'] - pd.Timedelta(hours=4)) & (interval_summary['start_time'] < ms71row['event_time']),\n+        interval_summary['start_time'] >= ms71row['event_time'],\n+    ]\n+    stage_labels = ['immediate_post_64', 'inter_mainshock_buildup', 'immediate_pre_71', 'post_71_plus10h']\n+    interval_summary['sequence_stage'] = np.select(stage_conditions, stage_labels, default='other')\n+    interval_summary['dominant_change_from_prev_deg'] = interval_summary['dominant_azimuth_deg'].diff().abs().apply(\n+        lambda x: min(x, 360 - x) if pd.notnull(x) else np.nan\n+    )\n+    transition_df = interval_summary[\n+        interval_summary['dominant_change_from_prev_deg'].fillna(0) >= 45\n+    ][['interval_id', 'start_time', 'dominant_azimuth_deg', 'secondary_azimuth_deg', 'anisotropy_strength', 'dominant_change_from_prev_deg', 'sequence_stage']].copy()\n+\n+    l_matrix_df = pd.DataFrame(L_matrix, columns=[f'az_{int(c):03d}' for c in AZIMUTH_CENTERS])\n+    l_matrix_df.insert(0, 'interval_id', interval_df['interval_id'].to_numpy())\n+    l_matrix_df = interval_df[['interval_id', 'start_time', 'end_time']].merge(l_matrix_df, on='interval_id', how='left')\n+\n+    save_dataframe(full_directional_df, dirs['tables'] / 'directional_ripley_full_interval_radius_sector.csv')\n+    save_dataframe(interval_summary, dirs['tables'] / 'interval_directional_summary.csv')\n+    save_dataframe(transition_df, dirs['tables'] / 'directional_transition_intervals.csv')\n+    save_dataframe(l_matrix_df, dirs['tables'] / 'directional_L_matrix_rstar.csv')\n+\n+    plot_heatmap(L_matrix, interval_df, interval_summary, mainshock_df, r_star_km, dirs['figures'] / 'time_direction_heatmap_rstar.png')\n+\n+    whole_df = rep_df[rep_df['figure_group'] == 'whole_window_4h'].sort_values('window_rank')\n+    near64_df = rep_df[rep_df['figure_group'] == 'near_mainshock64_30m'].sort_values('window_rank')\n+    near71_df = rep_df[rep_df['figure_group'] == 'near_mainshock71_30m'].sort_values('window_rank')\n+\n+    whole_summary = plot_map_rose_family(\n+        whole_df,\n+        catalog_df,\n+        faults,\n+        mainshock_df,\n+        params,\n+        color_mode='relative_to_64_hours',\n+        figure_title='Ridgecrest sequence: 8 representative 4-hour windows',\n+        out_path=dirs['figures'] / 'map_rose_whole_window_4h.png',\n+    )\n+    near64_summary = plot_map_rose_family(\n+        near64_df,\n+        catalog_df,\n+        faults,\n+        mainshock_df,\n+        params,\n+        color_mode='relative_to_64_hours',\n+        figure_title='Ridgecrest sequence: representative 30-minute windows after Mw 6.4',\n+        out_path=dirs['figures'] / 'map_rose_near_mainshock64.png',\n+    )\n+    near71_summary = plot_map_rose_family(\n+        near71_df,\n+        catalog_df,\n+        faults,\n+        mainshock_df,\n+        params,\n+        color_mode='relative_to_71_hours',\n+        figure_title='Ridgecrest sequence: representative 30-minute windows before Mw 7.1',\n+        out_path=dirs['figures'] / 'map_rose_near_mainshock71.png',\n+    )\n+    rep_summary = pd.concat([whole_summary, near64_summary, near71_summary], ignore_index=True)\n+    save_dataframe(rep_summary, dirs['tables'] / 'representative_window_directional_summary.csv')\n+\n+    param_df = pd.DataFrame(\n+        {\n+            'study_area_km2': [study_area_km2],\n+            'buffer_km': [BUFFER_KM],\n+            'sector_width_deg': [SECTOR_WIDTH_DEG],\n+            'n_sectors': [N_SECTORS],\n+            'r_values_km': [';'.join(f'{r:.2f}' for r in r_values_km)],\n+            'r_star_km': [r_star_km],\n+            'min_events_interval': [MIN_EVENTS_INTERVAL],\n+            'min_pairs_required': [MIN_PAIRS_REQUIRED],\n+            'edge_treatment': ['fixed buffered convex-hull study area; no explicit isotropic edge correction'],\n+            'azimuth_convention': ['counterclockwise from +x/east, mapped to [0,360)'],\n+        }\n+    )\n+    save_dataframe(param_df, dirs['tables'] / 'analysis_parameters.csv')\n+\n+    validation_df = pd.DataFrame(\n+         {\n+             'check': [\n+                 'interval_count_matches_matrix',\n+                 'sector_count_is_72',\n+                 'mainshock64_present',\n+                 'mainshock71_present',\n+                 'representative_windows_nonempty',\n+-                'valid_intervals_present',\n++                'valid_intervals_present',\n++                'interval_summary_count_matches_intervals',\n+             ],\n+             'passed': [\n+                 len(interval_df) == L_matrix.shape[0],\n+                 L_matrix.shape[1] == N_SECTORS,\n+                 (mainshock_df['label'] == 'Mainshock64').any(),\n+                 (mainshock_df['label'] == 'Mainshock71').any(),\n+                 len(rep_df) > 0,\n+                 bool(interval_summary['valid'].any()),\n++                len(interval_summary) == len(interval_df),\n+             ],\n+         }\n+     )\n+        {\n+            'check': [\n+                'interval_count_matches_matrix',\n+                'sector_count_is_72',\n+                'mainshock64_present',\n+                'mainshock71_present',\n+                'representative_windows_nonempty',\n+                'valid_intervals_present',\n+            ],\n+            'passed': [\n+                len(interval_df) == L_matrix.shape[0],\n+                L_matrix.shape[1] == N_SECTORS,\n+                (mainshock_df['label'] == 'Mainshock64').any(),\n+                (mainshock_df['label'] == 'Mainshock71').any(),\n+                len(rep_df) > 0,\n+                bool(interval_summary['valid'].any()),\n+            ],\n+        }\n+    )\n+    save_dataframe(validation_df, dirs['tables'] / 'validation_checks.csv')\n+    log('All requested analysis products generated successfully.')\n+\n+\n+if __name__ == '__main__':\n+    try:\n+        main()\n+    except Exception:\n+        print(traceback.format_exc(), flush=True)\n+        sys.exit(1)",
+                "diff_truncated": false,
+                "coding_response_summary": "Implemented the task script at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py`\n\nWhat it does:\n- Loads and validates the Ridgecrest catalog, mainshock table, and fault JSON.\n- Builds the fixed analysis window `[Mw 6.4, Mw 7.1 + 10 h]`.\n- Projects coordinates to a local UTM CRS.\n- Defines 30-minute intervals and representative windows.\n- Estimates a fixed study area and chooses a characteristic radius `r*` from data-driven support/anisotropy diagnostics.\n- Computes sector-based directional Ripley K/L through time in parallel.\n- Derives dominant/secondary azimuths and transition metrics.\n- Generates:\n  - radius-selection diagnostic figure,\n  - time-direction heatmap,\n  - 3 requested 2×4 map-plus-rose figure families.\n- Exports machine-readable CSV outputs for catalog, intervals, parameters, full directional statistics, summaries, transitions, and validation checks.\n- Uses flushed logging and surfaces fatal errors with `traceback.format_exc()` exactly once.\n\nMain change summary:\n- Created the full end-to-end analysis script with parallel interval processing, reproducible window selection, figure generation, QC/validation exports, and explicit parameter documentation.\n----------\nCode Review:\nReviewed and fixed several issues.\n\nKey fixes made:\n- Added selective cleanup of stale derived outputs in the task output directory, without touching raw inputs.\n- Fixed representative-window selection for the “before Mw 7.1” figure so it only uses intervals between Mw 6.4 and Mw 7.1.\n- Added explicit validation that the mainshock file contains exactly one Mw 6.4 and one Mw 7.1 event.\n- Added downstream schema checks after preprocessing and after the interval-summary merge.\n- Fixed a low-support edge case in pair counting for `n < 2`.\n- Relaxed the direction-metric validity test so it rejects only all-NaN directional vectors, not any vector containing a NaN.\n- Added one more final validation check for interval-summary row count consistency.\n- Removed a few unused imports/constants to reduce correctness risk and review noise.\n\nSo this is not a pure “passed as-is” review; the script needed corrections and has now been updated accordingly.",
+                "runtime_action_before": null,
+                "runtime_observation_after": {
+                  "task_name": "01_ridgecrest_directional_ripley_analysis",
+                  "stage": "preflight",
+                  "status": "failed",
+                  "timestamp": "2026-07-06T02:55:46.001490+00:00",
+                  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                  "log_path": null,
+                  "returncode": null,
+                  "preflight": {
+                    "passed": false,
+                    "checks": [
+                      {
+                        "name": "script_exists",
+                        "passed": true,
+                        "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_command_startable",
+                        "passed": true,
+                        "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                        "evidence": []
+                      },
+                      {
+                        "name": "py_compile",
+                        "passed": false,
+                        "message": "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 204\n    -        return counts, pair_counts_r, np.array([], dtype=float)\nIndentationError: expected an indented block\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: expected an indented block (01_ridgecrest_directional_ripley_analysis.py, line 204)",
+                        "evidence": [
+                          "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 204\n    -        return counts, pair_counts_r, np.array([], dtype=float)\nIndentationError: expected an indented block\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: expected an indented block (01_ridgecrest_directional_ripley_analysis.py, line 204)"
+                        ]
+                      }
+                    ],
+                    "diagnosis": {
+                      "failed": true,
+                      "failure_type": "syntax_error",
+                      "severity": "error",
+                      "stage": "preflight",
+                      "retry_allowed": false,
+                      "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                      "evidence": [
+                        "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 204\n    -        return counts, pair_counts_r, np.array([], dtype=float)\nIndentationError: expected an indented block\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: expected an indented block (01_ridgecrest_directional_ripley_analysis.py, line 204)"
+                      ],
+                      "source_files": [
+                        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                      ],
+                      "metadata": {
+                        "retry_decision": {
+                          "retry_allowed": false,
+                          "strategy": "fix_script_syntax_before_rerun",
+                          "reason": "The script cannot be executed until syntax errors are fixed.",
+                          "max_additional_attempts": 0
+                        }
+                      }
+                    },
+                    "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun"
+                  },
+                  "diagnosis": {
+                    "failed": true,
+                    "failure_type": "syntax_error",
+                    "severity": "error",
+                    "stage": "preflight",
+                    "retry_allowed": false,
+                    "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                    "evidence": [
+                      "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 204\n    -        return counts, pair_counts_r, np.array([], dtype=float)\nIndentationError: expected an indented block\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: expected an indented block (01_ridgecrest_directional_ripley_analysis.py, line 204)"
+                    ],
+                    "source_files": [
+                      "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                    ],
+                    "metadata": {
+                      "retry_decision": {
+                        "retry_allowed": false,
+                        "strategy": "fix_script_syntax_before_rerun",
+                        "reason": "The script cannot be executed until syntax errors are fixed.",
+                        "max_additional_attempts": 0
+                      }
+                    }
+                  },
+                  "result_check_diagnosis": null,
+                  "debug_context": null,
+                  "message": "Preflight failed before script execution.",
+                  "metadata": {}
+                },
+                "runtime_action_after": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "outcome": "preflight_failed",
+                "metadata": {
+                  "before_exists": false,
+                  "after_exists": true,
+                  "before_size_bytes": null,
+                  "after_size_bytes": 41489,
+                  "before_truncated": false,
+                  "after_truncated": false
+                }
+              },
+              {
+                "round_index": 2,
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                "task_name": "01_ridgecrest_directional_ripley_analysis",
+                "timestamp": "2026-07-06T02:56:04.242991+00:00",
+                "script_hash_before": "d6d291edddabf4dc49451e5523a0656d633c482e66ee0318d5fb05c74c73391d",
+                "script_hash_after": "0918495367abd79892772cfa679eb67640cb3142582ac0d0acae2a2aa8487376",
+                "changed": true,
+                "changed_lines": 9,
+                "diff_summary": "--- before/01_ridgecrest_directional_ripley_analysis.py\n+++ after/01_ridgecrest_directional_ripley_analysis.py\n@@ -196,19 +196,12 @@\n \n \n def pairwise_directional_counts(coords_xy: np.ndarray, r_values_km: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:\n-     n = len(coords_xy)\n-     counts = np.zeros((len(r_values_km), N_SECTORS), dtype=np.float64)\n-     pair_counts_r = np.zeros(len(r_values_km), dtype=np.int64)\n-     pair_total = 0\n-     if n < 2:\n--        return counts, pair_counts_r, np.array([], dtype=float)\n-+        return counts, pair_counts_r, np.array([0], dtype=float)\n     n = len(coords_xy)\n     counts = np.zeros((len(r_values_km), N_SECTORS), dtype=np.float64)\n     pair_counts_r = np.zeros(len(r_values_km), dtype=np.int64)\n     pair_total = 0\n     if n < 2:\n-        return counts, pair_counts_r, np.array([], dtype=float)\n+        return counts, pair_counts_r, np.array([0], dtype=float)\n     max_r = float(np.max(r_values_km))\n     for start in range(0, n - 1, PAIR_BLOCK_SIZE):\n         end = min(n - 1, start + PAIR_BLOCK_SIZE)",
+                "diff_truncated": false,
+                "coding_response_summary": "Fixed the primary preflight failure.\n\nWhat changed:\n- Removed stray diff markers accidentally left in `pairwise_directional_counts(...)`.\n- Restored proper indentation and removed duplicated lines in that function.\n- Kept the intended behavior for the `n < 2` case: it now returns `np.array([0], dtype=float)` for total pairs.\n\nThis addresses the exact `IndentationError` reported at line 204.",
+                "runtime_action_before": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "runtime_observation_after": {
+                  "task_name": "01_ridgecrest_directional_ripley_analysis",
+                  "stage": "preflight",
+                  "status": "failed",
+                  "timestamp": "2026-07-06T02:56:04.827227+00:00",
+                  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                  "log_path": null,
+                  "returncode": null,
+                  "preflight": {
+                    "passed": false,
+                    "checks": [
+                      {
+                        "name": "script_exists",
+                        "passed": true,
+                        "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_command_startable",
+                        "passed": true,
+                        "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                        "evidence": []
+                      },
+                      {
+                        "name": "py_compile",
+                        "passed": false,
+                        "message": "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 884\n    {\nIndentationError: unexpected indent\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: unexpected indent (01_ridgecrest_directional_ripley_analysis.py, line 884)",
+                        "evidence": [
+                          "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 884\n    {\nIndentationError: unexpected indent\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: unexpected indent (01_ridgecrest_directional_ripley_analysis.py, line 884)"
+                        ]
+                      }
+                    ],
+                    "diagnosis": {
+                      "failed": true,
+                      "failure_type": "syntax_error",
+                      "severity": "error",
+                      "stage": "preflight",
+                      "retry_allowed": false,
+                      "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                      "evidence": [
+                        "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 884\n    {\nIndentationError: unexpected indent\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: unexpected indent (01_ridgecrest_directional_ripley_analysis.py, line 884)"
+                      ],
+                      "source_files": [
+                        "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                      ],
+                      "metadata": {
+                        "retry_decision": {
+                          "retry_allowed": false,
+                          "strategy": "fix_script_syntax_before_rerun",
+                          "reason": "The script cannot be executed until syntax errors are fixed.",
+                          "max_additional_attempts": 0
+                        }
+                      }
+                    },
+                    "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun"
+                  },
+                  "diagnosis": {
+                    "failed": true,
+                    "failure_type": "syntax_error",
+                    "severity": "error",
+                    "stage": "preflight",
+                    "retry_allowed": false,
+                    "recommended_action": "fix_script_syntax_for_configured_runtime_before_rerun",
+                    "evidence": [
+                      "Traceback (most recent call last):\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 144, in compile\n    code = loader.source_to_code(source_bytes, dfile or file,\n  File \"<frozen importlib._bootstrap_external>\", line 913, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py\", line 884\n    {\nIndentationError: unexpected indent\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 5, in <module>\n  File \"<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/py_compile.py\", line 150, in compile\n    raise py_exc\npy_compile.PyCompileError: Sorry: IndentationError: unexpected indent (01_ridgecrest_directional_ripley_analysis.py, line 884)"
+                    ],
+                    "source_files": [
+                      "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py"
+                    ],
+                    "metadata": {
+                      "retry_decision": {
+                        "retry_allowed": false,
+                        "strategy": "fix_script_syntax_before_rerun",
+                        "reason": "The script cannot be executed until syntax errors are fixed.",
+                        "max_additional_attempts": 0
+                      }
+                    }
+                  },
+                  "result_check_diagnosis": null,
+                  "debug_context": null,
+                  "message": "Preflight failed before script execution.",
+                  "metadata": {}
+                },
+                "runtime_action_after": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "outcome": "preflight_failed",
+                "metadata": {
+                  "before_exists": true,
+                  "after_exists": true,
+                  "before_size_bytes": 41489,
+                  "after_size_bytes": 41164,
+                  "before_truncated": false,
+                  "after_truncated": false
+                }
+              },
+              {
+                "round_index": 3,
+                "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                "task_name": "01_ridgecrest_directional_ripley_analysis",
+                "timestamp": "2026-07-06T02:56:24.060749+00:00",
+                "script_hash_before": "0918495367abd79892772cfa679eb67640cb3142582ac0d0acae2a2aa8487376",
+                "script_hash_after": "4b8dca47501fa9686b58733bd3eb99ef6d32b207a017271be927e7e1930f6b30",
+                "changed": true,
+                "changed_lines": 24,
+                "diff_summary": "--- before/01_ridgecrest_directional_ripley_analysis.py\n+++ after/01_ridgecrest_directional_ripley_analysis.py\n@@ -859,28 +859,6 @@\n     save_dataframe(param_df, dirs['tables'] / 'analysis_parameters.csv')\n \n     validation_df = pd.DataFrame(\n-         {\n-             'check': [\n-                 'interval_count_matches_matrix',\n-                 'sector_count_is_72',\n-                 'mainshock64_present',\n-                 'mainshock71_present',\n-                 'representative_windows_nonempty',\n--                'valid_intervals_present',\n-+                'valid_intervals_present',\n-+                'interval_summary_count_matches_intervals',\n-             ],\n-             'passed': [\n-                 len(interval_df) == L_matrix.shape[0],\n-                 L_matrix.shape[1] == N_SECTORS,\n-                 (mainshock_df['label'] == 'Mainshock64').any(),\n-                 (mainshock_df['label'] == 'Mainshock71').any(),\n-                 len(rep_df) > 0,\n-                 bool(interval_summary['valid'].any()),\n-+                len(interval_summary) == len(interval_df),\n-             ],\n-         }\n-     )\n         {\n             'check': [\n                 'interval_count_matches_matrix',\n@@ -889,6 +867,7 @@\n                 'mainshock71_present',\n                 'representative_windows_nonempty',\n                 'valid_intervals_present',\n+                'interval_summary_count_matches_intervals',\n             ],\n             'passed': [\n                 len(interval_df) == L_matrix.shape[0],\n@@ -897,6 +876,7 @@\n                 (mainshock_df['label'] == 'Mainshock71').any(),\n                 len(rep_df) > 0,\n                 bool(interval_summary['valid'].any()),\n+                len(interval_summary) == len(interval_df),\n             ],\n         }\n     )",
+                "diff_truncated": false,
+                "coding_response_summary": "Fixed the second preflight syntax failure.\n\nWhat changed:\n- Removed leftover diff-marker artifacts and the duplicated malformed `validation_df` block near the end of the script.\n- Replaced it with one clean, properly indented `validation_df = pd.DataFrame(...)` definition.\n\nThis directly addresses the `IndentationError: unexpected indent` at line 884.",
+                "runtime_action_before": {
+                  "action_type": "inspect_preflight_evidence",
+                  "retry_allowed": false,
+                  "priority": "high",
+                  "reason": "The script failed deterministic checks before full execution; inspect the preflight evidence before choosing a fix.",
+                  "prompt_focus": [
+                    "Preflight checks and evidence.",
+                    "Generated script path, runtime command, and output directory."
+                  ],
+                  "recommended_action": null
+                },
+                "runtime_observation_after": {
+                  "task_name": "01_ridgecrest_directional_ripley_analysis",
+                  "stage": "task_success",
+                  "status": "success",
+                  "timestamp": "2026-07-06T03:06:08.124920+00:00",
+                  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                  "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+                  "returncode": 0,
+                  "preflight": {
+                    "passed": true,
+                    "checks": [
+                      {
+                        "name": "script_exists",
+                        "passed": true,
+                        "message": "Script file exists: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_command_startable",
+                        "passed": true,
+                        "message": "Executable is available: <ENV_ROOT>/miniconda3/envs/seismoagent/bin/python",
+                        "evidence": []
+                      },
+                      {
+                        "name": "py_compile",
+                        "passed": true,
+                        "message": "Target runtime py_compile passed.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "subprocess_timeout_contract",
+                        "passed": true,
+                        "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                        "evidence": []
+                      },
+                      {
+                        "name": "output_dir_writable",
+                        "passed": true,
+                        "message": "Output directory is writable: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_python_version",
+                        "passed": true,
+                        "message": "Runtime Python version: 3.9",
+                        "evidence": []
+                      },
+                      {
+                        "name": "runtime_annotation_compatibility",
+                        "passed": true,
+                        "message": "Runtime annotation compatibility check passed.",
+                        "evidence": []
+                      }
+                    ],
+                    "diagnosis": null,
+                    "recommended_action": ""
+                  },
+                  "diagnosis": null,
+                  "result_check_diagnosis": null,
+                  "debug_context": {
+                    "task_name": "01_ridgecrest_directional_ripley_analysis",
+                    "stage": "result_check_input",
+                    "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt",
+                    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+                    "returncode": 0,
+                    "failure_type": null,
+                    "recommended_action": null,
+                    "log_size_bytes": 6762,
+                    "core_error": "All requested analysis products generated successfully.",
+                    "traceback_tail": "",
+                    "error_lines": [],
+                    "warning_lines": [
+                      "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:474: FutureWarning: The behavior of DatetimeProperties.to_pydatetime is deprecated, in a fut...[truncated]",
+                      "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py:512: UserWarning: This figure includes Axes that are not compatible with tight_layout, so re...[truncated]"
+                    ],
+                    "required_outputs": [],
+                    "recommended_outputs": [],
+                    "optional_outputs": [],
+                    "missing_outputs": [],
+                    "output_inventory": [
+                      {
+                        "path": "figures",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "intermediate",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "logs",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "tables",
+                        "type": "dir"
+                      },
+                      {
+                        "path": "figures/map_rose_near_mainshock64.png",
+                        "type": "file",
+                        "size_bytes": 838160
+                      },
+                      {
+                        "path": "figures/map_rose_near_mainshock71.png",
+                        "type": "file",
+                        "size_bytes": 835745
+                      },
+                      {
+                        "path": "figures/map_rose_whole_window_4h.png",
+                        "type": "file",
+                        "size_bytes": 1102352
+                      },
+                      {
+                        "path": "figures/radius_selection_diagnostics.png",
+                        "type": "file",
+                        "size_bytes": 108781
+                      },
+                      {
+                        "path": "figures/time_direction_heatmap_rstar.png",
+                        "type": "file",
+                        "size_bytes": 616871
+                      },
+                      {
+                        "path": "tables/analysis_catalog_with_intervals.csv",
+                        "type": "file",
+                        "size_bytes": 1051624
+                      },
+                      {
+                        "path": "tables/analysis_parameters.csv",
+                        "type": "file",
+                        "size_bytes": 350
+                      },
+                      {
+                        "path": "tables/analysis_qc_summary.csv",
+                        "type": "file",
+                        "size_bytes": 263
+                      },
+                      {
+                        "path": "tables/directional_L_matrix_rstar.csv",
+                        "type": "file",
+                        "size_bytes": 63412
+                      },
+                      {
+                        "path": "tables/directional_ripley_full_interval_radius_sector.csv",
+                        "type": "file",
+                        "size_bytes": 1928380
+                      },
+                      {
+                        "path": "tables/directional_transition_intervals.csv",
+                        "type": "file",
+                        "size_bytes": 4256
+                      },
+                      {
+                        "path": "tables/fault_orientation_families.csv",
+                        "type": "file",
+                        "size_bytes": 887
+                      },
+                      {
+                        "path": "tables/interval_definitions.csv",
+                        "type": "file",
+                        "size_bytes": 6094
+                      },
+                      {
+                        "path": "tables/interval_directional_summary.csv",
+                        "type": "file",
+                        "size_bytes": 15221
+                      },
+                      {
+                        "path": "tables/mainshock_metadata.csv",
+                        "type": "file",
+                        "size_bytes": 289
+                      },
+                      {
+                        "path": "tables/radius_selection_diagnostics.csv",
+                        "type": "file",
+                        "size_bytes": 351
+                      }
+                    ],
+                    "output_inventory_truncated": true,
+                    "artifact_validations": [
+                      {
+                        "path": "figures/map_rose_near_mainshock64.png",
+                        "kind": "image",
+                        "size_bytes": 838160,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 4400,
+                          "height": 2200
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/map_rose_near_mainshock71.png",
+                        "kind": "image",
+                        "size_bytes": 835745,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 4400,
+                          "height": 2200
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/map_rose_whole_window_4h.png",
+                        "kind": "image",
+                        "size_bytes": 1102352,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 4400,
+                          "height": 2200
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/radius_selection_diagnostics.png",
+                        "kind": "image",
+                        "size_bytes": 108781,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 1760,
+                          "height": 1100
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "figures/time_direction_heatmap_rstar.png",
+                        "kind": "image",
+                        "size_bytes": 616871,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "width": 3520,
+                          "height": 1980
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "tables/analysis_catalog_with_intervals.csv",
+                        "kind": "csv",
+                        "size_bytes": 1051624,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "rows_sampled": 6334,
+                          "max_columns": 10
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "tables/analysis_parameters.csv",
+                        "kind": "csv",
+                        "size_bytes": 350,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "rows_sampled": 2,
+                          "max_columns": 10
+                        },
+                        "warnings": [],
+                        "error": null
+                      },
+                      {
+                        "path": "tables/analysis_qc_summary.csv",
+                        "kind": "csv",
+                        "size_bytes": 263,
+                        "readable": true,
+                        "empty": false,
+                        "valid": true,
+                        "summary": {
+                          "rows_sampled": 2,
+                          "max_columns": 8
+                        },
+                        "warnings": [],
+                        "error": null
+                      }
+                    ],
+                    "artifact_validations_truncated": true,
+                    "external_log_signals": [],
+                    "external_log_signals_truncated": false,
+                    "last_observed_line": "All requested analysis products generated successfully."
+                  },
+                  "message": "Outputs meet the task requirements. The expected machine-readable tables and requested figures are present, the core directional Ripley products were generated for 88 intervals and 72 sectors, validation checks passed, and the inspected visualizations are scientifically meaningful and readable. Minor layout crowding is present in the time-direction heatmap and some composite panels, but not enough to undermine usability or task completion.",
+                  "metadata": {}
+                },
+                "runtime_action_after": {
+                  "action_type": "pass",
+                  "retry_allowed": false,
+                  "priority": "low",
+                  "reason": "The latest runtime observation passed.",
+                  "prompt_focus": [
+                    "Proceed to the next workflow step."
+                  ],
+                  "recommended_action": "no_retry_needed"
+                },
+                "outcome": "success",
+                "metadata": {
+                  "before_exists": true,
+                  "after_exists": true,
+                  "before_size_bytes": 41164,
+                  "after_size_bytes": 40418,
+                  "before_truncated": false,
+                  "after_truncated": false
+                }
+              }
+            ],
+            "last_heartbeat_at": "2026-07-06T03:04:25.653100+00:00",
+            "started_at": null,
+            "finished_at": null,
+            "elapsed_sec": 933.022,
+            "timing": {},
+            "coding_plan_context": null,
+            "coding_tool_usage": null,
+            "result_check_tool_usage": null,
+            "tool_usage_summary": null,
+            "last_observed_line": "Saved figure: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/figures/map_rose_near_mainshock64.png",
+            "last_activity_at": "2026-07-06T03:08:39.263305+00:00",
+            "last_progress_event": "task_analysis_done",
+            "progress_message": "Task-level analysis file was generated."
+          }
+        ],
+        "evaluation_path": "<PACKAGE_ROOT>/results/exp_run/analysis/eval_round_0.json",
+        "evaluation_satisfactory": true
+      }
+    ]
+  },
+  "artifacts": {
+    "request_txt": "<PACKAGE_ROOT>/results/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs",
+    "run_log_path": "<PACKAGE_ROOT>/results/log/run_log.log",
+    "final_report_md": "<PACKAGE_ROOT>/results/research_report/report.md",
+    "final_report_pdf": "<PACKAGE_ROOT>/results/research_report/report.pdf",
+    "final_report_tex": "<PACKAGE_ROOT>/results/research_report/report.tex",
+    "token_summary_json": null,
+    "trajectory_dir": "<PACKAGE_ROOT>/results/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {
+      "Input Guard": {
+        "input_tokens": 2599,
+        "output_tokens": 15
+      },
+      "Data Descriptions Judgement": {
+        "input_tokens": 0,
+        "output_tokens": 0
+      },
+      "Data Descriptions": {
+        "input_tokens": 46581,
+        "output_tokens": 11091
+      },
+      "Planing": {
+        "input_tokens": 53336,
+        "output_tokens": 16753
+      },
+      "Plan Merging": {
+        "input_tokens": 26955,
+        "output_tokens": 4105
+      },
+      "Workflow Agent": {
+        "input_tokens": 30641,
+        "output_tokens": 3701
+      },
+      "Coding Agent (01_ridgecrest_directional_ripley_analysis)": {
+        "input_tokens": 640720,
+        "output_tokens": 16290
+      },
+      "Result Check Agent (01_ridgecrest_directional_ripley_analysis)": {
+        "input_tokens": 23602,
+        "output_tokens": 1436
+      },
+      "Task Analysis Agent (01_ridgecrest_directional_ripley_analysis)": {
+        "input_tokens": 87419,
+        "output_tokens": 8275
+      },
+      "Evaluation": {
+        "input_tokens": 14956,
+        "output_tokens": 900
+      },
+      "Report Synthesis": {
+        "input_tokens": 70994,
+        "output_tokens": 8447
+      }
+    },
+    "total_input_tokens": 997803,
+    "total_output_tokens": 71013,
+    "total_tokens": 1068816
+  },
+  "failure": null
+}

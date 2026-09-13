@@ -1,0 +1,33 @@
+Starting Task 01_reference_framework
+PID=427376
+Loading catalog: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv
+Loading mainshock_table: <REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv
+Inter-mainshock window: 2019-07-04T17:33:49.040000+00:00 -> 2019-07-06T03:19:53.040000+00:00
+Inter-mainshock event count: 4716
+Loading faults: <REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/intermainshock_catalog_clean.csv
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/mainshock_reference_table.csv
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/fault_segments_table.csv
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage1.csv
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage2.csv
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/01_reference_framework.py:309: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(tmp[col]):
+Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_morphology_1h.csv
+Wrote metadata: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/analysis_metadata.json
+Task 01_reference_framework completed successfully

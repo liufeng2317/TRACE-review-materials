@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_temporal_rate_energy_changepoints",
+    "generated_at": "2026-07-06T09:59:15.388569+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 692.22,
+    "timing": {
+      "total_sec": 692.22,
+      "coding_agent_sec": 236.422,
+      "code_review_sec": 45.183,
+      "preflight_sec": 1.42,
+      "script_execution_sec": 117.697,
+      "result_check_sec": 129.163,
+      "task_analysis_sec": 155.888
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_temporal_rate_energy_changepoints.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_temporal_rate_energy_changepoints/log_3.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "metadata/temporal_analysis_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/metadata/temporal_analysis_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/changepoint_summary_all.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/tables/changepoint_summary_all.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/domain_time_series_all.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/tables/domain_time_series_all.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/domain_timing_summary_all.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/tables/domain_timing_summary_all.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/neighborhood_timing_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/tables/neighborhood_timing_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/primary_domain_timing_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/tables/primary_domain_timing_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "figures/cumulative_counts_region_a_vs_b_1h.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/figures/cumulative_counts_region_a_vs_b_1h.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/cumulative_counts_region_a_vs_b_30min.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints/figures/cumulative_counts_region_a_vs_b_30min.png",
+        "kind": "figure"
+      }
+    ],
+    "all": [
+      "figures/cumulative_counts_region_a_vs_b_1h.png",
+      "figures/cumulative_counts_region_a_vs_b_30min.png",
+      "figures/energy_panels_primary_domains_1h.png",
+      "figures/energy_panels_primary_domains_30min.png",
+      "figures/neighborhood_comparison_1h.png",
+      "figures/neighborhood_comparison_30min.png",
+      "figures/normalized_cumulative_energy_region_a_vs_b_1h.png",
+      "figures/normalized_cumulative_energy_region_a_vs_b_30min.png",
+      "figures/rate_change_diagnostics_1h.png",
+      "figures/rate_change_diagnostics_30min.png",
+      "figures/region_a_vs_b_rate_difference_ratio_1h.png",
+      "figures/region_a_vs_b_rate_difference_ratio_30min.png",
+      "figures/seismic_rate_primary_domains_1h.png",
+      "figures/seismic_rate_primary_domains_30min.png",
+      "metadata/temporal_analysis_metadata.json",
+      "tables/changepoint_summary_all.csv",
+      "tables/domain_time_series_all.csv",
+      "tables/domain_timing_summary_all.csv",
+      "tables/neighborhood_timing_summary.csv",
+      "tables/primary_domain_timing_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Construct domain-scale rate and energy time series, extract timing diagnostics, and run Bayesian change-point analysis for corridor and neighborhood domains.",
+    "result": "Construct domain-scale rate and energy time series, extract timing diagnostics, and run Bayesian change-point analysis for corridor and neighborhood domains. Status=success; outputs=20 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

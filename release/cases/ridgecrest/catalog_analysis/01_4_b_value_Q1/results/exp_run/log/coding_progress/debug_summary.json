@@ -1,0 +1,107 @@
+{
+  "generated_at": "2026-07-06T14:58:11.691799+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 1,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_interevent_bvalue_workflow.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 752,
+        "coding_response_summary": "Done — I wrote the full workflow script to:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py`\n\nWhat it now does:\n- Loads the relocated catalog and mainshock metadata.\n...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 39545,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "Completed 84/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic",
+            "log_size_bytes": 69869,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input",
+            "warning_lines": [
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide",
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide",
+              "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide"
+            ]
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt",
+          "message": "The output directory contains the expected workflow products for the interevent sliding-window b-value analysis, including cleaned/assigned catalogs, primary and exploratory window estimates, temporal contrasts, radius-sensitivity outputs, validation tables, and multiple non-placeholder figures. Tab...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_interevent_bvalue_workflow",
+          "timestamp": "2026-07-06T14:55:30.393923+00:00"
+        },
+        "script_hash_after": "d610e5ad58088073ac24353aba6bd1d8df43998b614a55ba93fbc38be3b3a47f",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+        "task_name": "01_interevent_bvalue_workflow",
+        "timestamp": "2026-07-06T14:51:31.970039+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "Completed 84/84 windows for core=mw71, radius=7, spec=exploratory_N50_step10, mc_mode=dynamic",
+          "log_size_bytes": 69869,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input",
+          "warning_lines": [
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide",
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide",
+            "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/seismostats/analysis/bvalue/classic.py:16: RuntimeWarning: divide by zero encountered in scalar divide"
+          ]
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt",
+        "message": "The output directory contains the expected workflow products for the interevent sliding-window b-value analysis, including cleaned/assigned catalogs, primary and exploratory window estimates, temporal contrasts, radius-sensitivity outputs, validation tables, and multiple non-placeholder figures. Tab...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_interevent_bvalue_workflow",
+        "timestamp": "2026-07-06T14:55:30.393923+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_interevent_bvalue_workflow.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_interevent_bvalue_workflow"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_ridgecrest_directional_ripley_analysis",
+    "generated_at": "2026-07-06T03:08:39.418492+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 933.022,
+    "timing": {
+      "total_sec": 933.022,
+      "coding_agent_sec": 166.278,
+      "code_review_sec": 29.827,
+      "preflight_sec": 1.235,
+      "script_execution_sec": 503.896,
+      "result_check_sec": 78.941,
+      "task_analysis_sec": 150.958
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_directional_ripley_analysis.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_directional_ripley_analysis.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_directional_ripley_analysis/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/analysis_catalog_with_intervals.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_catalog_with_intervals.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/analysis_parameters.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_parameters.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/analysis_qc_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/analysis_qc_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/directional_L_matrix_rstar.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_L_matrix_rstar.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/directional_ripley_full_interval_radius_sector.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_ripley_full_interval_radius_sector.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/directional_transition_intervals.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/directional_transition_intervals.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_orientation_families.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/fault_orientation_families.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/interval_definitions.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_directional_ripley_analysis/tables/interval_definitions.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/map_rose_near_mainshock64.png",
+      "figures/map_rose_near_mainshock71.png",
+      "figures/map_rose_whole_window_4h.png",
+      "figures/radius_selection_diagnostics.png",
+      "figures/time_direction_heatmap_rstar.png",
+      "tables/analysis_catalog_with_intervals.csv",
+      "tables/analysis_parameters.csv",
+      "tables/analysis_qc_summary.csv",
+      "tables/directional_L_matrix_rstar.csv",
+      "tables/directional_ripley_full_interval_radius_sector.csv",
+      "tables/directional_transition_intervals.csv",
+      "tables/fault_orientation_families.csv",
+      "tables/interval_definitions.csv",
+      "tables/interval_directional_summary.csv",
+      "tables/mainshock_metadata.csv",
+      "tables/radius_selection_diagnostics.csv",
+      "tables/representative_window_directional_summary.csv",
+      "tables/representative_windows.csv",
+      "tables/validation_checks.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the Ridgecrest analysis dataset, compute directional Ripley K and L statistics through time, derive transition metrics, generate the requested figures, and export validated machine-readable outputs.",
+    "result": "Build the Ridgecrest analysis dataset, compute directional Ripley K and L statistics through time, derive transition metrics, generate the requested figures, and export validated m...[truncated] Status=success; outputs=19 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

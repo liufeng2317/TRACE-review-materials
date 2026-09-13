@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_domain_preparation
+Status: success
+Execution stage: analysis_done
+Debug rounds: 3
+Result check rounds: 1
+Elapsed seconds: 459.273
+Started at: 2026-07-07T02:17:17.650164+00:00
+Finished at: 2026-07-07T02:24:56.922911+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_domain_preparation.md
+Runtime action: pass
+Code changes: 3
+Last activity: 2026-07-07T02:24:56.922818+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=13.339, coding_agent_sec=218.166, preflight_sec=0.968, result_check_sec=105.322, script_execution_sec=67.238, task_analysis_sec=52.063, total_sec=459.273
+Coding plan context: mode=full_experiment_plan, original_chars=15428, compact_chars=15428
+Coding tool usage: total=9, read_file=1, unique_files=1, used_retrieve=False, tools={'python_executor': 3, 'bash_executor': 1, 'write_file': 1, 'apply_diff': 3, 'read_file': 1}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

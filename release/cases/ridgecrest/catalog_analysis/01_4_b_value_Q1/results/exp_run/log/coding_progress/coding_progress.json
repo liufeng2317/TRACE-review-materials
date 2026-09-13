@@ -1,0 +1,74 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-06T14:58:11.669535+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 1,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 16858,
+        "mode": "full_experiment_plan",
+        "original_chars": 16858,
+        "task_name": "01_interevent_bvalue_workflow"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 9
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py": {
+            "count": 2,
+            "tools": {
+              "read_file": 2
+            }
+          }
+        },
+        "read_file_call_count": 2,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 1,
+          "python_executor": 9,
+          "read_file": 2,
+          "write_file": 1
+        },
+        "total_tool_calls": 13,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 1,
+      "elapsed_sec": 683.221,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T14:58:11.560631+00:00",
+      "last_activity_at": "2026-07-06T14:58:11.560494+00:00",
+      "last_no_progress_sec": 0.0,
+      "last_observed_line": "Preparing 66 windows for core=mw71, radius=5, spec=exploratory_N50_step10, mc_mode=dynamic",
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_interevent_bvalue_workflow/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_interevent_bvalue_workflow",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_interevent_bvalue_workflow.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-07-06T14:46:48.339722+00:00",
+      "status": "success",
+      "task_name": "01_interevent_bvalue_workflow",
+      "timing": {
+        "code_review_sec": 51.362,
+        "coding_agent_sec": 232.016,
+        "preflight_sec": 0.548,
+        "result_check_sec": 127.226,
+        "script_execution_sec": 110.17,
+        "task_analysis_sec": 161.048,
+        "total_sec": 683.221
+      }
+    }
+  ]
+}

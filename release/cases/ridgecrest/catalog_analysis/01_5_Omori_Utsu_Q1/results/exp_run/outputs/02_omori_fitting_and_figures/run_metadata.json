@@ -1,0 +1,51 @@
+{
+  "input_metadata_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_metadata.json",
+  "event_table_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/interevent_domain_event_table.csv",
+  "primary_magnitude_threshold": 3.0,
+  "primary_split_latitude_deg": 35.72,
+  "robustness_split_latitudes_deg": [
+    35.7,
+    35.72,
+    35.74
+  ],
+  "period_endpoints_days": [
+    0.3,
+    0.5,
+    0.68,
+    0.732,
+    0.85,
+    1.0,
+    1.1,
+    1.22,
+    1.404
+  ],
+  "m54_separator_period_days": 0.732,
+  "final_period_days": 1.404,
+  "minimum_events_to_fit": 5,
+  "bootstrap_replicates": 1000,
+  "omori_utsu_rate_model": "lambda(t) = K * (c + t)^(-p)",
+  "p_bounds": [
+    0.2,
+    2.5
+  ],
+  "c_bounds_days": [
+    1e-05,
+    1.0
+  ],
+  "cpu_count_detected": 192,
+  "successful_primary_windows": 27,
+  "failed_primary_windows": 0,
+  "bootstrap_windows_with_warning": 0,
+  "mw64_time_utc": "2019-07-04T17:33:49.040000+00:00",
+  "mw71_time_utc": "2019-07-06T03:19:53.040000+00:00",
+  "corridor_geometry": {
+    "strike_deg": 138.0,
+    "centerline_start_lon": -117.735813,
+    "centerline_start_lat": 35.897499,
+    "centerline_end_lon": -117.36252,
+    "centerline_end_lat": 35.559488,
+    "total_width_km": 8.0,
+    "half_width_km": 4.0,
+    "centerline_length_km": 50.46874575697378
+  }
+}

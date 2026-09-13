@@ -1,0 +1,4 @@
+window_name,mw71_core_median_b,mw64_core_median_b,valid_node_median_b,future71_relative_class,control64_relative_class
+full_interevent,0.6283700231766193,0.676207549861068,0.685030998339918,lower,similar
+pre_separator,0.5613457327487097,0.6125663997843058,0.63143279091748,lower,similar
+post_separator,0.6886761364881853,1.0014888755537008,0.9706227177995818,lower,similar

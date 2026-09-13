@@ -1,0 +1,222 @@
+tasks:
+- name: 01_reference_framework
+  description: Build the shared inter-mainshock dataset, interval tables, and 
+    spatial metadata for Ridgecrest analyses.
+  script: 01_reference_framework.py
+  ancestors: []
+  subtasks:
+  - name: load_and_clean_inputs
+    description: Read the catalog, mainshock table, and fault traces, then parse
+      and validate required fields.
+    inputs:
+    - relocated_catalog_csv
+    - mainshock_events_csv
+    - fault_json
+    outputs:
+    - intermainshock_catalog_clean
+    - mainshock_reference_table
+    - fault_segments_table
+    - input_quality_flags
+    params:
+      catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      mainshock_identification: magnitude_based_selection
+      authoritative_time_source: mainshock_events_csv
+      invalid_row_handling: drop_and_record
+  - name: define_intervals_and_spatial_reference
+    description: Create KDE and morphology interval tables, common map extent, 
+      and one local projected CRS.
+    inputs:
+    - intermainshock_catalog_clean
+    - mainshock_reference_table
+    - fault_segments_table
+    outputs:
+    - interval_definitions_kde_stage1
+    - interval_definitions_kde_stage2
+    - interval_definitions_morphology_1h
+    - analysis_metadata
+    params:
+      master_window: intermainshock_period
+      interval_rule: left_closed_right_open_with_final_bin_closed
+      stage1_duration_hours: 4
+      stage1_interval_minutes: 30
+      stage2_interval_hours: 2
+      morphology_interval_hours: 1
+      map_extent_padding: fixed_margin
+      projected_crs_strategy: local_crs_centered_on_study_area
+  - name: validate_and_export_shared_products
+    description: Save reusable shared outputs and verify interval completeness 
+      and metadata consistency.
+    inputs:
+    - intermainshock_catalog_clean
+    - mainshock_reference_table
+    - fault_segments_table
+    - interval_definitions_kde_stage1
+    - interval_definitions_kde_stage2
+    - interval_definitions_morphology_1h
+    - analysis_metadata
+    outputs:
+    - shared_data_products
+    - analysis_validation_manifest
+    - output_inventory
+    params:
+      expected_mainshock_count: 2
+      validation_checks:
+      - chronological_order
+      - required_columns_present
+      - interval_coverage_complete
+      - map_extent_defined
+      - projected_crs_defined
+
+- name: 02_kde_migration_analysis
+  description: Compute fixed-bandwidth interval KDEs, generate stage panel 
+    figures, and track hotspot migration between the two mainshocks.
+  script: 02_kde_migration_analysis.py
+  ancestors:
+  - 01_reference_framework
+  subtasks:
+  - name: compute_interval_kde_and_hotspots
+    description: Run interval-wise KDE on a common grid and extract the primary 
+      hotspot for each interval.
+    inputs:
+    - intermainshock_catalog_clean
+    - mainshock_reference_table
+    - fault_segments_table
+    - interval_definitions_kde_stage1
+    - interval_definitions_kde_stage2
+    - analysis_metadata
+    outputs:
+    - kde_interval_summary
+    - kde_stage1_hotspots
+    - kde_stage2_hotspots
+    - kde_global_normalization
+    - kde_processing_status
+    params:
+      coordinate_system_for_computation: projected_crs
+      grid_strategy: common_extent_and_resolution
+      bandwidth_strategy: 
+        one_fixed_objective_rule_from_full_intermainshock_cloud
+      hotspot_definition: 
+        maximum_density_with_connected_region_centroid_tiebreak
+      parallel_workers_max: 64
+      progress_reporting: true
+  - name: generate_kde_panel_figures
+    description: Assemble paginated 2_by_4 KDE map panels with shared extent, 
+      normalization, and overlays.
+    inputs:
+    - kde_interval_summary
+    - kde_global_normalization
+    - mainshock_reference_table
+    - fault_segments_table
+    - analysis_metadata
+    outputs:
+    - kde_stage1_panel_figures
+    - kde_stage2_panel_figures
+    - kde_panel_index
+    params:
+      subplots_per_page: 8
+      layout: 2_by_4
+      shared_color_scale: true
+      show_colorbar: false
+      unused_panel_handling: blank_or_mark_unused
+  - name: compute_hotspot_migration_diagnostics
+    description: Build stage-wise hotspot paths and supporting migration metrics
+      relative to Mw 7.1 and mapped faults.
+    inputs:
+    - kde_stage1_hotspots
+    - kde_stage2_hotspots
+    - mainshock_reference_table
+    - fault_segments_table
+    - analysis_metadata
+    outputs:
+    - hotspot_migration_stage1_figure
+    - hotspot_migration_stage2_figure
+    - hotspot_migration_metrics
+    params:
+      path_grouping: by_stage_and_chronological_order
+      metrics:
+      - stepwise_migration_distance
+      - cumulative_path_length
+      - distance_to_mw71
+      - nearest_fault_distance
+      - local_fault_segment_density
+      coordinate_system_for_metrics: projected_crs
+
+- name: 03_morphology_and_synthesis
+  description: Compute hourly convex hull and alpha-shape evolution, then 
+    summarize focusing, defocusing, and bifurcation diagnostics.
+  script: 03_morphology_and_synthesis.py
+  ancestors:
+  - 01_reference_framework
+  - 02_kde_migration_analysis
+  subtasks:
+  - name: compute_hourly_geometric_envelopes
+    description: Derive hourly convex hull and alpha-shape boundaries and 
+      interval-level geometric metrics.
+    inputs:
+    - intermainshock_catalog_clean
+    - mainshock_reference_table
+    - fault_segments_table
+    - interval_definitions_morphology_1h
+    - analysis_metadata
+    outputs:
+    - convex_hull_metrics
+    - alpha_shape_metrics
+    - geometry_status_by_interval
+    - geometry_boundaries
+    params:
+      coordinate_system_for_computation: projected_crs
+      convex_hull_minimum_points: 3
+      alpha_strategy: one_fixed_heuristic_from_full_intermainshock_cloud
+      invalid_geometry_handling: skip_and_flag
+      parallel_workers_max: 64
+      progress_reporting: true
+  - name: generate_morphology_evolution_figures
+    description: Plot all valid convex hull and alpha-shape boundaries in a 
+      common frame with time-encoded colors.
+    inputs:
+    - convex_hull_metrics
+    - alpha_shape_metrics
+    - geometry_boundaries
+    - mainshock_reference_table
+    - fault_segments_table
+    - analysis_metadata
+    outputs:
+    - convex_hull_evolution_figure
+    - alpha_shape_evolution_figure
+    params:
+      boundary_only_plotting: true
+      time_color_mapping: early_cool_to_late_warm
+      shared_map_extent: true
+      polygon_fill: false
+  - name: build_spatiotemporal_synthesis
+    description: Combine hotspot and geometry diagnostics into rule-based 
+      evidence summaries for focusing, spreading, and bifurcation.
+    inputs:
+    - hotspot_migration_metrics
+    - convex_hull_metrics
+    - alpha_shape_metrics
+    - geometry_status_by_interval
+    - mainshock_reference_table
+    - fault_segments_table
+    outputs:
+    - spatiotemporal_synthesis_summary
+    - interval_process_flags
+    - analysis_validation_manifest
+    - output_inventory
+    params:
+      evidence_rules:
+      - decreasing_distance_to_mw71_with_decreasing_area_as_focusing_evidence
+      - increasing_area_or_outward_migration_as_defocusing_evidence
+      - increasing_component_count_as_bifurcation_evidence
+      fault_context_role: structural_context_only
+      require_traceable_rule_based_flags: true
+      validate_outputs:
+      - expected_interval_counts
+      - non_empty_scientific_tables_when_expected
+      - figure_presence
+      - chronological_completeness

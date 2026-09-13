@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 03_morphology_and_synthesis
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 559.036
+Started at: 2026-07-06T01:43:20.737026+00:00
+Finished at: 2026-07-06T01:52:39.772732+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/03_morphology_and_synthesis/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/03_morphology_and_synthesis.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/03_morphology_and_synthesis.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-06T01:52:39.772618+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=19.895, coding_agent_sec=158.757, preflight_sec=0.406, result_check_sec=119.853, script_execution_sec=122.471, task_analysis_sec=134.862, total_sec=559.036
+Coding plan context: mode=full_experiment_plan, original_chars=16978, compact_chars=16978
+Coding tool usage: total=11, read_file=4, unique_files=3, used_retrieve=False, tools={'python_executor': 4, 'read_file': 4, 'write_file': 1, 'apply_diff': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

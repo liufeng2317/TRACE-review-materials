@@ -1,0 +1,40 @@
+{
+  "catalog_role": "manuscript_analysis_catalog",
+  "final_event_count": 84474,
+  "agent_hypodd_output_count": 84475,
+  "agent_gamma_catalog_count": 140505,
+  "station_subset": "30 core Ridgecrest stations",
+  "processing_window_utc": {
+    "start": "2019-07-04T00:00:00Z",
+    "end": "2019-07-26T00:00:00Z"
+  },
+  "event_time_range_utc": {
+    "start": "2019-07-04T00:56:37.590000+00:00",
+    "end": "2019-07-25T23:59:29.320000+00:00"
+  },
+  "counts_by_day": {
+    "2019-07-04": 918,
+    "2019-07-05": 3444,
+    "2019-07-06": 3724,
+    "2019-07-07": 3760,
+    "2019-07-08": 3984,
+    "2019-07-09": 3573,
+    "2019-07-10": 4036,
+    "2019-07-11": 4029,
+    "2019-07-12": 4386,
+    "2019-07-13": 4468,
+    "2019-07-14": 4478,
+    "2019-07-15": 4149,
+    "2019-07-16": 3663,
+    "2019-07-17": 3769,
+    "2019-07-18": 3670,
+    "2019-07-19": 3690,
+    "2019-07-20": 4161,
+    "2019-07-21": 4543,
+    "2019-07-22": 3929,
+    "2019-07-23": 4424,
+    "2019-07-24": 3827,
+    "2019-07-25": 3849
+  },
+  "selection_note": "The public final catalog contains the events retained for manuscript analysis after the agent-generated relocation output was checked and validated by experts. The unadjusted native output is retained separately for audit."
+}

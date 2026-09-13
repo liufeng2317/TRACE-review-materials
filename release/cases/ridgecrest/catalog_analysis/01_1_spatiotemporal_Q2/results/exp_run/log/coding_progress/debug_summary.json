@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-07-05T08:15:11.869273+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 2
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 2,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_catalog_windows_and_time_colored_maps.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 681,
+        "coding_response_summary": "Implemented the task script at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py`\n\nWhat it does:\n- Loads and validates the catalog and mainshock tabl...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 25807,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": false,
+            "last_observed_line": "Figures directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps/figures",
+            "log_size_bytes": 1435,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_and_time_colored_maps/log_0.txt",
+          "message": "Outputs meet the task requirements. The run produced the expected enriched catalog, validated mainshock/reference metadata, short and long analysis windows, per-bin count and spatial-summary tables, and two clear time-colored epicenter figures. Table counts are internally consistent with the log and...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_catalog_windows_and_time_colored_maps",
+          "timestamp": "2026-07-05T08:06:18.389170+00:00"
+        },
+        "script_hash_after": "8e6e9895defa376f11e1eeca46ff6846529ca56de3352fccfbce14df131655ed",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py",
+        "task_name": "01_catalog_windows_and_time_colored_maps",
+        "timestamp": "2026-07-05T08:03:56.843559+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": false,
+          "last_observed_line": "Figures directory: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps/figures",
+          "log_size_bytes": 1435,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_and_time_colored_maps/log_0.txt",
+        "message": "Outputs meet the task requirements. The run produced the expected enriched catalog, validated mainshock/reference metadata, short and long analysis windows, per-bin count and spatial-summary tables, and two clear time-colored epicenter figures. Table counts are internally consistent with the log and...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_catalog_windows_and_time_colored_maps",
+        "timestamp": "2026-07-05T08:06:18.389170+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_and_time_colored_maps/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_and_time_colored_maps/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_and_time_colored_maps",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_catalog_windows_and_time_colored_maps.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_and_time_colored_maps.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_catalog_windows_and_time_colored_maps"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/02_grid_onset_and_trigger_diagnostics.md",
+      "code_change_count": 2,
+      "debug_attempt_count": 2,
+      "debug_round": 2,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 2,
+        "coding_response_summary": "Fixed the blocking failure in `load_long_window_catalog()`.\n\nChange made:\n- Updated datetime parsing for the ancestor CSV to:\n  - `pd.to_datetime(df[\"event_time\"], utc=True, format=\"mixed\")`\n\nWhy:\n- The ancestor output contains mixed ISO-like timestamp strings, some with fractional seconds and some ...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 40282,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 40266,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 2,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+            "log_size_bytes": 3888,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt",
+          "message": "Outputs meet the task requirements. The script produced the expected grid, onset-diagnostic, and trigger-diagnostic tables plus two substantive figures. Data content is internally consistent with the execution log: a 0.5 km grid of 19,758 cells, 68 half-hour bins, event-to-grid assignments for 5,206...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "02_grid_onset_and_trigger_diagnostics",
+          "timestamp": "2026-07-05T08:11:08.022083+00:00"
+        },
+        "script_hash_after": "9cb08b3c09ce263de0f762342122bd16d7d623d29442d6455dcada5e23dc55e1",
+        "script_hash_before": "d085f4e3bf9242ed0a04e123f9e253f244672ea589276b62b10783669da65d22",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py",
+        "task_name": "02_grid_onset_and_trigger_diagnostics",
+        "timestamp": "2026-07-05T08:09:26.775937+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "Outputs written to: <PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+          "log_size_bytes": 3888,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt",
+        "message": "Outputs meet the task requirements. The script produced the expected grid, onset-diagnostic, and trigger-diagnostic tables plus two substantive figures. Data content is internally consistent with the execution log: a 0.5 km grid of 19,758 cells, 68 half-hour bins, event-to-grid assignments for 5,206...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "02_grid_onset_and_trigger_diagnostics",
+        "timestamp": "2026-07-05T08:11:08.022083+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/02_grid_onset_and_trigger_diagnostics/log_1.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/02_grid_onset_and_trigger_diagnostics",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/02_grid_onset_and_trigger_diagnostics.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_grid_onset_and_trigger_diagnostics.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "02_grid_onset_and_trigger_diagnostics"
+    }
+  ]
+}

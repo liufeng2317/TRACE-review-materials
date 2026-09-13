@@ -1,0 +1,11 @@
+check_name,value
+all_interevent_events,4714
+entire_corridor_all_magnitudes,3156
+north_35p72_all_magnitudes,1442
+south_35p72_all_magnitudes,1714
+on_split_35p72_all_magnitudes,0
+north_plus_south_35p72_all_magnitudes,3156
+north_plus_south_minus_entire_35p72_all_magnitudes,0
+entire_corridor_m_ge_3,118
+north_35p72_m_ge_3,50
+south_35p72_m_ge_3,68

@@ -1,0 +1,239 @@
+# Goal
+Investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence using the relocated observational catalog, with emphasis on whether seismicity between the Mw 6.4 and Mw 7.1 mainshocks shows synchronous activation or staged/cascade-like triggering.
+
+## Planning Assumptions
+- Use only the provided observational catalog and mainshock reference table; no model data are needed.
+- The two authoritative analysis anchors are the Mw 6.4 and Mw 7.1 entries in `main_shock_events.csv`.
+- Time handling must be done in absolute UTC using parsed datetimes from `event_time`; all relative times are measured from the Mw 6.4 origin time.
+- Spatial analyses should use a local projected coordinate system centered on the catalog region so that the requested 0.5 km × 0.5 km grid is defined in kilometers rather than degrees.
+- The catalog fields available for analysis are limited to `event_time`, `latitude`, `longitude`, `depth_km`, and `magnitude`; onset-time detection must therefore rely on seismicity-rate changes, not waveform-based triggering metrics.
+- “Sustained increase” for grid-cell onset should be implemented with an explicit reproducible rule and accompanied by robustness diagnostics, because the user requests a physically interpretable onset time but no single threshold rule is prescribed.
+- Parallel computation should be applied to grid-cell time-series construction and onset detection; plotting itself is usually not the main bottleneck, but data preparation for large point clouds and per-cell statistics can be parallelized.
+- Prefer one primary workflow script for data loading, preprocessing, time-colored point-cloud figures, gridding, onset detection, and map generation; produce separate intermediate CSV/NPY/Parquet-style tabular outputs only when they are directly reused by later steps.
+
+## Analysis Plan
+
+### Task 1: Build the validated event catalog and analysis windows
+- Task description:
+  - Load the relocated catalog and the two-row mainshock table.
+  - Identify the Mw 6.4 and Mw 7.1 reference events.
+  - Construct the two required post-Mw 6.4 windows:
+    - short window: `[mainshock64, mainshock64 + 4 hours]`
+    - long window: `[mainshock64, mainshock71]`
+  - Derive relative time fields and projected local coordinates for all events.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy:
+  - Parse `event_time` as timezone-consistent datetimes.
+  - Select the mainshocks from the reference table by magnitude values 6.4 and 7.1; verify there is exactly one event for each.
+  - Compute `t_rel_hours` and `t_rel_minutes` relative to Mw 6.4.
+  - Project longitude/latitude to local planar coordinates `(x_km, y_km)` using a catalog-centered projection or local tangent-plane approximation.
+  - Define study-region bounds from all events in `[mainshock64, mainshock71]` for later gridding.
+- Constraints:
+  - Keep all catalog events in the requested windows; do not decluster or magnitude-filter unless added only as a secondary diagnostic.
+  - Preserve exact mainshock times from the reference table, not from nearest matching catalog entries.
+  - Record validation checks: row counts in each window, min/max coordinates, min/max times, and confirmation of no missing values after parsing.
+- Key outputs:
+  - Cleaned event table with relative-time and projected-coordinate columns
+  - Table of mainshock reference metadata
+  - Window summary table with event counts and spatial/time extents
+
+### Task 2: Generate time-colored spatial point clouds after the Mw 6.4 mainshock
+- Task description:
+  - Produce the two longitude–latitude epicenter scatter plots requested by the user to visually assess temporal layering after Mw 6.4.
+- Required data sources:
+  - Cleaned event table from Task 1
+  - Mainshock reference table from Task 1
+- Parameter selection strategy:
+  - Short-window plot:
+    - subset events in `[mainshock64, mainshock64 + 4 hours]`
+    - assign each event to 30-minute bins relative to Mw 6.4
+  - Long-window plot:
+    - subset events in `[mainshock64, mainshock71]`
+    - assign each event to 2-hour bins relative to Mw 6.4
+  - Use discrete categorical colors, one fixed color per bin, with no interpolation.
+  - Overlay Mw 6.4 and Mw 7.1 epicenters using distinct symbols.
+  - Order plotting from later bins first and earlier bins last, or use transparency, so early compact clusters are not fully obscured; keep bin-to-color mapping explicit in the legend/color key.
+- Constraints:
+  - Plot in longitude–latitude space as requested, even if projected coordinates are used elsewhere.
+  - No continuous colorbar for event time; use stepped bins only.
+  - The long-window plot ends at the Mw 7.1 origin time and should exclude events after Mw 7.1.
+  - Include the two mainshock locations even if one falls at the boundary of the plotted window.
+- Key outputs:
+  - Figure 1: short-window epicenter scatter colored by 30-minute bins
+  - Figure 2: long-window epicenter scatter colored by 2-hour bins
+  - Event-bin summary table listing bin edges, counts, and assigned color labels
+
+### Task 3: Quantify temporal layering in the time-colored point clouds
+- Task description:
+  - Add objective spatial summaries to support the visual interpretation of whether activation is synchronous or staged.
+- Required data sources:
+  - Binned event subsets from Task 2
+  - Projected coordinates from Task 1
+- Parameter selection strategy:
+  - For each time bin in each window, compute:
+    - event count
+    - centroid `(x_km, y_km)`
+    - covariance ellipse or principal-axis orientation
+    - along-strike and across-strike spread using PCA on projected coordinates
+    - nearest distance from bin centroid to Mw 6.4 and Mw 7.1 epicenters
+  - Compare consecutive bins using:
+    - centroid migration distance
+    - overlap between convex hulls or kernel-density high-density areas
+    - along-strike migration rate if a dominant sequence trend emerges
+- Constraints:
+  - This step should remain descriptive and not replace the onset analysis.
+  - Use the same bin definitions as Task 2; do not retune bins.
+  - If bins contain too few events for shape metrics, return count and centroid only and flag the bin as underpopulated.
+- Key outputs:
+  - Time-bin spatial summary table
+  - Optional companion figure: centroid migration path overlaid on epicenters
+  - Diagnostic metrics supporting interpretation of staged versus mixed activation
+
+### Task 4: Construct the 0.5 km × 0.5 km spatial grid and local seismicity-rate time series
+- Task description:
+  - Build the gridded space-time representation required for onset-time mapping.
+- Required data sources:
+  - Events in `[mainshock64, mainshock71]` from Task 1
+  - Projected coordinates from Task 1
+- Parameter selection strategy:
+  - Define the grid from the min/max projected coordinates of events in `[mainshock64, mainshock71]`.
+  - Use fixed cell size: 0.5 km in x and 0.5 km in y.
+  - Define 30-minute time bins from Mw 6.4 up to Mw 7.1.
+  - For each event, assign:
+    - spatial cell index
+    - temporal bin index
+  - For each cell, count events per 30-minute bin to obtain the local seismicity-rate time series.
+  - Parallelize per-cell aggregation or chunked event-to-cell assignment across up to 64 cores.
+- Constraints:
+  - Grid definition must be based only on the `[mainshock64, mainshock71]` spatial extent, per user request.
+  - Keep zero-count bins; they are necessary for onset detection.
+  - Store both raw counts and normalized rates (counts per 30 minutes); raw counts are sufficient numerically, but explicit rate labeling improves interpretability.
+  - Provide progress logging for cell processing and aggregation.
+- Key outputs:
+  - Grid definition table with cell edges/centers
+  - Sparse or dense cell-by-time count matrix
+  - Per-cell event totals and occupancy summary
+
+### Task 5: Define and detect onset time from sustained local rate increase
+- Task description:
+  - Convert each cell’s 30-minute count series into a reproducible onset time relative to Mw 6.4.
+- Required data sources:
+  - Cell-by-time count matrix from Task 4
+  - Mainshock timing from Task 1
+- Parameter selection strategy:
+  - Use a transparent multi-criterion onset rule, for example:
+    - smooth the count series lightly in time only if needed for stability, while preserving 30-minute resolution for reporting
+    - estimate a local background from the earliest available bins or from the lower quantiles across the series
+    - define candidate onset as the first bin where the count exceeds a threshold above background and the increase is sustained for at least 2 consecutive bins
+  - Recommended reproducible threshold family:
+    - minimum activity threshold: first bin with count ≥ 2 events per 30 minutes, or count above a robust background threshold, whichever is stricter
+    - sustain criterion: at least 2 of the next 3 bins remain above threshold
+    - optional cumulative criterion: cumulative count after onset within the next 1–2 hours exceeds a small minimum to suppress isolated single-bin bursts
+  - Record onset as:
+    - onset bin index
+    - onset time in hours after Mw 6.4
+    - confidence flag based on signal strength and persistence
+  - For cells with no clear activation, assign missing onset and mark as inactive/undetermined.
+  - Parallelize onset detection across cells.
+- Constraints:
+  - The onset rule must be fixed before interpretation and applied uniformly to all cells.
+  - Do not infer onset from single isolated counts alone if the goal is “sustained increase.”
+  - Because no pre-Mw 6.4 baseline window is supplied in the request, background estimation must be internal to the post-6.4 series or based on robust within-series statistics; document the chosen rule explicitly.
+  - Keep the primary onset definition simple and interpretable; if a second robustness definition is tested, treat it as diagnostic only.
+- Key outputs:
+  - Cell-level onset table with coordinates, onset time, confidence flag, and total post-onset counts
+  - QC table summarizing numbers of active, inactive, and ambiguous cells
+  - Onset-rule parameter record for reproducibility
+
+### Task 6: Map onset times and evaluate triggering style from Mw 6.4 to Mw 7.1
+- Task description:
+  - Create the spatial onset-time map and derive interpretable diagnostics of possible triggering propagation.
+- Required data sources:
+  - Cell-level onset table from Task 5
+  - Mainshock reference table from Task 1
+  - Optional time-colored event plots from Task 2 for cross-comparison
+- Parameter selection strategy:
+  - Plot each 0.5 km cell at its center or as a filled square polygon, colored by onset time relative to Mw 6.4.
+  - Use a monotonic discrete or stepped sequential colormap:
+    - earlier onset = darker
+    - later onset = lighter
+  - Overlay Mw 6.4 and Mw 7.1 epicenters.
+  - Add optional contours or outlines for cells with high cumulative counts to distinguish robust activation from sparse noise.
+  - Quantify propagation by fitting simple descriptive relations:
+    - onset time versus distance from Mw 6.4
+    - onset time versus distance from Mw 7.1
+    - onset time projected along the principal sequence strike
+  - Compare whether earliest activated cells align preferentially toward the eventual Mw 7.1 rupture region.
+- Constraints:
+  - The onset map should only include cells within the study region and with valid onset estimates; inactive cells may be shown separately or left blank.
+  - Distinguish “no activation detected” from “late activation.”
+  - The interpretation should focus on whether activation is spatially mixed, front-like, segmented, or migratory toward the Mw 7.1 hypocentral area.
+- Key outputs:
+  - Figure 3: onset-time spatial map
+  - Figure 4: onset time versus distance/projection diagnostics
+  - Summary metrics:
+    - fraction of early-activated cells near Mw 7.1 side versus opposite side
+    - median onset time by along-strike segment
+    - rank correlation between onset time and along-strike position
+
+### Task 7: Segment the sequence to test the Mw 6.4-to-Mw 7.1 triggering hypothesis
+- Task description:
+  - Organize the space-time evolution into physically interpretable subregions and compare their activation chronology relative to the two mainshocks.
+- Required data sources:
+  - Event catalog from Task 1
+  - Grid/onset outputs from Tasks 4–6
+  - Mainshock reference table
+- Parameter selection strategy:
+  - Define subregions using one of the following reproducible approaches:
+    - along-strike segmentation from PCA of the `[mainshock64, mainshock71]` epicenters
+    - clusters apparent in the onset map
+    - fixed windows around Mw 6.4, Mw 7.1, and the interconnecting corridor
+  - For each subregion, compute:
+    - cumulative event count versus time after Mw 6.4
+    - magnitude-time plot
+    - median and earliest onset time of cells
+    - event-rate evolution in 30-minute bins
+  - Specifically test whether the future Mw 7.1 neighborhood shows:
+    - immediate widespread activation after Mw 6.4
+    - delayed but coherent acceleration
+    - migration of activity from the Mw 6.4 side toward the Mw 7.1 side
+- Constraints:
+  - Subregion definitions must be data-driven but simple enough to reproduce.
+  - Avoid overfitting many small regions; prioritize a few interpretable domains linked to the mainshock geometry.
+  - This remains a descriptive triggering analysis, not a dynamic stress inversion.
+- Key outputs:
+  - Figure 5: along-strike or subregion cumulative-count curves
+  - Figure 6: subregion rate evolution heat map or stacked timeline
+  - Table comparing activation timing metrics among Mw 6.4 vicinity, corridor, and Mw 7.1 vicinity
+
+### Task 8: Workflow execution, validation, and deliverables
+- Task description:
+  - Run the full workflow with independent output checks for each major analytical stage and retain reusable intermediate products.
+- Required data sources:
+  - All outputs from Tasks 1–7
+- Parameter selection strategy:
+  - Use one primary analysis script with modular stages:
+    - stage A: loading/validation
+    - stage B: time-colored point clouds
+    - stage C: gridding and rate matrix
+    - stage D: onset detection
+    - stage E: onset maps and triggering diagnostics
+  - Enable parallel execution for stage C and D, with user-configurable worker count up to 64.
+  - Emit progress logs for:
+    - file loading and time parsing
+    - window subsetting
+    - cell aggregation
+    - onset detection completion
+    - figure export completion
+- Constraints:
+  - Each stage should save direct scientific outputs and QC summaries, not only final figures.
+  - A stage is successful only if its expected non-empty tables/figures are produced and pass basic validation checks.
+  - Keep outputs separated by analysis step so the user can inspect each result independently.
+- Key outputs:
+  - Clean catalog and metadata tables
+  - Time-binned event tables
+  - Grid-cell count matrix and onset table
+  - Figures 1–6
+  - Run log and QC summary documenting counts, thresholds, and any inactive/ambiguous cells

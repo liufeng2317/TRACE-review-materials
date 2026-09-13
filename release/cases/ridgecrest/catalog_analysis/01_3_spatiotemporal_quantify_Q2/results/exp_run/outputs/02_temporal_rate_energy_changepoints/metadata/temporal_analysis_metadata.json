@@ -1,0 +1,32 @@
+{
+  "time_resolutions": {
+    "30min": "0 days 00:30:00",
+    "1h": "0 days 01:00:00"
+  },
+  "domain_masks": {
+    "All_region": "is_all_region",
+    "Region_A": "in_Region_A",
+    "Region_B": "in_Region_B",
+    "Mw64_neighborhood": "in_Mw64_neighborhood",
+    "Mw71_neighborhood": "in_Mw71_neighborhood"
+  },
+  "sustained_activity_rule": "First bin starting a run of >= 2 consecutive nonzero bins after Mw 6.4.",
+  "changepoint_method": {
+    "name": "bayesian single-changepoint posterior scan",
+    "max_changepoints": 5,
+    "min_segment_bins": 4,
+    "mean_grid_size": 60,
+    "posterior_probability_threshold": 0.3,
+    "support_score": "(post_mean - pre_mean) / pooled_std"
+  },
+  "analysis_window": {
+    "catalog_start_time": "2019-07-04 00:56:37.590000+00:00",
+    "mw64_time": "2019-07-04 17:33:49.040000+00:00",
+    "mw71_time": "2019-07-06 03:19:53.040000+00:00"
+  },
+  "notes": [
+    "A self-contained Bayesian changepoint scan was used to compute posterior probabilities for single mean-shift changepoints under a Gaussian likelihood with discretized mean and scale priors.",
+    "Energy was taken from the ancestor event table using log10(E[J]) = 1.5*M + 4.8 from Task 01.",
+    "Normalized cumulative fractions are defined only for bins after Mw 6.4."
+  ]
+}

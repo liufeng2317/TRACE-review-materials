@@ -1,0 +1,65 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2402,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 23723,
+      "output_tokens": 5788
+    },
+    "Planing": {
+      "input_tokens": 31076,
+      "output_tokens": 8973
+    },
+    "Plan Merging": {
+      "input_tokens": 18962,
+      "output_tokens": 3547
+    },
+    "Workflow Agent": {
+      "input_tokens": 29338,
+      "output_tokens": 4111
+    },
+    "Coding Agent (01_catalog_windows_and_time_colored_maps)": {
+      "input_tokens": 203284,
+      "output_tokens": 11167
+    },
+    "Result Check Agent (01_catalog_windows_and_time_colored_maps)": {
+      "input_tokens": 40163,
+      "output_tokens": 1570
+    },
+    "Task Analysis Agent (01_catalog_windows_and_time_colored_maps)": {
+      "input_tokens": 61489,
+      "output_tokens": 6212
+    },
+    "Coding Agent (02_grid_onset_and_trigger_diagnostics)": {
+      "input_tokens": 335241,
+      "output_tokens": 17048
+    },
+    "Result Check Agent (02_grid_onset_and_trigger_diagnostics)": {
+      "input_tokens": 33580,
+      "output_tokens": 1763
+    },
+    "Task Analysis Agent (02_grid_onset_and_trigger_diagnostics)": {
+      "input_tokens": 97192,
+      "output_tokens": 6547
+    },
+    "Evaluation": {
+      "input_tokens": 19084,
+      "output_tokens": 960
+    },
+    "Report Synthesis": {
+      "input_tokens": 150351,
+      "output_tokens": 8282
+    }
+  },
+  "total": {
+    "input_tokens": 1045885,
+    "output_tokens": 75983,
+    "total_tokens": 1121868
+  }
+}

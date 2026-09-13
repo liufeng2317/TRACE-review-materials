@@ -1,0 +1,128 @@
+# Goal
+Investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence between the Mw 6.4 and Mw 7.1 mainshocks, with emphasis on whether triggered seismicity aligns with mapped fault الاتجاه, whether that alignment changes with time, and whether fault activation occurs simultaneously across the system or propagates through time.
+
+## Planning Assumptions
+- Use only the provided observation-based relocated catalog, mainshock table, and mapped surface-fault polylines; no model data are needed.
+- Catalog schema is fixed as `event_time, latitude, longitude, depth_km, magnitude`; `event_time` must be parsed as UTC datetime.
+- The 2-row mainshock table is the authoritative source for the Mw 6.4 and Mw 7.1 event times and epicenters used to define windows and annotations.
+- Surface faults are provided as geographic polylines in longitude-latitude coordinates; nearest-fault distance should be computed to polyline segments, not just to polyline vertices.
+- Distance and along-fault analyses should use a locally appropriate projected coordinate system after geographic-to-planar transformation; map display can remain in longitude-latitude.
+- Major analytical stages should be executed independently with their own validated outputs; long-running spatial distance calculations should use parallel processing up to 64 cores and emit progress logs.
+- Success evidence for each computational stage must include non-empty derived tables/arrays and the requested figures; diagnostic-only outputs are not sufficient.
+
+## Analysis Plan
+
+### Task 1 — Build the Ridgecrest analysis dataset and time windows
+- Task description:
+  - Load the relocated catalog, mainshock reference table, and fault polylines.
+  - Define the master analysis windows and per-panel time slices required for all downstream figures and statistics.
+  - Construct reusable event subsets and metadata tables for map panels and time-evolution analysis.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy:
+  - Identify Mw 6.4 and Mw 7.1 rows from the mainshock table by magnitude and verify chronological order.
+  - Define:
+    - Window A: `[Mw6.4, Mw7.1]`
+    - Stage 1 bins: 30-minute intervals over `[Mw6.4, Mw6.4 + 4 h]`
+    - Stage 2 bins: 2-hour intervals over `[Mw6.4 + 4 h, Mw7.1]`
+    - Window B before/after comparison:
+      - before = `[Mw6.4, Mw7.1]`
+      - after = `[Mw7.1, Mw7.1 + 2 days]`
+  - Compute a common map extent from all events in Window B plus both mainshocks, with a small geographic margin so every subplot uses identical bounds.
+  - Prepare cumulative “events before current bin” subsets and “events within current bin” subsets for each panel.
+  - Create projected x-y coordinates for events and fault vertices/segments for geometry calculations.
+- Constraints:
+  - Treat intervals as left-closed/right-open except for the final bin in a stage, which includes the endpoint to avoid dropping edge events.
+  - Preserve all catalog rows unless mandatory cleaning is needed for missing or invalid coordinates/times.
+  - Keep stage definitions exactly as requested; do not rebalance bin counts to fit subplot pages.
+  - If the total number of bins exceeds 8, paginate into multiple 2×4 figures while preserving chronological order.
+- Key outputs:
+  - Clean event table with UTC times and projected coordinates
+  - Mainshock metadata table with Mw 6.4 and Mw 7.1 times/locations
+  - Fault polyline/segment geometry table in geographic and projected coordinates
+  - Time-bin definition table with stage labels, bin start/end times, page number, and subplot index
+
+### Task 2 — Spatiotemporal map series and directional-evolution diagnostics
+- Task description:
+  - Generate the requested time-sliced spatial maps between the Mw 6.4 and Mw 7.1 mainshocks and the before/after Mw 7.1 comparison map.
+  - Add quantitative directional diagnostics to support interpretation of whether triggering follows fault strike and whether activation migrates through time.
+- Required data sources:
+  - Reusable outputs from Task 1
+  - Original fault polylines for top-level overlay
+- Parameter selection strategy:
+  - For each time bin, plot:
+    - prior events in silver with high transparency
+    - in-bin events in a brighter foreground color
+    - surface faults as figure-level overlay in every panel
+    - Mw 6.4 and Mw 7.1 epicenters with distinct markers/labels
+  - Produce paginated 2×4 map figures for:
+    - Stage 1 bins
+    - Stage 2 bins
+    - any overflow bins as additional pages
+  - Produce one 2-panel comparison figure for:
+    - `[Mw6.4, Mw7.1]`
+    - `[Mw7.1, Mw7.1 + 2 days]`
+  - For each time bin, compute directional summary metrics in projected coordinates:
+    - event-cloud principal orientation from covariance/PCA of epicenters
+    - major/minor axis spread and elongation ratio
+    - centroid location
+    - optional 1D along-strike coordinate using the dominant local fault trend or reference trend estimated from nearby fault segments
+  - Compare event-cloud orientation with mapped fault orientation using angular misfit statistics.
+  - Track centroid shift and along-strike occupancy through successive bins to test simultaneous versus progressive activation.
+- Constraints:
+  - All map subplots must use identical spatial extents and no colorbar.
+  - Faults and mainshock epicenters should appear in every subplot at the top visual layer.
+  - Directional metrics must be computed only when a bin contains enough events for stable estimation; sparse bins should be flagged rather than overinterpreted.
+  - Do not infer fault direction from seismicity alone when mapped faults are available; use fault geometry as the reference.
+  - Keep visualization and quantitative diagnostics in the same primary script so figure generation and metric validation share the same binning.
+- Key outputs:
+  - Time-sliced 2×4 map figure series for the Mw 6.4 to Mw 7.1 interval
+  - Before/after Mw 7.1 comparison figure
+  - Per-bin directional metrics table:
+    - event count
+    - principal orientation
+    - elongation ratio
+    - centroid x/y or lon/lat
+    - orientation misfit to nearest/reference fault trend
+    - along-strike extent and occupied fraction
+  - Summary plots to answer the three scientific questions:
+    - principal orientation versus time
+    - orientation misfit versus time
+    - centroid/along-strike migration versus time
+    - along-strike occupancy or cumulative occupied length versus time
+
+### Task 3 — Nearest-fault distance computation and temporal statistics
+- Task description:
+  - Compute the nearest distance from each earthquake to the mapped surface-fault network, summarize the distribution for the Mw 6.4 to Mw 7.1 interval, and test how the distribution evolves through time.
+- Required data sources:
+  - Reusable outputs from Task 1
+  - Fault segment geometry from Task 1
+- Parameter selection strategy:
+  - Restrict the primary nearest-fault analysis to events in `[Mw6.4, Mw7.1]`.
+  - Compute point-to-polyline-segment minimum distance in projected coordinates for every event.
+  - Use parallel chunked processing across events or fault-segment spatial index queries, with up to 64 cores and progress logging.
+  - Store, for each event:
+    - nearest fault distance
+    - identifier of nearest segment/polyline if available
+    - event time and magnitude for stratified analysis
+  - Summarize distance distributions using:
+    - histogram or kernel-smoothed density for all events in `[Mw6.4, Mw7.1]`
+    - empirical cumulative distribution
+    - per-bin summaries aligned with Task 2 time bins: median, interquartile range, and selected percentiles
+  - Quantify time evolution with:
+    - rolling or per-bin median distance
+    - fraction of events within selected near-fault thresholds derived from the empirical distribution or geologically meaningful cutoffs
+    - optional comparison of Stage 1 versus Stage 2 distributions using nonparametric tests
+- Constraints:
+  - Distances should be to line segments, not to raw vertices alone.
+  - Use a spatial index or segment chunking to avoid brute-force full pairwise calculations where possible.
+  - Keep temporal bins for distance-change plots consistent with the map-series bins so visual and statistical interpretations align.
+  - If surface-fault coverage is incomplete, interpret distance as distance to mapped surface traces only, not to full subsurface ruptures.
+- Key outputs:
+  - Event-level nearest-fault distance table for `[Mw6.4, Mw7.1]`
+  - Overall nearest-fault distance distribution figure
+  - Time-evolution figure of nearest-fault distance statistics by bin
+  - Optional stage-comparison table and figure for Stage 1 versus Stage 2
+  - Validation summary with counts processed, counts matched, and distance computation completeness

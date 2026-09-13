@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_catalog_windows_qc",
+    "generated_at": "2026-07-05T07:46:16.120189+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 257.687,
+    "timing": {
+      "total_sec": 257.687,
+      "coding_agent_sec": 93.318,
+      "code_review_sec": 27.036,
+      "preflight_sec": 0.45,
+      "script_execution_sec": 22.087,
+      "result_check_sec": 53.622,
+      "task_analysis_sec": 60.006
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_catalog_windows_qc.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "analysis_extent.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/analysis_extent.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "catalog_qc_summary.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/catalog_qc_summary.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "mainshock_reference_verified.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/mainshock_reference_verified.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "ridgecrest_catalog_clean.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/ridgecrest_catalog_clean.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "time_windows_comparison_intervals.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_comparison_intervals.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "time_windows_post64_hourly.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_post64_hourly.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "time_windows_whole_sequence.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_whole_sequence.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "analysis_extent.json",
+      "catalog_qc_summary.json",
+      "mainshock_reference_verified.csv",
+      "ridgecrest_catalog_clean.csv",
+      "time_windows_comparison_intervals.csv",
+      "time_windows_post64_hourly.csv",
+      "time_windows_whole_sequence.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the validated Ridgecrest catalog, verified mainshock references, common map extent, and reusable time-window tables.",
+    "result": "Build the validated Ridgecrest catalog, verified mainshock references, common map extent, and reusable time-window tables. Status=success; outputs=7 discovered; primary=7.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

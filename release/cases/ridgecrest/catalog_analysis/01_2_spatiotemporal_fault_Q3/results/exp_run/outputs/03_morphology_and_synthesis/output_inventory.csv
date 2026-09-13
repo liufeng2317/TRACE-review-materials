@@ -1,0 +1,11 @@
+file_name,bytes
+alpha_shape_boundaries.csv,217744
+alpha_shape_evolution.png,295110
+alpha_shape_metrics.csv,12462
+analysis_validation_manifest.json,1844
+convex_hull_boundaries.csv,33968
+convex_hull_evolution.png,1130481
+convex_hull_metrics.csv,12358
+geometry_status_by_interval.csv,4186
+interval_process_flags.csv,4975
+spatiotemporal_synthesis_summary.csv,20080

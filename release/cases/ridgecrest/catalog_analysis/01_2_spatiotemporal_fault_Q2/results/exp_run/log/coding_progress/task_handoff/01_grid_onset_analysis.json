@@ -1,0 +1,108 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_grid_onset_analysis",
+    "generated_at": "2026-07-06T00:18:55.611733+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 507.623,
+    "timing": {
+      "total_sec": 507.623,
+      "coding_agent_sec": 126.56,
+      "code_review_sec": 36.279,
+      "preflight_sec": 0.53,
+      "script_execution_sec": 82.196,
+      "result_check_sec": 113.645,
+      "task_analysis_sec": 147.098
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_grid_onset_analysis.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_grid_onset_analysis.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_grid_onset_analysis/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/cell_time_series.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/cell_time_series.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/event_to_cell_assignment.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/event_to_cell_assignment.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/filtered_events.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/filtered_events.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/grid_cell_onset.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_cell_onset.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/grid_definition.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_definition.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/grid_onset_metrics.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/grid_onset_metrics.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/mainshock_reference_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/mainshock_reference_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/qc_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_grid_onset_analysis/tables/qc_summary.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/example_cell_time_series.png",
+      "figures/grid_onset_confidence_map.png",
+      "figures/grid_onset_histogram_cdf.png",
+      "figures/grid_onset_map.png",
+      "figures/grid_onset_vs_distance_mw64.png",
+      "figures/occupied_cell_event_histogram.png",
+      "figures/occupied_cells_map.png",
+      "figures/study_area_seismicity_rate.png",
+      "figures/study_region_overview.png",
+      "tables/cell_time_series.csv",
+      "tables/event_to_cell_assignment.csv",
+      "tables/filtered_events.csv",
+      "tables/grid_cell_onset.csv",
+      "tables/grid_definition.csv",
+      "tables/grid_onset_metrics.csv",
+      "tables/mainshock_reference_table.csv",
+      "tables/qc_summary.csv",
+      "tables/run_parameters.csv",
+      "tables/study_region_bounds.csv",
+      "tables/time_bins.csv",
+      "tables/validation_summary.csv"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Load and validate Ridgecrest inputs, define the common space-time domain, build the 1 km grid, and compute grid-cell activation onset products.",
+    "result": "Load and validate Ridgecrest inputs, define the common space-time domain, build the 1 km grid, and compute grid-cell activation onset products. Status=success; outputs=21 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

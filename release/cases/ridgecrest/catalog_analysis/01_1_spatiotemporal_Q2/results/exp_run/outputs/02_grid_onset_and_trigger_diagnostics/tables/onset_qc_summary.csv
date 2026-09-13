@@ -1,0 +1,9 @@
+metric,value
+n_grid_cells,8829.0
+n_occupied_cells,922.0
+n_robust_onset_cells,179.0
+n_ambiguous_cells,230.0
+n_insufficient_data_cells,513.0
+n_inactive_cells,7907.0
+n_time_bins_30min,68.0
+analysis_duration_hr,33.76777777777777

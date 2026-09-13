@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_ridgecrest_metrics_preparation",
+    "generated_at": "2026-07-05T18:18:20.703194+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 351.797,
+    "timing": {
+      "total_sec": 351.797,
+      "coding_agent_sec": 115.478,
+      "code_review_sec": 32.999,
+      "preflight_sec": 0.469,
+      "script_execution_sec": 50.112,
+      "result_check_sec": 70.464,
+      "task_analysis_sec": 81.132
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_metrics_preparation.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_metrics_preparation.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_metrics_preparation/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "along_strike_first_activation.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/along_strike_first_activation.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "bin_directional_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/bin_directional_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "canonical_map_extent.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/canonical_map_extent.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "canonical_time_bins.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/canonical_time_bins.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "catalog_clean_projected.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/catalog_clean_projected.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "event_fault_metrics_post71.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/event_fault_metrics_post71.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "event_fault_metrics_pre71.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/event_fault_metrics_pre71.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "fault_polylines_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_metrics_preparation/fault_polylines_summary.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "along_strike_first_activation.csv",
+      "bin_directional_summary.csv",
+      "canonical_map_extent.csv",
+      "canonical_time_bins.csv",
+      "catalog_clean_projected.csv",
+      "event_fault_metrics_post71.csv",
+      "event_fault_metrics_pre71.csv",
+      "fault_polylines_summary.csv",
+      "fault_segments_projected.csv",
+      "mainshock_reference.csv",
+      "question_metric_summary.csv",
+      "run_metadata.csv",
+      "validation_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the analysis-ready Ridgecrest dataset, compute event-level nearest-fault geometry, and derive bin-level directional and along-strike metrics.",
+    "result": "Build the analysis-ready Ridgecrest dataset, compute event-level nearest-fault geometry, and derive bin-level directional and along-strike metrics. Status=success; outputs=13 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

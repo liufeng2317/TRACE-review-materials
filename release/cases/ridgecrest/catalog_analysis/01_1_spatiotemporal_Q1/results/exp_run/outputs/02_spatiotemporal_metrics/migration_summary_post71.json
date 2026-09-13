@@ -1,0 +1,15 @@
+{
+  "cumulative_centroid_distance_km": 15.9629577211987,
+  "distance_to_target_trend_slope_km_per_hour": -0.06325373955712087,
+  "dominant_cluster_fraction_median": 0.7826673231903437,
+  "dominant_orientation_deg": 326.13641989248424,
+  "mean_centroid_step_distance_km": 1.0641971814132465,
+  "median_cluster_count": 2.5,
+  "multi_cluster_window_fraction": 1.0,
+  "n_windows_total": 16,
+  "n_windows_with_events": 16,
+  "net_centroid_shift_azimuth_deg": 141.3370390109406,
+  "net_centroid_shift_distance_km": 5.19118755064297,
+  "orientation_change_class": "stable",
+  "summary_label": "post71"
+}

@@ -1,0 +1,63 @@
+[INFO] Removed stale directory: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h
+[INFO] Removed stale directory: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_6h
+[INFO] Removed stale directory: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/compare_before_after_mw64.png
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/compare_before_after_mw71.png
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_2h_page_index.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_6h_page_index.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_page_index.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_render_log.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_render_log.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_branching_flags.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/ridgecrest_triggering_evidence_summary.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/ridgecrest_interval_interpretation_table.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figure_window_cross_reference.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_64.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_71.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/output_manifest.csv
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/validation_report.json
+[INFO] Removed stale file: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/run_log.txt
+[INFO] Script path: <PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py
+[INFO] Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence
+[INFO] Page rendering workers=8, max_cores=64
+[INFO] Reading cleaned catalog: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/ridgecrest_catalog_clean.csv
+[INFO] Reading mainshock reference: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/mainshock_reference_verified.csv
+[INFO] Reading windows: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_whole_sequence.csv
+[INFO] Reading windows: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_post64_hourly.csv
+[INFO] Reading windows: <PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc/time_windows_comparison_intervals.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_metrics_whole_sequence.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_metrics_post64_hourly.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_cluster_metrics_whole_sequence.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/window_cluster_metrics_post64_hourly.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/comparison_metrics_64.csv
+[INFO] Reading metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics/comparison_metrics_71.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figure_window_cross_reference.csv
+[INFO] Rendering family=figures_whole_sequence_2h pages=4 workers=8
+[INFO] Rendered figures_whole_sequence_2h page 004/004: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_004.png size=301543
+[INFO] Rendered figures_whole_sequence_2h page 002/004: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_002.png size=242304
+[INFO] Rendered figures_whole_sequence_2h page 003/004: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_003.png size=350477
+[INFO] Rendered figures_whole_sequence_2h page 001/004: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_001.png size=198979
+[INFO] Rendering family=figures_whole_sequence_6h pages=2 workers=8
+[INFO] Rendered figures_whole_sequence_6h page 002/002: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_6h/whole_sequence_6h_page_002.png size=708151
+[INFO] Rendered figures_whole_sequence_6h page 001/002: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_6h/whole_sequence_6h_page_001.png size=594659
+[INFO] Rendering family=figures_post64_hourly pages=5 workers=8
+[INFO] Rendered figures_post64_hourly page 005/005: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_005.png size=112868
+[INFO] Rendered figures_post64_hourly page 001/005: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_001.png size=179937
+[INFO] Rendered figures_post64_hourly page 002/005: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_002.png size=213337
+[INFO] Rendered figures_post64_hourly page 003/005: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_003.png size=229493
+[INFO] Rendered figures_post64_hourly page 004/005: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_post64_hourly/post64_hourly_page_004.png size=238007
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_2h_page_index.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_6h_page_index.csv
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_page_index.csv
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/whole_sequence_render_log.json
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_hourly_render_log.json
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/post64_branching_flags.csv
+[INFO] Wrote comparison figure: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/compare_before_after_mw64.png
+[INFO] Wrote comparison figure: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/compare_before_after_mw71.png
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/ridgecrest_triggering_evidence_summary.json
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/ridgecrest_interval_interpretation_table.csv
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_64.json
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/before_after_change_metrics_71.json
+[INFO] Wrote CSV: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/output_manifest.csv
+[INFO] Wrote JSON: <PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/validation_report.json
+[INFO] Task 03_visualization_and_evidence completed successfully

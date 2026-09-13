@@ -1,0 +1,3 @@
+stage,n_intervals,n_valid_kde,mean_distance_to_main71_km,mean_hotspot_step_km,mean_high_density_area_km2,mean_patch_count
+Stage1,8,8,13.015583916645646,3.4258060555226613,4.160639265149445,1.125
+Stage2,15,15,9.244406610506982,2.7032164845663442,0.7587328419379058,0.2

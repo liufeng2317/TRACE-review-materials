@@ -1,0 +1,41 @@
+{
+  "task": "03_morphology_and_synthesis",
+  "reference_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework",
+  "kde_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis",
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_morphology_and_synthesis",
+  "projected_epsg": 32611,
+  "alpha_selection": {
+    "method": "delaunay_circumradius_quantile",
+    "sample_point_count": 2000,
+    "triangle_count": 3990,
+    "radius_quantiles_m": {
+      "0.7": 260.7286021729246,
+      "0.75": 304.7403991630393,
+      "0.8": 366.45805907771495,
+      "0.85": 477.7261105396023,
+      "0.9": 735.8257078160852
+    },
+    "selected_radius_m": 366.45805907771495,
+    "selected_alpha_inv_m": 0.002728825237236574
+  },
+  "interval_count_expected": 34,
+  "interval_count_status_table": 34,
+  "interval_count_convex_metrics": 34,
+  "interval_count_alpha_metrics": 34,
+  "valid_convex_interval_count": 34,
+  "valid_alpha_interval_count": 34,
+  "convex_boundary_vertex_count": 291,
+  "alpha_boundary_vertex_count": 1870,
+  "kde_hotspot_metrics_available": true,
+  "outputs_present": {
+    "convex_hull_metrics.csv": true,
+    "alpha_shape_metrics.csv": true,
+    "geometry_status_by_interval.csv": true,
+    "convex_hull_boundaries.csv": true,
+    "alpha_shape_boundaries.csv": true,
+    "convex_hull_evolution.png": true,
+    "alpha_shape_evolution.png": true,
+    "spatiotemporal_synthesis_summary.csv": true,
+    "interval_process_flags.csv": true
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "catalog_qc": {
+    "dataset_label": "ridgecrest_catalog",
+    "rows_dropped_invalid_numeric": 0,
+    "rows_dropped_invalid_time": 0,
+    "rows_dropped_missing_required": 0,
+    "rows_dropped_nonfinite_coordinates": 0,
+    "rows_final": 84474,
+    "rows_original": 84474,
+    "time_max": "2019-07-25T23:59:29.320000+00:00",
+    "time_min": "2019-07-04T00:56:37.590000+00:00"
+  },
+  "common_extent": {
+    "derived_from": "full_clean_catalog",
+    "latitude_max": 36.36162779518504,
+    "latitude_min": 35.22090479518505,
+    "longitude_max": -116.9439567617556,
+    "longitude_min": -118.11486693463452,
+    "padding_degrees": 0.05,
+    "projection_origin_latitude": 35.791266295185046,
+    "projection_origin_longitude": -117.52941184819505
+  },
+  "mainshock_qc": {
+    "dataset_label": "mainshock_reference",
+    "rows_dropped_invalid_numeric": 0,
+    "rows_dropped_invalid_time": 0,
+    "rows_dropped_missing_required": 0,
+    "rows_dropped_nonfinite_coordinates": 0,
+    "rows_final": 2,
+    "rows_original": 2,
+    "time_max": "2019-07-06T03:19:53.040000+00:00",
+    "time_min": "2019-07-04T17:33:49.040000+00:00"
+  },
+  "notes": {
+    "interval_convention": "half_open_start_inclusive_end_exclusive",
+    "max_cores_available_for_downstream_tasks": 64,
+    "spatial_projection": "local_equirectangular_km"
+  },
+  "verified_mainshocks": {
+    "mainshock64": {
+      "depth_km": 11.864,
+      "event_time": "2019-07-04T17:33:49.040000+00:00",
+      "latitude": 35.70421,
+      "longitude": -117.49392,
+      "magnitude": 6.4
+    },
+    "mainshock71": {
+      "depth_km": 1.986,
+      "event_time": "2019-07-06T03:19:53.040000+00:00",
+      "latitude": 35.77623,
+      "longitude": -117.59286,
+      "magnitude": 7.1
+    }
+  },
+  "window_summary": {
+    "comparison_intervals": 4,
+    "post64_hourly": {
+      "end_time": "2019-07-06T03:19:53.040000+00:00",
+      "n_windows": 34,
+      "start_time": "2019-07-04T17:33:49.040000+00:00"
+    },
+    "whole_sequence__2h_mainshock64_to_mainshock71_plus_1day": {
+      "end_time": "2019-07-07T03:19:53.040000+00:00",
+      "n_windows": 29,
+      "start_time": "2019-07-04T17:33:49.040000+00:00"
+    },
+    "whole_sequence__6h_mainshock71_plus_1day_to_plus_5days": {
+      "end_time": "2019-07-11T03:19:53.040000+00:00",
+      "n_windows": 16,
+      "start_time": "2019-07-07T03:19:53.040000+00:00"
+    }
+  }
+}

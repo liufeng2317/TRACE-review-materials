@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_domain_preparation",
+    "generated_at": "2026-07-07T02:30:09.873278+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 459.273,
+    "timing": {
+      "total_sec": 459.273,
+      "coding_agent_sec": 218.166,
+      "code_review_sec": 13.339,
+      "preflight_sec": 0.968,
+      "script_execution_sec": 67.238,
+      "result_check_sec": 105.322,
+      "task_analysis_sec": 52.063
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_domain_preparation.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_domain_preparation.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_domain_preparation/log_2.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "domain_assignment_checks.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_assignment_checks.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "domain_counts_primary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_counts_primary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "domain_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "interevent_domain_event_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/interevent_domain_event_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "domain_assignment_diagnostic.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/domain_assignment_diagnostic.png",
+        "kind": "figure"
+      }
+    ],
+    "all": [
+      "domain_assignment_checks.csv",
+      "domain_assignment_diagnostic.png",
+      "domain_counts_primary.csv",
+      "domain_metadata.json",
+      "interevent_domain_event_table.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the Ridgecrest interevent event table, assign fixed corridor and north-south domains, and save domain diagnostics metadata.",
+    "result": "Build the Ridgecrest interevent event table, assign fixed corridor and north-south domains, and save domain diagnostics metadata. Status=success; outputs=5 discovered; primary=5.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

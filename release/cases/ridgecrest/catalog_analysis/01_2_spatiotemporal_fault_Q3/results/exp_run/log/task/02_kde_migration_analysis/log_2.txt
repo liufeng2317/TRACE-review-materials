@@ -1,0 +1,40 @@
+Loading catalog: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/intermainshock_catalog_clean.csv
+Loading mainshocks: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/mainshock_reference_table.csv
+Loading faults: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/fault_segments_table.csv
+Loading stage 1 intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage1.csv
+Loading stage 2 intervals: <PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework/interval_definitions_kde_stage2.csv
+Estimated fixed KDE bandwidth from full inter-mainshock catalog using Scott rule: 1415.44 m
+Launching interval-parallel KDE computation with n_jobs=23 for 23 intervals
+Computing KDE for stage2_03: stage=stage2, events=291, start=2019-07-05T01:33:49.040000+00:00, end=2019-07-05T03:33:49.040000+00:00
+Computing KDE for stage2_12: stage=stage2, events=283, start=2019-07-05T19:33:49.040000+00:00, end=2019-07-05T21:33:49.040000+00:00
+Computing KDE for stage2_04: stage=stage2, events=287, start=2019-07-05T03:33:49.040000+00:00, end=2019-07-05T05:33:49.040000+00:00
+Computing KDE for stage2_02: stage=stage2, events=284, start=2019-07-04T23:33:49.040000+00:00, end=2019-07-05T01:33:49.040000+00:00
+Computing KDE for stage2_08: stage=stage2, events=306, start=2019-07-05T11:33:49.040000+00:00, end=2019-07-05T13:33:49.040000+00:00
+Computing KDE for stage2_06: stage=stage2, events=283, start=2019-07-05T07:33:49.040000+00:00, end=2019-07-05T09:33:49.040000+00:00
+Computing KDE for stage2_05: stage=stage2, events=280, start=2019-07-05T05:33:49.040000+00:00, end=2019-07-05T07:33:49.040000+00:00
+Computing KDE for stage2_09: stage=stage2, events=283, start=2019-07-05T13:33:49.040000+00:00, end=2019-07-05T15:33:49.040000+00:00
+Computing KDE for stage2_14: stage=stage2, events=229, start=2019-07-05T23:33:49.040000+00:00, end=2019-07-06T01:33:49.040000+00:00
+Computing KDE for stage2_15: stage=stage2, events=214, start=2019-07-06T01:33:49.040000+00:00, end=2019-07-06T03:19:53.040000+00:00
+Computing KDE for stage2_13: stage=stage2, events=279, start=2019-07-05T21:33:49.040000+00:00, end=2019-07-05T23:33:49.040000+00:00
+Computing KDE for stage2_07: stage=stage2, events=276, start=2019-07-05T09:33:49.040000+00:00, end=2019-07-05T11:33:49.040000+00:00
+Computing KDE for stage1_06: stage=stage1, events=72, start=2019-07-04T20:03:49.040000+00:00, end=2019-07-04T20:33:49.040000+00:00
+Computing KDE for stage2_01: stage=stage2, events=270, start=2019-07-04T21:33:49.040000+00:00, end=2019-07-04T23:33:49.040000+00:00
+Computing KDE for stage1_08: stage=stage1, events=68, start=2019-07-04T21:03:49.040000+00:00, end=2019-07-04T21:33:49.040000+00:00
+Computing KDE for stage2_11: stage=stage2, events=287, start=2019-07-05T17:33:49.040000+00:00, end=2019-07-05T19:33:49.040000+00:00
+Computing KDE for stage1_03: stage=stage1, events=65, start=2019-07-04T18:33:49.040000+00:00, end=2019-07-04T19:03:49.040000+00:00
+Computing KDE for stage1_04: stage=stage1, events=65, start=2019-07-04T19:03:49.040000+00:00, end=2019-07-04T19:33:49.040000+00:00
+Computing KDE for stage2_10: stage=stage2, events=314, start=2019-07-05T15:33:49.040000+00:00, end=2019-07-05T17:33:49.040000+00:00
+Computing KDE for stage1_01: stage=stage1, events=68, start=2019-07-04T17:33:49.040000+00:00, end=2019-07-04T18:03:49.040000+00:00
+Computing KDE for stage1_05: stage=stage1, events=75, start=2019-07-04T19:33:49.040000+00:00, end=2019-07-04T20:03:49.040000+00:00
+Computing KDE for stage1_07: stage=stage1, events=67, start=2019-07-04T20:33:49.040000+00:00, end=2019-07-04T21:03:49.040000+00:00
+Computing KDE for stage1_02: stage=stage1, events=70, start=2019-07-04T18:03:49.040000+00:00, end=2019-07-04T18:33:49.040000+00:00
+Saved interval KDE summary: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_interval_summary.csv
+Saved KDE normalization metadata: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_global_normalization.json
+Saved hotspot tables for stage1 and stage2
+Saved KDE panel page: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage1_panels_page01.png
+Saved KDE panel page: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage2_panels_page01.png
+Saved KDE panel page: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/kde_stage2_panels_page02.png
+Saved hotspot migration metrics: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_metrics.csv
+Saved hotspot migration figure: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_stage1.png
+Saved hotspot migration figure: <PACKAGE_ROOT>/results/exp_run/outputs/02_kde_migration_analysis/hotspot_migration_stage2.png
+02_kde_migration_analysis completed successfully.

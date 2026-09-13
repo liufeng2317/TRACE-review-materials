@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_omori_fitting_and_figures
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 363.124
+Started at: 2026-07-07T02:24:06.565025+00:00
+Finished at: 2026-07-07T02:30:09.689127+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/02_omori_fitting_and_figures/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/02_omori_fitting_and_figures.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/02_omori_fitting_and_figures.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-07T02:30:09.689032+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=61.584, coding_agent_sec=112.679, preflight_sec=0.359, result_check_sec=53.819, script_execution_sec=31.099, task_analysis_sec=102.222, total_sec=363.124
+Coding plan context: mode=full_experiment_plan, original_chars=15428, compact_chars=15428
+Coding tool usage: total=12, read_file=4, unique_files=2, used_retrieve=False, tools={'read_file': 4, 'bash_executor': 2, 'python_executor': 3, 'write_file': 1, 'apply_diff': 2}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

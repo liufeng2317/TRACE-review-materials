@@ -1,0 +1,156 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_spatial_bvalue_diagnostics",
+    "generated_at": "2026-07-06T16:13:07.839706+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 2643.506,
+    "timing": {
+      "total_sec": 2643.506,
+      "coding_agent_sec": 169.113,
+      "code_review_sec": 55.031,
+      "preflight_sec": 0.494,
+      "script_execution_sec": 2099.078,
+      "result_check_sec": 131.003,
+      "task_analysis_sec": 187.791
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_spatial_bvalue_diagnostics.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_spatial_bvalue_diagnostics.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_spatial_bvalue_diagnostics/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/analysis_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/tables/analysis_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "figures/figure_core_fmd_comparison.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/figure_core_fmd_comparison.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/figure_radius_sensitivity.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/figure_radius_sensitivity.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/map_bvalue_difference_post_minus_pre_r5.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/map_bvalue_difference_post_minus_pre_r5.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/map_bvalue_full_interevent_r5.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/map_bvalue_full_interevent_r5.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/map_bvalue_full_interevent_r5_geo.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/map_bvalue_full_interevent_r5_geo.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/map_bvalue_post_separator_r5.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/map_bvalue_post_separator_r5.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/map_bvalue_post_separator_r5_geo.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics/figures/map_bvalue_post_separator_r5_geo.png",
+        "kind": "figure"
+      }
+    ],
+    "all": [
+      "figures/figure_core_fmd_comparison.png",
+      "figures/figure_radius_sensitivity.png",
+      "figures/map_bvalue_difference_post_minus_pre_r5.png",
+      "figures/map_bvalue_full_interevent_r5.png",
+      "figures/map_bvalue_full_interevent_r5_geo.png",
+      "figures/map_bvalue_post_separator_r5.png",
+      "figures/map_bvalue_post_separator_r5_geo.png",
+      "figures/map_bvalue_pre_separator_r5.png",
+      "figures/map_bvalue_pre_separator_r5_geo.png",
+      "figures/map_reliability_class_full_interevent_r5.png",
+      "figures/map_reliability_class_post_separator_r5.png",
+      "figures/map_reliability_class_pre_separator_r5.png",
+      "figures/map_reliability_ngeMc_full_interevent_r5.png",
+      "figures/map_reliability_ngeMc_post_separator_r5.png",
+      "figures/map_reliability_ngeMc_pre_separator_r5.png",
+      "figures/map_uncertainty_full_interevent_r5.png",
+      "figures/map_uncertainty_post_separator_r5.png",
+      "figures/map_uncertainty_pre_separator_r5.png",
+      "figures/profile_mw71_post_separator_bvalue.png",
+      "tables/analysis_metadata.json",
+      "tables/background_reference_bvalue.csv",
+      "tables/bootstrap_progress_log.csv",
+      "tables/catalog_background_reference_clean.csv",
+      "tables/catalog_full_interevent_clean.csv",
+      "tables/catalog_post_separator_clean.csv",
+      "tables/catalog_pre_separator_clean.csv",
+      "tables/catalog_validation_checks.csv",
+      "tables/comparison_summary.csv",
+      "tables/core_bvalues_fmd_summary.csv",
+      "tables/core_fmd_bins.csv",
+      "tables/core_radius_sensitivity_summary.csv",
+      "tables/core_region_event_counts.csv",
+      "tables/core_regions_5km.csv",
+      "tables/core_vs_control_comparison.csv",
+      "tables/difference_map_coverage_summary.csv",
+      "tables/excluded_events_log.csv",
+      "tables/fault_profile_definition.csv",
+      "tables/future71_vs_control_lowb_comparison.csv",
+      "tables/grid_bvalue_difference_post_minus_pre_r5.csv",
+      "tables/grid_bvalues_full_interevent_r4.csv",
+      "tables/grid_bvalues_full_interevent_r5.csv",
+      "tables/grid_bvalues_full_interevent_r6.csv",
+      "tables/grid_bvalues_full_interevent_r7.csv",
+      "tables/grid_bvalues_post_separator_r4.csv",
+      "tables/grid_bvalues_post_separator_r5.csv",
+      "tables/grid_bvalues_post_separator_r6.csv",
+      "tables/grid_bvalues_post_separator_r7.csv",
+      "tables/grid_bvalues_pre_separator_r4.csv",
+      "tables/grid_bvalues_pre_separator_r5.csv",
+      "tables/grid_bvalues_pre_separator_r6.csv",
+      "tables/grid_bvalues_pre_separator_r7.csv",
+      "tables/grid_nodes.csv",
+      "tables/low_b_nodes_by_window_r5.csv",
+      "tables/low_b_summary_by_window.csv",
+      "tables/magnitude_precision_deltaM_check.csv",
+      "tables/mainshock_markers_projected.csv",
+      "tables/mw71_profile_post_separator_r5.csv",
+      "tables/mw71_profile_post_separator_r5_binned.csv",
+      "tables/output_manifest.csv",
+      "tables/profile_orientation_metadata.csv",
+      "tables/projection_and_grid_definition.csv",
+      "tables/radius_sensitivity_summary.csv",
+      "tables/required_output_checklist.csv",
+      "tables/result_summary.json",
+      "tables/spatial_validation_checks.csv",
+      "tables/validation_report.json",
+      "tables/window_level_bvalue_qc.csv",
+      "tables/window_level_fmd_summary.csv",
+      "tables/window_level_mc_qc.csv"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Execute the full Ridgecrest interevent spatial b-value analysis, figure generation, and scientific validation in one script.",
+    "result": "Execute the full Ridgecrest interevent spatial b-value analysis, figure generation, and scientific validation in one script. Status=success; outputs=69 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

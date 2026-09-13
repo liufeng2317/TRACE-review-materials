@@ -1,0 +1,274 @@
+tasks:
+- name: 01_domain_preparation
+  description: Build the Ridgecrest interevent event table, assign fixed 
+    corridor and north-south domains, and save domain diagnostics metadata.
+  script: 01_domain_preparation.py
+  ancestors: []
+  subtasks:
+  - name: load_catalog_and_mainshocks
+    description: Read the relocated catalog and identify the Mw 6.4 and Mw 7.1 
+      mainshock origin times.
+    inputs:
+    - relocated_catalog
+    - mainshock_catalog
+    outputs:
+    - catalog_records
+    - mainshock_times
+    - mainshock_records
+    params:
+      time_column: event_time
+      catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      mainshock_identification: by_magnitude_from_mainshock_catalog
+  - name: build_interevent_time_reference
+    description: Compute time since Mw 6.4 and retain only events strictly 
+      between the Mw 6.4 and Mw 7.1 origin times.
+    inputs:
+    - catalog_records
+    - mainshock_times
+    outputs:
+    - interevent_catalog
+    - interevent_time_metadata
+    params:
+      reference_event: Mw6.4
+      interevent_interval: open_interval_between_Mw6.4_and_Mw7.1
+      time_unit: day
+  - name: project_to_local_metric_system
+    description: Project events and corridor control points to a local metric 
+      coordinate system for distance calculations.
+    inputs:
+    - interevent_catalog
+    - mainshock_records
+    outputs:
+    - projected_interevent_catalog
+    - projected_corridor_geometry
+    - projection_metadata
+    params:
+      projection_strategy: 
+        local_metric_projection_centered_near_corridor_midpoint
+      distance_unit: km
+  - name: assign_fixed_corridor_and_split_domains
+    description: Compute along-strike and cross-strike positions and assign 
+      entire, north, and south domain flags for the required split latitudes.
+    inputs:
+    - projected_interevent_catalog
+    - projected_corridor_geometry
+    outputs:
+    - event_domain_table
+    - domain_count_summary
+    - domain_assignment_checks
+    params:
+      centerline_start_lon_lat:
+      - -117.735813
+      - 35.897499
+      centerline_end_lon_lat:
+      - -117.36252
+      - 35.559488
+      axial_strike_deg: 138.0
+      corridor_total_width_km: 6.0
+      corridor_half_width_km: 3.0
+      primary_split_latitude_deg: 35.72
+      sensitivity_split_latitudes_deg:
+      - 35.7
+      - 35.72
+      - 35.74
+      split_rule: 
+        strict_north_greater_strict_south_less_equal_split_only_in_entire
+  - name: save_metadata_and_domain_figure
+    description: Save required metadata and generate the domain-assignment 
+      diagnostic figure for the fixed primary geometry.
+    inputs:
+    - event_domain_table
+    - domain_count_summary
+    - domain_assignment_checks
+    - mainshock_records
+    - projected_corridor_geometry
+    - interevent_time_metadata
+    - projection_metadata
+    outputs:
+    - analysis_metadata
+    - domain_assignment_figure
+    - event_domain_dataset
+    params:
+      separator_period_days: 0.732
+      final_period_days: 1.404
+      figure_contents:
+      - all_interevent_events_colored_by_time_since_Mw6.4
+      - corridor_centerline
+      - corridor_boundary
+      - split_line_35.72N
+      - north_and_south_assigned_events
+      - Mw6.4_and_Mw7.1_mainshocks
+
+- name: 02_omori_fitting_and_figures
+  description: Fit cumulative pure power-law Omori models with bootstrap 
+    uncertainty, create required figures, and save primary and split-sensitivity
+    results.
+  script: 02_omori_fitting_and_figures.py
+  ancestors:
+  - 01_domain_preparation
+  subtasks:
+  - name: extract_primary_fit_windows
+    description: Build cumulative domain-period event subsets for the primary M 
+      greater than or equal to 3.0 analysis.
+    inputs:
+    - event_domain_dataset
+    - analysis_metadata
+    outputs:
+    - fit_window_table
+    - fit_input_audit
+    params:
+      primary_domains:
+      - entire_35p72_corridor
+      - north_35p72
+      - south_35p72
+      minimum_magnitude: 3.0
+      cumulative_period_endpoints_days:
+      - 0.3
+      - 0.5
+      - 0.68
+      - 0.732
+      - 0.85
+      - 1.0
+      - 1.1
+      - 1.22
+      - 1.404
+      time_filter: positive_times_up_to_period_endpoint
+  - name: fit_primary_power_law_models
+    description: Fit lambda of t equals K times t to the minus p by maximum 
+      likelihood for each primary domain-period window and record failures 
+      explicitly.
+    inputs:
+    - fit_window_table
+    - fit_input_audit
+    outputs:
+    - primary_fit_results
+    - fit_failure_log
+    params:
+      rate_model: pure_power_law_lambda_K_t_to_minus_p
+      fitting_method: maximum_likelihood_estimation
+      lower_bound_rule: use_first_observed_event_time_if_needed
+      unconstrained_window_policy: mark_failure_without_forcing_solution
+      low_count_open_circle_rule:
+        domain: north_35p72
+        max_event_count: 20
+  - name: bootstrap_primary_uncertainty
+    description: Resample event times within each successful window, refit the 
+      same model, and summarize bootstrap uncertainty for p.
+    inputs:
+    - primary_fit_results
+    - fit_input_audit
+    outputs:
+    - bootstrap_summary
+    - merged_primary_results
+    - bootstrap_diagnostics
+    params:
+      resampling_unit: event_times_with_replacement
+      summary_statistics:
+      - bootstrap_p_median
+      - bootstrap_p_q025
+      - bootstrap_p_q975
+      - bootstrap_success_count
+      - bootstrap_failure_count
+      - bootstrap_success_fraction
+      parallel_execution: enabled_if_available
+      progress_reporting: enabled
+      replicate_count_strategy: fixed_count_recorded_in_metadata
+  - name: create_main_two_panel_figure
+    description: Generate the primary two-panel figure for p-value evolution and
+      the final entire-area rate-fit diagnostic.
+    inputs:
+    - merged_primary_results
+    - fit_input_audit
+    - analysis_metadata
+    outputs:
+    - main_two_panel_figure
+    - panel_b_rate_support_table
+    params:
+      panel_a_domains:
+        entire_35p72_corridor: grey
+        north_35p72: blue
+        south_35p72: red
+      panel_a_markers:
+        default: filled_circle_with_vertical_uncertainty_bar
+        north_low_count: open_blue_circle
+      panel_a_vertical_lines_days:
+      - 0.0
+      - 0.732
+      - 1.404
+      panel_b_domain: entire_35p72_corridor
+      panel_b_period_days: 1.404
+      panel_b_axes: log_log
+      panel_b_observed_rate_strategy: 
+        visualization_binning_documented_without_affecting_MLE
+  - name: run_split_line_sensitivity
+    description: Repeat north-south cumulative fitting and bootstrap summaries 
+      for the three requested split latitudes as a robustness check.
+    inputs:
+    - event_domain_dataset
+    - analysis_metadata
+    outputs:
+    - split_sensitivity_results
+    - split_sensitivity_figure
+    - split_sensitivity_diagnostics
+    params:
+      split_latitudes_deg:
+      - 35.7
+      - 35.72
+      - 35.74
+      domains_per_split:
+      - north
+      - south
+      fixed_shared_settings:
+        minimum_magnitude: 3.0
+        cumulative_period_endpoints_days:
+        - 0.3
+        - 0.5
+        - 0.68
+        - 0.732
+        - 0.85
+        - 1.0
+        - 1.1
+        - 1.22
+        - 1.404
+        rate_model: pure_power_law_lambda_K_t_to_minus_p
+        fitting_method: maximum_likelihood_estimation
+        bootstrap_method: resample_event_times_with_replacement
+  - name: validate_outputs_and_prepare_comparison_tables
+    description: Cross-check deliverables and save compact tables that support 
+      the primary north-versus-south interpretation.
+    inputs:
+    - domain_count_summary
+    - analysis_metadata
+    - primary_fit_results
+    - bootstrap_summary
+    - merged_primary_results
+    - split_sensitivity_results
+    - fit_failure_log
+    outputs:
+    - primary_north_south_comparison_table
+    - workflow_manifest
+    - validation_report
+    params:
+      primary_split_latitude_deg: 35.72
+      later_periods_of_interest_days:
+      - 1.1
+      - 1.22
+      - 1.404
+      validation_checks:
+      - mainshock_times_match_metadata
+      - final_period_matches_Mw7.1_endpoint
+      - north_and_south_counts_do_not_exceed_entire
+      - every_plotted_point_has_results_row
+      - failed_windows_remain_explicitly_flagged
+      - missing_plot_points_are_not_fabricated
+      comparison_fields:
+      - north_minus_south_p_fit
+      - north_minus_south_bootstrap_median_difference
+      - interval_overlap_indicator
+      - low_count_caution_flag
+      - later_period_marker

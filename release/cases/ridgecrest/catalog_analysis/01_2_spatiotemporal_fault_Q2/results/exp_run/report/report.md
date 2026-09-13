@@ -1,0 +1,204 @@
+---
+author:
+- TRACE
+title: |
+  Spatiotemporal Evolution of the Ridgecrest Inter-Mainshock Earthquake Sequence  
+  Grid-Based and Fault-Segment Diagnostics of Triggering Between the Mw 6.4 and Mw 7.1 Mainshocks
+---
+
+# Abstract
+
+This report investigates the evolution of seismic activation during the Ridgecrest sequence between the Mw 6.4 mainshock on 2019-07-04 and the Mw 7.1 mainshock on 2019-07-06, with emphasis on whether activation along mapped fault directions was synchronous, progressively staged, cascade-like, or more structurally complex. The implemented workflow combined two complementary analyses: (1) a 1 km gridded onset analysis over a fault-bounded study region buffered by 5 km, using 30 minute bins and a sustained-activation onset rule; and (2) a mapped-fault segment framework in which earthquakes were associated to the nearest segment within 3 km and segment activation was defined as the first 30 minute bin exceeding 5 events (10 events per hour). The gridded analysis retained 4,713 inter-mainshock earthquakes, mapped them to 2,968 grid cells, and found 104 activated cells among 445 occupied cells. The fault-based analysis built 1,019 segments from 977 mapped polylines and associated 4,490 of 4,627 filtered earthquakes (97.0%) to mapped fault segments, but only 24 segments met the strict activation threshold. Diagnostic metrics show that activation was not synchronous across the fault system: only 16.7% of activated fault segments were triggered within 60 minutes of Mw 6.4 and only 25.0% within 240 minutes, while the fault-segment activation interquartile range was 832.5 minutes. The combined evidence supports a mixed and structurally heterogeneous triggering pattern rather than system-wide co-activation. At the same time, the stringent segment threshold and sparse number of activated multi-segment faults limit the ability to establish a robust, systematized along-fault cascade law. Within the mapped-fault framework, the Mw 7.1 nearest mapped segment was not itself anomalously late-activated; however, that inference remains conditional on surface-fault representation and nearest-segment assignment.
+
+# Scientific Objective and Scope
+
+The objective of this study was to investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence specifically during the interval bounded by the Mw 6.4 and Mw 7.1 mainshocks, and to determine the style of triggering along the mapped fault system. The two primary scientific questions were:
+
+1.  Was earthquake activation along fault directions approximately synchronous across the system?
+
+2.  If not, was activation staged, cascade-like along faults, or more spatially complex with cross-fault jumps and localized heterogeneity?
+
+The analysis window was strictly limited to the inter-mainshock interval from 2019-07-04 17:33:49.040000+00:00 to 2019-07-06 03:19:53.040000+00:00. Therefore, the report addresses only the evolution between the two mainshocks and does not infer pre-Mw 6.4 background behavior or post-Mw 7.1 development.
+
+# Data, Study Domain, and Implemented Workflow
+
+## Input datasets
+
+The workflow used the relocated Ridgecrest earthquake catalog, the mainshock reference table, and mapped surface-fault polylines provided in the project context. The exact source files were:
+
+- Earthquake catalog: <a href="<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv" class="uri"><REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv</a>
+
+- Mainshock reference events: <a href="<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv" class="uri"><REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv</a>
+
+- Fault traces: <a href="<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json" class="uri"><REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json</a>
+
+Task 01 validated 84,474 catalog input rows, with zero missing required rows, zero duplicate removals, zero invalid numeric rows, and zero invalid time rows in the visible quality-control summary. These values are documented in the task output table <a href="../outputs/01_grid_onset_analysis/tables/qc_summary.csv" class="uri">../outputs/01_grid_onset_analysis/tables/qc_summary.csv</a>.
+
+## Workflow actually implemented
+
+The final interpretation rests on three implemented task groups.
+
+#### Task 01: Grid-based onset analysis.
+
+The fault-bounded study region was buffered by 5 km in all directions and discretized into 1 km $`\times`$ 1 km cells. Local seismicity rates were constructed using 30 minute bins. The implemented onset rule for grid cells was *not* the same as the fault-segment rule; instead, a cell was assigned an onset at the first 30 minute bin with count $`\ge 2`$ and sustained support in subsequent bins, specifically as documented in the run-parameter table: candidate plus next bin $`\ge 3`$, or candidate plus next two bins $`\ge 3`$ with nonzero post-candidate activity. Parameters are preserved in <a href="../outputs/01_grid_onset_analysis/tables/run_parameters.csv" class="uri">../outputs/01_grid_onset_analysis/tables/run_parameters.csv</a>.
+
+#### Task 02: Fault-segment activation analysis.
+
+Mapped fault polylines were projected and discretized into short contiguous segments with a target length of 1 km. Earthquakes from the filtered inter-mainshock catalog were associated to the nearest fault segment when the minimum distance was less than 3 km. For each segment, a 30 minute time series was built, and activation was defined as the first time bin exceeding 5 events per 30 minute, equivalent to 10 events per hour. Parameters are documented in <a href="../outputs/02_fault_segment_activation/tables/run_parameters.csv" class="uri">../outputs/02_fault_segment_activation/tables/run_parameters.csv</a>.
+
+#### Task 03: Triggering-style diagnostics.
+
+The diagnostic stage integrated the grid-cell and fault-segment products to quantify system synchrony, assess whether any major faults showed robust along-fault propagation, measure cross-fault complexity, and examine the activation history near the Mw 7.1 nucleation area. Parameters include a 60 minute early window, a 240 minute intermediate window, a 3 km Mw 7.1 neighborhood radius, and a requirement of at least 8 activated segments on a major fault for robust propagation testing. These settings are recorded in <a href="../outputs/03_triggering_style_diagnostics/tables/run_parameters.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/run_parameters.csv</a>.
+
+# Evidence Overview and Principal Deliverables
+
+The report draws primarily on the task outputs listed in the project evidence index. Key tables include the gridded onset metrics, fault-segment activation summary, system synchrony metrics, cross-fault complexity metrics, fault classification table, Mw 7.1 neighborhood segment table, and event-count conservation table. Representative figures are shown in Figures <a href="#fig:overview" data-reference-type="ref" data-reference="fig:overview">1</a>–<a href="#fig:mw71" data-reference-type="ref" data-reference="fig:mw71">7</a>.
+
+<figure id="fig:overview" data-latex-placement="H">
+<img src="../outputs/01_grid_onset_analysis/figures/study_region_overview.png" style="width:80.0%" />
+<figcaption>Study region overview for the Ridgecrest inter-mainshock analysis, showing the fault-controlled spatial domain used for the gridded onset framework.</figcaption>
+</figure>
+
+<figure id="fig:gridmap" data-latex-placement="H">
+<img src="../outputs/01_grid_onset_analysis/figures/grid_onset_map.png" style="width:80.0%" />
+<figcaption>Grid-cell onset map for the inter-mainshock interval. Darker tones represent earlier activation onset relative to the Mw 6.4 mainshock.</figcaption>
+</figure>
+
+<figure id="fig:faultmap" data-latex-placement="H">
+<img src="../outputs/02_fault_segment_activation/figures/fault_segment_activation_map.png" style="width:80.0%" />
+<figcaption>Fault-segment activation map colored by activation time. This figure is central to evaluating whether activation progressed coherently along mapped fault directions or remained heterogeneous across the system.</figcaption>
+</figure>
+
+<figure id="fig:densitytime" data-latex-placement="H">
+<img src="../outputs/02_fault_segment_activation/figures/fault_segment_activation_density_vs_time.png" style="width:80.0%" />
+<figcaption>Temporal density of activated fault segments. Concentrated bands would support more synchronous behavior, whereas temporally broadened density supports staged or heterogeneous activation.</figcaption>
+</figure>
+
+<figure id="fig:strikedensity" data-latex-placement="H">
+<img src="../outputs/02_fault_segment_activation/figures/strike_activation_time_density.png" style="width:80.0%" />
+<figcaption>Strike-versus-activation-time density for activated fault segments. This view tests whether activation concentrated on a preferred fault orientation at specific times or jumped among orientations.</figcaption>
+</figure>
+
+<figure id="fig:alongfault" data-latex-placement="H">
+<img src="../outputs/03_triggering_style_diagnostics/figures/along_fault_distance_vs_activation_time_major_faults.png" style="width:80.0%" />
+<figcaption>Distance-versus-activation-time view for major faults. The scarcity of faults meeting the eligibility criteria for propagation testing limits strong inference on systematized along-fault cascade behavior.</figcaption>
+</figure>
+
+<figure id="fig:mw71" data-latex-placement="H">
+<img src="../outputs/03_triggering_style_diagnostics/figures/mw71_nucleation_local_context.png" style="width:80.0%" />
+<figcaption>Activation context near the Mw 7.1 nucleation area, used to evaluate whether the nearest mapped segment activated anomalously late.</figcaption>
+</figure>
+
+# Results
+
+## Grid-based onset patterns
+
+The gridded analysis established a reproducible onset framework for the inter-mainshock interval. According to the task claim and evidence tables, 4,713 earthquakes were retained between the two mainshocks and mapped onto 2,968 grid cells, of which 445 were occupied and 104 showed detectable onset under the sustained-count rule. The study therefore did not show universal or immediate activation across the occupied region.
+
+Early activation fractions from the grid metrics were limited. In the task-level onset metrics table, the fraction of occupied cells activated within 30, 60, 120, and 240 minutes was 0.0449, 0.0607, 0.0719, and 0.0944, respectively, when normalized over all occupied cells. In the integrated synchrony table, where the denominator is the activated-cell subset, the fractions were 19.2%, 26.0%, 30.8%, and 40.4%, respectively. This confirms that activated cells were spread across time rather than concentrated immediately after Mw 6.4. The spatial pattern in Figure <a href="#fig:gridmap" data-reference-type="ref" data-reference="fig:gridmap">2</a> likewise indicates distributed onset times rather than a single front-like activation sweeping the entire study region at once.
+
+## Fault-segment framework and event association
+
+The fault-based workflow produced 1,019 discretized fault segments from 977 mapped polylines. The segment-length distribution, however, was much shorter than the nominal 1 km target, with median length 0.122 km and mean length 0.222 km, as recorded in the Task 02 quality-control table. This means the fault backbone preserved mapped geometry but did not produce a uniform physical segmentation scale.
+
+From 4,627 filtered inter-mainshock events entering the segment-association stage, 4,490 events (97.0%) were associated to a nearest segment within 3 km, leaving 137 unassociated events. The compact context reports a median event-to-segment distance of 0.592 km, supporting the interpretation that seismicity was strongly fault-controlled in map view. However, the event-count conservation table shows that Task 01 retained 4,713 events, whereas Task 02 operated on 4,627 rows before association. This discrepancy was explicitly tracked in the workflow and should be read as a filtering-stage difference rather than an unacknowledged inconsistency; the documented counts are listed in Table <a href="#tab:counts" data-reference-type="ref" data-reference="tab:counts">[tab:counts]</a>.
+
+<div class="tabularx">
+
+P0.55 \>p0.18 Stage & Count  
+Filtered inter-mainshock events in Task 01 & 4,713  
+Fault-association input rows in Task 02 & 4,627  
+Associated events in Task 02 & 4,490  
+Unassociated events in Task 02 & 137  
+Mapped fault segments & 1,019  
+Activated fault segments & 24  
+
+</div>
+
+Despite the high event-association rate, only 24 of 1,019 segments met the activation threshold of 5 events per 30 minute bin. This is scientifically important: the inter-mainshock sequence was largely organized near the mapped fault network, but only a small subset of segments reached the threshold used here to define *activation*. Thus, conclusions about synchrony and propagation are driven by strong local bursts rather than all fault-adjacent seismicity.
+
+## Was activation synchronous along the fault system?
+
+The answer is no within the implemented framework. The system-synchrony metrics show that only 16.7% of activated fault segments were activated within 30 minutes of Mw 6.4, the same 16.7% within 60 minutes, and only 25.0% within 120 and 240 minutes. The interpretation summary explicitly reports a fault-segment activation fraction of 0.167 within 60 minutes, 0.250 within 240 minutes, and an activation-time interquartile range of 832.50 minutes. These metrics are inconsistent with system-wide co-activation.
+
+The gridded analysis independently supports this conclusion. Activated cells had a median onset time of 375 minutes in the synchrony table, with the 25th percentile at 60 minutes and a nontrivial tail extending much later in the sequence. The combined cell-based and segment-based evidence therefore rejects a simple picture in which the entire fault system was rapidly and synchronously turned on by the Mw 6.4 event.
+
+## Was activation staged, cascade-like, or more complex?
+
+The diagnostic synthesis supports a *mixed / complex activation pattern*. This exact classification appears in the interpretation summary table. The evidence for complexity is threefold.
+
+First, activation was temporally broad. The large interquartile range of fault-segment activation times shows that activated segments emerged over many hours rather than within a short, quasi-instantaneous response interval.
+
+Second, robust along-fault propagation could not be established on major faults using the pre-defined criteria. The diagnostic workflow required at least 8 activated segments on a major fault for robust propagation testing, yet the classification table shows no eligible faults, and the evaluation summary states that zero major faults were eligible for robust propagation testing. The few faults with more than one activated segment had only two activated segments each and were classified as *complex/indeterminate*. Accordingly, the available evidence does not support a clean, monotonic intra-fault cascade law across major mapped structures.
+
+Third, cross-fault behavior appears important. The interpretation summary reports 11 jump-like line pairs within 30 minutes, indicating temporally close activation across different mapped lines rather than simple progressive migration along a single line. This behavior is consistent with structural complexity, branching, step-overs, and stress transfer across a distributed network. The strike-time density map in Figure <a href="#fig:strikedensity" data-reference-type="ref" data-reference="fig:strikedensity">5</a> is qualitatively consistent with such orientation-dependent heterogeneity.
+
+Overall, the data do not favor either extreme of purely synchronous system-wide triggering or a single coherent cascade along one dominant fault. Instead, they support a temporally extended and geometrically heterogeneous activation process with local bursts and cross-fault complexity.
+
+## Mw 7.1 nucleation-area activation history
+
+A specific project question was whether the Mw 7.1 rupture initiated on a segment that activated anomalously late. Within the mapped-fault framework used here, the answer is no. The interpretation summary reports *mw71_target_segment_activation_minutes = not activated*, and both anomaly tests relative to the local neighborhood and system are reported as *False*. Thus, the nearest mapped segment to Mw 7.1 did not emerge as an anomalously late-activated precursor in this analysis.
+
+However, this inference requires caution. The nearest mapped segment may not fully represent the true nucleation structure at depth, and the surface-fault geometry plus nearest-segment association rule may not capture the exact mechanical nucleation patch. Figure <a href="#fig:mw71" data-reference-type="ref" data-reference="fig:mw71">7</a> should therefore be interpreted as a constrained diagnostic within the mapped-fault framework rather than definitive proof about the physical nucleation asperity.
+
+# Interpretation
+
+The Ridgecrest inter-mainshock sequence appears to have evolved through distributed, fault-controlled, but selectively threshold-exceeding activation. The high proportion of earthquakes associated with mapped fault segments demonstrates that seismicity remained strongly organized by the fault network. Yet the fact that only 24 segments exceeded the activation threshold, combined with broad activation-time dispersion, indicates that strong rate bursts were localized in both space and time.
+
+This pattern is more consistent with heterogeneous stress redistribution and geometrically mediated triggering than with a single propagating activation front. Some parts of the network responded early after Mw 6.4, but many did not cross the threshold until much later, and some remained below threshold throughout the interval despite having associated earthquakes. The absence of robust multi-segment propagation trends on major faults suggests that if cascade-like behavior occurred, it was either weaker than the selected threshold could resolve, confined to short mapped portions, or obscured by segmentation irregularity and network complexity.
+
+Accordingly, the most defensible scientific interpretation is that the Ridgecrest inter-mainshock activation was **not synchronous**, **not demonstrably dominated by simple along-fault cascading**, and **best characterized as mixed and structurally complex**. This conclusion directly addresses the user’s main questions while preserving the methodological conditions under which the inference was obtained.
+
+# Limitations and Confidence
+
+Several limitations materially affect interpretation.
+
+1.  **Strict activation threshold for fault segments.** Activation required more than or equal to 5 events per 30 minute bin, equivalent to 10 events per hour. This is stringent and likely suppresses weaker but potentially meaningful activation. It is probably the main reason that only 24 of 1,019 segments were classified as activated.
+
+2.  **Nonuniform segment lengths.** Although the intended target was 1 km, the actual segment statistics were much shorter on average (median 0.122 km, mean 0.222 km). This means segment counts and strike-density diagnostics partly reflect mapping density and polyline geometry, not only a uniform physical discretization.
+
+3.  **Limited power for along-fault propagation testing.** No major faults met the eligibility threshold for robust propagation analysis, so the study can reject synchrony and support complexity, but it cannot strongly parameterize systematic cascade propagation along major faults.
+
+4.  **Restricted time window.** The analysis covers only the interval between the two mainshocks. It therefore does not benchmark these activation patterns against longer-term background seismicity or the immediate post-Mw 7.1 reorganization.
+
+5.  **Conditional Mw 7.1 nucleation inference.** The conclusion regarding the nearest mapped segment to Mw 7.1 depends on surface-fault representation and nearest-segment assignment, and should not be overstated as structural proof of the true nucleation process.
+
+6.  **Different onset rules across analysis domains.** Grid-cell onset used a sustained-count rule with count $`\ge 2`$, whereas fault-segment activation used a stricter threshold of 5 events per 30 minute. The two products are complementary, but they are not directly interchangeable.
+
+Given these limitations, the evaluation metadata rates the overall scientific confidence as **moderate**. That assessment is appropriate: the analysis robustly rejects system-wide synchrony and documents structural heterogeneity, but it does not fully resolve the detailed mechanics of propagation along every mapped fault strand.
+
+# Reproducibility and Evidence Paths
+
+The core evidence for this report resides in the following outputs:
+
+- Grid-based outputs: <a href="../outputs/01_grid_onset_analysis" class="uri">../outputs/01_grid_onset_analysis</a>
+
+- Fault-segment outputs: <a href="../outputs/02_fault_segment_activation" class="uri">../outputs/02_fault_segment_activation</a>
+
+- Triggering-style diagnostics: <a href="../outputs/03_triggering_style_diagnostics" class="uri">../outputs/03_triggering_style_diagnostics</a>
+
+Particularly relevant tables for audit and reuse are:
+
+- <a href="../outputs/01_grid_onset_analysis/tables/grid_onset_metrics.csv" class="uri">../outputs/01_grid_onset_analysis/tables/grid_onset_metrics.csv</a>
+
+- <a href="../outputs/02_fault_segment_activation/tables/qc_summary.csv" class="uri">../outputs/02_fault_segment_activation/tables/qc_summary.csv</a>
+
+- <a href="../outputs/02_fault_segment_activation/tables/fault_segment_activation_summary.csv" class="uri">../outputs/02_fault_segment_activation/tables/fault_segment_activation_summary.csv</a>
+
+- <a href="../outputs/03_triggering_style_diagnostics/tables/system_synchrony_metrics.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/system_synchrony_metrics.csv</a>
+
+- <a href="../outputs/03_triggering_style_diagnostics/tables/fault_classification_table.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/fault_classification_table.csv</a>
+
+- <a href="../outputs/03_triggering_style_diagnostics/tables/cross_fault_complexity_metrics.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/cross_fault_complexity_metrics.csv</a>
+
+- <a href="../outputs/03_triggering_style_diagnostics/tables/mw71_nucleation_neighborhood_segments.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/mw71_nucleation_neighborhood_segments.csv</a>
+
+- <a href="../outputs/03_triggering_style_diagnostics/tables/interpretation_summary.csv" class="uri">../outputs/03_triggering_style_diagnostics/tables/interpretation_summary.csv</a>
+
+# Conclusions
+
+Within the time window between the Mw 6.4 and Mw 7.1 Ridgecrest mainshocks, earthquake activation along the mapped fault system was not synchronous. Both gridded onset metrics and fault-segment activation metrics show temporally broad response rather than rapid system-wide co-activation. The strongest available evidence further indicates that activation was not cleanly described by a simple progressive along-fault cascade. Instead, the sequence is best interpreted as a mixed and structurally complex pattern involving selective local activation, delayed responses on many parts of the network, and temporally close activation across different mapped fault lines.
+
+The Mw 7.1 nucleation area does not appear, within this mapped-fault and threshold-based framework, to correspond to an anomalously late-activated segment. However, this result should be treated as conditional rather than definitive because it depends on mapped surface geometry and a nearest-segment representation of the fault system.
+
+The main scientific answer to the user’s questions is therefore: **activation was not synchronous; it was staged in time but not in the form of a simple uniform cascade, and is better described as heterogeneous and cross-fault complex.**

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "checks": {
+    "clean_catalogs_nonempty": true,
+    "delta_m_recorded": true,
+    "full_r5_valid_nodes_positive": true,
+    "post_r5_valid_nodes_positive": true,
+    "difference_table_present": true,
+    "separator_marker_logged": true
+  },
+  "notes": [
+    "Sparse pre-separator coverage should be treated as exploratory."
+  ]
+}

@@ -1,0 +1,275 @@
+# Goal
+Relocate Ridgecrest earthquakes in the full-window 2019-07-04 to 2019-07-26 using `PAL_HypoDD`/HypoDD from the Gamma-derived phase and catalog files, then quantify and visualize differences between the original and relocated catalogs.
+
+## Planning Assumptions
+- Use observation-derived inputs already produced from the Ridgecrest workflow: `phase_20190704.dat`, `phase_20190705.dat`, `catalog_20190704.dat`, `catalog_20190705.dat`, and `station.sta`.
+- `PAL_HypoDD` package contract requires the documented Python workflow:
+  `Config` -> optional `PAL2HypoDD_PhaseConverter` -> `read_fpha` -> `mk_sta` -> `mk_pha` -> `run_ph2dt` -> `Run_HypoDD` -> `merge_hypodd_output`.
+- In this environment, `Config` must use `hypo_root="<PROJECT_ROOT>/software/hypoDD/HYPODD/src"`, and `Config` derives `ph2dt`/`hypoDD` executable paths from it.
+- `PAL_HypoDD` expects a prepared phase format whose event header is:
+  `origin_time_compact, lat, lon, dep, mag, evid`,
+  followed by pick lines:
+  `NET.STA, ISO_P_pick, ISO_S_pick`,
+  with missing picks written as `-1`.
+- Gamma `phase_YYYYMMDD.dat` is not already in that prepared `PAL_HypoDD` format, so a script-level conversion step is required; do not use Unix timestamps at any stage. All parsed and written times should be handled with `obspy.UTCDateTime`, and output pick times must remain ISO UTC strings.
+- `mk_pha()` applies `ot_range`, `lat_range`, and `lon_range` before `run_ph2dt()`. Incorrect bounds can produce empty relocation inputs even if source files exist.
+- User requested that `lat_range` and `lon_range` be derived from station extent plus padding 0.1 degrees; `keep_grids=False`.
+- Local HYPODD limits from the package contract are `MAXEVE=10800`, `MAXDATA=3100000`, `MAXCL=100`, etc. The full-window catalog size from the provided summaries is 275 + 3241 = 140505 events, so a single run is likely feasible if ph2dt link density remains moderate.
+- Native relocation success evidence must include non-empty `dt_*.ct`, `{ctlg_code}.loc`, `{ctlg_code}.reloc`, `{ctlg_code}.pha`, plus `ph2dt`/`hypoDD` logs. Conversion-only or plotting-only outputs are not success.
+- Built-in `pal_hypodd` plotting functions can be used for QA figures, but the task also requires explicit original-versus-relocated comparison figures and relocation statistics.
+
+## Analysis Plan
+### Task 1: Build a single end-to-end relocation script for the full-window Ridgecrest window
+- Task description:
+  - Create one primary script that ingests the two daily Gamma phase files and two daily Gamma catalog files, derives relocation bounds from `station.sta`, converts the phase representation into `PAL_HypoDD` prepared format, runs `PAL_HypoDD`/HypoDD, validates native outputs, computes relocation statistics, and produces comparison figures.
+  - Keep all parameters and settings explicitly defined in the script and print progress at each major stage.
+- Required data sources:
+  - `<CASE_ROOT>/catalog_construction/01_step3_association_Gamma/exp_run/outputs/01_gamma_association_location_magnitude/phase_20190704.dat`
+  - `<CASE_ROOT>/catalog_construction/01_step3_association_Gamma/exp_run/outputs/01_gamma_association_location_magnitude/phase_20190705.dat`
+  - `<CASE_ROOT>/catalog_construction/01_step3_association_Gamma/exp_run/outputs/01_gamma_association_location_magnitude/catalog_20190704.dat`
+  - `<CASE_ROOT>/catalog_construction/01_step3_association_Gamma/exp_run/outputs/01_gamma_association_location_magnitude/catalog_20190705.dat`
+  - `<CASE_ROOT>/catalog_construction/01_step1_data_preprocessing_for_phasepicking/exp_run/outputs/01_preprocess_ridgecrest_stationday_waveforms/station.sta`
+- Parameter selection strategy:
+  - Time window:
+    - Include only events with origin time in `[2019-07-04T00:00:00Z, 2019-07-26T00:00:00Z)`.
+    - Use `obspy.UTCDateTime` for parsing, filtering, sorting, and any event matching.
+    - Set `ot_range="20190704-20190726"` only after confirming `PAL_HypoDD` end-date handling; if package examples imply inclusive end-date semantics for daily strings, use the string that fully covers all processed days and verify selected-event count against the filtered source catalog before running `ph2dt`.
+  - Spatial bounds:
+    - Read station lat/lon min/max from `station.sta`.
+    - Set `lat_range=[min_station_lat - 0.1, max_station_lat + 0.1]`.
+    - Set `lon_range=[min_station_lon - 0.1, max_station_lon + 0.1]`.
+  - Grid settings:
+    - Default to `num_grids=[1, 1]` because the full-window event count is below the documented `MAXEVE` limit.
+    - Set `keep_grids=False` per user request.
+    - Set `xy_pad` explicitly in the script; with a single grid it has little effect, but still define it for contract completeness.
+  - HypoDD/ph2dt parameters:
+    - Define `ph2dt_params` and `hypoDD_reloc_params` explicitly in the script using package-compatible keys.
+    - Start from conservative catalog-relocation settings similar to documented examples, then only adjust if preflight or native logs show over-linking or zero-link issues.
+  - Catalog code and file naming:
+    - Use a task-specific `ctlg_code` identifying Ridgecrest and the full-window.
+- Constraints:
+  - Do not invent a YAML/JSON config mode; use `pal_hypodd.Config`.
+  - If `pal_hypodd` import fails, use the documented package path:
+    `<PROJECT_ROOT>/seismoagent/library/basic_fun/PALM/PAL_HypoDD`
+  - Do not convert times to timestamps.
+  - Do not assume row-order identity between input and relocated catalogs.
+  - Print progress messages for:
+    - input discovery,
+    - station bound derivation,
+    - phase conversion,
+    - preflight counts,
+    - `mk_sta`,
+    - `mk_pha`,
+    - `run_ph2dt`,
+    - per-grid `Run_HypoDD`,
+    - merge,
+    - statistics,
+    - figure generation.
+- Key outputs:
+  - One executable relocation-and-analysis script.
+  - Prepared merged phase file for `PAL_HypoDD`.
+  - Native HypoDD outputs and logs.
+  - Relocation statistics tables and comparison figures.
+
+### Task 1.1: Parse and harmonize the source data
+- Task description:
+  - Read station metadata, Gamma daily catalogs, and Gamma daily phase files; combine the 222 daily windows into a single relocation input set.
+- Required data sources:
+  - `station.sta`
+  - `catalog_20190704.dat`, `catalog_20190705.dat`
+  - `phase_20190704.dat`, `phase_20190705.dat`
+- Parameter selection strategy:
+  - Station table:
+    - Parse columns as station code, latitude, longitude, elevation, extra field.
+    - Retain only the fields needed by `mk_sta`.
+  - Catalog table:
+    - Read headerless CSV with columns `ot, lat, lon, dep, mag`.
+    - Parse `ot` with `obspy.UTCDateTime`.
+  - Phase files:
+    - Read repeated `EVENT` / `STATION` blocks.
+    - For each event, parse origin time, latitude, longitude, depth, magnitude.
+    - For each station line, keep `NET.STA`, P pick, S pick; ignore Gamma amplitude for HypoDD input but retain if a diagnostic summary is wanted.
+- Constraints:
+  - Verify station identifiers in `station.sta` match `NET.STA` in phase files before relocation.
+  - Reject or log malformed events with no valid P or S picks.
+  - Preserve ISO UTC pick strings; missing picks remain `-1`.
+- Key outputs:
+  - In-memory combined station table.
+  - In-memory combined original catalog for the full-window.
+  - In-memory combined event-pick structure keyed by event.
+
+### Task 1.2: Convert Gamma phase format into prepared `PAL_HypoDD` phase format
+- Task description:
+  - Write a merged phase file that conforms to `read_fpha`/`mk_pha` expectations.
+- Required data sources:
+  - Parsed combined Gamma phase records from Task 1.1.
+- Parameter selection strategy:
+  - Assign deterministic event IDs sequentially after sorting by origin time with `obspy.UTCDateTime`.
+  - Event header line format:
+    - compact origin time string `YYYYMMDDHHMMSS.SS`,
+    - latitude,
+    - longitude,
+    - depth,
+    - magnitude,
+    - event ID.
+  - Station pick line format:
+    - `NET.STA, ISO_P_pick, ISO_S_pick`
+    - Use `-1` for missing P or S.
+  - Write one merged full-window phase file rather than separate daily files, to allow a single relocation run and a single merged catalog comparison.
+- Constraints:
+  - This is a custom conversion for Gamma-to-`PAL_HypoDD`; do not call `PAL2HypoDD_PhaseConverter`, which is intended for PAL/PALM `phase.dat`.
+  - Validate that `read_fpha` returns a non-zero event count from the written file before proceeding.
+- Key outputs:
+  - Prepared full-window HypoDD phase file.
+  - Event-ID mapping table linking event ID to original origin time and source day.
+
+### Task 1.3: Preflight validation before native relocation
+- Task description:
+  - Check that the run is scientifically and technically valid before invoking `ph2dt` and HypoDD.
+- Required data sources:
+  - Prepared phase file.
+  - Station table.
+  - Combined original catalog.
+- Parameter selection strategy:
+  - Compute:
+    - number of stations,
+    - number of events,
+    - number of total picks,
+    - number of events with at least one P or S,
+    - event count inside `ot_range`/`lat_range`/`lon_range`.
+  - Compare event count with `MAXEVE=10800`.
+  - Estimate whether one-grid run is appropriate from total event count and station count; keep `num_grids=[1,1]` unless preflight suggests otherwise.
+- Constraints:
+  - If `read_fpha` returns zero events, stop and fix conversion.
+  - If selected events after `mk_pha` would be zero, stop and fix time/spatial bounds.
+  - If station-code mismatch exists, stop and reconcile names before relocation.
+- Key outputs:
+  - Preflight summary table.
+  - Progress log statements documenting the validated counts and selected parameter values.
+
+### Task 1.4: Run `PAL_HypoDD` relocation
+- Task description:
+  - Execute the documented Python workflow using the prepared phase file and station file.
+- Required data sources:
+  - Prepared phase file.
+  - `station.sta`
+- Parameter selection strategy:
+  - `Config` fields to define explicitly in the script:
+    - `hypo_root="<PROJECT_ROOT>/software/hypoDD/HYPODD/src"`
+    - `ctlg_code`
+    - `fsta`
+    - `fpha`
+    - `dep_corr`
+    - `ot_range`
+    - `lat_range`
+    - `lon_range`
+    - `num_grids=[1,1]`
+    - `xy_pad`
+    - `num_workers`
+    - `keep_grids=False`
+    - `ph2dt_params`
+    - `hypoDD_reloc_params`
+  - Use:
+    - `read_fpha`
+    - `mk_sta`
+    - `mk_pha`
+    - `run_ph2dt`
+    - `Run_HypoDD`
+    - `merge_hypodd_output`
+    - `load_hypodd_original_catalog`
+    - `load_hypodd_reloc_catalog`
+- Constraints:
+  - Confirm existence of `ph2dt/ph2dt` and `hypoDD/hypoDD` under the configured `hypo_root` before running.
+  - Native success requires non-empty `dt_*.ct`, `.loc`, `.reloc`, and logs.
+  - If `ph2dt` reports zero selected events/phases, fix bounds or input format rather than tuning relocation parameters.
+  - If HypoDD fails to create `.loc`, inspect native logs before any downstream plotting.
+- Key outputs:
+  - Non-empty relocated catalog loaded with `load_hypodd_reloc_catalog`.
+  - Original HypoDD catalog loaded with `load_hypodd_original_catalog`.
+  - Native logs for run verification.
+
+### Task 1.5: Match original and relocated events and compute relocation statistics
+- Task description:
+  - Build event-level comparison products between original and relocated catalogs and summarize relocation performance.
+- Required data sources:
+  - Original HypoDD catalog from `load_hypodd_original_catalog`.
+  - Relocated HypoDD catalog from `load_hypodd_reloc_catalog`.
+  - Event-ID mapping table from Task 1.2 if needed for robust matching.
+- Parameter selection strategy:
+  - Match events using preserved event IDs if available through the workflow; if IDs are not directly present in loaded dataframes, match using verified within-run ordering or origin-time consistency only after confirming package behavior for this run.
+  - Compute:
+    - total input events,
+    - total relocated events,
+    - relocation success rate,
+    - latitude/longitude/depth ranges before and after relocation,
+    - horizontal shift per event,
+    - depth shift per event,
+    - summary statistics of shifts: median, mean, percentiles, max,
+    - magnitude distribution of relocated vs non-relocated events,
+    - event counts by day.
+- Constraints:
+  - Do not assume relocated catalog contains every input event.
+  - Do not match by raw row order against the Gamma source catalog.
+  - Keep time fields in ISO UTC / `UTCDateTime`-compatible form in outputs.
+- Key outputs:
+  - Comparison table for matched original-relocated events.
+  - Unrelocated-event summary table.
+  - Summary statistics table for relocation quality and coverage.
+
+### Task 1.6: Generate figures required by the user
+- Task description:
+  - Produce figures that show the relocated event distribution and the difference between original and relocated locations.
+- Required data sources:
+  - Original and relocated catalogs.
+  - Matched comparison table.
+  - Station table for optional overlay/context.
+- Parameter selection strategy:
+  - Required figures:
+    - Original catalog epicenter map for the full-window.
+    - Relocated catalog epicenter map for the same window.
+    - Side-by-side original vs relocated epicenter comparison using identical map bounds.
+    - Overlay map with original and relocated points together.
+    - Relocation vector map for matched events, using sampled arrows if density is too high.
+    - Depth cross-section or depth-vs-latitude / depth-vs-longitude comparison before vs after relocation.
+    - Histogram of horizontal relocation distances.
+    - Histogram of depth changes.
+    - Event-count summary figure, such as counts per day and relocated/non-relocated counts.
+  - Optional QA figures from `pal_hypodd` after successful merge:
+    - run summary map/residual plots,
+    - key evaluation metric plots.
+- Constraints:
+  - Use the same geographic extent for original and relocated map comparisons.
+  - Ensure figures reflect only the requested full-window.
+  - Do not treat QA plots alone as the final scientific output.
+- Key outputs:
+  - A figure set showing:
+    - event location distribution,
+    - original-versus-relocated differences,
+    - relocation-distance statistics,
+    - relocation coverage.
+
+### Task 1.7: Immediate output validation and failure evidence collection
+- Task description:
+  - Verify that the relocation run produced valid scientific outputs and capture evidence if it failed.
+- Required data sources:
+  - Native output files and logs from Task 1.4.
+- Parameter selection strategy:
+  - Validate:
+    - non-empty `dt_*.ct`,
+    - non-empty `{ctlg_code}.loc`,
+    - non-empty `{ctlg_code}.reloc`,
+    - non-empty `{ctlg_code}.pha`,
+    - readable original and relocated catalogs through package loaders,
+    - relocated-event count > 0.
+  - If failure occurs, collect:
+    - preflight counts,
+    - chosen config values,
+    - `ph2dt` log excerpts,
+    - HypoDD log excerpts,
+    - counts of selected events and phases.
+- Constraints:
+  - Empty outputs, conversion-only products, or plotting-only products must be marked as failure.
+  - Do not proceed to final comparison statistics if relocated catalog is empty.
+- Key outputs:
+  - Run validation summary.
+  - Failure-diagnostic summary if relocation does not complete successfully.

@@ -1,0 +1,22 @@
+Loading event table: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/event_region_assignments.csv
+Traceback (most recent call last):
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 588, in <module>
+    main()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 531, in main
+    df, meta, main64_time, main71_time = load_inputs()
+  File "<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py", line 85, in load_inputs
+    df["event_time"] = pd.to_datetime(df["event_time"], utc=True)
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pandas/core/tools/datetimes.py", line 1072, in to_datetime
+    values = convert_listlike(arg._values, format)
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pandas/core/tools/datetimes.py", line 435, in _convert_listlike_datetimes
+    return _array_strptime_with_fallback(arg, name, utc, format, exact, errors)
+  File "<ENV_ROOT>/miniconda3/envs/seismoagent/lib/python3.9/site-packages/pandas/core/tools/datetimes.py", line 469, in _array_strptime_with_fallback
+    result, tz_out = array_strptime(arg, fmt, exact=exact, errors=errors, utc=utc)
+  File "pandas/_libs/tslibs/strptime.pyx", line 501, in pandas._libs.tslibs.strptime.array_strptime
+  File "pandas/_libs/tslibs/strptime.pyx", line 451, in pandas._libs.tslibs.strptime.array_strptime
+  File "pandas/_libs/tslibs/strptime.pyx", line 583, in pandas._libs.tslibs.strptime._parse_with_format
+ValueError: time data "2019-07-04 17:36:39+00:00" doesn't match format "%Y-%m-%d %H:%M:%S.%f%z", at position 42. You might want to try:
+    - passing `format` if your strings have a consistent format;
+    - passing `format='ISO8601'` if your strings are all ISO8601 but not necessarily in exactly the same format;
+    - passing `format='mixed'`, and the format will be inferred for each element individually. You might want to use `dayfirst` alongside this.
+

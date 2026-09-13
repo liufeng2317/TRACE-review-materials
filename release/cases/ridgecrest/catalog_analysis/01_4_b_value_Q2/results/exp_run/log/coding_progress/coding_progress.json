@@ -1,0 +1,77 @@
+{
+  "active_task": null,
+  "generated_at": "2026-07-06T16:13:07.822339+00:00",
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 1
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 1,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 20479,
+        "mode": "full_experiment_plan",
+        "original_chars": 20479,
+        "task_name": "01_spatial_bvalue_diagnostics"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "python_executor": 2
+        },
+        "file_reads": {
+          "<PACKAGE_ROOT>/results/exp_run/scripts/01_spatial_bvalue_diagnostics.py": {
+            "count": 3,
+            "tools": {
+              "read_file": 3
+            }
+          }
+        },
+        "read_file_call_count": 3,
+        "retrieve_calls": {
+          "retrieve_catalog_statistics_document_of_seismostats": 1
+        },
+        "tools": {
+          "apply_diff": 2,
+          "python_executor": 2,
+          "read_file": 3,
+          "retrieve_catalog_statistics_document_of_seismostats": 1,
+          "write_file": 1
+        },
+        "total_tool_calls": 9,
+        "unique_file_read_count": 1,
+        "used_retrieve": true
+      },
+      "debug_round": 1,
+      "elapsed_sec": 2643.506,
+      "execution_stage": "analysis_done",
+      "finished_at": "2026-07-06T16:13:07.690815+00:00",
+      "last_activity_at": "2026-07-06T16:13:07.690704+00:00",
+      "last_no_progress_sec": 600.858,
+      "last_observed_line": "warnings.warn(",
+      "last_progress_event": "task_analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_spatial_bvalue_diagnostics/log_0.txt",
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics",
+      "progress_message": "Task-level analysis file was generated.",
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_spatial_bvalue_diagnostics.py",
+      "script_stall_detected": true,
+      "script_stall_reason": "No new script log progress for 600s across 10 heartbeat(s).",
+      "started_at": "2026-07-06T15:29:04.184379+00:00",
+      "status": "success",
+      "task_name": "01_spatial_bvalue_diagnostics",
+      "timing": {
+        "code_review_sec": 55.031,
+        "coding_agent_sec": 169.113,
+        "preflight_sec": 0.494,
+        "result_check_sec": 131.003,
+        "script_execution_sec": 2099.078,
+        "task_analysis_sec": 187.791,
+        "total_sec": 2643.506
+      }
+    }
+  ]
+}

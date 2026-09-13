@@ -1,0 +1,265 @@
+{
+  "task": "01_reference_framework",
+  "input_paths": {
+    "catalog": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv",
+    "mainshock_table": "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv",
+    "fault_json": "<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json"
+  },
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_reference_framework",
+  "cleaning": {
+    "catalog": {
+      "table_name": "catalog",
+      "rows_before_cleaning": 84474,
+      "rows_after_cleaning": 84474,
+      "rows_removed": 0
+    },
+    "mainshock_table": {
+      "table_name": "mainshock_table",
+      "rows_before_cleaning": 2,
+      "rows_after_cleaning": 2,
+      "rows_removed": 0
+    }
+  },
+  "mainshock_window": {
+    "mainshock64_time": "2019-07-04T17:33:49.040000+00:00",
+    "mainshock71_time": "2019-07-06T03:19:53.040000+00:00",
+    "window_duration_hours": 33.76777777777778
+  },
+  "mainshock_catalog_discrepancy": {
+    "Mainshock64": {
+      "matched_catalog_event_found": true,
+      "nearest_catalog_time_difference_seconds": 0.0
+    },
+    "Mainshock71": {
+      "matched_catalog_event_found": true,
+      "nearest_catalog_time_difference_seconds": 0.0
+    }
+  },
+  "interval_definitions": {
+    "stage1": {
+      "description": "[mainshock64, mainshock64 + 4 hours], 30-minute interval",
+      "count": 8,
+      "frequency": "30min",
+      "event_total": 550
+    },
+    "stage2": {
+      "description": "[mainshock64 + 4 hours, mainshock71], 2-hour interval",
+      "count": 15,
+      "frequency": "2h",
+      "event_total": 4166
+    },
+    "morphology_1h": {
+      "description": "[mainshock64, mainshock71], 1-hour interval",
+      "count": 34,
+      "frequency": "1h",
+      "event_total": 4716
+    },
+    "bin_policy": "left_closed_right_open_except_final_closed"
+  },
+  "counts": {
+    "intermainshock_catalog_event_count": 4716,
+    "fault_segment_count": 17792,
+    "fault_point_count": 207549
+  },
+  "fault_metadata": {
+    "raw_segment_count": 17792,
+    "kept_segment_count": 17792,
+    "skipped_segment_count": 0,
+    "kept_point_count": 207549
+  },
+  "plot_extent_degrees": {
+    "longitude_min": -117.79240063769927,
+    "longitude_max": -117.312835696215,
+    "latitude_min": 35.44951379518505,
+    "latitude_max": 35.9385750704832,
+    "longitude_min_padded": -117.84240063769927,
+    "longitude_max_padded": -117.262835696215,
+    "latitude_min_padded": 35.39951379518505,
+    "latitude_max_padded": 35.9885750704832,
+    "longitude_center": -117.55261816695713,
+    "latitude_center": 35.694044432834126,
+    "plot_margin_degrees": 0.05
+  },
+  "projected_crs": {
+    "epsg": 32611,
+    "projjson": {
+      "$schema": "https://proj.org/schemas/v0.7/projjson.schema.json",
+      "type": "ProjectedCRS",
+      "name": "WGS 84 / UTM zone 11N",
+      "base_crs": {
+        "name": "WGS 84",
+        "datum_ensemble": {
+          "name": "World Geodetic System 1984 ensemble",
+          "members": [
+            {
+              "name": "World Geodetic System 1984 (Transit)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1166
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G730)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1152
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G873)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1153
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G1150)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1154
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G1674)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1155
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G1762)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1156
+              }
+            },
+            {
+              "name": "World Geodetic System 1984 (G2139)",
+              "id": {
+                "authority": "EPSG",
+                "code": 1309
+              }
+            }
+          ],
+          "ellipsoid": {
+            "name": "WGS 84",
+            "semi_major_axis": 6378137,
+            "inverse_flattening": 298.257223563
+          },
+          "accuracy": "2.0",
+          "id": {
+            "authority": "EPSG",
+            "code": 6326
+          }
+        },
+        "coordinate_system": {
+          "subtype": "ellipsoidal",
+          "axis": [
+            {
+              "name": "Geodetic latitude",
+              "abbreviation": "Lat",
+              "direction": "north",
+              "unit": "degree"
+            },
+            {
+              "name": "Geodetic longitude",
+              "abbreviation": "Lon",
+              "direction": "east",
+              "unit": "degree"
+            }
+          ]
+        },
+        "id": {
+          "authority": "EPSG",
+          "code": 4326
+        }
+      },
+      "conversion": {
+        "name": "UTM zone 11N",
+        "method": {
+          "name": "Transverse Mercator",
+          "id": {
+            "authority": "EPSG",
+            "code": 9807
+          }
+        },
+        "parameters": [
+          {
+            "name": "Latitude of natural origin",
+            "value": 0,
+            "unit": "degree",
+            "id": {
+              "authority": "EPSG",
+              "code": 8801
+            }
+          },
+          {
+            "name": "Longitude of natural origin",
+            "value": -117,
+            "unit": "degree",
+            "id": {
+              "authority": "EPSG",
+              "code": 8802
+            }
+          },
+          {
+            "name": "Scale factor at natural origin",
+            "value": 0.9996,
+            "unit": "unity",
+            "id": {
+              "authority": "EPSG",
+              "code": 8805
+            }
+          },
+          {
+            "name": "False easting",
+            "value": 500000,
+            "unit": "metre",
+            "id": {
+              "authority": "EPSG",
+              "code": 8806
+            }
+          },
+          {
+            "name": "False northing",
+            "value": 0,
+            "unit": "metre",
+            "id": {
+              "authority": "EPSG",
+              "code": 8807
+            }
+          }
+        ]
+      },
+      "coordinate_system": {
+        "subtype": "Cartesian",
+        "axis": [
+          {
+            "name": "Easting",
+            "abbreviation": "E",
+            "direction": "east",
+            "unit": "metre"
+          },
+          {
+            "name": "Northing",
+            "abbreviation": "N",
+            "direction": "north",
+            "unit": "metre"
+          }
+        ]
+      },
+      "scope": "Navigation and medium accuracy spatial referencing.",
+      "area": "Between 120\u00b0W and 114\u00b0W, northern hemisphere between equator and 84\u00b0N, onshore and offshore. Canada - Alberta; British Columbia (BC); Northwest Territories (NWT); Nunavut. Mexico. United States (USA).",
+      "bbox": {
+        "south_latitude": 0,
+        "west_longitude": -120,
+        "north_latitude": 84,
+        "east_longitude": -114
+      },
+      "id": {
+        "authority": "EPSG",
+        "code": 32611
+      }
+    }
+  }
+}

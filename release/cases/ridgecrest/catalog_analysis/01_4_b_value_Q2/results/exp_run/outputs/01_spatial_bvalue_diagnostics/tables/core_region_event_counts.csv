@@ -1,0 +1,7 @@
+window_name,core_name,raw_events_in_circle,events_ge_mc
+full_interevent,Mw6.4_core,1744,649
+full_interevent,Mw7.1_core,704,215
+pre_separator,Mw6.4_core,1073,498
+pre_separator,Mw7.1_core,130,49
+post_separator,Mw6.4_core,671,151
+post_separator,Mw7.1_core,574,166

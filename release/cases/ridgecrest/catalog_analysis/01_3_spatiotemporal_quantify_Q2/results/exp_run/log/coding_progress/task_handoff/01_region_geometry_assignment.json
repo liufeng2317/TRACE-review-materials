@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_region_geometry_assignment",
+    "generated_at": "2026-07-06T09:59:15.375816+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 474.221,
+    "timing": {
+      "total_sec": 474.221,
+      "coding_agent_sec": 114.458,
+      "code_review_sec": 25.559,
+      "preflight_sec": 0.441,
+      "script_execution_sec": 83.2,
+      "result_check_sec": 96.814,
+      "task_analysis_sec": 152.401
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_region_geometry_assignment.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_region_geometry_assignment.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_region_geometry_assignment/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "metadata/region_geometry_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/metadata/region_geometry_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/event_region_assignments.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/event_region_assignments.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/region_assignment_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/region_assignment_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "figures/fixed_corridor_assignment_map.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures/fixed_corridor_assignment_map.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/region_a_across_centerline_distribution.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures/region_a_across_centerline_distribution.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/region_a_along_strike_distribution.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures/region_a_along_strike_distribution.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/region_b_across_centerline_distribution.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures/region_b_across_centerline_distribution.png",
+        "kind": "figure"
+      },
+      {
+        "path": "figures/region_b_along_strike_distribution.png",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/figures/region_b_along_strike_distribution.png",
+        "kind": "figure"
+      }
+    ],
+    "all": [
+      "figures/fixed_corridor_assignment_map.png",
+      "figures/region_a_across_centerline_distribution.png",
+      "figures/region_a_along_strike_distribution.png",
+      "figures/region_b_across_centerline_distribution.png",
+      "figures/region_b_along_strike_distribution.png",
+      "figures/unassigned_event_diagnostic_map.png",
+      "metadata/region_geometry_metadata.json",
+      "tables/event_region_assignments.csv",
+      "tables/region_assignment_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the fixed local metric geometry, assign events to corridors and diagnostic neighborhoods, and generate region-definition quality-control outputs.",
+    "result": "Build the fixed local metric geometry, assign events to corridors and diagnostic neighborhoods, and generate region-definition quality-control outputs. Status=success; outputs=9 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

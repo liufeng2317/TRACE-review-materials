@@ -1,0 +1,13 @@
+check,value
+catalog_event_count,84474
+pre71_event_count,4716
+post71_event_count,7641
+fault_polyline_count,17792
+fault_segment_count,189737
+time_bin_count,23
+event_metrics_pre71_count,4716
+event_metrics_post71_count,7641
+bin_summary_count,23
+empty_bins,0
+sparse_orientation_bins,0
+max_workers_used,64

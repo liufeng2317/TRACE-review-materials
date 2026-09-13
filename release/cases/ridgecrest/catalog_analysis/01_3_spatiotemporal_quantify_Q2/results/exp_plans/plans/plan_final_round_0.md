@@ -1,0 +1,196 @@
+# Goal
+Investigate whether and how the Mw 6.4 Ridgecrest mainshock triggered the Mw 7.1 earthquake by comparing two fixed fault-oriented regions, quantifying temporal offsets and differences in seismic-rate/energy evolution, and resolving the internal spatial ordering of activation before the Mw 7.1 mainshock.
+
+## Planning Assumptions
+- Use only the provided observational datasets:
+  - Catalog: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - Mainshocks: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - Fault traces: `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Analysis time window is fixed to `[catalog start time, Mw 7.1 origin time]`. All triggering diagnostics are referenced to elapsed time since the Mw 6.4 mainshock.
+- Fixed user-defined domains must not be re-estimated from seismicity:
+  - Region A centerline: `(-117.635877, 35.555024)` to `(-117.463113, 35.729199)`, strike `39.0°`, half-width `3.0 km`
+  - Region B centerline: `(-117.735813, 35.897499)` to `(-117.362520, 35.559488)`, strike `138.0°`, half-width `3.0 km`
+  - Mw6.4-neighborhood: 10 km radius around Mw 6.4 epicenter
+  - Mw7.1-neighborhood: 10 km radius around Mw 7.1 epicenter
+- Corridor and circle memberships are independent boolean masks; events may belong to multiple masks. Preserve overlap counts explicitly.
+- All horizontal geometry must be computed in one local metric coordinate system shared by catalog events, mainshocks, fault traces, corridor boundaries, and grids. Use that projection for all distances, widths, along-strike coordinates, across-strike coordinates, and cell definitions.
+- Corridor membership must be based on finite-segment geometry: event projection lies between centerline endpoints and `|across-strike distance| <= 3.0 km`.
+- The user’s domain definition specifies 10 km circular neighborhoods, while one visualization bullet mentions 5 km. Use 10 km for all calculations and ensure figure labels match the 10 km analytical radius.
+- Compute seismic rate at both 30-minute and 1-hour resolution for All region, Region A, Region B, Mw6.4-neighborhood, and Mw7.1-neighborhood using shared bin edges within each resolution.
+- Compute event energy from magnitude with one consistent scalar relation for all analyses; use `log10(E[J]) = 1.5*M + 4.8` unless dataset metadata provides a documented alternative.
+- Bayesian change-point analysis is required for both rate and energy series. Use one consistent Bayesian method across all domains and both observables; outputs must include non-empty change-point tables and mapped timestamps.
+- Grid analyses inside Region A and Region B must use fixed `0.5 km × 0.5 km` cells. Zero-count cells are scientifically meaningful and must be retained in maps, tables, and heatmaps.
+- Parallel execution up to 64 cores is appropriate for per-cell statistics, repeated binning, and neighborhood/corridor grid calculations. A step is successful only if the merged scientific outputs are valid and non-empty.
+- Use a small number of cohesive task scripts:
+  - Script 1: geometry, projection, event assignment, and region diagnostics
+  - Script 2: temporal rate/energy construction and Bayesian change-point analysis
+  - Script 3: gridded corridor/neighborhood activation and along-strike ordering analysis
+
+## Analysis Plan
+
+### Task 1 — Build fixed geometry, assign events, and validate region definitions
+- Task description
+  - Load the relocated catalog, mainshock table, and fault traces.
+  - Parse `event_time, latitude, longitude, depth_km, magnitude`.
+  - Identify Mw 6.4 and Mw 7.1 rows from `main_shock_events.csv` by magnitude and use their event times and epicenters directly.
+  - Truncate the catalog to the fixed window ending at Mw 7.1.
+  - Construct one local metric projection for the Ridgecrest study area.
+  - Build Region A and Region B finite corridor polygons from the prescribed centerlines and 3 km half-width.
+  - Build the two 10 km circular neighborhood masks around the Mw 6.4 and Mw 7.1 epicenters.
+  - For every event, compute projected coordinates, time since Mw 6.4, time to Mw 7.1, along-strike and across-strike coordinates relative to both corridors, horizontal distance to both mainshocks, and boolean masks for All region, Region A, Region B, Mw6.4-neighborhood, Mw7.1-neighborhood, corridor overlap, and unassigned-to-corridors.
+  - Produce geometry QA diagnostics to confirm that the fixed corridors span the intended seismicity and that unassigned events do not dominate the Mw 6.4-to-Mw 7.1 linkage zone.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - Use all catalog events with `event_time <= Mw 7.1 origin time`.
+  - Compute along-strike coordinate by projection onto each finite centerline and across-strike distance by signed perpendicular offset in kilometers.
+  - Assign an event to a corridor only if its projected position lies within the segment endpoints and its perpendicular distance is within 3 km.
+  - Keep Region A and Region B masks independent; record overlap count rather than forcing exclusivity.
+  - Keep circle masks independent of corridor masks.
+  - For map coloring, an auxiliary exclusive display class may be generated, but the stored scientific assignment must remain boolean and non-exclusive.
+- Constraints
+  - Do not tune corridor width, strike, or endpoints from the seismicity cloud.
+  - Do not discard unassigned events.
+  - Use local metric distances for all region tests and summaries.
+  - Validate that the analytical circle boundaries shown in figures are 10 km, not 5 km.
+- Key outputs
+  - Event-level enriched table with projected coordinates, relative times, along-/across-strike coordinates, distances to both mainshocks, and all domain masks.
+  - Compact CSV summary with assignment counts, corridor-overlap count, unassigned fraction, median and 95th-percentile absolute across-centerline distance, and along-strike coordinate range for Region A and Region B.
+  - Fixed-corridor assignment map with fault traces, centerlines, 6 km corridor boundaries, 10 km neighborhood circles, mainshocks, and events colored by time since Mw 6.4.
+  - Across-centerline distance distributions for Region A and Region B with the 3 km half-width marked.
+  - Along-strike coordinate distributions for Region A and Region B with finite centerline endpoints marked.
+  - Unassigned-event diagnostic map.
+
+### Task 2 — Construct domain-scale seismic-rate and energy series and extract Bayesian change points
+- Task description
+  - Using the Task 1 event table, build 30-minute and 1-hour binned seismic-rate and energy-release products for All region, Region A, Region B, Mw6.4-neighborhood, and Mw7.1-neighborhood from catalog start to Mw 7.1.
+  - Compute post-Mw 6.4 timing diagnostics needed to compare synchronous versus delayed activation.
+  - Apply Bayesian change-point detection separately to rate and energy series to identify statistically supported transitions in activity before Mw 7.1.
+  - Compare Region A versus Region B and Mw6.4-neighborhood versus Mw7.1-neighborhood on matched time axes and matched metrics.
+- Required data sources
+  - Event-level enriched table from Task 1
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy
+  - Use two fixed temporal resolutions: 30 minutes and 1 hour.
+  - Within each resolution, use one common set of bin edges for all domains.
+  - For each domain and bin, compute:
+    - event count
+    - seismic rate
+    - summed energy
+    - cumulative event count
+    - cumulative energy
+    - normalized cumulative count fraction over the post-Mw 6.4 interval
+    - normalized cumulative energy fraction over the post-Mw 6.4 interval
+  - Derive the following post-Mw 6.4 timing metrics for each domain:
+    - first event time
+    - first sustained activity time
+    - strongest rate-change time
+    - peak-rate time
+  - Define first sustained activity time with one explicit persistence rule chosen before execution and applied identically to all domains, such as the first bin that starts a run of at least a fixed number of consecutive nonzero or above-threshold bins; store the chosen rule in metadata.
+  - Define strongest rate-change time using one consistent rule across domains, preferably the most prominent positive Bayesian rate change after Mw 6.4; if a deterministic first-difference diagnostic is also computed, keep it secondary and clearly labeled.
+  - For Bayesian change points, use the same model family and comparable prior settings for all domains and for both rate and energy.
+  - For optional Region A versus Region B dominance diagnostics, prefer rate difference as the stable default; compute rate ratio only where denominators are valid and mark undefined bins explicitly.
+- Constraints
+  - Do not mix 30-minute and 1-hour products within a single direct-comparison panel.
+  - Keep raw cumulative curves and normalized cumulative fractions together so timing is not conflated with total productivity.
+  - Keep neighborhood diagnostics separate from corridor diagnostics; they are corroborative, not replacements.
+  - Change-point outputs must be mapped back to physical time and linked to pre/post segment levels.
+- Key outputs
+  - Domain-by-bin time-series tables for 30-minute and 1-hour resolutions covering counts, rates, energy, cumulative counts, cumulative energy, and normalized cumulative fractions.
+  - Change-point tables for rate and energy series, including domain, resolution, change-point time, support metric, and pre/post segment levels.
+  - Seismic-rate time series for All region, Region A, and Region B with Mw 6.4 and Mw 7.1 marked.
+  - Rate-change diagnostics with detected change points for All region, Region A, and Region B.
+  - Cumulative count comparison for Region A and Region B, including both raw cumulative counts and normalized cumulative fractions.
+  - Energy-release and cumulative-energy plots for All region, Region A, and Region B with detected change points marked.
+  - Normalized cumulative energy fraction comparison for Region A and Region B.
+  - Near-mainshock neighborhood comparison showing rate, cumulative counts, normalized cumulative fractions, first sustained activity time, strongest rate-change time, and peak-rate time for Mw6.4-neighborhood and Mw7.1-neighborhood.
+  - Optional Region A versus Region B rate-difference and rate-ratio diagnostics through time.
+  - Compact CSV summary for All region, Region A, and Region B containing first event time, first sustained activity time, strongest rate-change time, peak-rate time, cumulative count, and cumulative energy.
+  - Parallel neighborhood summary table with the same timing metrics for Mw6.4-neighborhood and Mw7.1-neighborhood.
+
+### Task 3 — Resolve spatial inhomogeneity and temporal ordering within corridors and near-mainshock neighborhoods
+- Task description
+  - Subdivide Region A and Region B into fixed `0.5 km × 0.5 km` cells in local metric coordinates.
+  - Compute cellwise seismicity statistics, first-activation timing, peak activity timing, cumulative energy, and along-strike summaries to test whether activation is spatially coherent, delayed in patches, or directionally evolving.
+  - Build parallel first-activation diagnostics within the two 10 km circular neighborhoods to compare local activation near the Mw 6.4 and Mw 7.1 epicentral areas.
+- Required data sources
+  - Event-level enriched table from Task 1
+  - Corridor geometry and circle geometry from Task 1
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/faults/ridgecrest_surface_faults.json`
+- Parameter selection strategy
+  - Build separate fixed grids for Region A and Region B corridor interiors using 0.5 km spacing in the local metric frame.
+  - Preserve every valid cell inside each corridor, including zero-count cells.
+  - Assign corridor events to cells and compute for each cell:
+    - total event count through Mw 7.1
+    - 30-minute and 1-hour binned count/rate series
+    - cumulative energy
+    - first activation time after Mw 6.4
+    - peak-rate time
+    - cell center projected coordinates and lon/lat
+    - along-strike coordinate
+    - across-strike coordinate
+    - distance to Mw 6.4 epicenter
+    - distance to Mw 7.1 epicenter
+  - Define first activation time with one consistent rule, preferably first post-Mw 6.4 event time or first nonzero bin center; record the chosen definition in metadata and use it uniformly.
+  - Build equivalent 0.5 km first-activation products inside the two 10 km circular neighborhoods using the same timing reference and same color scale.
+  - Aggregate corridor cells into along-strike bins using a width equal to 0.5 km or an explicitly chosen integer multiple of 0.5 km if stabilization is needed; preserve the original cell-level table regardless.
+  - For each along-strike bin, compute event count, first activation time, peak-rate time, and cumulative energy.
+  - Quantify internal ordering with simple trend diagnostics between along-strike coordinate and first activation time, while also flagging non-monotonic or patchy departures.
+- Constraints
+  - Zero-count cells must remain visible in cumulative maps and heatmaps as grey/light-grey background.
+  - Region A and Region B first-activation maps must share the same time color scale spanning 0 to Mw 7.1 occurrence time in hours since Mw 6.4.
+  - Time-versus-along-strike heatmaps are the primary evidence for internal temporal ordering; distance-to-mainshock heatmaps are optional secondary diagnostics only.
+  - Circular-neighborhood activation maps are diagnostic supplements and must not replace corridor-based conclusions.
+  - Validate that both Region A and Region B produce non-empty cell-level outputs before accepting the task as complete.
+- Key outputs
+  - Cell-level table for Region A and Region B with cell center lon/lat, projected coordinates, along-strike coordinate, across-strike coordinate, distance to Mw6.4, distance to Mw7.1, event count, cumulative energy, first activation time, and peak-rate time.
+  - Neighborhood cell-level first-activation table with a compatible schema for Mw6.4-neighborhood and Mw7.1-neighborhood.
+  - Cumulative seismicity-count maps for Region A and Region B with zero-count cells shown in grey and fixed corridor geometry overlaid.
+  - Two-panel first-activation-time maps for Region A and Region B with common time scale and labeled mainshocks.
+  - Two-panel first-activation-time maps for Mw6.4-neighborhood and Mw7.1-neighborhood with the same common time scale.
+  - Time-versus-along-strike heatmaps for Region A and Region B.
+  - First-activation time versus along-strike plots for Region A and Region B.
+  - Along-strike binned summary tables for each region including bin center, event count, first activation time, peak-rate time, and cumulative energy.
+
+### Task execution flow and data dependencies
+- Script 1 executes Task 1 end-to-end:
+  - load all inputs
+  - build projection and fixed geometries
+  - assign events
+  - generate region-definition diagnostics
+  - export the event-level enriched table and assignment summary CSV
+  - validate non-zero counts for Region A and Region B and report corridor overlap and unassigned fraction
+- Script 2 executes Task 2 end-to-end:
+  - consume the Task 1 enriched event table
+  - build 30-minute and 1-hour domain time series
+  - compute timing metrics
+  - run Bayesian change-point analysis on rate and energy
+  - generate all regional and neighborhood temporal figures
+  - export time-series tables, change-point tables, and compact summary CSVs
+  - validate that required domain series and change-point outputs are non-empty
+- Script 3 executes Task 3 end-to-end:
+  - consume the Task 1 enriched event table and fixed geometry
+  - build corridor and neighborhood grids
+  - compute cellwise statistics and first-activation products
+  - generate maps, heatmaps, and along-strike summaries
+  - export cell-level tables and along-strike summary tables
+  - validate that both corridors produce non-empty cell outputs and activated cells where expected
+
+### Final comparison targets to be supported by the outputs
+- Region A versus Region B:
+  - first event lag
+  - first sustained activity lag
+  - strongest rate-change lag
+  - peak-rate lag
+  - differences in cumulative-count and cumulative-energy growth
+  - differences in Bayesian rate and energy change-point timing
+- Mw6.4-neighborhood versus Mw7.1-neighborhood:
+  - whether activation near the future Mw 7.1 area begins later
+  - whether local intensification near Mw 7.1 is delayed, abrupt, or multi-stage
+- Internal ordering within each corridor:
+  - whether activation is near-synchronous along strike
+  - whether activation migrates systematically
+  - whether activation is spatially heterogeneous or patchy with delayed segment activation

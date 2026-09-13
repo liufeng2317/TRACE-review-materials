@@ -1,0 +1,83 @@
+Loading event table: <PACKAGE_ROOT>/results/exp_run/outputs/01_region_geometry_assignment/tables/event_region_assignments.csv
+Loaded 4,755 events. Analysis window: 2019-07-04 00:56:37.590000+00:00 to 2019-07-06 03:19:53.040000+00:00
+Building time series in parallel with up to 64 workers for 10 domain-resolution combinations.
+Completed domain=All_region, resolution=1h
+Completed domain=Region_A, resolution=1h
+Completed domain=Region_B, resolution=1h
+Completed domain=Mw64_neighborhood, resolution=1h
+Completed domain=Mw71_neighborhood, resolution=1h
+Completed domain=All_region, resolution=30min
+Completed domain=Region_A, resolution=30min
+Completed domain=Region_B, resolution=30min
+Completed domain=Mw64_neighborhood, resolution=30min
+Completed domain=Mw71_neighborhood, resolution=30min
+Saving time-series and change-point tables.
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:328: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if any(pd.api.types.is_datetime64tz_dtype(df[c]) or pd.api.types.is_datetime64_any_dtype(df[c]) for c in df.columns):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:328: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if any(pd.api.types.is_datetime64tz_dtype(df[c]) or pd.api.types.is_datetime64_any_dtype(df[c]) for c in df.columns):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:328: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if any(pd.api.types.is_datetime64tz_dtype(df[c]) or pd.api.types.is_datetime64_any_dtype(df[c]) for c in df.columns):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:328: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if any(pd.api.types.is_datetime64tz_dtype(df[c]) or pd.api.types.is_datetime64_any_dtype(df[c]) for c in df.columns):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:328: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if any(pd.api.types.is_datetime64tz_dtype(df[c]) or pd.api.types.is_datetime64_any_dtype(df[c]) for c in df.columns):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+<PACKAGE_ROOT>/results/exp_run/scripts/02_temporal_rate_energy_changepoints.py:331: DeprecationWarning: is_datetime64tz_dtype is deprecated and will be removed in a future version. Check `isinstance(dtype, pd.DatetimeTZDtype)` instead.
+  if pd.api.types.is_datetime64tz_dtype(out[col]) or pd.api.types.is_datetime64_any_dtype(out[col]):
+Creating figures for resolution=30min
+Creating figures for resolution=1h
+Finished successfully. Outputs written to <PACKAGE_ROOT>/results/exp_run/outputs/02_temporal_rate_energy_changepoints

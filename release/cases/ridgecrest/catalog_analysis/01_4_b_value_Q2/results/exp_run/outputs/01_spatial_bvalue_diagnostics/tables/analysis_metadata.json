@@ -1,0 +1,36 @@
+{
+  "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_spatial_bvalue_diagnostics.py",
+  "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_spatial_bvalue_diagnostics",
+  "input_files": [
+    "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv",
+    "<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv",
+    "<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv"
+  ],
+  "fixed_mc": 1.5,
+  "delta_m": 0.01,
+  "radii_km": [
+    4.0,
+    5.0,
+    6.0,
+    7.0
+  ],
+  "primary_radius_km": 5.0,
+  "grid_spacing_km": 1.0,
+  "min_events_ge_mc": 30,
+  "bootstrap_samples_nodes": 500,
+  "bootstrap_samples_core": 1000,
+  "separator_time": "2019-07-05 11:07:52.830000+00:00",
+  "projection_center": {
+    "lon": -117.5435765975892,
+    "lat": 35.72146737313156
+  },
+  "profile": {
+    "strike_deg": 138.24852605245889,
+    "source": "principal_axis_post_separator_near_Mw7.1",
+    "swath_half_width_km": 5.0
+  },
+  "common_b_map_scale": {
+    "vmin": 0.505533412753838,
+    "vmax": 1.368800495695213
+  }
+}

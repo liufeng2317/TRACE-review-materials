@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "03_gridded_activation_ordering",
+    "generated_at": "2026-07-06T09:59:15.405472+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 528.175,
+    "timing": {
+      "total_sec": 528.175,
+      "coding_agent_sec": 118.445,
+      "code_review_sec": 56.159,
+      "preflight_sec": 0.369,
+      "script_execution_sec": 64.352,
+      "result_check_sec": 115.573,
+      "task_analysis_sec": 171.261
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/03_gridded_activation_ordering.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/03_gridded_activation_ordering.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/03_gridded_activation_ordering/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "metadata/gridded_activation_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/metadata/gridded_activation_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/corridor_cell_activation_table_all_regions.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/corridor_cell_activation_table_all_regions.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/mw6.4_neighborhood_cell_activation_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/mw6.4_neighborhood_cell_activation_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/mw7.1_neighborhood_cell_activation_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/mw7.1_neighborhood_cell_activation_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/neighborhood_cell_activation_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/neighborhood_cell_activation_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/region_a_along_strike_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/region_a_along_strike_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/region_a_cell_activation_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/region_a_cell_activation_table.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/region_a_time_along_heatmap_table.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_gridded_activation_ordering/tables/region_a_time_along_heatmap_table.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/corridor_cumulative_seismicity_maps.png",
+      "figures/corridor_first_activation_maps.png",
+      "figures/first_activation_vs_along_strike.png",
+      "figures/neighborhood_first_activation_maps.png",
+      "figures/time_vs_along_strike_heatmaps.png",
+      "metadata/gridded_activation_metadata.json",
+      "tables/corridor_cell_activation_table_all_regions.csv",
+      "tables/mw6.4_neighborhood_cell_activation_table.csv",
+      "tables/mw7.1_neighborhood_cell_activation_table.csv",
+      "tables/neighborhood_cell_activation_table.csv",
+      "tables/region_a_along_strike_summary.csv",
+      "tables/region_a_cell_activation_table.csv",
+      "tables/region_a_time_along_heatmap_table.csv",
+      "tables/region_b_along_strike_summary.csv",
+      "tables/region_b_cell_activation_table.csv",
+      "tables/region_b_time_along_heatmap_table.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Compute gridded corridor and neighborhood activation statistics and resolve internal spatial ordering before the Mw 7.1 mainshock.",
+    "result": "Compute gridded corridor and neighborhood activation statistics and resolve internal spatial ordering before the Mw 7.1 mainshock. Status=success; outputs=16 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

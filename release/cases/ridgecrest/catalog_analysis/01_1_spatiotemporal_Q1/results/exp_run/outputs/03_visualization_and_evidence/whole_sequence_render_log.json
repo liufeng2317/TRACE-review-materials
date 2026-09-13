@@ -1,0 +1,37 @@
+{
+  "family_name": "figures_whole_sequence_2h",
+  "figure_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h",
+  "pages_expected": 4,
+  "pages_rendered": 4,
+  "results": [
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_001.png",
+      "n_windows": 8,
+      "page_number": 1,
+      "size_bytes": 198979
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_002.png",
+      "n_windows": 8,
+      "page_number": 2,
+      "size_bytes": 242304
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_003.png",
+      "n_windows": 8,
+      "page_number": 3,
+      "size_bytes": 350477
+    },
+    {
+      "exists": true,
+      "figure_path": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence/figures_whole_sequence_2h/whole_sequence_2h_page_004.png",
+      "n_windows": 5,
+      "page_number": 4,
+      "size_bytes": 301543
+    }
+  ],
+  "workers_used": 8
+}

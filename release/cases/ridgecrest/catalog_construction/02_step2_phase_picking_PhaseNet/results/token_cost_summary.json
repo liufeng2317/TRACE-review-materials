@@ -1,0 +1,53 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2249,
+      "output_tokens": 17
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 22551,
+      "output_tokens": 6393
+    },
+    "Planing": {
+      "input_tokens": 84636,
+      "output_tokens": 8568
+    },
+    "Plan Merging": {
+      "input_tokens": 38629,
+      "output_tokens": 3164
+    },
+    "Workflow Agent": {
+      "input_tokens": 45712,
+      "output_tokens": 3020
+    },
+    "Coding Agent (01_phasenet_phase_picking)": {
+      "input_tokens": 914579,
+      "output_tokens": 13797
+    },
+    "Result Check Agent (01_phasenet_phase_picking)": {
+      "input_tokens": 288631,
+      "output_tokens": 4539
+    },
+    "Task Analysis Agent (01_phasenet_phase_picking)": {
+      "input_tokens": 18995,
+      "output_tokens": 6296
+    },
+    "Evaluation": {
+      "input_tokens": 11913,
+      "output_tokens": 801
+    },
+    "Report Synthesis": {
+      "input_tokens": 62276,
+      "output_tokens": 5601
+    }
+  },
+  "total": {
+    "input_tokens": 1490171,
+    "output_tokens": 52196,
+    "total_tokens": 1542367
+  }
+}

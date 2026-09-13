@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Full-window continuous waveform phase-picking workflow using one observation waveform archive plus station metadata, with deep-learning inference, multiprocessing, daily CSV merging, and one diagnostic plot. Risk is moderate because NPU multiprocessing must avoid fork-based re-initialization and outputs must be validated per day.",
+  "data_source_count": 2,
+  "workflow_risk": "moderate",
+  "expected_script_count": 1
+}

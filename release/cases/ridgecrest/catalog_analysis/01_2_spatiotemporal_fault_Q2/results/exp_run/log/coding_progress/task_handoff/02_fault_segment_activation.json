@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_fault_segment_activation",
+    "generated_at": "2026-07-06T00:18:55.622430+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 655.197,
+    "timing": {
+      "total_sec": 655.197,
+      "coding_agent_sec": 197.786,
+      "code_review_sec": 44.34,
+      "preflight_sec": 0.931,
+      "script_execution_sec": 102.382,
+      "result_check_sec": 129.309,
+      "task_analysis_sec": 176.758
+    },
+    "quality_flags": [
+      "task_status:success",
+      "outputs_truncated"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/02_fault_segment_activation.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/02_fault_segment_activation.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/02_fault_segment_activation/log_1.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "tables/event_to_fault_segment_association.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/event_to_fault_segment_association.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_activation_density_vs_time.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/fault_activation_density_vs_time.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_segment_activation_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/fault_segment_activation_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_segment_geometry.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/fault_segment_geometry.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/fault_segment_time_series.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/fault_segment_time_series.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/major_fault_activation_raster.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/major_fault_activation_raster.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/qc_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/qc_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/run_parameters.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_fault_segment_activation/tables/run_parameters.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/associated_vs_unassociated_events.png",
+      "figures/cumulative_fault_segment_activation.png",
+      "figures/fault_segment_activation_density_vs_time.png",
+      "figures/fault_segment_activation_map.png",
+      "figures/fault_segments_by_line.png",
+      "figures/major_fault_activation_raster.png",
+      "figures/nearest_distance_histogram.png",
+      "figures/representative_fault_segment_time_series.png",
+      "figures/segment_length_histogram.png",
+      "figures/segment_strike_distribution.png",
+      "figures/strike_activation_time_density.png",
+      "tables/event_to_fault_segment_association.csv",
+      "tables/fault_activation_density_vs_time.csv",
+      "tables/fault_segment_activation_summary.csv",
+      "tables/fault_segment_geometry.csv",
+      "tables/fault_segment_time_series.csv",
+      "tables/major_fault_activation_raster.csv",
+      "tables/qc_summary.csv",
+      "tables/run_parameters.csv",
+      "tables/strike_activation_density_long.csv",
+      "tables/strike_activation_density_matrix.csv",
+      "tables/unassociated_events.csv",
+      "tables/validation_summary.csv"
+    ],
+    "truncated": true
+  },
+  "notes": {
+    "purpose": "Build the fault-segment backbone, associate earthquakes to segments, compute segment activation time series, and generate fault-based activation figures.",
+    "result": "Build the fault-segment backbone, associate earthquakes to segments, compute segment activation time series, and generate fault-based activation figures. Status=success; outputs=23 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

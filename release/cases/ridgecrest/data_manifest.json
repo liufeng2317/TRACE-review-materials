@@ -1,0 +1,40 @@
+{
+  "case_id": "ridgecrest_2019",
+  "title": "TRACE analysis of the 2019 Ridgecrest earthquake sequence",
+  "release_scope": {
+    "catalog_construction": "Scripts and selected workflow materials for preprocessing, phase picking, association, and relocation.",
+    "catalog_analysis": "Prompts, generated scripts, and selected result summaries for spatiotemporal, fault, b-value, and Omori-Utsu analyses.",
+    "excluded": "Raw waveforms, large input datasets, complex intermediate tables, caches, and local runtime directories. The compact final manuscript catalog and selected diagnostics are retained."
+  },
+  "data_requirements": [
+    {
+      "name": "continuous_waveforms",
+      "description": "SCEDC continuous waveform data for 2019-07-04 through 2019-07-26; required for catalog generation.",
+      "release_path": "<DATA_ROOT>/waveforms/"
+    },
+    {
+      "name": "station_metadata",
+      "description": "StationXML metadata for the selected Ridgecrest stations.",
+      "release_path": "<DATA_ROOT>/station_metadata/"
+    },
+    {
+      "name": "reference_catalog",
+      "description": "USGS ComCat CI catalog used as an external reference.",
+      "service_url": "https://earthquake.usgs.gov/fdsnws/event/1/query"
+    },
+    {
+      "name": "fault_geometry",
+      "description": "Ridgecrest fault geometry used by fault-oriented analyses.",
+      "release_path": "<DATA_ROOT>/faults/ridgecrest_surface_faults.json"
+    }
+  ],
+  "main_workflow": [
+    "preprocessing",
+    "PhaseNet phase picking",
+    "GaMMA association and location",
+    "HypoDD relocation",
+    "spatiotemporal and fault analysis",
+    "b-value analysis",
+    "Omori-Utsu and rate diagnostics"
+  ]
+}

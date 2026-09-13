@@ -1,0 +1,291 @@
+# Goal
+Investigate the spatiotemporal evolution of the Ridgecrest earthquake sequence using the provided relocated observational catalog, with primary emphasis on how seismicity evolved from the Mw 6.4 mainshock toward the Mw 7.1 mainshock, including directional migration, simultaneous multi-cluster triggering, and emergence of new activated zones before and after each mainshock.
+
+## Planning Assumptions
+- Use only the provided observational CSV files:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- The catalog fields are fixed as `event_time,latitude,longitude,depth_km,magnitude`; all required time slicing is based on `event_time` parsed as UTC.
+- `mainshock64` and `mainshock71` must be read from `main_shock_events.csv` by magnitude and verified by chronological order; do not hard-code their times or locations.
+- All map products must share one fixed longitude-latitude extent derived once from the full relocated catalog with a small padding margin; this same extent must be reused for:
+  - whole-sequence time-sliced maps,
+  - before/after comparison maps,
+  - post-Mw 6.4 hourly maps.
+- Identical color settings means a single global category style is reused in every map:
+  - current-window events: one bright foreground color,
+  - prior events: silver with high transparency,
+  - before/after overlays: one fixed color for “before” and one fixed color for “after,” reused consistently in both comparison figures,
+  - mainshock markers: fixed marker styles for Mw 6.4 and Mw 7.1.
+- The scientific result should rely on observation-based spatial-temporal diagnostics only; no stress-transfer or rupture-physics model should be inferred from catalog patterns alone.
+- Quantitative support for interpretation should include window-based centroid motion, principal-axis orientation, along-strike/cross-strike migration relative to the Mw 6.4→Mw 7.1 direction, and simple multi-cluster diagnostics.
+- Parallelization is appropriate at the page level for repeated figure generation and at the window level for summary metrics; use up to 64 cores where beneficial.
+- Successful completion requires complete, chronologically ordered, non-empty scientific outputs: validated time-window tables, per-window metrics, all expected figure pages, comparison figures, and merged validation records.
+
+## Analysis Plan
+
+### Task 1: Build the validated analysis-ready catalog, mainshock table, and reusable window definitions
+- Task description:
+  - Read both CSV files, validate schema, parse UTC times, sort events chronologically, verify the two mainshocks, derive one common spatial extent, and construct all analysis windows required by the request.
+  - Generate one cleaned event table and machine-readable window-definition tables reused by all downstream analyses.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy:
+  - Identify `mainshock64` as the row with magnitude 6.4 and `mainshock71` as the row with magnitude 7.1; verify unique matches and that `mainshock64 < mainshock71`.
+  - Use half-open intervals `[start, end)` internally for all repeated slicing to avoid double counting; allow the final interval endpoint to be included only in merged bookkeeping if needed.
+  - Define windows exactly as requested:
+    - Whole-sequence stage A: `[mainshock64, mainshock71 + 1 day)` with 2-hour windows.
+    - Whole-sequence stage B: `[mainshock71 + 1 day, mainshock71 + 5 days)` with 6-hour windows.
+    - Mw 6.4 comparison:
+      - before: `[catalog start, mainshock64)`
+      - after: `[mainshock64, mainshock71)`
+    - Mw 7.1 comparison:
+      - before: `[mainshock64, mainshock71)`
+      - after: `[mainshock71, mainshock71 + 2 days)`
+    - Post-Mw 6.4 detailed sequence:
+      - hourly windows on `[mainshock64, mainshock71)` for the required high-resolution analysis.
+  - Derive one fixed map extent from full-catalog longitude/latitude min-max plus a small fixed padding margin.
+  - Precompute per-event attributes for reuse:
+    - elapsed hours since Mw 6.4,
+    - elapsed hours since Mw 7.1,
+    - sequence segment label,
+    - projected coordinates in one local planar system for distance/orientation calculations.
+- Constraints:
+  - Remove or flag rows with missing or invalid `event_time`, `latitude`, or `longitude`; log exclusions.
+  - Do not infer missing event metadata.
+  - Keep depth and magnitude in the cleaned table even when not directly plotted.
+  - Preserve empty windows in window-definition tables so chronology remains complete.
+- Key outputs:
+  - `ridgecrest_catalog_clean.csv`
+  - `mainshock_reference_verified.csv`
+  - `analysis_extent.json`
+  - `time_windows_whole_sequence.csv`
+  - `time_windows_post64_hourly.csv`
+  - `time_windows_comparison_intervals.csv`
+  - `catalog_qc_summary.json`
+
+### Task 2: Compute quantitative spatiotemporal diagnostics for migration, organization, and directional change
+- Task description:
+  - Compute compact per-window and interval-based diagnostics that directly support the user’s questions about directional triggering, migration, branching, and emergence of new active zones.
+  - This task should produce the quantitative evidence layer used to interpret the requested maps.
+- Required data sources:
+  - `ridgecrest_catalog_clean.csv`
+  - `mainshock_reference_verified.csv`
+  - `time_windows_whole_sequence.csv`
+  - `time_windows_post64_hourly.csv`
+  - `time_windows_comparison_intervals.csv`
+  - `analysis_extent.json`
+- Parameter selection strategy:
+  - For each 2-hour, 6-hour, and 1-hour window, compute:
+    - event count,
+    - magnitude summary,
+    - centroid longitude/latitude,
+    - centroid in projected coordinates,
+    - principal-axis azimuth from window covariance when event count is sufficient,
+    - major/minor spread,
+    - robust spatial footprint area when event count is sufficient,
+    - centroid distance to Mw 6.4 and to Mw 7.1,
+    - centroid azimuth from Mw 6.4 and from Mw 7.1.
+  - Define the Mw 6.4→Mw 7.1 vector once from the verified mainshock epicenters and compute:
+    - along-strike centroid projection,
+    - cross-strike centroid projection,
+    - along-strike spread and cross-strike spread of events per window.
+  - For migration assessment after Mw 6.4 and after Mw 7.1, compute:
+    - consecutive-window centroid displacement vectors,
+    - cumulative centroid migration,
+    - change in principal-axis azimuth through time,
+    - distance-to-Mw 7.1 versus time after Mw 6.4.
+  - For multi-cluster behavior and possible simultaneous activation, compute per window:
+    - density-based cluster count in projected coordinates,
+    - dominant cluster fraction,
+    - cluster centroids,
+    - cluster azimuths relative to Mw 6.4.
+  - For before/after comparisons around each mainshock, compute:
+    - event counts before and after,
+    - centroid shift vector,
+    - principal-axis orientation change,
+    - occupied-area change,
+    - hotspot or density-center shift using the same spatial grid before and after within each comparison.
+- Constraints:
+  - Use projected coordinates for all distance, orientation, and clustering calculations rather than raw degree-space geometry.
+  - If a window has too few events for stable orientation, area, or clustering estimates, mark these as insufficient rather than forcing estimates.
+  - Clustering parameters must be chosen from the catalog’s spatial scale and then fixed consistently across comparable windows; do not vary clustering thresholds window by window.
+  - These diagnostics support descriptive interpretation only and must not be presented as proof of physical triggering mechanism.
+- Key outputs:
+  - `window_metrics_whole_sequence.csv`
+  - `window_metrics_post64_hourly.csv`
+  - `window_cluster_metrics_whole_sequence.csv`
+  - `window_cluster_metrics_post64_hourly.csv`
+  - `comparison_metrics_64.csv`
+  - `comparison_metrics_71.csv`
+  - `migration_summary_64_to_71.json`
+  - `migration_summary_post71.json`
+
+### Task 3: Generate whole-sequence time-sliced spatial maps with fixed styling and chronological 2 x 4 batching
+- Task description:
+  - Produce the requested map series for the whole sequence, using non-overlapping windows and fixed 2 x 4 chronological pages.
+  - Each panel should show current-window events prominently and earlier events in silver, with mainshock epicenters overlaid when already occurred.
+- Required data sources:
+  - `ridgecrest_catalog_clean.csv`
+  - `mainshock_reference_verified.csv`
+  - `time_windows_whole_sequence.csv`
+  - `analysis_extent.json`
+  - `window_metrics_whole_sequence.csv`
+- Parameter selection strategy:
+  - Build two map families:
+    - Family A: 2-hour windows from `mainshock64` to `mainshock71 + 1 day`.
+    - Family B: 6-hour windows from `mainshock71 + 1 day` to `mainshock71 + 5 days`.
+  - Group every 8 consecutive windows into one 2 x 4 figure page, ordered chronologically.
+  - In each panel:
+    - events inside the current window plotted with the fixed bright color,
+    - events before the current window start plotted in silver with high transparency,
+    - Mw 6.4 epicenter plotted if the panel time is after Mw 6.4,
+    - Mw 7.1 epicenter plotted only if the panel time is after Mw 7.1.
+  - Add compact panel labels:
+    - window start/end time,
+    - event count in the current window.
+- Constraints:
+  - All panels must use the same map extent and category colors.
+  - No colorbar.
+  - Empty windows must still be plotted to preserve temporal continuity.
+  - Parallelization should occur at the figure-page level, not inside individual panels.
+  - Merged success requires all expected pages to exist, be chronologically indexed, and correspond exactly to the window table.
+- Key outputs:
+  - complete figure set for whole-sequence 2-hour pages
+  - complete figure set for whole-sequence 6-hour pages
+  - `whole_sequence_2h_page_index.csv`
+  - `whole_sequence_6h_page_index.csv`
+  - `whole_sequence_render_log.json`
+
+### Task 4: Generate before/after spatial comparison figures for Mw 6.4 and Mw 7.1
+- Task description:
+  - Produce two direct comparison figures that overlay seismicity before and after each mainshock and summarize the observed reorganization.
+- Required data sources:
+  - `ridgecrest_catalog_clean.csv`
+  - `mainshock_reference_verified.csv`
+  - `time_windows_comparison_intervals.csv`
+  - `analysis_extent.json`
+  - `comparison_metrics_64.csv`
+  - `comparison_metrics_71.csv`
+- Parameter selection strategy:
+  - Figure 1:
+    - before Mw 6.4: `[catalog start, mainshock64)`
+    - after Mw 6.4: `[mainshock64, mainshock71)`
+  - Figure 2:
+    - before Mw 7.1: `[mainshock64, mainshock71)`
+    - after Mw 7.1: `[mainshock71, mainshock71 + 2 days)`
+  - Use one fixed color for “before” and one fixed color for “after,” reused identically in both figures.
+  - Overlay relevant mainshock epicenters and optional compact centroid/principal-axis markers if the overlay remains legible.
+  - Use the same density grid for before and after within each comparison if any density-difference summary is computed.
+- Constraints:
+  - Same map extent as all other spatial products.
+  - No colorbar.
+  - Do not change symbol meaning between the Mw 6.4 and Mw 7.1 comparison figures.
+  - The scatter overlay remains the primary required output; any density or outline aid must remain secondary.
+- Key outputs:
+  - `compare_before_after_mw64` figure
+  - `compare_before_after_mw71` figure
+  - `before_after_change_metrics_64.json`
+  - `before_after_change_metrics_71.json`
+
+### Task 5: Generate the high-resolution post-Mw 6.4 hourly map sequence
+- Task description:
+  - Produce the most important requested product: the hour-by-hour spatial evolution after Mw 6.4, grouped into 2 x 4 chronological pages, to resolve fine-scale migration, branching, and geometric change before Mw 7.1.
+- Required data sources:
+  - `ridgecrest_catalog_clean.csv`
+  - `mainshock_reference_verified.csv`
+  - `time_windows_post64_hourly.csv`
+  - `analysis_extent.json`
+  - `window_metrics_post64_hourly.csv`
+  - `window_cluster_metrics_post64_hourly.csv`
+- Parameter selection strategy:
+  - Use non-overlapping 1-hour windows on `[mainshock64, mainshock71)`.
+  - Group every 8 consecutive hourly windows into one figure page.
+  - In each panel:
+    - current-hour events in the fixed bright color,
+    - all earlier post-Mw 6.4 events in silver with high transparency,
+    - Mw 6.4 epicenter overlaid in every panel.
+  - Add compact panel labels:
+    - hour index since Mw 6.4,
+    - current-hour event count.
+  - Use the hourly diagnostics to generate page-linked metadata for later interpretation:
+    - centroid progression,
+    - cluster count,
+    - principal-axis azimuth.
+- Constraints:
+  - Same extent and same color policy as all other figures.
+  - No colorbar.
+  - Preserve zero-event hours in chronology.
+  - Parallelize by figure page and validate final page count against the hourly window table.
+- Key outputs:
+  - full post-Mw 6.4 hourly figure series
+  - `post64_hourly_page_index.csv`
+  - `post64_hourly_render_log.json`
+  - `post64_branching_flags.csv`
+
+### Task 6: Produce machine-readable evidence products focused on the Mw 6.4 to Mw 7.1 triggering question
+- Task description:
+  - Integrate the map-linked diagnostics into compact evidence summaries that answer the user’s main scientific questions: whether the Mw 6.4 sequence activated one or multiple directions, whether migration occurred toward the Mw 7.1 zone, whether direction changed after Mw 7.1, and whether a new activation zone emerged.
+- Required data sources:
+  - `window_metrics_whole_sequence.csv`
+  - `window_metrics_post64_hourly.csv`
+  - `window_cluster_metrics_whole_sequence.csv`
+  - `window_cluster_metrics_post64_hourly.csv`
+  - `comparison_metrics_64.csv`
+  - `comparison_metrics_71.csv`
+  - page index files from Tasks 3 and 5
+  - `migration_summary_64_to_71.json`
+  - `migration_summary_post71.json`
+- Parameter selection strategy:
+  - Summarize evidence separately for:
+    - immediate post-Mw 6.4 interval,
+    - inter-mainshock evolution from Mw 6.4 to Mw 7.1,
+    - immediate post-Mw 7.1 interval,
+    - before/after Mw 6.4,
+    - before/after Mw 7.1.
+  - For each interval, record:
+    - dominant orientation,
+    - whether orientation is stable, rotating, or poorly constrained,
+    - whether centroid motion is systematic, stepwise, or weak,
+    - whether one dominant cluster or multiple simultaneous clusters are present,
+    - whether a new post-mainshock activation zone appears,
+    - which figure pages and time windows support the interpretation.
+- Constraints:
+  - Keep all statements observational and descriptive.
+  - If evidence is mixed or low-confidence, explicitly mark it as ambiguous rather than forcing binary classification.
+  - Do not generate narrative conclusions as a separate coding task; produce only machine-readable evidence products for downstream interpretation.
+- Key outputs:
+  - `ridgecrest_triggering_evidence_summary.json`
+  - `ridgecrest_interval_interpretation_table.csv`
+  - `figure_window_cross_reference.csv`
+
+### Task 7: Execute as a small number of cohesive scripts with validation, progress reporting, and completeness checks
+- Task description:
+  - Run the workflow in a minimal set of reliable scripts, ensure progress visibility during long computations, and validate that the final scientific outputs are complete and internally consistent.
+- Required data sources:
+  - all outputs from Tasks 1–6
+- Parameter selection strategy:
+  - Use three primary task scripts:
+    - Script A: data ingestion, schema/time QC, mainshock verification, common extent generation, and window-table construction.
+    - Script B: all per-window and comparison metrics, migration diagnostics, and clustering summaries.
+    - Script C: all figure generation for whole-sequence maps, comparison maps, and post-Mw 6.4 hourly maps, including page-level parallel execution.
+  - Use up to 64 cores for page rendering and independent window-based metric calculations where performance benefits are real.
+  - Emit progress logs for:
+    - catalog loading and QC,
+    - metric computation by window family,
+    - figure page rendering,
+    - final validation.
+  - Validate:
+    - expected number of windows in each family,
+    - expected number of 2 x 4 pages,
+    - chronological ordering,
+    - no missing or duplicated windows across pages,
+    - non-empty figure files for all requested pages,
+    - consistency of map extent and style metadata across products.
+- Constraints:
+  - Successful completion requires the merged scientific outputs, not merely successful batch execution.
+  - If any page or metrics table is incomplete, rerun only failed batches and then repeat merged-output validation.
+- Key outputs:
+  - `run_log.txt`
+  - `output_manifest.csv`
+  - `validation_report.json`

@@ -1,0 +1,184 @@
+# Goal
+Investigate the spatiotemporal evolution of the 2019 Ridgecrest earthquake sequence from the relocated observational catalog, with emphasis on whether seismicity between the Mw 6.4 and Mw 7.1 mainshocks shows directed migration, simultaneous activation of multiple clusters, or emergence of a new triggering zone/direction before the Mw 7.1 rupture.
+
+## Planning Assumptions
+- Use only the provided relocated observational catalog and the two-row mainshock reference table; no model data are needed.
+- Primary event table fields are `event_time`, `latitude`, `longitude`, `depth_km`, and `magnitude`; `event_time` must be parsed as UTC datetime.
+- Mainshock times and epicenters must be read from `main_shock_events.csv` rather than hard-coded. The Mw 6.4 row defines `mainshock64`; the Mw 7.1 row defines `mainshock71`.
+- All map comparisons should use a single fixed longitude-latitude extent derived once from the full catalog, with a small padding margin, so all panels are directly comparable.
+- Because the task is dominated by catalog slicing, map generation, and descriptive diagnostics, one primary task script is sufficient; it should produce all derived tables, diagnostics, and figures for the three requested analysis blocks.
+- Parallelization should be applied at the figure-batch level or time-window level, not by splitting a single plot panel across workers. Progress logging should report batch/figure completion and skipped empty windows.
+- Success evidence is not only successful script execution, but also non-empty time-window summaries and the full requested figure sets for the sequence-wide, before/after, and post-Mw 6.4 analyses.
+
+## Analysis Plan
+
+### Task 1: Build a unified catalog-analysis table and event-window definitions
+- Task description:
+  - Load the relocated catalog and mainshock reference table, validate schema and time ordering, derive analysis windows relative to the Mw 6.4 and Mw 7.1 events, and create reusable per-event attributes for all downstream figures and diagnostics.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy:
+  - Identify `mainshock64` as the row with magnitude 6.4 and `mainshock71` as the row with magnitude 7.1.
+  - Sort the full catalog by `event_time`.
+  - Derive a fixed map extent from min/max longitude and latitude of the full catalog, padded slightly so all events and mainshock symbols are visible.
+  - Create relative-time columns:
+    - hours since Mw 6.4
+    - hours since Mw 7.1
+    - sequence day index
+  - Create segment labels:
+    - pre-Mw 6.4: `[catalog start, mainshock64)`
+    - Mw 6.4 to Mw 7.1: `[mainshock64, mainshock71)`
+    - early post-Mw 7.1: `[mainshock71, mainshock71 + 2 days)`
+    - extended post-Mw 7.1: `[mainshock71 + 1 day, mainshock71 + 5 days)`
+- Constraints:
+  - Keep half-open intervals for most slices to avoid double counting boundary events; document explicitly how exact boundary times are assigned.
+  - Do not infer additional event types or phases; use event hypocenter locations only.
+  - Preserve all events unless there are invalid rows with missing essential fields; invalid-row counts must be logged.
+- Key outputs:
+  - Cleaned, time-sorted event table
+  - Mainshock metadata table with confirmed times/epicenters
+  - Window-definition table for all requested time slices
+  - Basic QC summary table: event counts, time span, spatial bounds, missing/invalid rows
+
+### Task 2: Quantify sequence-scale spatiotemporal organization and migration diagnostics
+- Task description:
+  - Compute simple, interpretable diagnostics to support visual interpretation of triggering direction, cluster emergence, and migration before producing figures.
+- Required data sources:
+  - Unified catalog-analysis table from Task 1
+- Parameter selection strategy:
+  - For each requested time window, compute:
+    - event count
+    - centroid longitude/latitude
+    - covariance ellipse or principal-axis orientation in map view
+    - dispersion metrics along the first and second principal axes
+    - distance and azimuth from Mw 6.4 epicenter
+    - distance and azimuth from Mw 7.1 epicenter when relevant
+  - For sequence-wide windows, use:
+    - 2-hour windows from `mainshock64` to `mainshock71 + 1 day`
+    - 6-hour windows from `mainshock71 + 1 day` to `mainshock71 + 5 days`
+  - For the post-Mw 6.4 detailed sequence, use:
+    - 1-hour windows from `mainshock64` to `mainshock71`
+  - For comparison intervals, compute separate statistics for:
+    - before vs after Mw 6.4
+    - before vs after Mw 7.1
+- Constraints:
+  - If a window has too few events for stable orientation estimation, mark orientation as undefined rather than forcing a result.
+  - Use horizontal geometry only for migration-direction interpretation in this task; depth remains available for later descriptive checks but not as a required plotting dimension.
+  - Do not over-interpret centroid drift alone; compare centroid motion with elongation orientation and spatial spread.
+- Key outputs:
+  - Time-window summary table for all 2-hour/6-hour sequence windows
+  - Time-window summary table for all 1-hour post-Mw 6.4 windows
+  - Interval-comparison statistics table for before/after Mw 6.4 and before/after Mw 7.1
+  - Derived interpretation aids: cumulative migration tracks of centroids and orientation evolution series
+
+### Task 3: Generate time-sliced spatial maps for the whole sequence
+- Task description:
+  - Produce the requested chronologically ordered 2 × 4-panel figure series covering the full sequence with changing time resolution across the two periods.
+- Required data sources:
+  - Unified catalog-analysis table from Task 1
+  - Mainshock metadata from Task 1
+  - Sequence-window summary table from Task 2 for panel annotations/checks
+- Parameter selection strategy:
+  - Window set A:
+    - from `mainshock64` to `mainshock71 + 1 day`
+    - non-overlapping 2-hour windows
+  - Window set B:
+    - from `mainshock71 + 1 day` to `mainshock71 + 5 days`
+    - non-overlapping 6-hour windows
+  - Group windows into chronological batches of up to 8 panels per figure.
+  - In each panel:
+    - current-window events plotted in the same bright color scale/style across all panels
+    - all prior events plotted in silver with high transparency
+    - plot Mw 6.4 epicenter only after its occurrence
+    - plot Mw 7.1 epicenter only after its occurrence
+  - Add compact panel metadata:
+    - start/end time of window
+    - current-window event count
+- Constraints:
+  - All panels across all figures must share identical map extent and plotting color rules.
+  - No colorbar.
+  - Empty windows should still be represented if they are part of the regular chronology, with panel title/count showing zero events.
+  - Batch generation should be parallelized across figures where possible, with progress logs for figure index completion.
+- Key outputs:
+  - Sequence-wide figure series for 2-hour windows
+  - Sequence-wide figure series for 6-hour windows
+  - Figure manifest table listing figure ID, covered time windows, and event counts
+
+### Task 4: Generate before/after spatial comparison figures around both mainshocks
+- Task description:
+  - Produce direct spatial overlays to compare seismicity organization before and after the Mw 6.4 and Mw 7.1 mainshocks.
+- Required data sources:
+  - Unified catalog-analysis table from Task 1
+  - Interval-comparison statistics from Task 2
+  - Mainshock metadata from Task 1
+- Parameter selection strategy:
+  - Comparison 1:
+    - before Mw 6.4: `[catalog start, mainshock64)`
+    - after Mw 6.4: `[mainshock64, mainshock71)`
+  - Comparison 2:
+    - before Mw 7.1: `[mainshock64, mainshock71)`
+    - after Mw 7.1: `[mainshock71, mainshock71 + 2 days)`
+  - Overlay before/after subsets with two distinct fixed colors and equal symbol logic.
+  - Add optional summary overlays if robust:
+    - centroids
+    - principal-axis direction lines
+    - convex hull or density contour only if event counts are sufficient and the overlay remains interpretable
+- Constraints:
+  - Use the same spatial extent as Task 3.
+  - Keep styling simple enough that before/after differences remain visually obvious.
+  - Do not change symbol/color meaning between the Mw 6.4 and Mw 7.1 comparison figures.
+- Key outputs:
+  - One figure comparing before vs after Mw 6.4
+  - One figure comparing before vs after Mw 7.1
+  - Small companion summary table reporting counts, centroid shifts, and orientation changes for each before/after pair
+
+### Task 5: Generate high-resolution time-sliced spatial maps for the post-Mw 6.4 sequence
+- Task description:
+  - Produce the most detailed figure series requested: hour-by-hour spatial evolution after the Mw 6.4 mainshock, grouped into 2 × 4-panel figures covering up to 8 hours each.
+- Required data sources:
+  - Unified catalog-analysis table from Task 1
+  - Post-Mw 6.4 hourly summary table from Task 2
+  - Mainshock metadata from Task 1
+- Parameter selection strategy:
+  - Use non-overlapping 1-hour windows from `mainshock64` up to `mainshock71`.
+  - Group every 8 consecutive hourly windows into one figure.
+  - In each panel:
+    - current-hour events in bright color
+    - all earlier events since `mainshock64` in silver with high transparency
+    - overlay the Mw 6.4 epicenter
+  - Add panel labels with hour index relative to Mw 6.4 and event count.
+  - If useful for interpretation, add a subtle centroid marker per hour to track local migration.
+- Constraints:
+  - This task has the highest figure count and should be parallelized by figure batch with progress logging.
+  - All panels and all figures must share identical extent and identical color settings.
+  - No colorbar.
+  - Include zero-event hours in chronology if present.
+- Key outputs:
+  - Full post-Mw 6.4 hourly figure series
+  - Figure manifest table for hourly maps
+  - Optional centroid-track table for hourly windows
+
+### Task 6: Synthesize direction-change and triggering-zone evidence from the map products
+- Task description:
+  - Convert the diagnostic tables and figure-level summaries into machine-readable evidence focused on the user’s scientific questions about migration direction, multi-cluster triggering, and emergence of new zones before/after the two mainshocks.
+- Required data sources:
+  - Outputs from Tasks 2–5
+- Parameter selection strategy:
+  - Summarize separately for:
+    - Mw 6.4 to Mw 7.1 interval
+    - immediate post-Mw 7.1 interval
+    - pre/post Mw 6.4 comparison
+    - pre/post Mw 7.1 comparison
+  - Evidence fields should include:
+    - dominant orientation by interval
+    - whether orientation is stable, rotating, or poorly constrained
+    - whether centroids migrate systematically
+    - whether multiple simultaneous spatial branches/clusters are present
+    - whether a new activation zone appears after Mw 7.1
+- Constraints:
+  - Treat these as descriptive evidence products, not formal causal proof of triggering mechanism.
+  - If cluster branching is not robust from centroid/orientation metrics alone, flag it for visual confirmation from the panel series instead of forcing binary classification.
+- Key outputs:
+  - Compact interpretation-summary table or JSON for each major interval
+  - Cross-reference table linking each interpretation statement to supporting figure IDs and time windows

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "01_1_trigger_spatiotemporal_Q1-v1",
+  "run_name": "01_1_trigger_spatiotemporal_Q1-v1",
+  "root": "<PACKAGE_ROOT>/results",
+  "status": "running",
+  "next_stage": "initialized",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 0,
+  "created_at": "2026-07-05T07:19:28.544728+00:00",
+  "updated_at": "2026-07-05T07:19:28.585663+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are a senior seismologist. \nYour objective is to investigate the spatiotemporal evolution of the earthquakes for the Ridgecrest earthquake sequence, spetial attention to the trigger mechanism from Mw 6.4 to Mw 7.1 mainshock.\n\n## 1. Data Sources\n- Catalog Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`\n    - the first row is the name of the columns: `event_time,latitude,longitude,depth_km,magnitude`\n- Main-shock events Path: `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`\n    - Mainshock64: magnitude 6.4\n    - Mainshock71: magnitude 7.1\n\n## 2. Time-sliced spatial maps for the whole sequence\nObjective: \nTo analyze the spatiotemporal evolution of the Ridgecrest earthquake sequence and discover the organized spatiotemporal patterns:\n    - The main characteristics of spatiotemporal patterns after Mw 6.4:\n        - Is the mainshock triggering one or multiple clusters in a specific direction?\n        - Is the cluster moving over time? If so, what is the direction of the movement? If not, is the cluster trigger simultaneously in multiple directions?\n    - The main characteristics of spatiotemporal patterns after Mw 7.1\n        - Is the direction changing before and after the mainshock? If so, what is the direction of the change? If not, is the direction static?\n        - Is the new trigger direction/zone after the mainshock? If so, what is the direction of the new trigger\n\nPlotting tasks:\n- Plot a series of figures showing the spatiotemporal evolution of earthquakes over the whole sequence:\n    - For the time range [mainshock64, mainshock71 + 1 day]: use a 2-hour interval\n    - For the time range [mainshock71 + 1 day, mainshock71 + 5 days]: use a 6-hour interval\n    - For each figure, arrange the subplots in a 2 x 4 grid (ordered chronologically).\n        - In each panel:\n            - Events within the time window: scatter plot with brighter color\n            - Events before the time window: scatter plot in silver with higher transparency\n            - Overlay the epicenters of Mw 6.4 and Mw 7.1 (when they have already occurred)\n        - All subplots must have:\n            - The same spatial extent\n            - No colorbar\n            - Identical color settings\n\n## 3. Spatial Distribution Comparison Before and After the Mainshocks\nObjective:\nTo identify changes in the spatial organization of earthquakes before and after the Mw 6.4 and Mw 7.1 mainshocks, and to assess whether these changes indicate the emergence of organized\n    - What are the changes in spatial distribution before and after the Mw 6.4 mainshock?\n    - What are the changes in spatial distribution before and after the Mw 7.1 mainshock?\n    - Spetial attention to:\n        - Is the migration direction changing before and after the mainshock? If so, what is the direction of the change? If not, is the direction static?\n        - Is the new trigger direction/zone after the mainshock? If so, what is the direction of the new trigger\n\nPlotting tasks:\n- Plot a figure comparing the spatial distribution before and after the Mw 6.4 mainshock (overlay with different colors for before and after):\n    - Before Mw 6.4 mainshock: [catalog origin time, mainshock64]\n    - After Mw 6.4 mainshock: [mainshock64, mainshock71]\n- Plot a figure comparing the spatial distribution before and after the Mw 7.1 mainshock (overlay with different colors for before and after):\n    - Before Mw 7.1 mainshock: [mainshock64, mainshock71]\n    - After Mw 7.1 mainshock: [mainshock71, mainshock71 + 2 days]\n\n## 4. Time-sliced spatial maps for the post-mainshock64 sequence (most important)\nObjective:\nTo characterize in detail the fine-scale spatiotemporal evolution of seismicity in longitude–latitude space following the Mw 6.4 mainshock.\n    - Describe how the spatial distribution of earthquakes evolves in longitude–latitude space after the Mw 6.4 mainshock, with emphasis on local migration, clustering, and geometric changes.\n\nPlotting tasks:\n- Plot a series of figures showing the spatiotemporal evolution after Mw 6.4:\n    - Use hour-by-hour temporal resolution\n    - Each figure contains up to 8 hours of data\n    - For each figure, arrange the subplots in a 2 x 4 grid (ordered chronologically).\n        - In each panel:\n            - Events in the time window: scatter plot with brighter color\n            - Events before the time window: scatter plot in silver with higher transparency\n            - Overlay the mainshock64 epicenter\n        - All subplots must have:\n            - The same spatial extent\n            - No colorbar\n            - Identical color settings\n\n## 5. Computational and software requirements\n- Process each major analytical step independently and generate figures and outputs for that step.\n- Use parallel computation (up to 64 cores) for computationally intensive tasks, such as spatial visualization, etc.\n- Display progress information (e.g., progress bars or logs) during long computations whenever possible.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<REPO_ROOT>/examples/ridgecrest/catalog_analysis/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_1_trigger_spatiotemporal_Q1-v1",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": []
+  },
+  "artifacts": {
+    "request_txt": null,
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs",
+    "run_log_path": "<PACKAGE_ROOT>/results/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<PACKAGE_ROOT>/results/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": null
+}

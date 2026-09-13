@@ -1,0 +1,8 @@
+metric,expected,completed,status
+catalog_rows_clean,84474,84474,ok
+intermainshock_rows,4716,4716,ok
+kde_intervals_total,23,23,ok
+kde_intervals_valid,23,23,ok
+morph_intervals_total,34,34,ok
+convex_valid_count,34,34,ok
+alpha_valid_count,34,34,ok

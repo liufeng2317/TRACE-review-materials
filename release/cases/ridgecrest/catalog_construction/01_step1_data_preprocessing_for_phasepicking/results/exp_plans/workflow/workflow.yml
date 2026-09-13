@@ -1,0 +1,230 @@
+tasks:
+- name: 01_preprocess_ridgecrest_stationday_waveforms
+  description: Build station metadata, preprocess 22 daily windows of Ridgecrest 
+    continuous waveforms into separate phase-picking and magnitude products, 
+    validate outputs, and save QC artifacts.
+  script: 01_preprocess_ridgecrest_stationday_waveforms.py
+  ancestors: []
+  subtasks:
+  - name: define_io_and_time_window
+    description: Define the explicit ObsPy UTCDateTime study window, input 
+      roots, output namespaces, and parallel settings.
+    inputs:
+    - waveform_root_directory
+    - stationxml_root_directory
+    outputs:
+    - processing_configuration
+    - explicit_day_windows
+    - output_namespace_definition
+    params:
+      start_time: UTCDateTime("2019-07-04T00:00:00")
+      end_time: UTCDateTime("2019-07-26T00:00:00")
+      max_workers: 64
+      time_type: obspy.UTCDateTime
+
+  - name: parse_stationxml_and_select_triplets
+    description: Read StationXML files, identify preferred HH or EH 
+      three-component channel triplets valid in the study window, and extract 
+      station metadata.
+    inputs:
+    - stationxml_files
+    - processing_configuration
+    outputs:
+    - station_metadata_records
+    - selected_channel_triplets
+    - station_selection_qc
+    params:
+      inventory_reader: read_inventory
+      metadata_format: STATIONXML
+      preferred_channel_families:
+      - HH
+      - EH
+      accepted_component_sets:
+      - ZNE
+      - Z12
+      gain_rule: arithmetic_mean_of_selected_three_channel_sensitivities
+
+  - name: write_station_sta
+    description: Write the required station metadata table and compact station 
+      QC summary.
+    inputs:
+    - station_metadata_records
+    - station_selection_qc
+    outputs:
+    - station_sta_table
+    - station_metadata_qc_table
+    params:
+      output_schema:
+      - network.station
+      - latitude
+      - longitude
+      - elevation
+      - gain
+      required_filename: station.sta
+
+  - name: discover_station_day_jobs_and_assess_completeness
+    description: Enumerate station-day jobs for 2019-07-04 through 2019-07-25, read 
+      overlapping MiniSEED files, merge segments, trim to exact UTC days, and 
+      compute completeness metrics.
+    inputs:
+    - waveform_root_directory
+    - selected_channel_triplets
+    - explicit_day_windows
+    - stationxml_files
+    outputs:
+    - station_day_job_manifest
+    - merged_station_day_streams
+    - completeness_qc_table
+    - skipped_station_day_records
+    params:
+      waveform_reader: read
+      merge_method: Stream.merge
+      trim_method: trim
+      input_format: MiniSEED
+      require_three_components: true
+      fallback_channel_family_allowed: true
+
+  - name: preprocess_phase_picking_products
+    description: Apply a picking-oriented preprocessing pipeline and save one 
+      final three-component MiniSEED per successful station-day without response
+      removal or normalization.
+    inputs:
+    - merged_station_day_streams
+    - completeness_qc_table
+    - explicit_day_windows
+    outputs:
+    - phase_daily_mseed_products
+    - phase_processing_log
+    - phase_product_validation_records
+    params:
+      preprocessing_steps:
+      - demean
+      - detrend
+      - taper
+      - bandpass_filter_below_nyquist
+      - optional_common_rate_resampling
+      response_removal: false
+      amplitude_normalization: false
+      output_naming: YYYYMMDD_network.station.starttime.endtime.mseed
+      intended_usage_comment: 
+        later_deep_learning_phase_picking_on_continuous_three_component_data
+
+  - name: preprocess_magnitude_products
+    description: Apply response removal and Wood-Anderson simulation to the same
+      validated station-day streams and save separate three-component MiniSEED 
+      products for magnitude estimation.
+    inputs:
+    - merged_station_day_streams
+    - completeness_qc_table
+    - stationxml_files
+    - explicit_day_windows
+    outputs:
+    - magnitude_daily_mseed_products
+    - response_wa_qc_table
+    - magnitude_product_validation_records
+    params:
+      preprocessing_steps:
+      - demean
+      - detrend
+      - taper
+      - sample_rate_aware_pre_filt_selection
+      - remove_response
+      - wood_anderson_simulation
+      - retrim_to_exact_day
+      response_method: Trace.remove_response
+      simulation_method: Trace.simulate
+      require_valid_response_metadata: true
+      output_naming: YYYYMMDD_network.station.starttime.endtime.mseed
+      intended_usage_comment: 
+        later_local_magnitude_amplitude_measurement_with_emphasis_on_horizontal_components
+
+  - name: run_parallel_processing_and_report_progress
+    description: Execute station-day preprocessing in parallel up to 64 workers 
+      and emit progress information for submitted, completed, skipped, and 
+      failed jobs.
+    inputs:
+    - station_day_job_manifest
+    - processing_configuration
+    - merged_station_day_streams
+    outputs:
+    - parallel_execution_log
+    - job_status_table
+    - failure_evidence_records
+    params:
+      parallel_unit: station_day
+      worker_cap: 64
+      progress_reporting: true
+      statistics_collection: true
+
+  - name: validate_written_outputs_and_summarize
+    description: Read back all saved MiniSEED outputs, verify exact 
+      three-component day-bounded products, and write compact machine-readable 
+      summaries.
+    inputs:
+    - phase_daily_mseed_products
+    - magnitude_daily_mseed_products
+    - parallel_execution_log
+    - station_sta_table
+    outputs:
+    - readback_validation_table
+    - processing_summary_table
+    - processing_summary_json
+    - deliverable_inventory_table
+    params:
+      validation_checks:
+      - file_exists
+      - non_empty
+      - readable_stream
+      - exactly_three_traces
+      - exact_day_bounds
+      - aligned_sample_counts
+      - aligned_component_timing
+      collect_failure_reasons: true
+
+  - name: generate_one_preprocessing_diagnostic_figure
+    description: Create one representative figure comparing raw merged traces 
+      with final phase-picking and Wood-Anderson magnitude products for a 
+      successful station-day.
+    inputs:
+    - merged_station_day_streams
+    - phase_daily_mseed_products
+    - magnitude_daily_mseed_products
+    - completeness_qc_table
+    outputs:
+    - preprocessing_diagnostic_figure
+    - figure_metadata_record
+    params:
+      selection_rule:
+      - high_completeness
+      - valid_three_component_stream
+      - successful_response_removal
+      - successful_wood_anderson_simulation
+      figure_content:
+      - raw_merged_trace
+      - trimmed_qc_trace
+      - final_phase_product
+      - final_magnitude_wood_anderson_product
+
+  - name: embed_downstream_usage_comments_and_acceptance_checks
+    description: Add concise in-script usage comments for later phase-picking 
+      and magnitude workflows and record requirement-level acceptance status.
+    inputs:
+    - processing_configuration
+    - deliverable_inventory_table
+    - processing_summary_table
+    - readback_validation_table
+    outputs:
+    - acceptance_checklist
+    - script_usage_comment_specification
+    params:
+      phase_comment_topics:
+      - continuous_three_component_daily_waveform
+      - detrended_tapered_filtered_only
+      - no_response_removal
+      - no_normalization
+      - intended_for_phase_picking
+      magnitude_comment_topics:
+      - response_removed
+      - wood_anderson_simulated
+      - intended_for_local_magnitude_amplitudes
+      - preserve_horizontal_component_identity

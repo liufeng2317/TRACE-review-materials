@@ -1,0 +1,9 @@
+window_name,time_bin_index,time_bin_start_min,time_bin_end_min,time_bin_label,event_count
+64_to_4h,0,0.0,30.0,0-30 min,68
+64_to_4h,1,30.0,60.0,30-60 min,70
+64_to_4h,2,60.0,90.0,60-90 min,65
+64_to_4h,3,90.0,120.0,90-120 min,65
+64_to_4h,4,120.0,150.0,120-150 min,75
+64_to_4h,5,150.0,180.0,150-180 min,72
+64_to_4h,6,180.0,210.0,180-210 min,67
+64_to_4h,7,210.0,240.0,210-240 min,68

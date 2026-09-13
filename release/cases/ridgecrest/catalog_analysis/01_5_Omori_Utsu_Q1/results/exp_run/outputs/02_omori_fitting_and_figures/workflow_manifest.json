@@ -1,0 +1,48 @@
+{
+  "outputs": [
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/primary_fit_table.csv",
+      "description": "Primary cumulative Omori-Utsu fit table for lambda(t)=K*(c+t)^(-p)."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/fit_input_audit_table.csv",
+      "description": "Event-time audit table for each primary fit window."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/bootstrap_summary.csv",
+      "description": "Bootstrap uncertainty summaries for primary windows."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/final_merged_primary_results.csv",
+      "description": "Merged primary results with fit and bootstrap fields."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/panel_b_rate_curve_support.csv",
+      "description": "Observed/fitted rate support table for main-figure panel b."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/main_two_panel_omori_comparison.png",
+      "description": "Required main two-panel Omori comparison figure."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/split_sensitivity_results.csv",
+      "description": "North/south split-sensitivity fit results for 35.70/35.72/35.74."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/split_sensitivity_summary.png",
+      "description": "Optional split-sensitivity summary figure."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/north_vs_south_primary_comparison_35p72.csv",
+      "description": "Primary north-vs-south comparison table for 35.72 split."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/run_metadata.json",
+      "description": "Run metadata and configuration summary."
+    },
+    {
+      "path": "<PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/workflow_manifest.json",
+      "description": "Manifest of this task outputs."
+    }
+  ]
+}

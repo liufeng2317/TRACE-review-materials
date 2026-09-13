@@ -1,0 +1,44 @@
+Output directory: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures
+Reading event table: <PACKAGE_ROOT>/results/exp_run/outputs/01_domain_preparation/interevent_domain_event_table.csv
+Building primary fit table and audit table.
+Saving primary fit table: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/primary_fit_table.csv
+Saving fit audit table: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/fit_input_audit_table.csv
+Running bootstrap summaries with up to 8 worker processes and 1000 replicates per successful window.
+Bootstrap 1/27: domain=Entire area, period=0.300 day, N=65, success=True
+Bootstrap 2/27: domain=Entire area, period=0.500 day, N=72, success=True
+Bootstrap 3/27: domain=Entire area, period=0.680 day, N=80, success=True
+Bootstrap 4/27: domain=Entire area, period=0.732 day, N=83, success=True
+Bootstrap 5/27: domain=Entire area, period=0.850 day, N=96, success=True
+Bootstrap 6/27: domain=Entire area, period=1.000 day, N=98, success=True
+Bootstrap 7/27: domain=Entire area, period=1.100 day, N=99, success=True
+Bootstrap 8/27: domain=Entire area, period=1.220 day, N=100, success=True
+Bootstrap 9/27: domain=Entire area, period=1.404 day, N=106, success=True
+Bootstrap 10/27: domain=Northern area, period=0.300 day, N=19, success=True
+Bootstrap 11/27: domain=Northern area, period=0.500 day, N=24, success=True
+Bootstrap 12/27: domain=Northern area, period=0.680 day, N=27, success=True
+Bootstrap 13/27: domain=Northern area, period=0.732 day, N=29, success=True
+Bootstrap 14/27: domain=Northern area, period=0.850 day, N=39, success=True
+Bootstrap 15/27: domain=Northern area, period=1.000 day, N=40, success=True
+Bootstrap 16/27: domain=Northern area, period=1.100 day, N=41, success=True
+Bootstrap 17/27: domain=Northern area, period=1.220 day, N=42, success=True
+Bootstrap 18/27: domain=Northern area, period=1.404 day, N=47, success=True
+Bootstrap 19/27: domain=Southern area, period=0.300 day, N=46, success=True
+Bootstrap 20/27: domain=Southern area, period=0.500 day, N=48, success=True
+Bootstrap 21/27: domain=Southern area, period=0.680 day, N=53, success=True
+Bootstrap 22/27: domain=Southern area, period=0.732 day, N=54, success=True
+Bootstrap 23/27: domain=Southern area, period=0.850 day, N=57, success=True
+Bootstrap 24/27: domain=Southern area, period=1.000 day, N=58, success=True
+Bootstrap 25/27: domain=Southern area, period=1.100 day, N=58, success=True
+Bootstrap 26/27: domain=Southern area, period=1.220 day, N=58, success=True
+Bootstrap 27/27: domain=Southern area, period=1.404 day, N=59, success=True
+Saving bootstrap summary: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/bootstrap_summary.csv
+Saving merged primary results: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/final_merged_primary_results.csv
+Saving panel-b support table: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/panel_b_rate_curve_support.csv
+Creating main two-panel figure: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/main_two_panel_omori_comparison.png
+Fitting split sensitivity for split latitude 35.70°N
+Fitting split sensitivity for split latitude 35.72°N
+Fitting split sensitivity for split latitude 35.74°N
+Saving split-sensitivity results: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/split_sensitivity_results.csv
+Creating split-sensitivity figure: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/split_sensitivity_summary.png
+Saving primary comparison table: <PACKAGE_ROOT>/results/exp_run/outputs/02_omori_fitting_and_figures/north_vs_south_primary_comparison_35p72.csv
+02_omori_fitting_and_figures completed successfully.

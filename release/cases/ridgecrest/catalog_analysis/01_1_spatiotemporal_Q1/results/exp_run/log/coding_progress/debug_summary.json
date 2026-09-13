@@ -1,0 +1,272 @@
+{
+  "generated_at": "2026-07-05T07:46:16.151298+00:00",
+  "issue_index": {
+    "failed_tasks": [],
+    "no_op_debug_tasks": [],
+    "repeated_failure_signature_tasks": [
+      "02_spatiotemporal_metrics"
+    ],
+    "result_check_tasks": []
+  },
+  "priority_tasks": [
+    {
+      "execution_stage": "analysis_done",
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+      "priority_rank": 40,
+      "priority_reason": "repeated_failure_signature",
+      "severity": "medium",
+      "status": "success",
+      "task_name": "02_spatiotemporal_metrics"
+    }
+  ],
+  "root": "<PACKAGE_ROOT>/results",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "success": 3
+  },
+  "summary_type": "coding_debug_summary",
+  "task_count": 3,
+  "tasks": [
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/01_catalog_windows_qc.md",
+      "code_change_count": 1,
+      "debug_attempt_count": 1,
+      "debug_round": 1,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 471,
+        "coding_response_summary": "Done — I wrote `01_catalog_windows_qc.py` at:\n\n`<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py`\n\nWhat it does:\n- Reads and validates both input CSVs\n- Cleans and sorts ...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 17350,
+          "after_truncated": false,
+          "before_exists": false,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 1,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "[INFO] Task 01_catalog_windows_qc completed successfully",
+            "log_size_bytes": 2540,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt",
+          "message": "Outputs meet the task requirements. The cleaned Ridgecrest catalog, verified mainshock reference table, shared analysis extent, reusable time-window tables, and QC summary were all produced and are internally consistent.",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "01_catalog_windows_qc",
+          "timestamp": "2026-07-05T07:30:46.389687+00:00"
+        },
+        "script_hash_after": "3e4a769294bbab6f5aaa44bf5e5df1b7dc91efae3adc5344d7ab4b599d713de7",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py",
+        "task_name": "01_catalog_windows_qc",
+        "timestamp": "2026-07-05T07:29:29.588865+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "[INFO] Task 01_catalog_windows_qc completed successfully",
+          "log_size_bytes": 2540,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt",
+        "message": "Outputs meet the task requirements. The cleaned Ridgecrest catalog, verified mainshock reference table, shared analysis extent, reusable time-window tables, and QC summary were all produced and are internally consistent.",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "01_catalog_windows_qc",
+        "timestamp": "2026-07-05T07:30:46.389687+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/01_catalog_windows_qc/log_0.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/01_catalog_windows_qc",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/01_catalog_windows_qc.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/01_catalog_windows_qc.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "01_catalog_windows_qc"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/02_spatiotemporal_metrics.md",
+      "code_change_count": 3,
+      "debug_attempt_count": 3,
+      "debug_round": 3,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 2,
+        "coding_response_summary": "Why the last fix failed:\n- The previous patch fixed one instance of `zip(..., strict=False)` in `add_consecutive_migration_metrics`, but the same unsupported argument was still present in a second location: `density_center`.\n- The runtime log shows the deepest concrete failure moved forward into `co...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 42328,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 42342,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 3,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "[INFO] Task 02_spatiotemporal_metrics completed successfully",
+            "log_size_bytes": 4144,
+            "output_inventory_truncated": false,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+          "message": "The output directory contains the expected CSV and JSON products for spatiotemporal metrics, clustering diagnostics, comparison intervals, and migration summaries. File row counts match the execution log (45 whole-sequence windows, 34 post-64-hourly windows, and corresponding cluster metrics), and t...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "02_spatiotemporal_metrics",
+          "timestamp": "2026-07-05T07:37:51.082938+00:00"
+        },
+        "script_hash_after": "a37a7107aaf85eba2ad767c2c3ff70363dd8612eaed3005967c2a34b16c68499",
+        "script_hash_before": "0017d0a94d7c292cb9da8bea6da973045dab75663078d788f96f00d35cd32321",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py",
+        "task_name": "02_spatiotemporal_metrics",
+        "timestamp": "2026-07-05T07:36:19.431778+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "[INFO] Task 02_spatiotemporal_metrics completed successfully",
+          "log_size_bytes": 4144,
+          "output_inventory_truncated": false,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+        "message": "The output directory contains the expected CSV and JSON products for spatiotemporal metrics, clustering diagnostics, comparison intervals, and migration summaries. File row counts match the execution log (45 whole-sequence windows, 34 post-64-hourly windows, and corresponding cluster metrics), and t...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "02_spatiotemporal_metrics",
+        "timestamp": "2026-07-05T07:37:51.082938+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/02_spatiotemporal_metrics/log_2.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/02_spatiotemporal_metrics",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/02_spatiotemporal_metrics.md"
+      ],
+      "priority_rank": 40,
+      "priority_reason": "repeated_failure_signature",
+      "repeated_failure_signatures": [
+        {
+          "count": 2,
+          "signature": "49a2d6299b52"
+        }
+      ],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/02_spatiotemporal_metrics.py",
+      "severity": "medium",
+      "status": "success",
+      "task_name": "02_spatiotemporal_metrics"
+    },
+    {
+      "analysis_path": "<PACKAGE_ROOT>/results/exp_run/analysis/03_visualization_and_evidence.md",
+      "code_change_count": 2,
+      "debug_attempt_count": 2,
+      "debug_round": 2,
+      "execution_stage": "analysis_done",
+      "failed_reason": null,
+      "last_code_change": {
+        "changed": true,
+        "changed_lines": 24,
+        "coding_response_summary": "Fixed the blocking failure by making JSON output serialization robust.\n\nWhat changed:\n- Added `_json_ready()` helper to recursively convert non-JSON-native objects before writing:\n  - `pd.Timestamp` → ISO string\n  - `Path` → string\n  - NumPy arrays/scalars → Python lists/scalars\n  - `NaN`/missing va...[truncated]",
+        "metadata": {
+          "after_exists": true,
+          "after_size_bytes": 49013,
+          "after_truncated": false,
+          "before_exists": true,
+          "before_size_bytes": 48240,
+          "before_truncated": false
+        },
+        "outcome": "success",
+        "round_index": 2,
+        "runtime_observation_after": {
+          "debug_context": {
+            "artifact_validations_truncated": true,
+            "last_observed_line": "[INFO] Task 03_visualization_and_evidence completed successfully",
+            "log_size_bytes": 10220,
+            "output_inventory_truncated": true,
+            "stage": "result_check_input"
+          },
+          "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt",
+          "message": "Results meet the task requirements. The output directory contains the requested multi-page map figures, before/after comparison plots, machine-readable evidence summaries, page indices/cross-references, manifest, and validation products. Validation metadata reports overall success, expected page cou...[truncated]",
+          "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+          "returncode": 0,
+          "stage": "task_success",
+          "status": "success",
+          "task_name": "03_visualization_and_evidence",
+          "timestamp": "2026-07-05T07:44:13.059366+00:00"
+        },
+        "script_hash_after": "b3bc4ee30c8e82bde6b17cd29e378cb968000c3519eec5071d01e89fda72d38f",
+        "script_hash_before": "b9a24c3540701c507ca420cdd1f8b7e47287c676c922083a2160f1f73d5cb6a8",
+        "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py",
+        "task_name": "03_visualization_and_evidence",
+        "timestamp": "2026-07-05T07:41:35.892288+00:00"
+      },
+      "last_runtime_observation": {
+        "debug_context": {
+          "artifact_validations_truncated": true,
+          "last_observed_line": "[INFO] Task 03_visualization_and_evidence completed successfully",
+          "log_size_bytes": 10220,
+          "output_inventory_truncated": true,
+          "stage": "result_check_input"
+        },
+        "log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt",
+        "message": "Results meet the task requirements. The output directory contains the requested multi-page map figures, before/after comparison plots, machine-readable evidence summaries, page indices/cross-references, manifest, and validation products. Validation metadata reports overall success, expected page cou...[truncated]",
+        "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+        "returncode": 0,
+        "stage": "task_success",
+        "status": "success",
+        "task_name": "03_visualization_and_evidence",
+        "timestamp": "2026-07-05T07:44:13.059366+00:00"
+      },
+      "latest_log_path": "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt",
+      "no_op_code_change_count": 0,
+      "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+      "priority_paths": [
+        "<PACKAGE_ROOT>/results/exp_run/log/task/03_visualization_and_evidence/log_1.txt",
+        "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py",
+        "<PACKAGE_ROOT>/results/exp_run/outputs/03_visualization_and_evidence",
+        "<PACKAGE_ROOT>/results/exp_run/analysis/03_visualization_and_evidence.md"
+      ],
+      "priority_rank": 90,
+      "priority_reason": null,
+      "repeated_failure_signatures": [],
+      "result_check_round": 1,
+      "script_path": "<PACKAGE_ROOT>/results/exp_run/scripts/03_visualization_and_evidence.py",
+      "severity": "info",
+      "status": "success",
+      "task_name": "03_visualization_and_evidence"
+    }
+  ]
+}

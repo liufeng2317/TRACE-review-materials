@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_ridgecrest_spatiotemporal_evolution
+Status: success
+Execution stage: analysis_done
+Debug rounds: 1
+Result check rounds: 1
+Elapsed seconds: 468.723
+Started at: 2026-07-05T08:38:14.599922+00:00
+Finished at: 2026-07-05T08:46:03.323074+00:00
+Latest log: <PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt
+Script: <PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py
+Output dir: <PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution
+Analysis: <PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_spatiotemporal_evolution.md
+Runtime action: pass
+Code changes: 1
+Last activity: 2026-07-05T08:46:03.322954+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=32.508, coding_agent_sec=119.381, preflight_sec=0.463, result_check_sec=109.667, script_execution_sec=65.145, task_analysis_sec=140.538, total_sec=468.723
+Coding plan context: mode=full_experiment_plan, original_chars=14050, compact_chars=14050
+Coding tool usage: total=7, read_file=2, unique_files=1, used_retrieve=False, tools={'python_executor': 2, 'bash_executor': 1, 'write_file': 1, 'read_file': 2, 'apply_diff': 1}
+Debug summary: <PACKAGE_ROOT>/results/exp_run/log/coding_progress/debug_summary.json

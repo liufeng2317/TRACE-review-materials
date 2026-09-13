@@ -1,0 +1,186 @@
+# Goal
+Compute fixed-window Ridgecrest b-value contrasts for the Mw 7.1 hypocentral target core versus the Mw 6.4 control core, the full interevent region, and the long-term regional background, and report contrast direction, magnitude, uncertainty, overlap behavior, and reliability using reproducible fixed-domain/fixed-time diagnostics.
+
+## Planning Assumptions
+- Use only the provided observation catalogs and mainshock reference table; no model data are needed.
+- Main fixed-window comparison must use fixed Mc = 1.5 for the interevent windows and the larger-area background reference. Automatic Mc from maximum curvature and conservative Mc = max(subset Mc, full-window Mc) are supporting/QC diagnostics.
+- SeismoStats package contract relevant here: magnitudes should be binned before Mc/b-value estimation; maximum-curvature Mc is available via `estimate_mc_maxc(fmd_bin=...)`; classical Aki-Utsu b-value estimation is available through `estimate_b(..., method=ClassicBValueEstimator)` or equivalent catalog method; alternative Mc methods exist but are not primary here.
+- Do not infer bin width only from plotting preference; infer `delta_M` from the actual magnitude discretization/precision present in the cleaned data and apply the same inferred value consistently within each catalog workflow unless the data indicate mixed precision that requires explicit harmonization.
+- Full interevent window is from Mw 6.4 origin time to Mw 7.1 origin time, excluding both mainshocks. Early/late windows are split at the fixed separator event time `2019-07-05T11:07:52.830000Z`; this separator event is excluded from all estimates and retained only as metadata and boundary information.
+- Spatial masking must use a local metric CRS with horizontal distance only; depth is retained in tables/diagnostics but not used in radial selection.
+- If any sensitivity radius causes overlap between Mw 6.4 and Mw 7.1 cylinders, report raw overlap counts and apply exclusive nearest-hypocenter assignment for the local-core sensitivity products at that radius.
+- Reliability labels are determined from `n >= Mc` only: robust (>=100), usable but moderately uncertain (50–99), exploratory (30–49), highly unreliable (<30).
+- Bootstrap summaries must include median, 16th percentile, 84th percentile, and standard deviation, with >=1000 samples where feasible and progress logging enabled. Parallel execution may use up to 64 cores.
+- Successful execution requires non-empty aggregate tables and figures for the requested windows/domains/radii; diagnostic-only or partially empty outputs are not sufficient unless a subset is truly inestimable because fewer than two events remain above Mc.
+
+## Analysis Plan
+
+### Task 1 — Primary catalog preparation, fixed-window subset construction, b-value estimation, contrasts, and machine-readable outputs
+- Task description
+  - Build one end-to-end analysis script that ingests all three CSV files, standardizes schemas, defines temporal and spatial subsets, computes Mc and b-values under fixed/automatic/conservative modes, bootstraps uncertainty, evaluates overlap behavior across radii, and writes the required CSV outputs plus compact metadata/QC summaries.
+- Required data sources
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_longterm/catalog_2year_background_before_64.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy
+  - 1.1 Catalog ingestion and schema harmonization
+    - Read interevent and mainshock files with canonical columns `event_time, latitude, longitude, depth_km, magnitude`.
+    - Read background file and rename `datetime -> event_time`, `latR -> latitude`, `lonR -> longitude`, `depR -> depth_km`, `mag -> magnitude`.
+    - Parse all times as timezone-aware UTC timestamps.
+    - Preserve original row indices and source file identifiers for traceability.
+  - 1.2 Data cleaning and validation
+    - Remove rows with missing or non-finite values in canonical fields.
+    - Remove exact duplicates if present, but retain a duplicate log with counts and source identifiers.
+    - Sort each catalog by `event_time`.
+    - Verify that the mainshock table contains the Mw 6.4 and Mw 7.1 events; identify them by magnitude/time consistency and store their times/hypocenters explicitly.
+    - Confirm whether either mainshock appears in the interevent catalog; if present, exclude them from interevent subsets by exact event time match and nearest magnitude/hypocenter consistency check.
+    - Search the interevent catalog for the separator event at `2019-07-05T11:07:52.830000Z`; if multiple rows match within timestamp precision, retain only the exact boundary timestamp row as separator metadata and exclude all matches at that timestamp from b-value subsets.
+  - 1.3 Magnitude discretization and binning
+    - Infer `delta_M` from the cleaned magnitude series by examining the minimum stable positive spacing among unique rounded magnitudes after excluding floating-point noise; verify against the dominant decimal precision pattern.
+    - Use the inferred `delta_M` to bin magnitudes consistently before SeismoStats Mc estimation and before Aki-Utsu/Classic b-value estimation.
+    - Store the inferred `delta_M` per catalog and note if harmonization to a common `delta_M` is required between interevent and background for comparison diagnostics.
+  - 1.4 Temporal windows
+    - Define full interevent window from Mw 6.4 origin time to Mw 7.1 origin time, excluding both endpoints/mainshocks.
+    - Define early interevent window: full interevent events strictly before separator time.
+    - Define late interevent window: full interevent events strictly after separator time and strictly before Mw 7.1 origin time.
+    - Background reference uses the full supplied background catalog only; do not subdivide background spatially or temporally for the primary outputs.
+  - 1.5 Spatial domains and projection
+    - Define full interevent regional domain as all events in the interevent catalog within the full/early/late time windows.
+    - Define local cylindrical cores centered on the Mw 6.4 and Mw 7.1 hypocenters using horizontal distances in a local metric CRS.
+    - Select the local CRS from the mainshock-region centroid so distances are in meters/kilometers with negligible distortion over the study area.
+    - Compute projected coordinates for every interevent event and for both mainshock hypocenters.
+    - For local analyses, apply radius masks for 4, 5, 6, and 7 km.
+  - 1.6 Overlap handling
+    - For each radius, compute counts of events assigned to Mw 6.4 only, Mw 7.1 only, and overlapping both masks.
+    - Primary 5 km analysis should confirm non-overlap, but still report counts.
+    - If overlap occurs at any sensitivity radius, create both raw overlap diagnostics and exclusive nearest-hypocenter assignments for the local-core sensitivity tables; ties should be flagged explicitly and resolved deterministically by smallest horizontal distance then earliest event time.
+  - 1.7 Mc estimation and b-value calculation
+    - For every required subset, compute:
+      - total events,
+      - catalog-derived Mc by maximum curvature,
+      - `n >= Mc`,
+      - magnitude min/max and above-Mc min/max,
+      - b-value using Aki-Utsu maximum likelihood with magnitude-bin correction,
+      - optional a-value for fitted FMD line support.
+    - Required subset families:
+      - Background regional reference:
+        - full background with fixed Mc = 1.5 as primary reported background reference,
+        - full background with automatic Mc from MAXC,
+        - full background with conservative Mc equal to max(background automatic Mc, 1.5) as QC/supporting diagnostic.
+      - Interevent regional reference:
+        - full interevent, early interevent, late interevent.
+      - Interevent local cores:
+        - Mw 6.4 and Mw 7.1 cores for radii 4, 5, 6, 7 km,
+        - each for full, early, late windows,
+        - each under fixed, automatic, and conservative Mc modes.
+    - For conservative Mc:
+      - within each temporal window family, use `Mc_conservative = max(subset Mc, full-window Mc)` where “full-window Mc” is the corresponding whole-region or whole-core full-interevent Mc used as the reference for that temporal split family; record the reference Mc used.
+  - 1.8 Bootstrap uncertainty
+    - For each estimable subset (`n >= Mc >= 2` events remaining), run bootstrap resampling of above-Mc magnitudes with at least 1000 replicates.
+    - Return bootstrap median b, 16th percentile, 84th percentile, standard deviation, and replicate count.
+    - Log progress periodically for long jobs and parallelize across subsets/replicates up to 64 cores while keeping deterministic random seeds recorded in metadata.
+    - If a subset has fewer than 2 events above Mc, write NA values for b and uncertainty while preserving counts and reliability label.
+  - 1.9 Reliability and contrast metrics
+    - Assign reliability labels from `n >= Mc`.
+    - Compute requested contrasts, carrying both point differences and bootstrap-derived uncertainty intervals:
+      - Mw7.1 − Mw6.4 for each interevent window and radius,
+      - Mw7.1 − full-region for each interevent window,
+      - late − early within each core and radius,
+      - optionally late − early for full interevent region as supporting context.
+    - For bootstrap contrasts, compute paired replicate differences when both component subsets have bootstrap samples; otherwise use propagated empirical resampling from stored replicate distributions and flag the method used.
+    - Record contrast direction categories: higher, lower, indistinguishable within interval, together with interval width and reliability flags inherited from both component subsets.
+  - 1.10 CSV outputs
+    - `cleaned_catalog_summaries.csv`
+      - one row per catalog/subset family with source path, time span, event counts before/after cleaning, inferred `delta_M`, mainshock exclusion counts, separator exclusion count, and CRS identifier.
+    - `separator_event_metadata.csv`
+      - separator time, matched event metadata, exclusion rule, and window definitions.
+    - `bvalue_aggregates_unified.csv`
+      - one row per window/domain/radius/Mc mode with all counts, Mc values, b-value statistics, magnitude ranges, overlap-assignment flag, reliability label, and bootstrap summary.
+    - `bvalue_contrasts.csv`
+      - one row per requested contrast with contrast type, component subset identifiers, point estimate, bootstrap interval, std, direction label, and reliability gate.
+    - `radius_overlap_diagnostics.csv`
+      - per radius: raw membership counts, overlap counts, exclusive assignment counts, tie counts, and whether overlap affects interpretation.
+    - `bootstrap_run_metadata.csv`
+      - subset identifier, bootstrap replicate count, random seed, execution time, and any warning flags.
+- Constraints
+  - Use observation data only.
+  - Do not perform sliding-window or time-varying b-value estimation.
+  - Background is one larger regional domain only; no local background cores.
+  - Exclude the Mw 6.4 and Mw 7.1 mainshocks and the fixed separator event from all b-value calculations.
+  - Compute b-values whenever at least two events remain above Mc, but do not use highly unreliable subsets to support conclusions.
+  - Keep all subset identifiers explicit: catalog, window, domain, radius_km, overlap_assignment_mode, mc_mode.
+- Key outputs
+  - Cleaned and harmonized catalogs in memory and/or cached analysis tables.
+  - Non-empty CSV tables:
+    - `cleaned_catalog_summaries.csv`
+    - `separator_event_metadata.csv`
+    - `bvalue_aggregates_unified.csv`
+    - `bvalue_contrasts.csv`
+    - `radius_overlap_diagnostics.csv`
+    - `bootstrap_run_metadata.csv`
+
+### Task 2 — Diagnostic visualization and merged validation of scientific outputs
+- Task description
+  - Build one plotting/validation script that reads the unified analysis tables from Task 1, verifies expected subset coverage, and produces the required figures with uncertainty intervals, Mc diagnostics, overlap summaries, and completeness views.
+- Required data sources
+  - Task 1 CSV outputs, especially `bvalue_aggregates_unified.csv`, `bvalue_contrasts.csv`, `radius_overlap_diagnostics.csv`, `cleaned_catalog_summaries.csv`, and `separator_event_metadata.csv`
+  - Original interevent/background/mainshock CSVs only as needed for map and completeness plots
+- Parameter selection strategy
+  - 2.1 Validation before plotting
+    - Confirm that all expected primary subsets exist:
+      - background full reference,
+      - interevent full/early/late full-region,
+      - Mw 6.4 and Mw 7.1 local cores for 5 km and windows full/early/late under fixed Mc = 1.5.
+    - Fail validation if these required rows are missing or all inestimable unexpectedly.
+  - 2.2 Figure 1: interevent map with hypocenters and cores
+    - Plot interevent event epicenters for the full interevent window.
+    - Overlay Mw 6.4 and Mw 7.1 hypocenters.
+    - Draw primary 5 km circles and optionally 4, 6, 7 km sensitivity circles.
+    - If overlap exists for any sensitivity radius, annotate overlap region and counts from `radius_overlap_diagnostics.csv`.
+  - 2.3 Figure 2: magnitude-frequency distributions
+    - For primary representative subsets, plot noncumulative and/or cumulative FMDs with:
+      - catalog-derived Mc marker,
+      - fixed Mc = 1.5 marker,
+      - fitted Gutenberg-Richter line from the corresponding b and a values.
+    - Include at minimum:
+      - full interevent region,
+      - Mw 6.4 5 km full window,
+      - Mw 7.1 5 km full window,
+      - background full reference.
+    - Show automatic/conservative Mc diagnostics as supporting annotations rather than replacing the fixed-Mc comparison.
+  - 2.4 Figure 3: main fixed-window comparison using fixed Mc = 1.5
+    - Use only 5 km cores for the primary side-by-side comparison.
+    - Windows required: full interevent, pre-separator, post-separator.
+    - Within each window, plot Mw 6.4 and Mw 7.1 core b-values side by side with bootstrap intervals and `n >= Mc` labels.
+    - Place background fixed-Mc reference as a separate horizontal line or separate panel so it does not obscure pre/post core comparison.
+  - 2.5 Figure 4: contrast plot
+    - Plot requested contrasts with uncertainty intervals:
+      - Mw7.1 − Mw6.4,
+      - Mw7.1 − full region,
+      - late − early within each core.
+    - Distinguish robust/usable/exploratory/highly unreliable contrasts by symbol or panel grouping using the reliability labels from Task 1.
+  - 2.6 Figure 5: radius sensitivity for interevent local cores only
+    - For radii 4, 5, 6, 7 km, plot b-value versus radius separately for Mw 6.4 and Mw 7.1 cores and for each interevent window.
+    - Flag radii where overlap required exclusive assignment.
+  - 2.7 Figure 6: time-magnitude completeness diagnostic
+    - Plot interevent event magnitudes versus time across the full interevent period.
+    - Mark Mw 6.4 time, separator time, and Mw 7.1 time.
+    - Overlay fixed Mc = 1.5 and annotate automatic Mc for full/early/late interevent windows as supporting completeness context.
+  - 2.8 Figure 7: overlap diagnostic
+    - Plot overlap counts and exclusive assignment counts for radii 4, 5, 6, 7 km.
+    - Include center separation and indicate which radii produce overlapping masks.
+- Constraints
+  - Use Task 1 tables as the authoritative source for b-values and uncertainties; do not recompute core scientific results independently in the plotting script.
+  - Ensure the main fixed-window figure explicitly highlights the 5 km Mw 6.4 and Mw 7.1 cores for the three required windows.
+  - Background reference must remain visually separate enough to preserve local-core pre/post comparison clarity.
+  - Figures should remain diagnostic and reproducible; avoid hidden manual editing steps.
+- Key outputs
+  - Non-empty figure files for:
+    - interevent core map,
+    - FMD/Mc diagnostics,
+    - main fixed-window 5 km comparison,
+    - contrast plot,
+    - radius sensitivity,
+    - time-magnitude completeness diagnostic,
+    - overlap diagnostic
+  - `figure_manifest.csv` listing figure names, source tables, subset coverage checks, and generation status

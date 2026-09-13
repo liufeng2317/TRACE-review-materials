@@ -1,0 +1,104 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_ridgecrest_spatiotemporal_evolution",
+    "generated_at": "2026-07-05T08:46:03.455472+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 468.723,
+    "timing": {
+      "total_sec": 468.723,
+      "coding_agent_sec": 119.381,
+      "code_review_sec": 32.508,
+      "preflight_sec": 0.463,
+      "script_execution_sec": 65.145,
+      "result_check_sec": 109.667,
+      "task_analysis_sec": 140.538
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<PACKAGE_ROOT>/results",
+    "script": "<PACKAGE_ROOT>/results/exp_run/scripts/01_ridgecrest_spatiotemporal_evolution.py",
+    "output_dir": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution",
+    "analysis": "<PACKAGE_ROOT>/results/exp_run/analysis/01_ridgecrest_spatiotemporal_evolution.md",
+    "log": "<PACKAGE_ROOT>/results/exp_run/log/task/01_ridgecrest_spatiotemporal_evolution/log_0.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "manifests/analysis_metadata.json",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/manifests/analysis_metadata.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/geometry_boundaries.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/geometry_boundaries.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/intermainshock_catalog.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/intermainshock_catalog.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/interval_definitions.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/interval_definitions.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/kde_interval_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/kde_interval_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/mainshock_metadata.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/mainshock_metadata.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/merged_kde_morphology_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/merged_kde_morphology_summary.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "tables/morphology_interval_summary.csv",
+        "absolute_path": "<PACKAGE_ROOT>/results/exp_run/outputs/01_ridgecrest_spatiotemporal_evolution/tables/morphology_interval_summary.csv",
+        "kind": "machine_readable"
+      }
+    ],
+    "all": [
+      "figures/alpha_shape_evolution.png",
+      "figures/convex_hull_evolution.png",
+      "figures/stage1_hotspot_migration.png",
+      "figures/stage1_kde_page_01.png",
+      "figures/stage2_hotspot_migration.png",
+      "figures/stage2_kde_page_01.png",
+      "figures/stage2_kde_page_02.png",
+      "logs/run_log.txt",
+      "manifests/analysis_metadata.json",
+      "tables/geometry_boundaries.csv",
+      "tables/intermainshock_catalog.csv",
+      "tables/interval_definitions.csv",
+      "tables/kde_interval_summary.csv",
+      "tables/mainshock_metadata.csv",
+      "tables/merged_kde_morphology_summary.csv",
+      "tables/morphology_interval_summary.csv",
+      "tables/stage_comparison_summary.csv",
+      "tables/validation_summary.csv"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Build the inter-mainshock catalog, compute KDE and morphology diagnostics, generate figures, and validate merged outputs for the Ridgecrest sequence.",
+    "result": "Build the inter-mainshock catalog, compute KDE and morphology diagnostics, generate figures, and validate merged outputs for the Ridgecrest sequence. Status=success; outputs=18 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

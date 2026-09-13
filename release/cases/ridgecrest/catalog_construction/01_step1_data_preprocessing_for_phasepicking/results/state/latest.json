@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0-public",
+  "state_scope": "release_summary",
+  "stage": "01_step1_data_preprocessing_for_phasepicking",
+  "status": "completed",
+  "interval_start": "2019-07-04T00:00:00Z",
+  "interval_end": "2019-07-26T00:00:00Z",
+  "daily_windows": 22,
+  "selected_stations": 47,
+  "station_day_jobs": 1034,
+  "successful_jobs": 853,
+  "skipped_jobs": 173,
+  "failed_jobs": 8,
+  "phase_products": 853,
+  "magnitude_products": 853
+}

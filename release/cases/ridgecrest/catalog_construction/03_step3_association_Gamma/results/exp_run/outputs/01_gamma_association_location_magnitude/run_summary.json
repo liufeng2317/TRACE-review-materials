@@ -1,0 +1,290 @@
+{
+  "run_label": "gamma_p04s04_noamp_eps10_os3_core30_full_vel_gradual_0to8km",
+  "test_category": "03_picks_gamma_p03s03_velocity_model_test",
+  "gamma_param_version": "gamma_p03s03_velocity_model_test",
+  "pick_label": "gamma_p04s04_noamp_eps10_os3_core30_full_vel_gradual_0to8km",
+  "picks_dir": "<CASE_ROOT>/catalog_construction/01_step2_phase_picking_PhaseNet/exp_run/outputs/01_phasenet_phase_picking_thresh_0.4_0.4",
+  "output_root": "<CASE_ROOT>/catalog_construction/03_step3_association_Gamma/results/exp_run/outputs",
+  "output_dir": "<CASE_ROOT>/catalog_construction/03_step3_association_Gamma/results/exp_run/outputs/01_gamma_association_location_magnitude",
+  "processed_days": [
+    "20190704",
+    "20190705",
+    "20190706",
+    "20190707",
+    "20190708",
+    "20190709",
+    "20190710",
+    "20190711",
+    "20190712",
+    "20190713",
+    "20190714",
+    "20190715",
+    "20190716",
+    "20190717",
+    "20190718",
+    "20190719",
+    "20190720",
+    "20190721",
+    "20190722",
+    "20190723",
+    "20190724",
+    "20190725"
+  ],
+  "skipped_existing_days": [],
+  "start_date": "2019-07-04T00:00:00.000000Z",
+  "end_date": "2019-07-26T00:00:00.000000Z",
+  "ncpu": 64,
+  "gamma_method": "BGMM",
+  "dbscan_eps": 10.0,
+  "oversample_factor": 3,
+  "min_picks_per_eq": 5,
+  "station_allowlist": "<CASE_ROOT>/catalog_construction/03_step3_association_Gamma/results/config/ridgecrest_core30_station_allowlist.txt",
+  "geo_bounds": "-118.0,-117.0,35.25,36.25",
+  "recompute_magnitudes": true,
+  "force_recompute": true,
+  "velocity_model": {
+    "z": [
+      0.0,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      16.0,
+      32.0
+    ],
+    "p": [
+      4.8,
+      5.0,
+      5.2,
+      5.38,
+      5.55,
+      5.72,
+      5.88,
+      6.02,
+      6.12,
+      6.24,
+      7.12
+    ],
+    "s": [
+      2.7745664739884393,
+      2.8901734104046244,
+      3.0057803468208095,
+      3.1098265895953756,
+      3.208092485549133,
+      3.30635838150289,
+      3.398843930635838,
+      3.4797687861271673,
+      3.5375722543352603,
+      3.606936416184971,
+      4.115606936416185
+    ]
+  },
+  "magnitude_formula": "ML = log10(A_mm) + 1.11*log10(R_km/100) + 0.00189*(R_km-100) + 3.0",
+  "magnitude_windows": {
+    "pre_s": 0.5,
+    "post_s": 3.0,
+    "pre_p": 0.2,
+    "post_p": 1.0,
+    "note": "P window is used only for station-event pairs without an S pick."
+  },
+  "magnitude_s_trigger": {
+    "enabled": true,
+    "min_original_mag": 4.2,
+    "min_s_stations": 6,
+    "min_p_stations": 6,
+    "min_s_minus_original": 1.0,
+    "min_s_minus_p": 1.2,
+    "note": "No external Mw override is applied here; reference Mw correction is handled outside Gamma."
+  },
+  "total_events": 140505,
+  "total_phase_rows": 1343624,
+  "magnitude_recompute_method": "station_day_cached_waveform",
+  "magnitude_recompute_note": "Magnitudes recomputed in place from existing Gamma association outputs; PhaseNet picking and Gamma association were not rerun. Waveforms were cached by station-day to avoid repeated MiniSEED reads.",
+  "magnitude_recomputed_days": [
+    {
+      "day": "20190704",
+      "events": 1255,
+      "paired_rows": 10921,
+      "waveform_median_events": 1255,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190705",
+      "events": 4616,
+      "paired_rows": 49090,
+      "waveform_median_events": 4616,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190706",
+      "events": 6135,
+      "paired_rows": 53982,
+      "waveform_median_events": 6135,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190707",
+      "events": 6286,
+      "paired_rows": 53965,
+      "waveform_median_events": 6286,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190708",
+      "events": 6649,
+      "paired_rows": 58218,
+      "waveform_median_events": 6649,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190709",
+      "events": 6296,
+      "paired_rows": 51649,
+      "waveform_median_events": 6296,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190710",
+      "events": 6869,
+      "paired_rows": 60966,
+      "waveform_median_events": 6869,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190711",
+      "events": 6940,
+      "paired_rows": 68413,
+      "waveform_median_events": 6940,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190712",
+      "events": 7172,
+      "paired_rows": 71320,
+      "waveform_median_events": 7172,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190713",
+      "events": 7317,
+      "paired_rows": 77096,
+      "waveform_median_events": 7317,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190714",
+      "events": 7126,
+      "paired_rows": 75338,
+      "waveform_median_events": 7126,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190715",
+      "events": 6867,
+      "paired_rows": 68213,
+      "waveform_median_events": 6867,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190716",
+      "events": 6331,
+      "paired_rows": 56343,
+      "waveform_median_events": 6331,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190717",
+      "events": 6458,
+      "paired_rows": 59499,
+      "waveform_median_events": 6458,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190718",
+      "events": 6448,
+      "paired_rows": 56734,
+      "waveform_median_events": 6448,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190719",
+      "events": 6363,
+      "paired_rows": 55330,
+      "waveform_median_events": 6363,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190720",
+      "events": 6997,
+      "paired_rows": 67103,
+      "waveform_median_events": 6997,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190721",
+      "events": 7433,
+      "paired_rows": 78554,
+      "waveform_median_events": 7433,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190722",
+      "events": 6743,
+      "paired_rows": 67965,
+      "waveform_median_events": 6743,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190723",
+      "events": 7252,
+      "paired_rows": 78089,
+      "waveform_median_events": 7252,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190724",
+      "events": 6477,
+      "paired_rows": 64590,
+      "waveform_median_events": 6477,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    },
+    {
+      "day": "20190725",
+      "events": 6475,
+      "paired_rows": 60246,
+      "waveform_median_events": 6475,
+      "s_window_trigger_events": 0,
+      "fallback_events": 0
+    }
+  ],
+  "assigned_p_picks": 1016008,
+  "assigned_s_picks": 1104082,
+  "picks_assigned_to_associated_events": 2120090,
+  "paired_phase_rows_in_release_validation": 1343624,
+  "station_subset": "30 core Ridgecrest stations"
+}

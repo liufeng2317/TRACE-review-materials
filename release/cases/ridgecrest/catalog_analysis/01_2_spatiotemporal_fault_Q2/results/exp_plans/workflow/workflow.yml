@@ -1,0 +1,357 @@
+tasks:
+- name: 01_grid_onset_analysis
+  description: Load and validate Ridgecrest inputs, define the common space-time
+    domain, build the 1 km grid, and compute grid-cell activation onset 
+    products.
+  script: 01_grid_onset_analysis.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_validate_inputs
+    description: Load the catalog, mainshock table, and fault polylines and 
+      validate required fields and malformed records.
+    inputs:
+    - earthquake_catalog_csv
+    - mainshock_table_csv
+    - fault_polylines_json
+    outputs:
+    - validated_catalog
+    - validated_mainshock_table
+    - validated_fault_polylines
+    - input_qc_summary
+    params:
+      required_catalog_columns:
+      - event_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      mainshock_identification: magnitude_based
+      duplicate_handling: flag_and_remove_exact_duplicates
+      invalid_row_handling: drop_and_count
+  - name: define_common_domain
+    description: Define the Mw 6.4 to Mw 7.1 time window, project coordinates to
+      a local metric system, and build the buffered study region.
+    inputs:
+    - validated_catalog
+    - validated_mainshock_table
+    - validated_fault_polylines
+    outputs:
+    - filtered_events
+    - mainshock_reference_table
+    - study_region_bounds
+    - projected_fault_geometry
+    - domain_qc_summary
+    params:
+      time_window: Mw64_to_Mw71
+      buffer_km: 5.0
+      coordinate_system: local_projected_cartesian_centered_on_ridgecrest
+      event_identifier: source_row_index_if_missing
+      time_reference: Mw64_origin_time
+  - name: construct_grid_and_time_series
+    description: Discretize the buffered region into 1 km cells, assign events 
+      to cells, and build 30-minute count-rate-cumulative series.
+    inputs:
+    - filtered_events
+    - study_region_bounds
+    outputs:
+    - grid_definition
+    - event_to_cell_assignment
+    - cell_time_series
+    - grid_qc_metrics
+    params:
+      grid_cell_size_km: 1.0
+      time_bin_minutes: 30
+      grid_assignment_rule: half_open_cell_bounds
+      parallel_workers_max: 64
+      progress_logging: true
+  - name: detect_grid_cell_onset
+    description: Apply the fixed sustained-activation rule to assign onset times
+      and confidence classes to occupied grid cells.
+    inputs:
+    - cell_time_series
+    - grid_definition
+    - mainshock_reference_table
+    outputs:
+    - grid_cell_onset_table
+    - grid_onset_summary_metrics
+    - grid_onset_validation
+    params:
+      candidate_onset_rule: first_bin_with_count_greater_or_equal_2
+      sustained_rule_primary: count_in_candidate_and_next_bin_greater_or_equal_3
+      sustained_rule_secondary: 
+        count_in_candidate_and_next_two_bins_greater_or_equal_3_with_nonzero_post_candidate_activity
+      confidence_rule:
+        robust_onset: 
+          total_cell_events_greater_or_equal_4_and_primary_support_present
+        weak_onset: sustained_rule_satisfied_but_low_total_events
+        no_onset: sustained_rule_not_satisfied
+  - name: generate_grid_outputs
+    description: Save reusable tables and figures for the study-domain overview 
+      and grid-based onset analysis.
+    inputs:
+    - filtered_events
+    - mainshock_reference_table
+    - projected_fault_geometry
+    - study_region_bounds
+    - grid_definition
+    - cell_time_series
+    - grid_cell_onset_table
+    - grid_onset_summary_metrics
+    outputs:
+    - overview_map
+    - occupied_cell_map
+    - total_seismicity_rate_figure
+    - grid_onset_map
+    - grid_onset_distribution_figures
+    - no_onset_cell_map
+    - example_cell_time_series_figures
+    - script_a_manifest
+    params:
+      onset_colormap: earlier_darker_later_lighter
+      activation_fraction_windows_minutes:
+      - 30
+      - 60
+      - 120
+      - 240
+      save_machine_readable_summaries: true
+
+- name: 02_fault_segment_activation
+  description: Build the fault-segment backbone, associate earthquakes to 
+    segments, compute segment activation time series, and generate fault-based 
+    activation figures.
+  script: 02_fault_segment_activation.py
+  ancestors:
+  - 01_grid_onset_analysis
+  subtasks:
+  - name: discretize_fault_backbone
+    description: Convert mapped fault polylines into contiguous analyzable 
+      segments and compute segment geometry attributes.
+    inputs:
+    - projected_fault_geometry
+    outputs:
+    - fault_segment_geometry
+    - fault_backbone_qc_metrics
+    params:
+      target_segment_length_km: 1.0
+      short_polyline_rule: 
+        keep_original_endpoints_if_length_not_greater_than_target
+      remove_duplicate_consecutive_vertices: true
+      optional_bend_flagging: deterministic_turning_angle_if_needed
+      strike_convention: orientation_corrected_0_to_180_degrees
+  - name: associate_events_to_segments
+    description: Compute nearest projected point-to-segment distances and assign
+      events within 3 km to their nearest fault segments.
+    inputs:
+    - filtered_events
+    - fault_segment_geometry
+    outputs:
+    - event_to_segment_association
+    - unassociated_event_table
+    - segment_association_summary
+    - association_validation
+    params:
+      association_distance_threshold_km: 3.0
+      distance_metric: projected_shortest_point_to_segment_distance
+      spatial_index: enabled
+      tie_break_rule: deterministic_lowest_distance_then_stable_segment_order
+      parallel_workers_max: 64
+      progress_logging: true
+  - name: build_segment_time_series_and_activation
+    description: Aggregate associated events into 30-minute segment time series 
+      and assign activation times using the fixed count threshold.
+    inputs:
+    - event_to_segment_association
+    - fault_segment_geometry
+    - mainshock_reference_table
+    outputs:
+    - segment_time_series
+    - segment_activation_summary
+    - segment_activation_validation
+    params:
+      time_bin_minutes: 30
+      activation_threshold_rule: first_bin_with_count_greater_or_equal_5
+      rate_equivalent_events_per_hour: 10.0
+      include_metrics:
+      - first_associated_event_time
+      - peak_count_time
+      - peak_rate_time
+      - total_associated_events
+      - active_flag
+      parallel_workers_max: 64
+      progress_logging: true
+  - name: generate_fault_activation_outputs
+    description: Produce fault-centered maps, activation-density products, and 
+      reusable summary tables from segment activation results.
+    inputs:
+    - fault_segment_geometry
+    - event_to_segment_association
+    - segment_time_series
+    - segment_activation_summary
+    - mainshock_reference_table
+    outputs:
+    - fault_segment_map
+    - activated_segment_count_time_figure
+    - cumulative_activated_segment_curve
+    - strike_time_density_matrix
+    - strike_time_density_figure
+    - activation_density_matrix
+    - parent_fault_activation_raster
+    - never_activated_segment_map
+    - script_b_manifest
+    params:
+      event_overlay_alpha_range:
+      - 0.1
+      - 0.2
+      event_overlay_marker_size: small
+      activation_colormap: earlier_darker_later_lighter
+      time_density_measure:
+      - newly_activated_segments_per_bin
+      - cumulative_activated_segments_per_bin
+      unactivated_segment_display: neutral_class
+  - name: validate_fault_products
+    description: Validate non-empty fault-segment outputs, association coverage,
+      and consistency of segment activation fields.
+    inputs:
+    - fault_segment_geometry
+    - event_to_segment_association
+    - unassociated_event_table
+    - segment_time_series
+    - segment_activation_summary
+    - activation_density_matrix
+    - strike_time_density_matrix
+    outputs:
+    - fault_product_validation_summary
+    params:
+      required_non_empty_outputs:
+      - fault_segment_geometry
+      - event_to_segment_association
+      - segment_time_series
+      - segment_activation_summary
+      validate_one_row_per_event: true
+      validate_na_structure_for_unactivated_segments: true
+
+- name: 03_triggering_style_diagnostics
+  description: Quantify synchrony, along-fault cascading, cross-fault 
+    complexity, and the Mw 7.1 nucleation-area activation history and package 
+    validated deliverables.
+  script: 03_triggering_style_diagnostics.py
+  ancestors:
+  - 01_grid_onset_analysis
+  - 02_fault_segment_activation
+  subtasks:
+  - name: compute_system_and_fault_metrics
+    description: Derive system-wide synchrony metrics, per-fault propagation 
+      metrics, and cross-fault complexity diagnostics from grid and segment 
+      activation products.
+    inputs:
+    - grid_cell_onset_table
+    - grid_onset_summary_metrics
+    - segment_activation_summary
+    - fault_segment_geometry
+    - event_to_segment_association
+    - mainshock_reference_table
+    outputs:
+    - synchrony_metrics_table
+    - per_fault_propagation_metrics
+    - cross_fault_complexity_metrics
+    - fault_classification_table
+    params:
+      synchrony_windows_minutes:
+      - 30
+      - 60
+      - 120
+      - 240
+      along_fault_metrics:
+      - activation_time_vs_cumulative_distance
+      - rank_correlation
+      - activation_span
+      - apparent_propagation_slope_when_coherent
+      complexity_metrics:
+      - temporally_close_first_activations_across_line_ids
+      - activation_residuals_after_simple_along_fault_trend
+      - concentration_near_bend_or_high_curvature_zones
+      classification_labels:
+      - near_synchronous
+      - staged_progressive
+      - jump_like
+      - complex_indeterminate
+  - name: evaluate_mw71_nucleation_context
+    description: Compare the activation timing of the segment nearest the Mw 7.1
+      epicenter with its local neighborhood and the full system.
+    inputs:
+    - segment_activation_summary
+    - fault_segment_geometry
+    - mainshock_reference_table
+    - event_to_segment_association
+    outputs:
+    - mw71_nucleation_anomaly_metrics
+    - mw71_local_context_summary
+    params:
+      target_segment_definition: nearest_segment_to_Mw71_epicenter
+      neighborhood_definition:
+      - same_parent_fault_local_neighbors
+      - nearby_fault_segments_within_configured_search_radius
+      comparison_statistics:
+      - local_percentile_rank
+      - system_percentile_rank
+      - local_time_difference
+      - anomalously_late_flag
+  - name: generate_triggering_diagnostic_figures
+    description: Create the integrated diagnostic figures needed to assess 
+      synchronous, staged, jump-like, or complex activation behavior.
+    inputs:
+    - grid_cell_onset_table
+    - segment_activation_summary
+    - fault_segment_geometry
+    - synchrony_metrics_table
+    - per_fault_propagation_metrics
+    - cross_fault_complexity_metrics
+    - mw71_nucleation_anomaly_metrics
+    - mainshock_reference_table
+    outputs:
+    - activation_time_vs_distance_from_mw64_figure
+    - activation_time_vs_distance_from_mw71_figure
+    - along_fault_distance_vs_activation_time_figures
+    - early_intermediate_late_segment_maps
+    - mw71_local_context_figure
+    - comparison_qc_figure
+    params:
+      temporal_classes:
+      - early
+      - intermediate
+      - late
+      major_fault_selection: sufficiently_populated_parent_faults_only
+      save_machine_readable_plot_metadata: true
+  - name: validate_and_package_deliverables
+    description: Validate cross-step consistency, summarize run parameters and 
+      counts, and package reusable outputs from all scripts.
+    inputs:
+    - input_qc_summary
+    - domain_qc_summary
+    - grid_onset_validation
+    - fault_product_validation_summary
+    - synchrony_metrics_table
+    - per_fault_propagation_metrics
+    - cross_fault_complexity_metrics
+    - mw71_nucleation_anomaly_metrics
+    - fault_classification_table
+    - script_a_manifest
+    - script_b_manifest
+    outputs:
+    - validation_summary_table
+    - run_parameter_summary_table
+    - deliverable_manifest
+    params:
+      cross_step_checks:
+      - event_count_conservation_across_filters
+      - association_row_count_conservation
+      - non_empty_activation_products_when_expected
+      - valid_na_structure_for_onset_and_activation_columns
+      recorded_run_parameters:
+        grid_cell_size_km: 1.0
+        time_bin_minutes: 30
+        study_region_buffer_km: 5.0
+        target_segment_length_km: 1.0
+        association_distance_threshold_km: 3.0
+        segment_activation_threshold_count_per_bin: 5
+      success_rule: merged_scientific_outputs_must_be_valid_and_non_empty

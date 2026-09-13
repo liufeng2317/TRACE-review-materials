@@ -1,0 +1,305 @@
+tasks:
+- name: 01_interevent_bvalue_workflow
+  description: Execute the full interevent sliding-window b-value analysis for 
+    the Mw 6.4 and Mw 7.1 core regions, including cleaning, assignment, 
+    estimation, contrasts, figures, and validation.
+  script: 01_interevent_bvalue_workflow.py
+  ancestors: []
+  subtasks:
+  - name: load_and_filter_catalogs
+    description: Load the relocated catalog and mainshock table, identify the Mw
+      6.4 and Mw 7.1 events, isolate the strict interevent period, and exclude 
+      both mainshocks.
+    inputs:
+    - relocated_catalog
+    - mainshock_catalog
+    outputs:
+    - sorted_catalog
+    - mainshock_metadata
+    - interevent_catalog
+    params:
+      time_field: event_time
+      magnitude_field: magnitude
+      latitude_field: latitude
+      longitude_field: longitude
+      depth_field: depth_km
+      interevent_bounds: between_mw64_and_mw71_exclusive
+  - name: identify_and_remove_separator_event
+    description: Identify the fixed M5.37 separator event, record its metadata 
+      and elapsed time since Mw 6.4, and remove it from all analysis inputs.
+    inputs:
+    - interevent_catalog
+    - mainshock_metadata
+    outputs:
+    - separator_event_metadata
+    - cleaned_interevent_catalog
+    - event_markers_metadata
+    params:
+      separator_time: 2019-07-05T11:07:52.830000Z
+      separator_match_strategy: exact_time_then_verify_magnitude_location_depth
+      exclude_separator_from_windows: true
+  - name: project_coordinates_and_assign_cores
+    description: Project events to a local metric CRS, compute horizontal 
+      distances to both hypocenters, assign events to primary and sensitivity 
+      cores, and resolve overlap by nearest-hypocenter assignment when needed.
+    inputs:
+    - cleaned_interevent_catalog
+    - mainshock_metadata
+    outputs:
+    - projected_interevent_catalog
+    - core_assignment_5km
+    - core_assignment_radius_sensitivity
+    - spatial_overlap_summary
+    params:
+      projection_strategy: local_metric_crs_centered_on_ridgecrest_region
+      distance_metric: horizontal_projected_distance
+      primary_radius_km: 5
+      sensitivity_radii_km:
+      - 4
+      - 5
+      - 6
+      - 7
+      overlap_resolution: exclusive_nearest_hypocenter_assignment
+  - name: infer_magnitude_discretization
+    description: Infer the global magnitude bin width from stable non-zero 
+      spacing in sorted unique magnitudes and record the selection metadata.
+    inputs:
+    - cleaned_interevent_catalog
+    outputs:
+    - magnitude_discretization_metadata
+    - inferred_delta_m
+    params:
+      inference_strategy: robust_unique_spacing_check
+      require_nonzero_spacing: true
+  - name: build_sliding_windows_and_compute_bvalues
+    description: Construct chronological sliding event windows for each core and
+      radius, then compute fixed-Mc and dynamic-Mc b-values, bootstrap 
+      uncertainty, Mc diagnostics, and reliability labels.
+    inputs:
+    - cleaned_interevent_catalog
+    - core_assignment_5km
+    - core_assignment_radius_sensitivity
+    - mainshock_metadata
+    - separator_event_metadata
+    - inferred_delta_m
+    outputs:
+    - bvalue_windows_5km_fixedMc
+    - bvalue_windows_5km_dynamicMc
+    - bvalue_windows_5km_exploratory_fixedMc
+    - bvalue_windows_5km_exploratory_dynamicMc
+    - bvalue_windows_radius_sensitivity_fixedMc
+    - bvalue_windows_radius_sensitivity_dynamicMc
+    - window_reliability_mc_diagnostics
+    - bootstrap_run_metadata
+    - bootstrap_progress_log
+    params:
+      primary_window:
+        n_events: 100
+        step_events: 20
+      exploratory_window:
+        n_events: 50
+        step_events: 10
+        trigger: insufficient_primary_5km_coverage_or_valid_windows
+      fixed_mc: 1.5
+      dynamic_mc_method: seismostats_estimate_mc_maxc
+      dynamic_mc_param_selection: use_fmd_bin_equal_to_inferred_delta_m
+      bvalue_method: seismostats_classic_aki_utsu_maximum_likelihood
+      bvalue_formula: log10e_over_meanM_minus_Mc_plus_deltaM_over_2
+      bootstrap_samples_min: 500
+      bootstrap_samples_target: 1000
+      bootstrap_resample_strategy: resample_window_events_with_replacement
+      parallel_workers_max: 64
+      progress_logging: true
+      reliability_thresholds:
+        robust_min_n_ge_mc: 100
+        usable_min_n_ge_mc: 50
+        exploratory_min_n_ge_mc: 30
+  - name: compute_temporal_contrasts_and_prepost_summaries
+    description: Match Mw 7.1 and Mw 6.4 window estimates by nearest center 
+      time, compute b-value contrasts with uncertainty, and summarize pre- and 
+      post-separator behavior without fitting a trend model.
+    inputs:
+    - bvalue_windows_5km_fixedMc
+    - bvalue_windows_5km_dynamicMc
+    - bvalue_windows_5km_exploratory_fixedMc
+    - bvalue_windows_5km_exploratory_dynamicMc
+    - bvalue_windows_radius_sensitivity_fixedMc
+    - bvalue_windows_radius_sensitivity_dynamicMc
+    - event_markers_metadata
+    outputs:
+    - bvalue_temporal_contrast_5km_fixedMc
+    - bvalue_temporal_contrast_5km_dynamicMc
+    - bvalue_temporal_contrast_5km_exploratory_fixedMc
+    - bvalue_temporal_contrast_5km_exploratory_dynamicMc
+    - pre_post_separator_summary_5km
+    - pre_post_separator_summary_radius_sensitivity
+    - contrast_significance_summary
+    params:
+      main_radius_km: 5
+      matching_strategy: 
+        nearest_center_time_within_same_window_family_and_mc_mode
+      maximum_time_mismatch: half_median_spacing_of_denser_center_time_series
+      contrast_definition: b_mw71_core_minus_b_mw64_core
+      contrast_uncertainty_preference: paired_bootstrap_difference_distribution
+      fallback_uncertainty_method: 
+        conservative_independent_bootstrap_propagation
+      joint_reliability_rule: weaker_of_paired_windows
+      summary_partition: center_time_before_or_after_separator
+      summary_statistics:
+      - window_count
+      - reliability_class_counts
+      - mean_b
+      - median_b
+      - median_ci_width
+      - median_dynamic_mc
+      significance_rule:
+        contrast_ci_excludes_zero: true
+        minimum_supported_reliability: usable_but_moderately_uncertain
+  - name: generate_tables_and_figures
+    description: Save required CSV tables, figure-source tables, and the full 
+      figure suite with separator and Mw 7.1 endpoint markers on all time-series
+      panels.
+    inputs:
+    - cleaned_interevent_catalog
+    - event_markers_metadata
+    - core_assignment_5km
+    - core_assignment_radius_sensitivity
+    - spatial_overlap_summary
+    - magnitude_discretization_metadata
+    - bvalue_windows_5km_fixedMc
+    - bvalue_windows_5km_dynamicMc
+    - bvalue_windows_radius_sensitivity_fixedMc
+    - bvalue_windows_radius_sensitivity_dynamicMc
+    - bvalue_temporal_contrast_5km_fixedMc
+    - bvalue_temporal_contrast_5km_dynamicMc
+    - pre_post_separator_summary_5km
+    - contrast_significance_summary
+    - window_reliability_mc_diagnostics
+    outputs:
+    - cleaned_interevent_catalog_csv
+    - event_markers_metadata_csv
+    - core_assignment_5km_csv
+    - core_assignment_radius_sensitivity_csv
+    - spatial_overlap_summary_csv
+    - magnitude_discretization_metadata_csv
+    - bvalue_windows_5km_fixedMc_csv
+    - bvalue_windows_5km_dynamicMc_csv
+    - bvalue_windows_5km_exploratory_fixedMc_csv
+    - bvalue_windows_5km_exploratory_dynamicMc_csv
+    - bvalue_windows_radius_sensitivity_fixedMc_csv
+    - bvalue_windows_radius_sensitivity_dynamicMc_csv
+    - bvalue_temporal_contrast_5km_fixedMc_csv
+    - bvalue_temporal_contrast_5km_dynamicMc_csv
+    - bvalue_temporal_contrast_5km_exploratory_fixedMc_csv
+    - bvalue_temporal_contrast_5km_exploratory_dynamicMc_csv
+    - pre_post_separator_summary_5km_csv
+    - pre_post_separator_summary_radius_sensitivity_csv
+    - contrast_significance_summary_csv
+    - window_reliability_mc_diagnostics_csv
+    - figure_source_data_map
+    - figure_source_data_fixedMc_5km
+    - figure_source_data_dynamicMc_5km
+    - figure_source_data_contrast_5km
+    - figure_source_data_diagnostics_5km
+    - figure_source_data_radius_sensitivity
+    - interevent_map_figure
+    - fixedMc_5km_timeseries_figure
+    - dynamicMc_5km_timeseries_figure
+    - contrast_5km_figure
+    - mc_and_n_ge_mc_diagnostics_figure
+    - radius_sensitivity_figure
+    params:
+      map_contents:
+      - interevent_events
+      - mw64_hypocenter
+      - mw71_hypocenter
+      - primary_5km_cores
+      - separator_event
+      fixedMc_timeseries_style:
+        uncertainty_bands: bootstrap_percentile_intervals
+        separator_marker: vertical_dashed_line
+        endpoint_marker: vertical_dotted_line
+        x_axis: hours_since_mw64
+      dynamicMc_timeseries_style:
+        uncertainty_bands: bootstrap_percentile_intervals
+        separator_marker: vertical_dashed_line
+        endpoint_marker: vertical_dotted_line
+        x_axis: hours_since_mw64
+      contrast_figure_style:
+        uncertainty_bands: bootstrap_or_propagated_intervals
+        separator_marker: vertical_dashed_line
+        endpoint_marker: vertical_dotted_line
+        optional_prepost_levels: only_if_supported_by_reliable_windows
+      diagnostic_panel_contents:
+      - dynamic_mc_curves
+      - n_ge_mc_curves
+      - reliability_reference_lines
+      reliability_reference_lines:
+      - 30
+      - 50
+      - 100
+      sensitivity_radii_km:
+      - 4
+      - 5
+      - 6
+      - 7
+  - name: validate_outputs_and_save_reproducibility_metadata
+    description: Validate catalog filtering, separator exclusion, window 
+      construction, statistical outputs, and figure completeness, then write run
+      metadata, inventory, logs, and failure evidence if needed.
+    inputs:
+    - relocated_catalog
+    - mainshock_catalog
+    - cleaned_interevent_catalog
+    - event_markers_metadata
+    - core_assignment_5km
+    - core_assignment_radius_sensitivity
+    - spatial_overlap_summary
+    - magnitude_discretization_metadata
+    - bvalue_windows_5km_fixedMc
+    - bvalue_windows_5km_dynamicMc
+    - bvalue_temporal_contrast_5km_fixedMc
+    - bvalue_temporal_contrast_5km_dynamicMc
+    - pre_post_separator_summary_5km
+    - window_reliability_mc_diagnostics
+    - bootstrap_run_metadata
+    - figure_source_data_map
+    - figure_source_data_fixedMc_5km
+    - figure_source_data_dynamicMc_5km
+    - figure_source_data_contrast_5km
+    - figure_source_data_diagnostics_5km
+    - figure_source_data_radius_sensitivity
+    outputs:
+    - run_metadata
+    - output_inventory
+    - validation_summary
+    - run_log
+    - failure_evidence
+    params:
+      validation_checks:
+      - mainshocks_absent_from_cleaned_interevent_catalog
+      - separator_absent_from_all_window_inputs
+      - raw_window_counts_equal_requested_n
+      - n_ge_mc_not_greater_than_window_size
+      - dynamic_mc_recorded_only_when_valid
+      - contrast_rows_linked_only_to_valid_matches
+      - prepost_grouping_uses_center_time_relative_to_separator
+      - required_5km_outputs_nonempty_when_event_counts_permit
+      reproducibility_metadata:
+      - input_file_paths
+      - filter_row_counts
+      - mainshock_metadata
+      - separator_metadata
+      - separator_hours_since_mw64
+      - selected_crs
+      - inferred_delta_m
+      - radius_list
+      - overlap_and_reassignment_counts
+      - window_families_used
+      - bootstrap_sample_count
+      - random_seed
+      - worker_count
+      - package_versions
+      success_rule: 
+        nonempty_validated_primary_5km_outputs_when_event_counts_permit
+      record_failure_evidence_if_primary_sparse_or_empty: true

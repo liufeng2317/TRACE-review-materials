@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "The request requires a multi-stage observational seismicity analysis integrating a large relocated catalog with mapped fault geometry, spatial gridding, fault discretization, nearest-segment association, onset-time definition, and multiple spatiotemporal diagnostics to distinguish synchronous versus cascade-like activation between two mainshocks. Workflow risk is elevated by geometric processing, parameterized onset definitions, and computational scaling across tens of thousands of events and fault polylines.",
+  "data_source_count": 3,
+  "workflow_risk": "moderate-high",
+  "expected_script_count": 3
+}

@@ -1,0 +1,295 @@
+# Goal
+Perform a primary Omori-Utsu comparison for the Ridgecrest interevent period between the Mw 6.4 and Mw 7.1 mainshocks, using the fixed Mw 7.1 fault-zone corridor and its northern/southern subdivisions, to test whether the northern subdivision shows systematically smaller fitted pure power-law p-values than the southern subdivision in later cumulative periods.
+
+## Planning Assumptions
+- Use only the provided observational catalog and mainshock metadata; no model data are needed.
+- Primary analysis window is the open interval `(Mw 6.4 origin time, Mw 7.1 origin time)`.
+- Primary magnitude threshold is fixed at `M >= 3.0`; any lower-threshold or Mc-based analysis is secondary and must be executed only after the primary workflow is complete.
+- Primary spatial definition is fixed by the user:
+  - centerline start `(-117.735813, 35.897499)`
+  - centerline end `(-117.362520, 35.559488)`
+  - strike `138.0°`
+  - total corridor width `6.0 km` (`3.0 km` half-width)
+  - primary split latitude `35.72°N`
+  - robustness-only split latitudes `35.70°N` and `35.74°N`
+- Primary rate model is the two-parameter pure power-law `lambda(t) = K * t^(-p)` fit by maximum likelihood over cumulative windows `[0, t_n]`; do not replace the primary result with a `K-c-p` Omori-Utsu model.
+- Because the pure power-law is singular at `t = 0`, the likelihood must explicitly use positive event times only and must document the lower bound used in each fit; recommended rule is to set the fitted interval lower bound to the first observed event time in that domain-window (`t_min = min(t_i)`), while keeping the analysis time reference at Mw 6.4.
+- Windows with too few events, degenerate timing, invalid likelihood, non-finite optimum, or failed optimization/bootstrap convergence must be marked explicitly as failure/unconstrained rather than forced.
+- Bootstrap uncertainty is required for successful fits and must report at least:
+  - median `p`
+  - 2.5 percentile
+  - 97.5 percentile
+  - bootstrap success diagnostics
+- Northern-domain windows with `N <= 20` must be flagged for open-circle plotting in the main figure.
+- Use the fewest cohesive scripts practical:
+  - Script 1: data ingestion, time reference, local projection, corridor/domain assignment, domain diagnostics, count tables, metadata, and validated event-level analysis table
+  - Script 2: cumulative-window extraction, MLE fitting, bootstrap estimation, result merging, panel-a/panel-b generation, and optional split-line robustness products
+
+## Analysis Plan
+
+### Task 1: Build the interevent catalog subset and fixed spatial domains
+- Task description:
+  - Read the relocated catalog and mainshock metadata.
+  - Identify the Mw 6.4 and Mw 7.1 mainshocks from `main_shock_events.csv`.
+  - Compute time since Mw 6.4 for all catalog events.
+  - Restrict to interevent events strictly between Mw 6.4 and Mw 7.1.
+  - Project the catalog and corridor to a local metric coordinate system.
+  - Construct the fixed Mw 7.1 fault-zone corridor and assign events to the entire, northern, and southern domains.
+  - Save reusable event-level outputs for all later fitting and plotting.
+- Required data sources:
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/TRACE_ridgecrest_relocated.csv`
+  - `<REPO_ROOT>/examples/ridgecrest/data/catalog_TRACE/main_shock_events.csv`
+- Parameter selection strategy:
+  - Parse `event_time` as UTC timestamps.
+  - Identify Mw 6.4 and Mw 7.1 rows by magnitude from `main_shock_events.csv`.
+  - Define `T = 0` at the Mw 6.4 origin time and compute `t_days = (event_time - T0)` in days.
+  - Interevent subset: keep events with `event_time > T0` and `event_time < T71`.
+  - Use a local metric projection centered near the corridor midpoint so along-strike and cross-strike distances are computed consistently in km.
+  - Corridor membership:
+    - finite centerline segment from the specified start/end points
+    - perpendicular distance `<= 3.0 km`
+    - projected along-line position within the segment endpoints
+  - Primary split:
+    - North: corridor events with `latitude > 35.72`
+    - South: corridor events with `latitude < 35.72`
+    - events exactly on `35.72` remain in Entire only unless a documented deterministic non-duplicating rule is used
+  - Also compute north/south assignment flags for `35.70` and `35.74` for robustness-only analysis.
+  - Preserve all interevent events regardless of magnitude in the event-level table; apply `M >= 3.0` only in Task 3.
+- Constraints:
+  - Use the user-specified geometry exactly; do not optimize strike, width, endpoints, or split latitude from the data.
+  - Entire area is defined only by corridor membership; north/south must be strict subsets of the corridor.
+  - Domain assignment must be traceable back to source catalog rows.
+- Key outputs:
+  - Event-level interevent domain table containing at least:
+    - `event_time, latitude, longitude, depth_km, magnitude`
+    - `t_days`
+    - projected coordinates
+    - along-strike distance
+    - cross-strike distance
+    - `in_entire_corridor`
+    - `north_35p72`, `south_35p72`
+    - `north_35p70`, `south_35p70`
+    - `north_35p74`, `south_35p74`
+  - Compact primary domain-count CSV for:
+    - Entire area
+    - Northern area
+    - Southern area
+  - Metadata CSV or JSON containing:
+    - Mw 6.4 time
+    - Mw 7.1 time
+    - `0.732 day`
+    - `1.404 day`
+    - corridor geometry
+    - width
+    - primary split latitude
+
+### Task 2: Generate and validate the domain-definition diagnostics
+- Task description:
+  - Produce the required domain-assignment figure and validate that the fixed corridor and north/south assignments are internally consistent before any Omori fitting.
+- Required data sources:
+  - Event-level interevent domain table from Task 1
+  - Mainshock metadata from Task 1
+- Parameter selection strategy:
+  - Plot all interevent events colored by time since Mw 6.4.
+  - Overlay:
+    - Mw 7.1 centerline
+    - corridor boundaries
+    - the `35.72°N` split line
+    - events assigned to northern and southern domains
+    - Mw 6.4 and Mw 7.1 mainshocks
+  - Use the same fixed geometry as Task 1; if plotting in lon/lat, transform corridor boundaries back from the projected coordinates consistently.
+  - Validate counts in the figure layers against the saved primary domain-count CSV.
+- Constraints:
+  - The diagnostic figure must clearly distinguish:
+    - all interevent events
+    - corridor membership
+    - north/south subsets
+    - the mainshocks
+  - This figure is for validating the fixed primary domain definition, not for exploring alternative geometries.
+- Key outputs:
+  - Domain-assignment diagnostic figure
+  - Domain-assignment check table with counts for:
+    - all interevent events
+    - entire corridor
+    - north
+    - south
+    - exact-on-split events if any
+
+### Task 3: Fit cumulative pure power-law Omori models for the three primary domains
+- Task description:
+  - For each primary domain and each fixed cumulative period endpoint, fit the pure power-law rate model `lambda(t)=K*t^(-p)` by MLE using only interevent events with `M >= 3.0`.
+  - Save fit status, event counts, fitted parameters, and explicit failure reasons.
+- Required data sources:
+  - Event-level interevent domain table from Task 1
+  - Metadata file from Task 1
+- Parameter selection strategy:
+  - Primary cumulative period endpoints in days:
+    - `0.30, 0.50, 0.68, 0.732, 0.85, 1.00, 1.10, 1.22, 1.404`
+  - Primary domains:
+    - Entire area
+    - Northern area at `35.72`
+    - Southern area at `35.72`
+  - For each domain-period:
+    - keep only events with `magnitude >= 3.0`
+    - keep only `0 < t_days <= period_days`
+    - record event count `N`
+    - if `N` is too small or event times are degenerate, mark failure/unconstrained
+    - set `t_min_used_days = min(t_i)` for the likelihood lower bound when needed to regularize the singularity at `t=0`
+    - set `t_max_used_days = period_days`
+    - estimate `p` and `K` under the truncated observation interval `[t_min_used_days, period_days]`
+    - store convergence status and any warnings
+  - Northern-domain windows with `N <= 20` must set `low_count_open_circle = true`.
+  - Southern-domain early windows that fail must remain missing in plots/tables rather than being interpolated.
+- Constraints:
+  - Apply the same fitting rules to Entire, North, and South to preserve comparability.
+  - Do not substitute alternative models for failed windows.
+  - Treat `0.732 day` and `1.404 day` as standard endpoints within the fixed endpoint list.
+- Key outputs:
+  - Primary fit table CSV with at least:
+    - `domain_label`
+    - `period_days`
+    - `event_count`
+    - `success_flag`
+    - `failure_reason`
+    - `p_fit`
+    - `K_fit`
+    - `t_min_used_days`
+    - `t_max_used_days`
+    - `low_count_open_circle`
+  - Fit-input audit table listing the event times used in each domain-period window
+
+### Task 4: Estimate bootstrap uncertainty for p and merge final primary results
+- Task description:
+  - For each successful primary-domain/period fit, bootstrap-resample the event times, refit the same pure power-law model, and merge uncertainty summaries into the final results table.
+- Required data sources:
+  - Primary fit table from Task 3
+  - Fit-input audit table from Task 3
+- Parameter selection strategy:
+  - Bootstrap within each successful domain-period window by resampling event times with replacement.
+  - Reuse the same fitting formulation, lower-bound handling rule, and success/failure criteria as in Task 3.
+  - Use a fixed bootstrap replicate count across windows when practical; record the chosen replicate count in metadata.
+  - Run bootstrap in parallel across domain-period windows or replicate blocks if helpful.
+  - Report progress during long bootstrap runs.
+  - For each domain-period, summarize:
+    - bootstrap median `p`
+    - bootstrap 2.5 percentile
+    - bootstrap 97.5 percentile
+    - number of successful bootstrap replicates
+    - number of failed bootstrap replicates
+    - bootstrap success fraction
+- Constraints:
+  - Failed bootstrap replicates must be counted and retained in diagnostics.
+  - If bootstrap validity is poor for a window, keep the primary fit but flag the uncertainty estimate as unstable.
+- Key outputs:
+  - Bootstrap summary CSV
+  - Final merged primary-results CSV containing at least:
+    - `domain_label`
+    - `period_days`
+    - `event_count`
+    - `success_flag`
+    - `failure_reason`
+    - `p_fit`
+    - `bootstrap_p_median`
+    - `bootstrap_p_q025`
+    - `bootstrap_p_q975`
+    - `bootstrap_success_count`
+    - `bootstrap_failure_count`
+    - `bootstrap_success_fraction`
+    - `low_count_open_circle`
+
+### Task 5: Create the required main two-panel figure
+- Task description:
+  - Produce the required primary two-panel figure with panel a for cumulative p-value comparison and panel b for the final entire-area rate-fit diagnostic.
+- Required data sources:
+  - Final merged primary-results CSV from Task 4
+  - Fit-input audit table from Task 3
+  - Metadata from Task 1
+- Parameter selection strategy:
+  - Panel a:
+    - x-axis: `Period [day]`
+    - y-axis: `p value`
+    - plot Entire in grey, North in blue, South in red
+    - use filled circles with vertical uncertainty bars for ordinary successful points
+    - use open blue circles for northern points with `N <= 20`
+    - leave failed/unconstrained points absent
+    - draw vertical lines at `0`, `0.732`, and `1.404` day
+    - label panel as `a`
+  - Panel b:
+    - use only the Entire-area result for the final `1.404 day` period
+    - compute observed seismicity rate `lambda [day^-1]` versus time since Mw 6.4 on log-log axes
+    - use log-spaced or equivalently documented sparse-safe time bins for visualization only
+    - overlay the fitted `K*t^(-p)` curve from the final Entire-area fit
+    - annotate fitted `p` with bootstrap uncertainty
+    - annotate the period `1.404 [day]`
+    - label panel as `b`
+- Constraints:
+  - Panel a is the primary scientific figure and must remain focused on Entire vs North vs South at the primary split `35.72°N`.
+  - Panel b must use only the final `1.404 day` Entire-area fit.
+  - Observed rate binning in panel b is a display diagnostic and must not alter the MLE fitting procedure.
+- Key outputs:
+  - Main two-panel figure
+  - Panel-b support table with bin edges, counts, observed rates, and fitted rates
+
+### Task 6: Run split-line robustness checks for 35.70 / 35.72 / 35.74
+- Task description:
+  - Repeat the north/south cumulative p-value workflow for split latitudes `35.70`, `35.72`, and `35.74` to assess robustness of the later-period north-versus-south contrast.
+- Required data sources:
+  - Event-level interevent domain table from Task 1
+  - Metadata from Task 1
+  - Same fitting and bootstrap workflow as Tasks 3–4
+- Parameter selection strategy:
+  - Keep all non-split parameters fixed:
+    - same corridor
+    - same `M >= 3.0`
+    - same cumulative endpoints
+    - same MLE formulation
+    - same bootstrap method
+  - Save north/south results separately for each split latitude.
+  - Summarize later-period contrasts, especially near:
+    - `1.10 day`
+    - `1.22 day`
+    - `1.404 day`
+- Constraints:
+  - This is secondary and must not replace the primary `35.72°N` comparison or the required main two-panel figure.
+  - Entire-area results do not change with split latitude and should not be redundantly redefined.
+- Key outputs:
+  - Split-sensitivity results CSV for north/south domains across `35.70 / 35.72 / 35.74`
+  - Optional split-line robustness figure or compact summary table
+
+### Task 7: Validate deliverables and prepare interpretation-support tables
+- Task description:
+  - Perform final consistency checks and save compact comparison-ready tables that directly support the user’s scientific question.
+- Required data sources:
+  - All outputs from Tasks 1–6
+- Parameter selection strategy:
+  - Validate:
+    - Mw 6.4 and Mw 7.1 times in metadata against mainshock file
+    - `1.404 day` consistency with the Mw 7.1 endpoint
+    - north and south counts do not exceed entire-domain counts
+    - every plotted point corresponds to a row in the final results CSV
+    - missing points are explicitly flagged as failed/unconstrained
+  - Build a compact comparison table for the primary split `35.72` including:
+    - north-minus-south `p_fit`
+    - north-minus-south bootstrap median difference
+    - interval-overlap indicator
+    - low-count caution flags
+    - later-period markers
+- Constraints:
+  - Primary interpretation must remain descriptive and count-aware:
+    - compare early vs later cumulative periods
+    - check whether North tends lower later
+    - avoid over-interpreting low-count or failed windows
+  - If the trend is weak or inconsistent, preserve that outcome in the saved comparison table rather than collapsing to a forced binary claim.
+- Key outputs:
+  - Primary north-vs-south comparison table for split `35.72`
+  - Workflow manifest listing all saved tables and figures with dependency relationships
+  - Final validated deliverable set:
+    - event-level interevent/domain table
+    - domain-count summary CSV
+    - metadata CSV or JSON
+    - domain-assignment diagnostic figure
+    - primary fit table
+    - bootstrap summary CSV
+    - final merged primary-results CSV
+    - main two-panel figure
+    - optional split-sensitivity products

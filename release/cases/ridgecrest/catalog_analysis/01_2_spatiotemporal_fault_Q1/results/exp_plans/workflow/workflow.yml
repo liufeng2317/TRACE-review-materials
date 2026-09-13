@@ -1,0 +1,296 @@
+tasks:
+- name: 01_ridgecrest_metrics_preparation
+  description: Build the analysis-ready Ridgecrest dataset, compute event-level 
+    nearest-fault geometry, and derive bin-level directional and along-strike 
+    metrics.
+  script: 01_ridgecrest_metrics_preparation.py
+  ancestors: []
+  subtasks:
+  - name: load_and_standardize_inputs
+    description: Load the catalog, mainshock table, and fault polylines and 
+      standardize timestamps and coordinates.
+    inputs:
+    - relocated_catalog_csv
+    - mainshock_events_csv
+    - fault_polylines_json
+    outputs:
+    - clean_event_table
+    - mainshock_reference_table
+    - fault_polyline_table
+    params:
+      time_column: event_time
+      coordinate_columns:
+      - latitude
+      - longitude
+      depth_column: depth_km
+      magnitude_column: magnitude
+      time_standard: UTC
+      mainshock_identification: magnitude_matched_rows_for_mw_6_4_and_mw_7_1
+  - name: build_projection_and_fault_segments
+    description: Create a local projected spatial reference and convert fault 
+      polylines into segment-level geometry with strike attributes.
+    inputs:
+    - clean_event_table
+    - mainshock_reference_table
+    - fault_polyline_table
+    outputs:
+    - projected_event_table
+    - projected_mainshock_table
+    - fault_segment_table
+    - projection_metadata
+    params:
+      projection_strategy: local_projected_crs_centered_on_ridgecrest_area
+      segment_definition: adjacent_fault_vertices_as_line_segments
+      segment_attributes:
+      - segment_length_km
+      - segment_strike_deg
+      - parent_fault_id
+  - name: define_time_bins_and_map_extent
+    description: Construct the canonical Stage 1 and Stage 2 time bins and a 
+      shared map extent for all figures.
+    inputs:
+    - projected_event_table
+    - projected_mainshock_table
+    - fault_polyline_table
+    outputs:
+    - canonical_time_bin_table
+    - canonical_map_extent
+    - time_window_metadata
+    params:
+      analysis_window: mainshock64_to_mainshock71
+      stage_1_duration_hours: 4
+      stage_1_bin_minutes: 30
+      stage_2_start: mainshock64_plus_4_hours
+      stage_2_bin_hours: 2
+      page_layout: 2_by_4
+      page_size_bins: 8
+      bin_rule: half_open_with_final_endpoint_included
+      extent_sources:
+      - events_between_mainshock64_and_mainshock71_plus_2_days
+      - mainshock_epicenters
+      - fault_traces
+  - name: compute_event_fault_geometry
+    description: Calculate nearest fault distance and local nearest-segment 
+      attributes for events in the pre- and post-Mw7.1 windows.
+    inputs:
+    - projected_event_table
+    - projected_mainshock_table
+    - fault_segment_table
+    - projection_metadata
+    outputs:
+    - event_fault_geometry_table
+    - spatial_index_metadata
+    - event_fault_geometry_validation
+    params:
+      target_windows:
+      - mainshock64_to_mainshock71
+      - mainshock71_to_mainshock71_plus_2_days
+      distance_method: exact_point_to_segment_distance_in_projected_coordinates
+      stored_attributes:
+      - nearest_fault_distance_km
+      - nearest_segment_id
+      - nearest_fault_id
+      - nearest_segment_strike_deg
+      - nearest_point_x
+      - nearest_point_y
+      - along_segment_coordinate
+      parallel_workers_max: 64
+      progress_reporting: true
+      validation_strategy: random_sample_distance_consistency_check
+  - name: summarize_directionality_and_activation
+    description: Derive per-bin directional, nearest-fault, and along-strike 
+      occupancy metrics for the trigger-evolution analysis.
+    inputs:
+    - canonical_time_bin_table
+    - event_fault_geometry_table
+    - fault_segment_table
+    - projected_mainshock_table
+    outputs:
+    - bin_directional_summary_table
+    - along_strike_first_activation_table
+    - question_metric_summary_table
+    params:
+      summary_window: mainshock64_to_mainshock71
+      per_bin_metrics:
+      - event_count
+      - centroid
+      - principal_axis_orientation_deg
+      - major_axis_spread
+      - minor_axis_spread
+      - elongation_ratio
+      - nearest_fault_distance_quantiles
+      - dominant_local_fault_strike_deg
+      - angular_misfit_deg
+      - along_strike_occupied_range
+      - cumulative_occupied_range
+      - newly_activated_range
+      branch_handling: 
+        compute_by_branch_or_dominant_strike_family_if_fault_network_is_multimodal
+      orientation_convention: line_orientation_with_180_degree_ambiguity
+      sparse_bin_policy: 
+        retain_counts_and_flag_for_unstable_directional_estimation
+  - name: validate_primary_outputs
+    description: Check that the event-level and bin-level outputs are complete, 
+      non-empty, and internally consistent.
+    inputs:
+    - clean_event_table
+    - canonical_time_bin_table
+    - event_fault_geometry_table
+    - bin_directional_summary_table
+    - along_strike_first_activation_table
+    - question_metric_summary_table
+    outputs:
+    - primary_validation_log
+    - analysis_manifest
+    params:
+      required_outputs:
+      - event_fault_geometry_table
+      - bin_directional_summary_table
+      - along_strike_first_activation_table
+      - question_metric_summary_table
+      checks:
+      - non_empty_tables
+      - expected_bin_count
+      - valid_mainshock_time_order
+      - processed_event_count_consistency
+      - missing_value_summary
+
+- name: 02_ridgecrest_figures_and_distribution_plots
+  description: Generate the requested Ridgecrest map series, comparison figure, 
+    nearest-fault distance plots, and directional-evolution synthesis figures 
+    from saved metrics.
+  script: 02_ridgecrest_figures_and_distribution_plots.py
+  ancestors:
+  - 01_ridgecrest_metrics_preparation
+  subtasks:
+  - name: generate_time_sliced_map_series
+    description: Create paginated 2 by 4 spatial map figures showing seismic 
+      evolution from the Mw 6.4 to the Mw 7.1 mainshock.
+    inputs:
+    - clean_event_table
+    - mainshock_reference_table
+    - fault_polyline_table
+    - canonical_time_bin_table
+    - canonical_map_extent
+    outputs:
+    - time_sliced_map_figures
+    - panel_manifest_table
+    params:
+      page_layout: 2_by_4
+      foreground_events: current_bin_events
+      background_events: prior_events_since_mainshock64
+      background_style: silver_high_transparency
+      overlay_layers:
+      - fault_traces_top_layer
+      - mainshock64_epicenter_top_layer
+      - mainshock71_epicenter_top_layer
+      fixed_extent: canonical_map_extent
+      colorbar: false
+      empty_bin_policy: keep_panel_with_context_layers
+      parallel_workers_max: 64
+      progress_reporting: true
+  - name: generate_pre_post_mainshock_comparison
+    description: Plot the spatial comparison of events before and after the Mw 
+      7.1 mainshock using shared overlays and extents.
+    inputs:
+    - clean_event_table
+    - mainshock_reference_table
+    - fault_polyline_table
+    - canonical_map_extent
+    - event_fault_geometry_table
+    outputs:
+    - pre_post_mainshock_comparison_figure
+    - comparison_summary_table
+    params:
+      before_window: mainshock64_to_mainshock71
+      after_window: mainshock71_to_mainshock71_plus_2_days
+      shared_overlays:
+      - fault_traces
+      - mainshock_epicenters
+      annotations:
+      - event_count
+      - median_nearest_fault_distance_km
+      boundary_rule: consistent_with_defined_window_inclusion
+  - name: plot_nearest_fault_distance_statistics
+    description: Produce overall and time-evolving nearest-fault distance 
+      distribution figures and tables.
+    inputs:
+    - event_fault_geometry_table
+    - canonical_time_bin_table
+    - bin_directional_summary_table
+    outputs:
+    - nearest_fault_distance_distribution_figure
+    - nearest_fault_distance_time_evolution_figure
+    - per_bin_distance_statistics_table
+    params:
+      analysis_window: mainshock64_to_mainshock71
+      overall_plots:
+      - histogram
+      - empirical_cumulative_distribution
+      temporal_summaries:
+      - median
+      - interquartile_range
+      - selected_quantiles
+      - near_fault_threshold_fractions
+      threshold_selection: 
+        choose_from_empirical_distribution_and_record_in_metadata
+      sparse_bin_policy: retain_and_flag_low_confidence_bins
+  - name: plot_alignment_and_propagation_summaries
+    description: Create synthesis figures for directional alignment change, 
+      centroid migration, and along-strike activation through time.
+    inputs:
+    - bin_directional_summary_table
+    - along_strike_first_activation_table
+    - panel_manifest_table
+    outputs:
+    - orientation_vs_time_figure
+    - orientation_misfit_vs_time_figure
+    - centroid_migration_figure
+    - along_strike_occupancy_through_time_figure
+    params:
+      linked_bin_definition: canonical_time_bin_table
+      plotted_metrics:
+      - principal_axis_orientation_deg
+      - angular_misfit_deg
+      - centroid_position
+      - cumulative_occupied_range
+      - incremental_occupied_range
+      - first_activation_time
+      branch_handling: 
+        separate_branch_specific_products_when_assignment_is_reliable
+      sparse_bin_annotation: true
+  - name: validate_figure_outputs
+    description: Verify that all requested figures and plot tables were 
+      generated and are non-empty.
+    inputs:
+    - time_sliced_map_figures
+    - panel_manifest_table
+    - pre_post_mainshock_comparison_figure
+    - comparison_summary_table
+    - nearest_fault_distance_distribution_figure
+    - nearest_fault_distance_time_evolution_figure
+    - per_bin_distance_statistics_table
+    - orientation_vs_time_figure
+    - orientation_misfit_vs_time_figure
+    - centroid_migration_figure
+    - along_strike_occupancy_through_time_figure
+    - analysis_manifest
+    outputs:
+    - figure_validation_log
+    - final_output_manifest
+    params:
+      required_figures:
+      - time_sliced_map_figures
+      - pre_post_mainshock_comparison_figure
+      - nearest_fault_distance_distribution_figure
+      - nearest_fault_distance_time_evolution_figure
+      - orientation_vs_time_figure
+      - orientation_misfit_vs_time_figure
+      - centroid_migration_figure
+      - along_strike_occupancy_through_time_figure
+      checks:
+      - expected_page_and_panel_counts
+      - non_empty_figure_files
+      - non_empty_summary_tables
+      - output_cross_reference_consistency
+      - failure_evidence_with_bin_or_page_context

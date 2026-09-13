@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single-catalog observational study with fixed geometry, repeated cumulative Omori-Utsu MLE fits across three domains and bootstrap uncertainty estimation, plus required diagnostic and summary figures. Workflow is cohesive but includes geometric projection, domain assignment, fit-failure handling, and optional split-line robustness checks.",
+  "data_source_count": 2,
+  "workflow_risk": "moderate",
+  "expected_script_count": 2
+}
