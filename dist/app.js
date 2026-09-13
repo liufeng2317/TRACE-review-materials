@@ -1,3 +1,72 @@
+const tabButtons = document.querySelectorAll(".nav-tab, .tab-button");
+const tabTriggers = document.querySelectorAll("[data-tab-target]");
+const tabPanels = document.querySelectorAll(".tab-panel");
+const tabAliases = {
+  agent: "overview",
+  cases: "ridgecrest",
+  meaning: "evidence"
+};
+
+const setActiveTab = (target, { scroll = true, updateHash = true } = {}) => {
+  const resolvedTarget = tabAliases[target] || target;
+  const panel = document.querySelector(`[data-panel="${resolvedTarget}"]`);
+  if (!panel) return;
+
+  tabButtons.forEach((button) => {
+    const active = button.dataset.tabTarget === resolvedTarget;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-selected", active ? "true" : "false");
+  });
+
+  tabPanels.forEach((item) => {
+    const active = item === panel;
+    item.classList.toggle("is-active", active);
+    item.hidden = !active;
+  });
+
+  if (updateHash) {
+    window.history.replaceState(null, "", `#${resolvedTarget}`);
+  }
+
+  if (scroll) {
+    document.querySelector("#explore").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
+tabTriggers.forEach((trigger) => {
+  trigger.addEventListener("click", (event) => {
+    const target = trigger.dataset.tabTarget;
+    if (trigger.tagName === "A") event.preventDefault();
+    setActiveTab(target);
+  });
+});
+
+document.querySelectorAll('[role="tablist"]').forEach((tablist) => {
+  const controls = [...tablist.querySelectorAll('[role="tab"]')];
+  controls.forEach((control, index) => {
+    control.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const nextIndex = event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? controls.length - 1
+          : (index + (event.key === "ArrowRight" ? 1 : -1) + controls.length) % controls.length;
+      controls[nextIndex].focus();
+      setActiveTab(controls[nextIndex].dataset.tabTarget);
+    });
+  });
+});
+
+const initialTab = window.location.hash.slice(1);
+if (initialTab && (document.querySelector(`[data-panel="${tabAliases[initialTab] || initialTab}"]`))) {
+  setActiveTab(initialTab, { scroll: false, updateHash: false });
+} else {
+  tabPanels.forEach((panel, index) => {
+    panel.hidden = index !== 0;
+  });
+}
+
 const formatScore = (value) => Number(value).toFixed(2);
 const formatPercent = (value) => `${(Number(value) * 100).toFixed(1)}%`;
 

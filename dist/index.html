@@ -15,10 +15,12 @@
           <img src="assets/trace-logo.svg" alt="TRACE">
         </a>
         <nav class="main-nav" aria-label="Primary navigation">
-          <a href="#agent">What is an agent?</a>
-          <a href="#benchmark">Benchmark</a>
-          <a href="#cases">Case studies</a>
-          <a href="#evidence">Evidence</a>
+          <button class="nav-tab is-active" type="button" data-tab-target="overview" role="tab" aria-selected="true">Overview</button>
+          <button class="nav-tab" type="button" data-tab-target="workflow" role="tab" aria-selected="false">TRACE workflow</button>
+          <button class="nav-tab" type="button" data-tab-target="benchmark" role="tab" aria-selected="false">Benchmark</button>
+          <button class="nav-tab" type="button" data-tab-target="ridgecrest" role="tab" aria-selected="false">Ridgecrest</button>
+          <button class="nav-tab" type="button" data-tab-target="sanriku" role="tab" aria-selected="false">Sanriku</button>
+          <button class="nav-tab" type="button" data-tab-target="evidence" role="tab" aria-selected="false">Evidence</button>
         </nav>
         <a class="nav-link" href="https://github.com/liufeng2317/TRACE-review-materials" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">-&gt;</span></a>
       </div>
@@ -34,8 +36,8 @@
             <h1>From scientific questions to inspectable evidence.</h1>
             <p class="hero-lede">TRACE is a multi-agent workflow for seismic research. It turns a scientific request into a sequence of plans, tools, executable analysis, checks, and evidence-linked results.</p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#agent">See how it works <span aria-hidden="true">v</span></a>
-              <a class="button button-quiet" href="#cases">Explore the cases</a>
+              <a class="button button-primary tab-trigger" href="#workflow" data-tab-target="workflow">See how it works <span aria-hidden="true">v</span></a>
+              <a class="button button-quiet tab-trigger" href="#ridgecrest" data-tab-target="ridgecrest">Explore the cases</a>
             </div>
           </div>
           <div class="hero-note">
@@ -66,294 +68,448 @@
         </div>
       </section>
 
-      <section class="section" id="agent">
+      <section class="tab-section" id="explore">
         <div class="shell">
-          <div class="section-heading">
-            <p class="eyebrow">01 / The idea</p>
-            <h2>What does "agent" mean here?</h2>
-            <p>A scientific agent is a system that can move through a research workflow. The language model supplies reasoning and code generation, while the surrounding workflow supplies tools, files, validation rules, and a persistent record of what happened.</p>
+          <div class="tab-intro">
+            <p class="eyebrow">Explore the study</p>
+            <h2>Read TRACE by question, workflow, or case.</h2>
+            <p>The manuscript explains the scientific motivation and results; this site turns that same structure into a guided record. Start with the plain-language overview, then follow the workflow into the benchmark and the two complementary earthquake applications.</p>
           </div>
 
-          <div class="agent-explainer">
-            <div class="plain-definition">
-              <span class="label">In plain language</span>
-              <p>You give TRACE a question such as "How did seismicity evolve after the Ridgecrest mainshocks?" TRACE breaks that question into workable stages, writes the analysis needed for each stage, runs it, checks the outputs, and keeps the evidence that supports the final interpretation.</p>
-            </div>
-            <div class="technical-definition">
-              <span class="label">For a reviewer</span>
-              <p>The public release exposes the case entry scripts, generated analysis code, parameters, outputs, reports, state records, and execution trajectories. Each layer can be inspected independently and traced back to the scientific question.</p>
-            </div>
+          <div class="tab-strip" role="tablist" aria-label="Study sections">
+            <button class="tab-button is-active" type="button" data-tab-target="overview" role="tab" aria-selected="true">Overview</button>
+            <button class="tab-button" type="button" data-tab-target="workflow" role="tab" aria-selected="false">TRACE workflow</button>
+            <button class="tab-button" type="button" data-tab-target="benchmark" role="tab" aria-selected="false">Benchmark</button>
+            <button class="tab-button" type="button" data-tab-target="ridgecrest" role="tab" aria-selected="false">Ridgecrest</button>
+            <button class="tab-button" type="button" data-tab-target="sanriku" role="tab" aria-selected="false">Sanriku</button>
+            <button class="tab-button" type="button" data-tab-target="evidence" role="tab" aria-selected="false">Evidence &amp; access</button>
           </div>
 
-          <div class="workflow" aria-label="TRACE workflow">
-            <div class="workflow-step">
-              <span class="step-number">01</span>
-              <h3>Question</h3>
-              <p>Define the scientific objective and the evidence needed to answer it.</p>
+          <section class="tab-panel is-active" id="overview" role="tabpanel" aria-label="Overview" data-panel="overview">
+            <div class="section-heading">
+              <p class="eyebrow">01 / The idea</p>
+              <h2>What does an "agent" mean in this study?</h2>
+              <p>A scientific agent is more than a language model that writes a script. It is a controlled research loop that turns a question into executable work, checks what the work produced, and preserves the path from observation to interpretation.</p>
             </div>
-            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
-            <div class="workflow-step">
-              <span class="step-number">02</span>
-              <h3>Plan</h3>
-              <p>Turn the objective into data, analysis, validation, and reporting stages.</p>
-            </div>
-            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
-            <div class="workflow-step">
-              <span class="step-number">03</span>
-              <h3>Build</h3>
-              <p>Select tools and generate the code that performs the requested operation.</p>
-            </div>
-            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
-            <div class="workflow-step">
-              <span class="step-number">04</span>
-              <h3>Check</h3>
-              <p>Inspect tables, figures, diagnostics, and intermediate assumptions.</p>
-            </div>
-            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
-            <div class="workflow-step">
-              <span class="step-number">05</span>
-              <h3>Synthesize</h3>
-              <p>Connect the evidence into a bounded, reviewable scientific result.</p>
-            </div>
-          </div>
 
-          <details class="technical-details">
-            <summary>What is preserved in the public record?</summary>
-            <div class="details-grid">
-              <span>Experiment plans</span>
-              <span>Generated scripts</span>
-              <span>Parameters and configs</span>
-              <span>Reviewable outputs</span>
-              <span>Reports and summaries</span>
-              <span>Execution trajectories</span>
+            <div class="overview-grid">
+              <article class="overview-block">
+                <span class="label">In plain language</span>
+                <p>You give TRACE a question such as "How did seismicity reorganize between the Ridgecrest mainshocks?" TRACE decomposes it into data, analysis, validation and reporting stages. It selects tools, generates code, executes the workflow, inspects the outputs and keeps the evidence needed for the final interpretation.</p>
+              </article>
+              <article class="overview-block overview-block-tint">
+                <span class="label">For a reviewer</span>
+                <p>The public release exposes case entry scripts, generated analysis code, parameters, outputs, reports, state records and execution trajectories. These records let a reader inspect not only the final figure, but also the choices and checks that produced it.</p>
+              </article>
             </div>
-          </details>
 
-          <div class="workflow-gallery" aria-label="Representative workflow figures">
-            <figure class="workflow-figure">
-              <img src="assets/workflow-waveform.png" alt="Waveform before and after signal preprocessing">
-              <figcaption><span class="label">Preprocess</span>Condition the signal before scientific inference.</figcaption>
-            </figure>
-            <figure class="workflow-figure">
-              <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
-              <figcaption><span class="label">Pick phases</span>Estimate P and S arrivals from waveform evidence.</figcaption>
-            </figure>
-            <figure class="workflow-figure">
-              <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
-              <figcaption><span class="label">Associate events</span>Group station-level arrivals into event hypotheses.</figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section class="section section-tint" id="benchmark">
-        <div class="shell">
-          <div class="section-heading split-heading">
-            <div>
-              <p class="eyebrow">02 / Benchmark</p>
-              <h2>Does the agent complete scientific work?</h2>
+            <div class="section-heading compact-heading">
+              <p class="eyebrow">Two complementary applications</p>
+              <h3>Validation and discovery are deliberately separated.</h3>
             </div>
-            <p>The benchmark separates atomic operations from longer workflows. Level 1 tests individual scientific capabilities. Level 2 tests chaining, branching, batching, and constrained exploration.</p>
-          </div>
+            <div class="role-grid">
+              <article class="role-item">
+                <span class="role-index">A</span>
+                <h3>Ridgecrest: retrospective validation</h3>
+                <p>TRACE starts from continuous waveforms in the well-studied 2019 sequence and reconstructs a catalog-based interpretation of delayed cascading activation between the Mw 6.4 and Mw 7.1 earthquakes.</p>
+                <button class="text-button tab-trigger" type="button" data-tab-target="ridgecrest">Read the case <span aria-hidden="true">-&gt;</span></button>
+              </article>
+              <article class="role-item">
+                <span class="role-index">B</span>
+                <h3>Sanriku: an unresolved sequence</h3>
+                <p>TRACE starts from JMA catalog and phase-arrival products, then integrates relocation, stage-resolved seismicity and waveform similarity to formulate a testable interpretation before the 2026 Mw 7.7 rupture.</p>
+                <button class="text-button tab-trigger" type="button" data-tab-target="sanriku">Read the case <span aria-hidden="true">-&gt;</span></button>
+              </article>
+            </div>
+          </section>
 
-          <div class="benchmark-summary">
-            <div class="benchmark-lead">
-              <span class="label">Overall result</span>
-              <div class="score-line"><strong id="mean-score">4.82</strong><span>/ 5</span></div>
-              <p>Mean task score across 104 tasks and three evaluated models. Manual-reference visualization ratings are the mean of five expert ratings on a 1-5 scale.</p>
-              <div class="score-rail"><span style="width: 96.4%"></span></div>
-              <div class="mini-stat-row">
-                <span><strong id="passed-runs">310</strong> passing runs</span>
-                <span><strong id="manual-score">4.93</strong> expert reference</span>
+          <section class="tab-panel" id="workflow" role="tabpanel" aria-label="TRACE workflow" data-panel="workflow">
+            <div class="section-heading">
+              <p class="eyebrow">02 / The workflow</p>
+              <h2>From an open question to an evidence-supported interpretation.</h2>
+              <p>TRACE connects planning, execution and synthesis while preserving the information boundary at each stage. The language model proposes and implements workflows; scientific tools generate the numerical and graphical products; diagnostics determine which products are allowed into the evidence chain.</p>
+            </div>
+
+            <div class="module-grid">
+              <article class="module-card">
+                <span class="module-number">01</span>
+                <span class="label">Planning and task decomposition</span>
+                <h3>Translate a question into candidate pathways.</h3>
+                <p>The planning agents identify the target sequence, available observations, requested outputs and candidate mechanisms. They query structured seismological knowledge and validated tool metadata, then aggregate feasible plans under data and physical constraints.</p>
+              </article>
+              <article class="module-card">
+                <span class="module-number">02</span>
+                <span class="label">Automated execution and diagnostics</span>
+                <h3>Generate, run and check the analysis.</h3>
+                <p>Workflow and coding agents turn a selected plan into executable scripts. A result-checking agent inspects file validity, numerical ranges, catalog completeness, spatial and temporal consistency, convergence and visualization diagnostics. Permitted revisions remain in the record.</p>
+              </article>
+              <article class="module-card">
+                <span class="module-number">03</span>
+                <span class="label">Scientific integration and inference</span>
+                <h3>Compare evidence across perspectives.</h3>
+                <p>Analysis agents summarize spatiotemporal, statistical, waveform and source evidence. A cross-perspective synthesis classifies each relation to candidate interpretations as supporting, inconsistent or unresolved, and retains viable alternatives and external validation targets.</p>
+              </article>
+            </div>
+
+            <div class="workflow" aria-label="TRACE workflow stages">
+              <div class="workflow-step">
+                <span class="step-number">01</span>
+                <h3>Question</h3>
+                <p>Define the scientific objective and the evidence needed to answer it.</p>
+              </div>
+              <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+              <div class="workflow-step">
+                <span class="step-number">02</span>
+                <h3>Plan</h3>
+                <p>Turn the objective into data, analysis, validation and reporting stages.</p>
+              </div>
+              <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+              <div class="workflow-step">
+                <span class="step-number">03</span>
+                <h3>Build</h3>
+                <p>Select tools and generate the code that performs the requested operation.</p>
+              </div>
+              <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+              <div class="workflow-step">
+                <span class="step-number">04</span>
+                <h3>Check</h3>
+                <p>Inspect tables, figures, diagnostics and intermediate assumptions.</p>
+              </div>
+              <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+              <div class="workflow-step">
+                <span class="step-number">05</span>
+                <h3>Synthesize</h3>
+                <p>Connect the evidence into a bounded, reviewable scientific result.</p>
               </div>
             </div>
-            <div class="level-panel">
-              <div class="segmented" role="tablist" aria-label="Benchmark level">
-                <button class="segment is-active" type="button" data-level="L1" role="tab" aria-selected="true">Level 1</button>
-                <button class="segment" type="button" data-level="L2" role="tab" aria-selected="false">Level 2</button>
+
+            <div class="workflow-gallery" aria-label="Representative workflow figures">
+              <figure class="workflow-figure">
+                <img src="assets/workflow-waveform.png" alt="Waveform before and after signal preprocessing">
+                <figcaption><span class="label">Preprocess</span>Condition the signal before scientific inference.</figcaption>
+              </figure>
+              <figure class="workflow-figure">
+                <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
+                <figcaption><span class="label">Pick phases</span>Estimate P and S arrivals from waveform evidence.</figcaption>
+              </figure>
+              <figure class="workflow-figure">
+                <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
+                <figcaption><span class="label">Associate events</span>Group station-level arrivals into event hypotheses.</figcaption>
+              </figure>
+            </div>
+
+            <div class="provenance-block">
+              <div class="subheading">
+                <span class="label">Recorded provenance</span>
+                <h3>Every interpretation has an inspectable route back to data.</h3>
               </div>
-              <div class="level-content">
-                <div class="level-title-row">
-                  <div>
-                    <span class="label">Selected level</span>
-                    <h3 id="level-name">Level 1</h3>
+              <div class="provenance-grid">
+                <div><strong>Input boundary</strong><span>Question, data sources, spatial and temporal selections, and permitted context.</span></div>
+                <div><strong>Planning</strong><span>Physical constraints, candidate interpretations and retained analysis branches.</span></div>
+                <div><strong>Execution</strong><span>Tools, scripts, parameters, input-output paths and intermediate products.</span></div>
+                <div><strong>Diagnostics</strong><span>Computational checks, physical checks, revisions and intervention status.</span></div>
+                <div><strong>Evidence</strong><span>Source product, method, parameters, diagnostic status and finding.</span></div>
+                <div><strong>Synthesis</strong><span>Supporting, inconsistent or unresolved relations, alternatives and validation targets.</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tab-panel section-tint-panel" id="benchmark" role="tabpanel" aria-label="Benchmark" data-panel="benchmark">
+            <div class="section-heading split-heading">
+              <div>
+                <p class="eyebrow">03 / Benchmark</p>
+                <h2>Does the agent complete scientific work?</h2>
+              </div>
+              <p>The benchmark separates bounded tool execution from longer workflow control. Level 1 tests individual seismological operations. Level 2 tests chaining, branching, batching and constrained exploration. Level 3 is represented by the two integrated case studies.</p>
+            </div>
+
+            <div class="benchmark-summary">
+              <div class="benchmark-lead">
+                <span class="label">Overall result</span>
+                <div class="score-line"><strong id="mean-score">4.82</strong><span>/ 5</span></div>
+                <p>Mean task score across 104 tasks and three evaluated models. Manual-reference visualization ratings are the mean of five expert ratings on a 1-5 scale.</p>
+                <div class="score-rail"><span style="width: 96.4%"></span></div>
+                <div class="mini-stat-row">
+                  <span><strong id="passed-runs">310</strong> passing runs</span>
+                  <span><strong id="manual-score">4.93</strong> expert reference</span>
+                </div>
+              </div>
+              <div class="level-panel">
+                <div class="segmented" role="tablist" aria-label="Benchmark level">
+                  <button class="segment is-active" type="button" data-level="L1" role="tab" aria-selected="true">Level 1</button>
+                  <button class="segment" type="button" data-level="L2" role="tab" aria-selected="false">Level 2</button>
+                </div>
+                <div class="level-content">
+                  <div class="level-title-row">
+                    <div>
+                      <span class="label">Selected level</span>
+                      <h3 id="level-name">Level 1</h3>
+                    </div>
+                    <strong id="level-score">4.83</strong>
                   </div>
-                  <strong id="level-score">4.83</strong>
+                  <p id="level-description">Atomic scientific operations, from data access and signal processing to statistics and visualization.</p>
+                  <div class="level-facts">
+                    <span><strong id="level-tasks">74</strong> tasks</span>
+                    <span><strong id="level-pass">72</strong> complete</span>
+                    <span><strong id="level-success">99.5%</strong> run success</span>
+                  </div>
                 </div>
-                <p id="level-description">Atomic scientific operations, from data access and signal processing to statistics and visualization.</p>
-                <div class="level-facts">
-                  <span><strong id="level-tasks">74</strong> tasks</span>
-                  <span><strong id="level-pass">72</strong> complete</span>
-                  <span><strong id="level-success">99.5%</strong> run success</span>
+              </div>
+            </div>
+
+            <div class="benchmark-level-grid">
+              <article class="benchmark-level">
+                <span class="label">Level 1 / 74 tasks</span>
+                <h3>Atomic task capability</h3>
+                <p>Data access and retrieval, data representation and formatting, signal processing, statistics and feature extraction, and scientific visualization.</p>
+              </article>
+              <article class="benchmark-level">
+                <span class="label">Level 2 / 30 tasks</span>
+                <h3>Multi-step analytical capability</h3>
+                <p>Sequential chaining, heuristic branching, scalable batching and scanning, and constrained space exploration under physical constraints.</p>
+              </article>
+              <article class="benchmark-level">
+                <span class="label">Level 3 / 2 cases</span>
+                <h3>Integrated scientific analysis</h3>
+                <p>End-to-end workflows that connect case-specific observations, candidate interpretations, multiple analyses and structured evidence synthesis.</p>
+              </article>
+            </div>
+
+            <div class="benchmark-columns">
+              <div class="model-table-wrap">
+                <div class="subheading">
+                  <span class="label">Model comparison</span>
+                  <h3>Three models, one task set</h3>
+                </div>
+                <div class="table-scroll">
+                  <table class="model-table">
+                    <thead>
+                      <tr>
+                        <th>Model</th>
+                        <th>Mean score</th>
+                        <th>Run success</th>
+                        <th>Debug rounds</th>
+                      </tr>
+                    </thead>
+                    <tbody id="model-rows"></tbody>
+                  </table>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="benchmark-columns">
-            <div class="model-table-wrap">
-              <div class="subheading">
-                <span class="label">Model comparison</span>
-                <h3>Three models, one task set</h3>
-              </div>
-              <div class="table-scroll">
-                <table class="model-table">
-                  <thead>
-                    <tr>
-                      <th>Model</th>
-                      <th>Mean score</th>
-                      <th>Run success</th>
-                      <th>Debug rounds</th>
-                    </tr>
-                  </thead>
-                  <tbody id="model-rows"></tbody>
-                </table>
+              <div class="skills-panel">
+                <div class="subheading">
+                  <span class="label">Task composition</span>
+                  <h3>What the benchmark asks for</h3>
+                </div>
+                <div class="skill-bars" id="skill-bars"></div>
               </div>
             </div>
-            <div class="skills-panel">
-              <div class="subheading">
-                <span class="label">Task composition</span>
-                <h3>What the benchmark asks for</h3>
+
+            <div class="assessment-note">
+              <span class="label">Assessment protocol</span>
+              <p>Deterministic outputs were compared with expert-designed reference solutions using predefined criteria and numerical tolerances. Qualitative Level 1 and Level 2 outputs were scored by five experts on task-specific 1-5 scales. The final output-level score is the mean of those five ratings. Level 3 case reports were reviewed qualitatively across planning, implementation and synthesis; no numerical Level 3 score was assigned.</p>
+            </div>
+
+            <div class="section-link-row">
+              <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">Inspect benchmark definitions and records <span aria-hidden="true">-&gt;</span></a>
+            </div>
+          </section>
+
+          <section class="tab-panel" id="ridgecrest" role="tabpanel" aria-label="Ridgecrest case" data-panel="ridgecrest">
+            <div class="case-panel-heading">
+              <div>
+                <p class="eyebrow">04 / Case study I</p>
+                <h2>Ridgecrest: reconstructing delayed cascading activation.</h2>
               </div>
-              <div class="skill-bars" id="skill-bars"></div>
+              <p>The 2019 sequence is the retrospective validation case. TRACE began with continuous waveforms and mapped surface ruptures, without a prescribed target interpretation, and recovered an established physical interpretation from the resulting catalog evidence.</p>
             </div>
-          </div>
 
-          <div class="section-link-row">
-            <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">Inspect benchmark definitions and records <span aria-hidden="true">-&gt;</span></a>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="cases">
-        <div class="shell">
-          <div class="section-heading split-heading">
-            <div>
-              <p class="eyebrow">03 / Scientific cases</p>
-              <h2>What do the outputs mean?</h2>
-            </div>
-            <p>The case studies show the workflow operating on real seismological questions. The point is not only to produce a figure, but to connect data preparation, computational choices, diagnostics, and interpretation.</p>
-          </div>
-
-          <div class="case-grid">
-            <article class="case-card">
-              <div class="case-media">
+            <div class="case-hero">
+              <figure class="case-figure">
                 <img src="assets/ridgecrest-mechanism-chain.png" alt="Ridgecrest earthquake sequence and fault-mechanism evidence">
-                <span class="case-tag">Ridgecrest / 2019</span>
+                <figcaption>Ridgecrest evidence chain: catalog structure, timing, fault organization and candidate interpretations.</figcaption>
+              </figure>
+              <div class="case-hero-copy">
+                <span class="label">Scientific question</span>
+                <h3>How did seismicity reorganize between the Mw 6.4 foreshock and the Mw 7.1 mainshock?</h3>
+                <p>TRACE constructed a high-resolution catalog, then examined spatial timing, proximity to mapped surface ruptures, seismicity-rate evolution and magnitude-frequency structure during the approximately 34-hour interval between the two earthquakes.</p>
+                <p>The evidence supported delayed, fault-bound activation toward the fault segment that later hosted the Mw 7.1 rupture. The result was consistent with previous Ridgecrest studies, providing retrospective validation of the observation-to-interpretation workflow.</p>
               </div>
-              <div class="case-body">
-                <h3>How did the sequence reorganize between Mw 6.4 and Mw 7.1?</h3>
-                <p>TRACE constructs a waveform-to-catalog workflow, then uses the relocated catalog to examine branching, fault alignment, activation, migration, and the transition between the two mainshocks.</p>
-                <div class="case-result">
-                  <span class="label">Released result</span>
-                  <strong>84,474-event relocated catalog</strong>
-                  <span>with time-windowed spatial evidence and report-linked figures</span>
-                </div>
-                <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/ridgecrest" target="_blank" rel="noreferrer">View Ridgecrest materials <span aria-hidden="true">-&gt;</span></a>
-              </div>
-            </article>
+            </div>
 
-            <article class="case-card">
-              <div class="case-media">
+            <div class="fact-grid">
+              <div class="fact-card"><strong>47</strong><span>selected three-component stations</span></div>
+              <div class="fact-card"><strong>1.45M / 1.64M</strong><span>P / S picks above the PhaseNet threshold</span></div>
+              <div class="fact-card"><strong>140,505</strong><span>associated events before relocation</span></div>
+              <div class="fact-card"><strong>84,474</strong><span>final relocated earthquakes</span></div>
+            </div>
+
+            <div class="analysis-grid">
+              <article class="analysis-card">
+                <span class="label">Catalog construction</span>
+                <h3>Waveforms became a traceable catalog.</h3>
+                <p>The workflow covered 4-26 July 2019, retained 853 quality-controlled station-day records, picked P and S arrivals with PhaseNet, associated arrivals with GaMMA and refined locations with HypoDD.</p>
+              </article>
+              <article class="analysis-card">
+                <span class="label">Spatial and temporal evidence</span>
+                <h3>The activation was organized by the fault network.</h3>
+                <p>Most events during the interval were within 2 km of mapped surface ruptures. Median activation onset was approximately 5.0 hours on the Mw 6.4 side and 10.0 hours on the later Mw 7.1 side.</p>
+              </article>
+              <article class="analysis-card">
+                <span class="label">Interpretation boundary</span>
+                <h3>The catalog constrains organization, not a unique mechanism.</h3>
+                <p>The delayed onset, persistent late activity and lower post-separator b-value on the Mw 7.1 side support delayed cascading activation. Coulomb stress transfer, rate-and-state response and postseismic deformation remain viable physical contributions.</p>
+              </article>
+            </div>
+
+            <div class="case-links">
+              <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/ridgecrest" target="_blank" rel="noreferrer">Open Ridgecrest release materials <span aria-hidden="true">-&gt;</span></a>
+              <button class="text-button tab-trigger" type="button" data-tab-target="evidence">Read the evidence boundary <span aria-hidden="true">-&gt;</span></button>
+            </div>
+          </section>
+
+          <section class="tab-panel" id="sanriku" role="tabpanel" aria-label="Sanriku case" data-panel="sanriku">
+            <div class="case-panel-heading">
+              <div>
+                <p class="eyebrow">05 / Case study II</p>
+                <h2>Sanriku: linking shallow activation to rupture geometry.</h2>
+              </div>
+              <p>The Sanriku sequence is the discovery application. TRACE began from official JMA event and phase-arrival products, then used relocation, fixed-stage catalog analysis, migration diagnostics and repeating-earthquake evidence to formulate a testable interpretation.</p>
+            </div>
+
+            <div class="case-hero">
+              <figure class="case-figure">
                 <img src="assets/sanriku-composite-evidence.png" alt="Composite evidence figure for the Sanriku earthquake sequence">
-                <span class="case-tag">Sanriku / 2025-2026</span>
+                <figcaption>Sanriku evidence chain: regional geometry, rates, magnitude-frequency structure and repeating-earthquake families.</figcaption>
+              </figure>
+              <div class="case-hero-copy">
+                <span class="label">Scientific question</span>
+                <h3>What evidence constrains shallow-interface activation before the April 2026 Mw 7.7 rupture?</h3>
+                <p>TRACE relocated 25,646 of 33,482 regional events from 1 June 2025 to 2 May 2026. It focused on the shallow-interface region containing the November 2025 Mw 6.9 and April 2026 Mw 7.7 source regions, separated by approximately 57 km.</p>
+                <p>The synthesis linked short-term activation around Mw 6.9 with persistent, spatially segmented activity before Mw 7.7, within a patch bracketed by regions of past large coseismic slip. This is a testable interpretation, not a prospective forecast or a unique causal attribution.</p>
               </div>
-              <div class="case-body">
-                <h3>How can a regional catalog support sequence-scale interpretation?</h3>
-                <p>TRACE prepares, relocates, validates, and analyzes the Sanriku catalog, then follows event-centered activation, event relationships, spatial-depth structure, mechanisms, and migration-related patterns.</p>
-                <div class="case-result">
-                  <span class="label">Released result</span>
-                  <strong>25,646-event validated catalog</strong>
-                  <span>with manuscript-aligned repeating-earthquake products</span>
+            </div>
+
+            <div class="fact-grid">
+              <div class="fact-card"><strong>33,482</strong><span>regional JMA catalog events</span></div>
+              <div class="fact-card"><strong>25,646</strong><span>events retained after relocation</span></div>
+              <div class="fact-card"><strong>231 / 145</strong><span>high-confidence pairs / repeating families</span></div>
+              <div class="fact-card"><strong>4.5 -&gt; 162 d^-1</strong><span>background to Mw 6.9-stage rate</span></div>
+            </div>
+
+            <div class="analysis-grid">
+              <article class="analysis-card">
+                <span class="label">Activation around Mw 6.9</span>
+                <h3>Seismic and aseismic evidence converged.</h3>
+                <p>In the approximately 10 days before Mw 6.9, the compact cluster expanded across about 16 km at an estimated 4.3 km d^-1. During the first 0.5 days after the event, the distance envelope expanded to about 75 km at an apparent 16.2 km d^-1.</p>
+              </article>
+              <article class="analysis-card">
+                <span class="label">Persistence before Mw 7.7</span>
+                <h3>The region did not simply return to background.</h3>
+                <p>Relocated-event rates decreased after the Mw 6.9 sequence but remained elevated, then increased slightly in the final pre-Mw 7.7 interval. Repeated low-b-value windows and separated M &gt;= 4 activity supported a persistent, segmented shallow response.</p>
+              </article>
+              <article class="analysis-card">
+                <span class="label">Long-term context</span>
+                <h3>Historical rupture geometry bounded the interpretation.</h3>
+                <p>The activated region lay between neighboring areas of past large slip, including the 2011 Tohoku-Oki and 1994 Sanriku-Oki rupture domains. Convergence information made meter-scale loading physically plausible, but did not establish a causal loading pathway.</p>
+              </article>
+            </div>
+
+            <div class="case-detail-grid sanriku-detail-grid">
+              <div class="case-detail">
+                <img src="assets/sanriku-repeat-evidence.png" alt="Sanriku repeat-family map, activation timeline, and waveform correlations">
+                <div>
+                  <span class="label">Waveform similarity</span>
+                  <h3>Repeating families provide an independent constraint.</h3>
+                  <p>Cross-correlation screening identified 231 high-confidence pairs grouped into 145 families concentrated around the Mw 6.9 activated region.</p>
                 </div>
-                <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/sanriku" target="_blank" rel="noreferrer">View Sanriku materials <span aria-hidden="true">-&gt;</span></a>
               </div>
-            </article>
-          </div>
+              <div class="case-detail">
+                <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
+                <div>
+                  <span class="label">Input boundary</span>
+                  <h3>Each evidence stream entered at a defined stage.</h3>
+                  <p>JMA arrivals supported relocation; separately assembled event waveforms supported repeating-earthquake analysis; historical rupture models and independent strain observations entered only during synthesis and external validation.</p>
+                </div>
+              </div>
+            </div>
 
-          <div class="case-detail-grid">
-            <div class="case-detail">
-              <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
+            <div class="case-links">
+              <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/sanriku" target="_blank" rel="noreferrer">Open Sanriku release materials <span aria-hidden="true">-&gt;</span></a>
+              <button class="text-button tab-trigger" type="button" data-tab-target="evidence">Read the evidence boundary <span aria-hidden="true">-&gt;</span></button>
+            </div>
+          </section>
+
+          <section class="tab-panel section-dark-panel" id="evidence" role="tabpanel" aria-label="Evidence and access" data-panel="evidence">
+            <div class="section-heading">
+              <p class="eyebrow">06 / Evidence and access</p>
+              <h2>The result is a chain of evidence, not a single answer.</h2>
+              <p>The website is the explanation layer. The public release remains the source of truth for scripts, parameters, outputs, reports, figure source data and execution records.</p>
+            </div>
+
+            <div class="meaning-grid">
+              <div class="meaning-item">
+                <span class="meaning-index">A</span>
+                <h3>For the workflow</h3>
+                <p>The benchmark asks whether an agent can execute concrete scientific operations and longer chains with recoverable records.</p>
+              </div>
+              <div class="meaning-item">
+                <span class="meaning-index">B</span>
+                <h3>For the evidence</h3>
+                <p>The case records keep plans, code, parameters, figures, reports and trajectories connected to the request that produced them.</p>
+              </div>
+              <div class="meaning-item">
+                <span class="meaning-index">C</span>
+                <h3>For seismology</h3>
+                <p>The outputs turn large catalogs into structured evidence about sequence organization, activation, relocation and repeating events.</p>
+              </div>
+            </div>
+
+            <div class="scope-grid">
               <div>
-                <span class="label">From waveform to catalog</span>
-                <h3>Specialized tools remain visible inside the agent workflow.</h3>
-                <p>Phase picking, association, relocation, correlation, and statistical analysis are not hidden behind a single score. Each stage leaves an inspectable computational product.</p>
+                <span class="label">Available in this review release</span>
+                <ul class="plain-list">
+                  <li>Benchmark definitions, evaluation summaries and expert-reference results.</li>
+                  <li>Case entry scripts, generated analysis code, parameter files and workflow records.</li>
+                  <li>Curated catalogs, derived outputs, figure source data, reports and execution trajectories.</li>
+                </ul>
               </div>
-            </div>
-            <div class="case-detail">
-              <img src="assets/sanriku-repeat-evidence.png" alt="Sanriku repeat-family map, activation timeline, and waveform correlations">
               <div>
-                <span class="label">From catalog to evidence</span>
-                <h3>Scientific meaning comes from linked comparisons.</h3>
-                <p>Spatial expansion, event-centered activation, and migration-like patterns are interpreted alongside controls, scope definitions, and the limits of the available observations.</p>
+                <span class="label">Maintained separately</span>
+                <ul class="plain-list">
+                  <li>Large waveform and source datasets remain with the original data providers.</li>
+                  <li>The general-purpose TRACE framework and deployment-specific runtime components are not part of this review release.</li>
+                  <li>Raw agent conversations, credentials and deployment-specific logs are not required to inspect the reported evidence chain.</li>
+                </ul>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section class="section section-dark" id="meaning">
-        <div class="shell">
-          <div class="section-heading">
-            <p class="eyebrow">04 / Why it matters</p>
-            <h2>The result is a chain of evidence, not a single answer.</h2>
-            <p>TRACE is useful when the scientific task is too open-ended for a single fixed script, but the conclusion still needs to be inspected like ordinary research.</p>
-          </div>
-          <div class="meaning-grid">
-            <div class="meaning-item">
-              <span class="meaning-index">A</span>
-              <h3>For the workflow</h3>
-              <p>The benchmark asks whether an agent can carry out concrete scientific operations and longer chains of operations with recoverable records.</p>
+            <div class="evidence-grid">
+              <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">
+                <span class="evidence-kicker">Benchmark</span>
+                <strong>Task definitions and evaluation summaries</strong>
+                <span>Level 1, Level 2, model results and five-expert reference scores.</span>
+                <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+              </a>
+              <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases" target="_blank" rel="noreferrer">
+                <span class="evidence-kicker">Cases</span>
+                <strong>Ridgecrest and Sanriku workflows</strong>
+                <span>Entry scripts, generated code, plans, trajectories, reports and outputs.</span>
+                <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+              </a>
+              <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/blob/main/docs/software_and_algorithm_manifest.md" target="_blank" rel="noreferrer">
+                <span class="evidence-kicker">Methods</span>
+                <strong>Software and model inventory</strong>
+                <span>Domain tools and the registered seismological AI model families.</span>
+                <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+              </a>
+              <a class="evidence-link" href="https://github.com/OpenEarthLab/EarthLink" target="_blank" rel="noreferrer">
+                <span class="evidence-kicker">Framework context</span>
+                <strong>EarthLink project</strong>
+                <span>Related open framework context while the complete TRACE implementation remains under review.</span>
+                <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+              </a>
             </div>
-            <div class="meaning-item">
-              <span class="meaning-index">B</span>
-              <h3>For the evidence</h3>
-              <p>The case records make the path from request to result visible: plans, code, parameters, figures, reports, and trajectories stay connected.</p>
-            </div>
-            <div class="meaning-item">
-              <span class="meaning-index">C</span>
-              <h3>For seismology</h3>
-              <p>The outputs turn large earthquake catalogs into structured evidence about sequence organization, activation, relocation, and repeating events.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="evidence">
-        <div class="shell">
-          <div class="section-heading split-heading">
-            <div>
-              <p class="eyebrow">05 / Evidence trail</p>
-              <h2>Start with the question. End at the file.</h2>
-            </div>
-            <p>The website is the explanation layer. The public release remains the source of truth for scripts, parameters, outputs, reports, and execution records.</p>
-          </div>
-          <div class="evidence-grid">
-            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">
-              <span class="evidence-kicker">Benchmark</span>
-              <strong>Task definitions and evaluation summaries</strong>
-              <span>Level 1, Level 2, model results, and expert-reference scores.</span>
-              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
-            </a>
-            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases" target="_blank" rel="noreferrer">
-              <span class="evidence-kicker">Cases</span>
-              <strong>Ridgecrest and Sanriku workflows</strong>
-              <span>Entry scripts, generated code, plans, trajectories, reports, and outputs.</span>
-              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
-            </a>
-            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/blob/main/docs/software_and_algorithm_manifest.md" target="_blank" rel="noreferrer">
-              <span class="evidence-kicker">Methods</span>
-              <strong>Software and model inventory</strong>
-              <span>Domain tools and the registered seismological AI model families.</span>
-              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
-            </a>
-            <a class="evidence-link" href="https://github.com/OpenEarthLab/EarthLink" target="_blank" rel="noreferrer">
-              <span class="evidence-kicker">Framework context</span>
-              <strong>EarthLink project</strong>
-              <span>Related open framework context while the complete TRACE implementation remains under review.</span>
-              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
-            </a>
-          </div>
+          </section>
         </div>
       </section>
     </main>
