@@ -171,17 +171,17 @@
             </div>
 
             <div class="workflow-gallery" aria-label="Representative workflow figures">
-              <figure class="workflow-figure">
+              <figure class="workflow-figure workflow-figure-preprocess">
                 <img src="assets/workflow-waveform.png" alt="Waveform before and after signal preprocessing">
-                <figcaption><span class="label">Condition the signal</span>Waveform preprocessing makes later picks inspectable.</figcaption>
+                <figcaption><span class="label">Condition the signal</span>Preprocessing separates usable waveform structure from background noise.</figcaption>
               </figure>
-              <figure class="workflow-figure">
-                <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
-                <figcaption><span class="label">Detect phase arrivals</span>P and S picks create the event-level evidence layer.</figcaption>
+              <figure class="workflow-figure workflow-figure-picking">
+                <img src="assets/phase-picking-labeled.png" alt="Three-component seismic traces with labeled P and S phase picks">
+                <figcaption><span class="label">Pick seismic phases</span>Mark P and S arrivals on waveform traces before association.</figcaption>
               </figure>
-              <figure class="workflow-figure">
-                <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
-                <figcaption><span class="label">Assemble event hypotheses</span>Station arrivals become a catalog through explicit association.</figcaption>
+              <figure class="workflow-figure workflow-figure-association">
+                <img src="assets/phase-association-schematic.svg" alt="P and S arrivals associated across stations into event groups">
+                <figcaption><span class="label">Associate arrivals into events</span>Consistent P and S arrivals across stations are grouped into event hypotheses.</figcaption>
               </figure>
             </div>
 
@@ -212,8 +212,8 @@
 
             <div class="benchmark-hero">
               <figure class="benchmark-figure">
-                <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
-                <figcaption><span class="label">Representative operation</span>Phase arrivals are associated into event hypotheses before catalog analysis.</figcaption>
+                <img src="assets/phase-association-schematic.svg" alt="P and S arrivals associated across stations into event groups">
+                <figcaption><span class="label">Representative operation</span>Station-level P and S observations are grouped into event hypotheses before catalog analysis.</figcaption>
               </figure>
               <div class="benchmark-hero-copy">
                 <span class="label">How to read the benchmark</span>
@@ -463,7 +463,7 @@
                 </div>
               </div>
               <div class="case-detail">
-                <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
+                <img src="assets/phase-picking-labeled.png" alt="Three-component seismic traces with labeled P and S phase picks">
                 <div>
                   <span class="label">Input boundary</span>
                   <h3>Each evidence stream entered at a defined stage.</h3>

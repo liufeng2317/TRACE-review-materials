@@ -610,8 +610,9 @@ h3 {
 
 .benchmark-figure img {
   width: 100%;
-  aspect-ratio: 1.55 / 1;
-  object-fit: cover;
+  height: 360px;
+  object-fit: contain;
+  padding: 18px 28px;
   background: #edf5f4;
 }
 
@@ -984,9 +985,16 @@ h3 {
 .workflow-figure img {
   display: block;
   width: 100%;
-  aspect-ratio: 1.55 / 1;
-  object-fit: cover;
+  height: 290px;
+  object-fit: contain;
+  padding: 12px;
   background: #edf5f4;
+}
+
+.workflow-figure-association img {
+  height: 360px;
+  padding: 18px 26px;
+  background: var(--white);
 }
 
 .workflow-figure figcaption {
@@ -1720,6 +1728,19 @@ h3 {
 
   .workflow-gallery {
     grid-template-columns: 1fr;
+  }
+
+  .workflow-figure img {
+    height: 240px;
+  }
+
+  .workflow-figure-association img {
+    height: 320px;
+  }
+
+  .benchmark-figure img {
+    height: 300px;
+    padding: 12px 18px;
   }
 
   .workflow-step {
