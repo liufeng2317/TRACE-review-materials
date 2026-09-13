@@ -37,6 +37,18 @@ The released Sanriku products include the validated relocation catalog with `25,
 
 Materials are available under [`release/scientific_cases/sanriku/`](release/scientific_cases/sanriku/).
 
+## Principal Software
+
+| Software or algorithm | Main role | Released case use |
+| --- | --- | --- |
+| ObsPy | Waveform, station, time, and catalog processing | Ridgecrest and Sanriku |
+| PhaseNet | Deep-learning P- and S-phase picking | Ridgecrest |
+| GaMMA | Phase association and initial event location | Ridgecrest |
+| HypoDD | Double-difference earthquake relocation | Ridgecrest and Sanriku |
+| SeismoStats | Catalog statistics, completeness, and magnitude-frequency analysis | Ridgecrest and Sanriku |
+
+The broader model inventory includes PhaseNet, PhaseNetLight, EQTransformer, OBSTransformer, GPD, BasicPhaseAE, DPPicker, Skynet, SeisT, SeisMoLLM, MagNet, DiTingMotion, BAZ-Network, DeepDenoiser, and SeisDAE. Their task categories, registered variants, public references, and implementation areas are listed in the [software and algorithm manifest](docs/software_and_algorithm_manifest.md).
+
 ## Benchmark
 
 The benchmark evaluates whether an analysis agent can complete structured scientific tasks and produce reviewable outputs. It includes Level 1 and Level 2 task definitions, evaluation summaries, reviewable run records, and public benchmark utilities.
@@ -54,7 +66,7 @@ This repository focuses on the materials needed to inspect the experimental desi
 - machine-readable result tables and summary files;
 - figures and other reviewable products supporting the released workflows.
 
-The repository uses public placeholders for local data and software locations. Large source datasets and external software environments are referenced separately.
+The repository uses public placeholders for local data and software locations. Large source datasets and external software environments are referenced separately. A full summary of the scientific software and algorithmic components is provided in the [software and algorithm manifest](docs/software_and_algorithm_manifest.md).
 
 ## TRACE Framework Availability
 
