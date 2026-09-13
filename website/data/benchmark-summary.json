@@ -1,0 +1,93 @@
+{
+  "summary": {
+    "total_tasks": 104,
+    "level_1_tasks": 74,
+    "level_2_tasks": 30,
+    "evaluation_records": 312,
+    "passed_runs": 310,
+    "partial_runs": 2,
+    "mean_task_score": 4.8216,
+    "mean_manual_reference_score": 4.9289,
+    "expert_ratings": 5,
+    "rating_scale": "1-5"
+  },
+  "levels": {
+    "L1": {
+      "tasks": 74,
+      "pass": 72,
+      "partial": 2,
+      "mean_score": 4.8318,
+      "mean_success_rate": 0.9946,
+      "description": "Atomic scientific operations, from data access and signal processing to statistics and visualization."
+    },
+    "L2": {
+      "tasks": 30,
+      "pass": 29,
+      "partial": 1,
+      "mean_score": 4.7665,
+      "mean_success_rate": 0.9933,
+      "description": "Longer workflows that chain steps, branch on evidence, scale across batches, or explore constrained alternatives."
+    }
+  },
+  "models": [
+    {
+      "name": "GPT-5.1",
+      "runs": 104,
+      "success_rate": 1.0,
+      "mean_score": 4.8475,
+      "debug_rounds": 1.6442
+    },
+    {
+      "name": "Gemini 3 Flash",
+      "runs": 104,
+      "success_rate": 1.0,
+      "mean_score": 4.8239,
+      "debug_rounds": 2.2596
+    },
+    {
+      "name": "Claude Sonnet 4",
+      "runs": 104,
+      "success_rate": 0.9808,
+      "mean_score": 4.7933,
+      "debug_rounds": 2.2788
+    }
+  ],
+  "skills": [
+    {
+      "name": "Signal processing",
+      "tasks": 22
+    },
+    {
+      "name": "Statistics",
+      "tasks": 18
+    },
+    {
+      "name": "Plotting",
+      "tasks": 15
+    },
+    {
+      "name": "Formatting",
+      "tasks": 12
+    },
+    {
+      "name": "Chaining",
+      "tasks": 10
+    },
+    {
+      "name": "Batching",
+      "tasks": 10
+    },
+    {
+      "name": "Retrieval",
+      "tasks": 7
+    },
+    {
+      "name": "Branching",
+      "tasks": 6
+    },
+    {
+      "name": "Constrained exploration",
+      "tasks": 4
+    }
+  ]
+}

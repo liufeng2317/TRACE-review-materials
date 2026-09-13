@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TRACE review materials: an accessible guide to scientific agents, benchmark evidence, and earthquake case studies.">
+    <title>TRACE | Scientific agents for seismology</title>
+    <link rel="icon" href="assets/trace-logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell nav-wrap">
+        <a class="brand" href="#top" aria-label="TRACE home">
+          <img src="assets/trace-logo.svg" alt="TRACE">
+        </a>
+        <nav class="main-nav" aria-label="Primary navigation">
+          <a href="#agent">What is an agent?</a>
+          <a href="#benchmark">Benchmark</a>
+          <a href="#cases">Case studies</a>
+          <a href="#evidence">Evidence</a>
+        </nav>
+        <a class="nav-link" href="https://github.com/liufeng2317/TRACE-review-materials" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">-&gt;</span></a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-image" role="img" aria-label="Ridgecrest earthquake sequence maps showing the evolution of seismicity"></div>
+        <div class="hero-shade"></div>
+        <div class="shell hero-content">
+          <div class="hero-copy">
+            <p class="eyebrow">TRACE review materials</p>
+            <h1>From scientific questions to inspectable evidence.</h1>
+            <p class="hero-lede">TRACE is a multi-agent workflow for seismic research. It turns a scientific request into a sequence of plans, tools, executable analysis, checks, and evidence-linked results.</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#agent">See how it works <span aria-hidden="true">v</span></a>
+              <a class="button button-quiet" href="#cases">Explore the cases</a>
+            </div>
+          </div>
+          <div class="hero-note">
+            <span class="note-kicker">The central idea</span>
+            <p>An agent is not just a chatbot that writes code. It is a controlled loop that plans, executes, inspects, revises, and records scientific work.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="signal-band">
+        <div class="shell signal-grid">
+          <div class="signal-item">
+            <strong>104</strong>
+            <span>benchmark tasks</span>
+          </div>
+          <div class="signal-item">
+            <strong>3</strong>
+            <span>evaluated models</span>
+          </div>
+          <div class="signal-item">
+            <strong>2</strong>
+            <span>earthquake case studies</span>
+          </div>
+          <div class="signal-item">
+            <strong>25,646</strong>
+            <span>validated Sanriku events</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="agent">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">01 / The idea</p>
+            <h2>What does "agent" mean here?</h2>
+            <p>A scientific agent is a system that can move through a research workflow. The language model supplies reasoning and code generation, while the surrounding workflow supplies tools, files, validation rules, and a persistent record of what happened.</p>
+          </div>
+
+          <div class="agent-explainer">
+            <div class="plain-definition">
+              <span class="label">In plain language</span>
+              <p>You give TRACE a question such as "How did seismicity evolve after the Ridgecrest mainshocks?" TRACE breaks that question into workable stages, writes the analysis needed for each stage, runs it, checks the outputs, and keeps the evidence that supports the final interpretation.</p>
+            </div>
+            <div class="technical-definition">
+              <span class="label">For a reviewer</span>
+              <p>The public release exposes the case entry scripts, generated analysis code, parameters, outputs, reports, state records, and execution trajectories. Each layer can be inspected independently and traced back to the scientific question.</p>
+            </div>
+          </div>
+
+          <div class="workflow" aria-label="TRACE workflow">
+            <div class="workflow-step">
+              <span class="step-number">01</span>
+              <h3>Question</h3>
+              <p>Define the scientific objective and the evidence needed to answer it.</p>
+            </div>
+            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+            <div class="workflow-step">
+              <span class="step-number">02</span>
+              <h3>Plan</h3>
+              <p>Turn the objective into data, analysis, validation, and reporting stages.</p>
+            </div>
+            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+            <div class="workflow-step">
+              <span class="step-number">03</span>
+              <h3>Build</h3>
+              <p>Select tools and generate the code that performs the requested operation.</p>
+            </div>
+            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+            <div class="workflow-step">
+              <span class="step-number">04</span>
+              <h3>Check</h3>
+              <p>Inspect tables, figures, diagnostics, and intermediate assumptions.</p>
+            </div>
+            <div class="workflow-arrow" aria-hidden="true">-&gt;</div>
+            <div class="workflow-step">
+              <span class="step-number">05</span>
+              <h3>Synthesize</h3>
+              <p>Connect the evidence into a bounded, reviewable scientific result.</p>
+            </div>
+          </div>
+
+          <details class="technical-details">
+            <summary>What is preserved in the public record?</summary>
+            <div class="details-grid">
+              <span>Experiment plans</span>
+              <span>Generated scripts</span>
+              <span>Parameters and configs</span>
+              <span>Reviewable outputs</span>
+              <span>Reports and summaries</span>
+              <span>Execution trajectories</span>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section section-tint" id="benchmark">
+        <div class="shell">
+          <div class="section-heading split-heading">
+            <div>
+              <p class="eyebrow">02 / Benchmark</p>
+              <h2>Does the agent complete scientific work?</h2>
+            </div>
+            <p>The benchmark separates atomic operations from longer workflows. Level 1 tests individual scientific capabilities. Level 2 tests chaining, branching, batching, and constrained exploration.</p>
+          </div>
+
+          <div class="benchmark-summary">
+            <div class="benchmark-lead">
+              <span class="label">Overall result</span>
+              <div class="score-line"><strong id="mean-score">4.82</strong><span>/ 5</span></div>
+              <p>Mean task score across 104 tasks and three evaluated models. Manual-reference visualization ratings are the mean of five expert ratings on a 1-5 scale.</p>
+              <div class="score-rail"><span style="width: 96.4%"></span></div>
+              <div class="mini-stat-row">
+                <span><strong id="passed-runs">310</strong> passing runs</span>
+                <span><strong id="manual-score">4.93</strong> expert reference</span>
+              </div>
+            </div>
+            <div class="level-panel">
+              <div class="segmented" role="tablist" aria-label="Benchmark level">
+                <button class="segment is-active" type="button" data-level="L1" role="tab" aria-selected="true">Level 1</button>
+                <button class="segment" type="button" data-level="L2" role="tab" aria-selected="false">Level 2</button>
+              </div>
+              <div class="level-content">
+                <div class="level-title-row">
+                  <div>
+                    <span class="label">Selected level</span>
+                    <h3 id="level-name">Level 1</h3>
+                  </div>
+                  <strong id="level-score">4.83</strong>
+                </div>
+                <p id="level-description">Atomic scientific operations, from data access and signal processing to statistics and visualization.</p>
+                <div class="level-facts">
+                  <span><strong id="level-tasks">74</strong> tasks</span>
+                  <span><strong id="level-pass">72</strong> complete</span>
+                  <span><strong id="level-success">99.5%</strong> run success</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="benchmark-columns">
+            <div class="model-table-wrap">
+              <div class="subheading">
+                <span class="label">Model comparison</span>
+                <h3>Three models, one task set</h3>
+              </div>
+              <div class="table-scroll">
+                <table class="model-table">
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Mean score</th>
+                      <th>Run success</th>
+                      <th>Debug rounds</th>
+                    </tr>
+                  </thead>
+                  <tbody id="model-rows"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="skills-panel">
+              <div class="subheading">
+                <span class="label">Task composition</span>
+                <h3>What the benchmark asks for</h3>
+              </div>
+              <div class="skill-bars" id="skill-bars"></div>
+            </div>
+          </div>
+
+          <div class="section-link-row">
+            <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">Inspect benchmark definitions and records <span aria-hidden="true">-&gt;</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="cases">
+        <div class="shell">
+          <div class="section-heading split-heading">
+            <div>
+              <p class="eyebrow">03 / Scientific cases</p>
+              <h2>What do the outputs mean?</h2>
+            </div>
+            <p>The case studies show the workflow operating on real seismological questions. The point is not only to produce a figure, but to connect data preparation, computational choices, diagnostics, and interpretation.</p>
+          </div>
+
+          <div class="case-grid">
+            <article class="case-card">
+              <div class="case-media">
+                <img src="assets/ridgecrest-sequence.png" alt="Ridgecrest seismicity maps across time">
+                <span class="case-tag">Ridgecrest / 2019</span>
+              </div>
+              <div class="case-body">
+                <h3>How did the sequence reorganize between Mw 6.4 and Mw 7.1?</h3>
+                <p>TRACE constructs a waveform-to-catalog workflow, then uses the relocated catalog to examine branching, fault alignment, activation, migration, and the transition between the two mainshocks.</p>
+                <div class="case-result">
+                  <span class="label">Released result</span>
+                  <strong>84,474-event relocated catalog</strong>
+                  <span>with time-windowed spatial evidence and report-linked figures</span>
+                </div>
+                <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/ridgecrest" target="_blank" rel="noreferrer">View Ridgecrest materials <span aria-hidden="true">-&gt;</span></a>
+              </div>
+            </article>
+
+            <article class="case-card">
+              <div class="case-media">
+                <img src="assets/sanriku-regional-map.png" alt="Regional Sanriku seismicity map with stations and major earthquakes">
+                <span class="case-tag">Sanriku / 2025-2026</span>
+              </div>
+              <div class="case-body">
+                <h3>How can a regional catalog support sequence-scale interpretation?</h3>
+                <p>TRACE prepares, relocates, validates, and analyzes the Sanriku catalog, then follows event-centered activation, event relationships, spatial-depth structure, mechanisms, and migration-related patterns.</p>
+                <div class="case-result">
+                  <span class="label">Released result</span>
+                  <strong>25,646-event validated catalog</strong>
+                  <span>with manuscript-aligned repeating-earthquake products</span>
+                </div>
+                <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/sanriku" target="_blank" rel="noreferrer">View Sanriku materials <span aria-hidden="true">-&gt;</span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="case-detail-grid">
+            <div class="case-detail">
+              <img src="assets/phasenet-picking.png" alt="PhaseNet waveform and phase probability output">
+              <div>
+                <span class="label">From waveform to catalog</span>
+                <h3>Specialized tools remain visible inside the agent workflow.</h3>
+                <p>Phase picking, association, relocation, correlation, and statistical analysis are not hidden behind a single score. Each stage leaves an inspectable computational product.</p>
+              </div>
+            </div>
+            <div class="case-detail">
+              <img src="assets/sanriku-migration.png" alt="Sanriku activated-area comparison before and after a major earthquake">
+              <div>
+                <span class="label">From catalog to evidence</span>
+                <h3>Scientific meaning comes from linked comparisons.</h3>
+                <p>Spatial expansion, event-centered activation, and migration-like patterns are interpreted alongside controls, scope definitions, and the limits of the available observations.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-dark" id="meaning">
+        <div class="shell">
+          <div class="section-heading">
+            <p class="eyebrow">04 / Why it matters</p>
+            <h2>The result is a chain of evidence, not a single answer.</h2>
+            <p>TRACE is useful when the scientific task is too open-ended for a single fixed script, but the conclusion still needs to be inspected like ordinary research.</p>
+          </div>
+          <div class="meaning-grid">
+            <div class="meaning-item">
+              <span class="meaning-index">A</span>
+              <h3>For the workflow</h3>
+              <p>The benchmark asks whether an agent can carry out concrete scientific operations and longer chains of operations with recoverable records.</p>
+            </div>
+            <div class="meaning-item">
+              <span class="meaning-index">B</span>
+              <h3>For the evidence</h3>
+              <p>The case records make the path from request to result visible: plans, code, parameters, figures, reports, and trajectories stay connected.</p>
+            </div>
+            <div class="meaning-item">
+              <span class="meaning-index">C</span>
+              <h3>For seismology</h3>
+              <p>The outputs turn large earthquake catalogs into structured evidence about sequence organization, activation, relocation, and repeating events.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="evidence">
+        <div class="shell">
+          <div class="section-heading split-heading">
+            <div>
+              <p class="eyebrow">05 / Evidence trail</p>
+              <h2>Start with the question. End at the file.</h2>
+            </div>
+            <p>The website is the explanation layer. The public release remains the source of truth for scripts, parameters, outputs, reports, and execution records.</p>
+          </div>
+          <div class="evidence-grid">
+            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/benchmark" target="_blank" rel="noreferrer">
+              <span class="evidence-kicker">Benchmark</span>
+              <strong>Task definitions and evaluation summaries</strong>
+              <span>Level 1, Level 2, model results, and expert-reference scores.</span>
+              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+            </a>
+            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases" target="_blank" rel="noreferrer">
+              <span class="evidence-kicker">Cases</span>
+              <strong>Ridgecrest and Sanriku workflows</strong>
+              <span>Entry scripts, generated code, plans, trajectories, reports, and outputs.</span>
+              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+            </a>
+            <a class="evidence-link" href="https://github.com/liufeng2317/TRACE-review-materials/blob/main/docs/software_and_algorithm_manifest.md" target="_blank" rel="noreferrer">
+              <span class="evidence-kicker">Methods</span>
+              <strong>Software and model inventory</strong>
+              <span>Domain tools and the registered seismological AI model families.</span>
+              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+            </a>
+            <a class="evidence-link" href="https://github.com/OpenEarthLab/EarthLink" target="_blank" rel="noreferrer">
+              <span class="evidence-kicker">Framework context</span>
+              <strong>EarthLink project</strong>
+              <span>Related open framework context while the complete TRACE implementation remains under review.</span>
+              <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-wrap">
+        <div>
+          <img src="assets/trace-logo.svg" alt="TRACE" class="footer-logo">
+          <p>Review materials for inspectable scientific agents in seismology.</p>
+        </div>
+        <div class="footer-meta">
+          <span>Case-specific release</span>
+          <span>Peer-review materials</span>
+          <a href="https://github.com/liufeng2317/TRACE-review-materials" target="_blank" rel="noreferrer">Repository -&gt;</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
