@@ -6,7 +6,7 @@ This directory contains the curated materials for public release and review.
 release/
 ├── README.md
 ├── benchmark/
-└── cases/
+└── scientific_cases/
     ├── ridgecrest/
     └── sanriku/
 ```
@@ -15,8 +15,8 @@ release/
 
 - `benchmark/`: benchmark task definitions, evaluation summaries, the public
   task runner, and redacted run records.
-- `cases/ridgecrest/`: curated materials for the 2019 Ridgecrest case.
-- `cases/sanriku/`: curated materials for the Sanriku catalog construction and
+- `scientific_cases/ridgecrest/`: curated materials for the 2019 Ridgecrest case.
+- `scientific_cases/sanriku/`: curated materials for the Sanriku catalog construction and
   catalog-analysis case.
 
 The release is organized as benchmark definitions and case-based scientific

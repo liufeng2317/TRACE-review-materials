@@ -20,7 +20,7 @@ The Ridgecrest case demonstrates an end-to-end earthquake-catalog workflow for t
 
 The case is designed to show how the workflow constructs a relocated earthquake catalog and then uses that catalog to investigate the spatial and temporal organization of the sequence.
 
-Materials are available under [`release/cases/ridgecrest/`](release/cases/ridgecrest/).
+Materials are available under [`release/scientific_cases/ridgecrest/`](release/scientific_cases/ridgecrest/).
 
 ### Sanriku earthquake sequence
 
@@ -35,7 +35,7 @@ The catalog-analysis materials then examine sequence response, earthquake behavi
 
 The released Sanriku products include the validated relocation catalog with `25,646` events and the manuscript-aligned repeating-earthquake result set.
 
-Materials are available under [`release/cases/sanriku/`](release/cases/sanriku/).
+Materials are available under [`release/scientific_cases/sanriku/`](release/scientific_cases/sanriku/).
 
 ## Benchmark
 
