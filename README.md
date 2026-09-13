@@ -80,6 +80,10 @@ The public scripts document the analysis steps and parameters used for the relea
 
 The released result tables and summary files define the manuscript-facing outputs. Supporting processing materials are included for workflow inspection and validation.
 
+## Website
+
+The interactive introduction to TRACE is published from the `dist/` directory through GitHub Pages. The site presents the TRACE framework, benchmark results, and Ridgecrest and Sanriku applications. Updates to `dist/` on the `main` branch are deployed automatically by the [GitHub Pages workflow](.github/workflows/pages.yml).
+
 ## Citation and License
 
 Please cite the associated TRACE manuscript when using these materials. A permanent citation and repository version will be added with the formal publication release.
