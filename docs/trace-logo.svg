@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" role="img" aria-labelledby="title desc">
+  <title id="title">TRACE logo</title>
+  <desc id="desc">A seismic waveform enclosed by a connected scientific network, followed by the word TRACE.</desc>
+
+  <g transform="translate(24 10) scale(.49)">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M512 92 A300 300 0 0 1 770 240" stroke="#102433" stroke-width="30"/>
+      <path d="M770 240 A300 300 0 0 1 815 510" stroke="#10AEB0" stroke-width="30"/>
+      <path d="M815 510 A300 300 0 0 1 690 700" stroke="#102433" stroke-width="30"/>
+      <path d="M690 700 A300 300 0 0 1 205 510" stroke="#10AEB0" stroke-width="30"/>
+      <path d="M205 510 A300 300 0 0 1 512 92" stroke="#102433" stroke-width="30"/>
+
+      <path d="M190 390 H300
+               C330 390 340 380 350 350
+               L382 275
+               L430 475
+               L492 155
+               L555 625
+               L620 300
+               L670 475
+               L710 350
+               C720 380 735 390 770 390
+               H835" stroke="#102433" stroke-width="34"/>
+    </g>
+
+    <g stroke="#102433" stroke-width="18">
+      <circle cx="512" cy="92" r="48" fill="#10AEB0"/>
+      <circle cx="770" cy="240" r="38" fill="#FF654F"/>
+      <circle cx="815" cy="510" r="48" fill="#10AEB0"/>
+      <circle cx="690" cy="700" r="38" fill="#FF654F"/>
+      <circle cx="205" cy="510" r="38" fill="#FF654F"/>
+    </g>
+  </g>
+
+  <text x="610" y="330" text-anchor="start"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="205" font-weight="700" letter-spacing="18"
+        fill="#102433">TRACE</text>
+</svg>
