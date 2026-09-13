@@ -49,6 +49,10 @@ document.querySelectorAll('a[href^="#ridgecrest-"], a[href^="#sanriku-"], a[href
 const navigation = document.querySelector(".main-nav");
 const navigationTabs = [...navigation.querySelectorAll(".nav-tab")];
 navigationTabs.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    setActiveTab(button.dataset.tabTarget);
+  });
+
   button.addEventListener("keydown", (event) => {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
