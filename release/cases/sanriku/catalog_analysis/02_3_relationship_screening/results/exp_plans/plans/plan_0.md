@@ -1,0 +1,119 @@
+# Goal
+Assess whether the M1, M2, and M3 Aomori earthquake clusters show meaningful catalog-level relationships worth deeper physical follow-up by comparing all three pairwise relationships symmetrically, separating raw catalog evidence from control-corrected evidence and distance-aware plausibility, and ranking relationship hypotheses for future investigation.
+
+## Planning Assumptions
+- Use observation data only: the relocated catalog in `catalog/Snet_catalog_relocate_250930_260501.csv` is the primary event dataset; `catalog/main_earthquake.csv` defines the three anchor events; `source_mechanism/Snet_mecha.csv` and `stations/station.sta` are contextual only.
+- The catalog contains core event fields only (time, latitude, longitude, depth, magnitude), so all relationship tests must be catalog-level and geometric/statistical; no physical triggering inference is allowed.
+- Event times must be parsed to a consistent timezone-naive or explicit UTC datetime representation before any relative-time calculations.
+- Distances should be computed geodetically in map view for epicentral separation; depth difference and full hypocentral distance should be retained separately to avoid collapsing near-surface and depth-offset cases.
+- All pairwise analyses must begin with identical metric definitions for M1-M2, M1-M3, and M2-M3 before any focused interpretation.
+- Ambiguity-preserving association is required: events may remain uniquely associated, overlapping/shared, corridor-like, endpoint-centered, outer-cluster, regional/background, or unresolved.
+- Controls must include at least one temporal null and one geometric null: random/shifted windows for time-concentration checks and pseudo-corridor or azimuth-rotated corridor tests for corridor enrichment checks.
+- Success evidence is not a single metric; required outputs are non-empty pairwise metric tables, control-comparison tables, hypothesis evidence matrices, and compact figures that directly support pair-hypothesis evaluation.
+
+## Analysis Plan
+### Task 1: Build the relationship-analysis dataset and symmetric pairwise metrics
+- Task description
+  - In one primary script, ingest the relocated catalog and mainshock table, standardize fields, derive event-relative geometry/time metrics, classify events with ambiguity-aware labels, and compute symmetric pairwise relationship diagnostics for M1-M2, M1-M3, and M2-M3.
+- Required data sources
+  - `catalog/Snet_catalog_relocate_250930_260501.csv`
+  - `catalog/main_earthquake.csv`
+  - Optional contextual overlays from `source_mechanism/Snet_mecha.csv` and `stations/station.sta` only if they help annotate maps or define follow-up targets; they should not drive the main relationship ranking.
+- Parameter selection strategy
+  - Use the full catalog span as the base analysis window to avoid preselecting one sequence narrative.
+  - Define magnitude subsets at M3+, M4+, M5+, and M6+ exactly as requested; report counts for each pair and subset.
+  - For each event, compute:
+    - relative time to each mainshock
+    - epicentral distance to each mainshock
+    - depth difference to each mainshock
+    - hypocentral distance to each mainshock
+    - nearest-mainshock identity and distance margin to second-nearest mainshock
+    - pairwise corridor coordinates for each pair: along-corridor projection, signed cross-corridor distance, and normalized endpoint distance
+    - event azimuth from each mainshock and pair-axis alignment
+  - For each mainshock pair, derive:
+    - pair epicentral separation, depth offset, origin-time separation, and azimuth
+    - corridor width candidates from data-adaptive scales tied to pair separation and local nearest-event spacing; retain at least one narrow and one broader corridor class to test sensitivity without turning the task into a full sensitivity study
+    - endpoint neighborhoods around each mainshock based on near-field distance bands and an outer-band ring for contextual comparison
+  - Event association classes should be assigned by explicit decision rules:
+    - uniquely associated with one cluster when nearest-mainshock distance is clearly smaller and event lies within that cluster’s neighborhood
+    - shared/overlapping when distances to two mainshocks are similar or neighborhoods overlap
+    - corridor-like when inside a pair corridor but not strongly endpoint-centered
+    - endpoint-centered when corridor inclusion occurs close to one mainshock only
+    - outer-cluster when associated by timing but mainly outside near-field neighborhoods
+    - regional/background when distant from all mainshocks and corridor tests
+    - unresolved when metrics conflict
+  - Compute pairwise summary metrics separately for raw, corrected, and plausibility layers:
+    - Raw: post/pre counts and rates around each endpoint and around both endpoints jointly; intervening-event counts; M4+/M5+/M6+ chain counts between endpoints; corridor fractions; cross-cluster nearest-mainshock transitions; time-lagged activity bursts
+    - Corrected: same metrics normalized against background temporal rate, random/shifted windows, and pseudo-corridor occupancy expectations
+    - Distance-aware plausibility: whether observed activity occurs predominantly in near-field overlap, intermediate corridor, or only broad regional scales relative to the pair separation and depth offset
+- Constraints
+  - Do not force assignment of every event to one mainshock sequence.
+  - Keep pairwise metrics comparable across all three pairs with the same formulas and classification logic.
+  - Separate map-view distance, depth offset, and time separation in all tables and interpretation-ready outputs.
+  - If a metric depends strongly on a chosen window, retain the metric but mark it as window-sensitive and avoid elevating it in final ranking without control support.
+- Key outputs
+  - `pair_geometry_summary.csv`: one row per pair with separation, depth offset, time offset, azimuth, corridor definitions
+  - `event_relationship_features.csv`: one row per catalog event with all derived distances, times, corridor coordinates, nearest-mainshock metrics, and ambiguity-aware labels
+  - `pairwise_raw_metrics.csv`: raw pairwise evidence by pair and magnitude threshold
+  - `pairwise_control_corrected_metrics.csv`: control-normalized metrics and enrichment factors
+  - `event_chain_summary.csv`: M4+/M5+/M6+ intervening-event and chain descriptors
+  - Compact diagnostic figures:
+    - pairwise relationship overview map with three mainshocks, event classes, and pair corridors
+    - three pairwise time-distance/projection panels showing event time relative to both endpoints versus along-corridor position or distance to endpoints
+    - M4+/M5+/M6+ intervening-event chain comparison figure across pairs
+    - ambiguity/association map distinguishing unique, shared, corridor-like, endpoint-centered, and regional/background events
+
+### Task 2: Control tests, hypothesis scoring, and follow-up prioritization
+- Task description
+  - Using the outputs of Task 1, compute null/control comparisons, assemble pair-hypothesis evidence scores, identify strongest and weakest relationship signals, and generate a concise scientific summary and prioritization framework.
+- Required data sources
+  - Outputs from Task 1 as primary inputs
+  - `source_mechanism/Snet_mecha.csv` for optional contextual tagging of follow-up targets where mechanism consistency/inconsistency may matter
+  - `stations/station.sta` for optional follow-up comments on whether some apparent gaps could reflect network geometry, without using station coverage to redefine the catalog metrics
+- Parameter selection strategy
+  - Evaluate all candidate hypotheses, plus an additional “common regional rate pulse without localized linkage” hypothesis if control-corrected evidence supports broad activation but not corridor/overlap structure.
+  - For each pair-hypothesis combination, combine three evidence layers:
+    - raw catalog evidence
+    - control-corrected evidence
+    - distance-aware plausibility
+  - Score evidence level as low, possible, moderate, or strong using explicit rule-based synthesis:
+    - low when most metrics are absent, contradictory, or explained by controls/background
+    - possible when some raw support exists but corrected or distance-aware support is weak/mixed
+    - moderate when raw and corrected support align and geometric plausibility is reasonable
+    - strong only when multiple independent metrics align and controls do not explain the pattern
+  - Evaluate the following hypotheses for each pair:
+    - independent local clusters
+    - overlapping activation zones
+    - delayed activation between clusters
+    - linked local fault-system activation
+    - corridor-like migration or expansion
+    - broader regional activation
+    - compound/swarm-like multi-event clustering
+    - apparent relationship caused by burst-like background seismicity or window choices
+    - optional additional hypothesis: common regional activation pulse without pair-specific linkage
+  - Prioritize follow-up need separately from current support:
+    - high when support is moderate/strong and additional external data could discriminate physical explanations
+    - medium when support is possible/moderate but ambiguity is high
+    - low when evidence is weak or mostly control-explained
+  - Use contextual mechanism metadata only as a follow-up discriminator:
+    - if shared or corridor-like events have mechanism coverage, summarize whether mechanisms appear broadly compatible, mixed, or too sparse to judge
+    - do not upgrade pair support solely from sparse mechanism overlap
+- Constraints
+  - Do not convert catalog-level support into causal claims.
+  - Keep negative and unresolved findings explicit; a pair can show raw linkage but low corrected support.
+  - Final pair ranking must be based on corrected and distance-aware evidence, not short time separation alone.
+  - The final report must clearly separate pairwise results from broader three-cluster regional interpretation.
+- Key outputs
+  - `pair_hypothesis_evidence_matrix.csv`: rows as pair-hypothesis combinations, columns for raw support, corrected support, distance plausibility, evidence level, and follow-up priority
+  - `cluster_level_synthesis.csv`: comparison of whether the three clusters are best described as independent, pairwise linked, regionally activated, swarm-like compound activity, or mostly window/background artifact
+  - `followup_targets.csv`: prioritized hypotheses with recommended external validation data types
+  - Compact diagnostic figures:
+    - corridor versus off-corridor enrichment comparison for each pair with control expectations
+    - relationship hypothesis evidence matrix heatmap
+    - pairwise follow-up priority ranking chart
+  - Concise scientific report content:
+    - pairwise evidence summary for M1-M2, M1-M3, and M2-M3
+    - strongest supported relationship signals
+    - weak, negative, or unresolved evidence
+    - explicit separation of raw, control-corrected, and distance-aware interpretations
+    - recommended next analyses using waveform similarity, refined relocation, focal mechanisms, geodesy, ocean-bottom pressure, and stress modeling only where justified by the catalog evidence

@@ -1,0 +1,14 @@
+{
+  "catalog_rows": 25646,
+  "mainshock_rows": 3,
+  "matched_rows": 3,
+  "sequence_rows": 1606311,
+  "summary_rows": 900,
+  "window_rows": 49727,
+  "radial_rows": 10980,
+  "depth_rows": 6300,
+  "mag_rows": 21744,
+  "mechanism_rows": 354,
+  "station_rows": 371,
+  "robustness_rows": 0
+}

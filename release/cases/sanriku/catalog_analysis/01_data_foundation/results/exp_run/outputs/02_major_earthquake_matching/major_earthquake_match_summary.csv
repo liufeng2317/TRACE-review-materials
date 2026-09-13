@@ -1,0 +1,9 @@
+metric,value
+major_event_count,3.0
+matched_count,3.0
+unmatched_count,0.0
+median_abs_time_diff_sec,0.0
+median_distance_km,0.1694794742707329
+median_depth_diff_km,0.0600000000000005
+median_mag_diff,0.0
+confidence_high,3.0

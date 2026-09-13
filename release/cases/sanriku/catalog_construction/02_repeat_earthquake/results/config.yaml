@@ -1,0 +1,289 @@
+# TRACE Configuration File
+# This YAML overrides values from `seismoagent/config/*.py`.
+# Sensitive credentials are best kept in `.env` when possible.
+
+# =============================================================================
+# Model Configuration
+# =============================================================================
+LLM_BASE_URL: "https://api.openai.com/v1"
+# LLM_BASE_URL: "http://34.13.73.248:3888/v1"
+# LLM_BASE_URL: "http://10.102.205.38:20010/v1"
+
+DEFAULT_MODEL: "gpt-5.4"
+# DEFAULT_MODEL: "o4-mini"
+# DEFAULT_MODEL: "A1-preview"
+DEFAULT_MODEL_PROVIDER: "openai"
+USE_RESPONSES_API: false
+
+LLM_PROXY: null
+# LLM request waiting timeouts, in seconds.
+# LLM_REQUEST_TIMEOUT is the hard maximum wait for one model response.
+# LLM_HTTP_TIMEOUT is passed to the underlying OpenAI/httpx client.
+LLM_REQUEST_TIMEOUT: 600
+LLM_HTTP_TIMEOUT: 600
+EMBEDDING_MODEL: "text-embedding-v4"
+
+SCIENTIFIC_SYNTHESIS_IMAGE_SETTINGS:
+  enabled: false
+  outputs:
+    figures_dir: "06_mechanism_figures"
+    image: "mechanism_figure.png"
+    schema_version: 1
+    type: "mechanism_figures"
+
+IMAGE_GENERATION_TOOL_SETTINGS:
+  model: "gpt-image-2"
+  size: "auto"
+  quality: "auto"
+  output_format: "png"
+
+# =============================================================================
+# Sensitive Runtime Credentials
+# =============================================================================
+# Prefer `.env` for secrets. These YAML entries are optional overrides when you
+# need a per-project config file.
+LLM_API_KEY: null
+IMAGE_GENERATION_API_KEY: null
+EMBEDDING_API_KEY: null
+TAVILY_API_KEY: null
+
+ENABLE_PROJECT_PROXY: true
+CODE_RUN_INHERIT_PROXY: false
+HTTP_PROXY: null
+HTTPS_PROXY: null
+PROXY_KEY: null
+PROXY_URL: null
+PROXY_USERNAME: null
+
+LANGSMITH_API_KEY: null
+LANGSMITH_PROJECT: null
+LANGSMITH_ENABLED: false
+
+# =============================================================================
+# Runtime / Local Execution
+# =============================================================================
+CONTAINER_RUNTIME: "local"
+DOCKER_IMAGE: "trace:v1"
+CONTAINER_PYTHON_BIN: "python"
+CONTAINER_SHELL: "bash"
+CONTAINER_USE_UID_GID: true
+CONTAINER_DISABLE_NETWORK: true
+CONTAINER_EXTRA_RUN_ARGS: []
+
+# Used only when CONTAINER_RUNTIME=apptainer.
+APPTAINER_SIF_PATH: "<APPTAINER_IMAGE>"
+
+# local running
+# Advanced runtime/debug defaults live in `seismoagent/config/runtime.py`.
+# Add them here only when this project needs to override a default.
+# For faster local runs, CODE_RUN_PYTHON can point directly to the seismoagent
+# environment python; otherwise CODE_RUN_CONDA_ENV uses `conda run`.
+CODE_RUN_PYTHON: null
+CODE_RUN_CONDA_ENV: "seismoagent"
+CODE_RUN_HEARTBEAT_INTERVAL: 60
+
+# =============================================================================
+# Data / Mount Configuration
+# =============================================================================
+DATA_CONTAINER_PATH_MAP: {}
+ADDITIONAL_CONTAINER_DIR: []
+
+# =============================================================================
+# Environment / Plotting
+# =============================================================================
+CONTAINER_ENV_VARS:
+  OMP_NUM_THREADS: 1
+  MKL_NUM_THREADS: 1
+  OPENBLAS_NUM_THREADS: 1
+  NUMEXPR_NUM_THREADS: 1
+  HDF5_USE_FILE_LOCKING: "FALSE"
+  DASK_NUM_WORKERS: 1
+  PYTHONDONTWRITEBYTECODE: "1"
+
+MATPLOTLIBRC: |
+  font.family : sans-serif
+  font.sans-serif : Noto Serif CJK SC, DejaVu Serif
+  axes.unicode_minus : False
+
+# =============================================================================
+# Agent Settings
+# =============================================================================
+INPUT_GUARD_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+
+REQUEST_REWRITE_EXTRACT_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+
+REQUEST_REWRITE_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+
+DATA_DESC_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+  max_tool_iterations: 60
+  max_agent_iterations: 65
+
+PLAN_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+
+PLAN_MERGE_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 60
+  max_agent_iterations: 65
+
+WORKFLOW_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 60
+  max_agent_iterations: 40
+
+CODING_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 60
+  max_agent_iterations: 40
+
+RESULT_CHECK_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 60
+  max_agent_iterations: 65
+
+TASK_ANALYSIS_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+  max_tool_iterations: 30
+  max_agent_iterations: 35
+
+EVALUATE_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "low"
+  verbose: true
+  max_tool_iterations: 30
+  max_agent_iterations: 35
+
+REPORT_SYNTHESIS_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 40
+  max_agent_iterations: 45
+
+REPORT_SYNTHESIS_LATEX_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "medium"
+  verbose: true
+  max_tool_iterations: 40
+  max_agent_iterations: 45
+
+SCIENTIFIC_SYNTHESIS_AGENT_SETTINGS:
+  model_settings:
+    reasoning_effort: "high"
+  verbose: true
+  max_tool_iterations: 40
+  max_agent_iterations: 45
+
+SCIENTIFIC_SYNTHESIS_RUNTIME_SETTINGS:
+  stage_00_request_frame_max_items: 3
+  stage_02_run_summary_evidence_min_items: 3
+  stage_02_run_summary_evidence_max_items: 6
+  stage_03_core_observations_min_items: 5
+  stage_03_core_observations_max_items: 8
+  stage_03_conflicts_or_limits_max_items: 5
+  stage_04_story_candidates_max_items: 4
+  stage_05_story_chains_max_items: 1
+
+# =============================================================================
+# Limits
+# =============================================================================
+CONTEXT_MANAGE_TRIGGER_TOKENS: 150000
+
+CODE_TEMPLATE_MAX_LINES: 2500
+CODE_TEMPLATE_TOP_K: 3
+CODE_TEMPLATE_THRESHOLD: 0.5
+
+MAX_RESULT_LINES: 100
+MAX_RESULT_CHECK_ROUNDS: 3
+MAX_RESULT_CHECK_FILES_PER_TYPE: 3
+
+MAX_FIGURE_NUMS: 20
+MAX_FIGURE_SIZE_MB: 10
+MAX_FIGURE_REFINE_ROUND: 4
+MAX_FIGURE_FEEDBACK_ROUND: 3
+
+MAX_ERROR_LOG_TOKENS: 10000
+
+MAX_PLANS: 5
+MAX_PLAN_DEBUG_ROUND: 3
+
+MAX_CODE_TASKS: 16
+MAX_CODE_RUN_TIME: 14400
+MAX_CODING_DEBUG_ROUND: 20
+MAX_CODING_DEBUG_LOGING_PROMPT_ROUND: 4
+MAX_CODING_FIRST_SUCCESS_ROUND: 20
+MAX_CODING_TASK_RETRIES: 2
+
+MAX_TASK_CHAIN_DEBUG_ROUND: 3
+MAX_TASK_CHAIN_RUN_RETRIES: 2
+MAX_RESEARCH_SUMMARY_PLANS: 2
+
+MAX_FILE_READ_LINES: 1000
+MAX_DIAG_DEBUG_CONTEXT: null
+
+MAX_REQUEST_REWRITE_PDF_CONCURRENCY: 4
+MAX_REFINEMENT_ROUNDS: 1
+ENABLE_REFINEMENT_LOOP: true
+MAX_REPORT_LATEX_DEBUG_ROUNDS: 10
+REPORT_LATEX_COMPILE_TIMEOUT: 300
+
+# =============================================================================
+# Tool Settings
+# =============================================================================
+WEB_SEARCH_TOOL_SETTINGS:
+  tavily_api_key: null
+  max_results: 5
+  topic: "general"
+  include_answer: true
+  search_depth: "advanced"
+  include_raw_content: false
+  time_range: null
+
+CHROMADB_CLINET_SETTINGS:
+  api_key: null
+  tenant: null
+  database: "trace"
+
+RETRIEVE_TOP_K_AI_MODEL: 3
+RETRIEVE_TOP_K_EXAMPLE: 1
+RETRIEVE_TOP_K_DOCUMENT: 3
+
+IMG_ANALYZE_MODEL_SETTING:
+  reasoning_effort: "low"
+
+PDF_ANALYZE_MODEL_SETTING:
+  reasoning_effort: "low"
+
+MINERU_PARSER_SETTINGS:
+  model_version: "pipeline"
+  language: "en"
+  is_ocr: false
+  poll_timeout: 300
+  llm_aid: false
+  max_retries: 3
+  continue_on_error: true
+  max_markdown_chars: 120000

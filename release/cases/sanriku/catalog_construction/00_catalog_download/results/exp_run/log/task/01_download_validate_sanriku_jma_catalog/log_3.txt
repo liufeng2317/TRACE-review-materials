@@ -1,0 +1,104 @@
+[2026-09-11T18:55:30Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog
+[2026-09-11T18:55:30Z] Fetching Hi-net login page
+[2026-09-11T18:55:32Z] Posting Hi-net login form (credential values suppressed)
+[2026-09-11T18:55:39Z] Hi-net authentication succeeded; catalog access will be verified by the first bounded chunk POST
+[2026-09-11T18:55:39Z] Requesting chunk 001: [2025-06-01, 2025-06-08) span=7 days
+[2026-09-11T18:56:33Z] Chunk 001 complete: parsed_rows=5359, actual_range=2025-06-01 00:03:37.790000 to 2025-06-07 23:58:37.320000
+[2026-09-11T18:56:36Z] Requesting chunk 002: [2025-06-08, 2025-06-15) span=7 days
+[2026-09-11T18:57:34Z] Chunk 002 complete: parsed_rows=8987, actual_range=2025-06-08 00:01:06.020000 to 2025-06-14 23:59:47.530000
+[2026-09-11T18:57:37Z] Requesting chunk 003: [2025-06-15, 2025-06-22) span=7 days
+[2026-09-11T18:57:51Z] Chunk 003 complete: parsed_rows=5706, actual_range=2025-06-15 00:02:13.200000 to 2025-06-21 23:59:31.300000
+[2026-09-11T18:57:54Z] Requesting chunk 004: [2025-06-22, 2025-06-29) span=7 days
+[2026-09-11T18:58:13Z] Chunk 004 complete: parsed_rows=7191, actual_range=2025-06-22 00:05:23.110000 to 2025-06-28 23:59:31.400000
+[2026-09-11T18:58:16Z] Requesting chunk 005: [2025-06-29, 2025-07-06) span=7 days
+[2026-09-11T18:58:41Z] Chunk 005 complete: parsed_rows=8596, actual_range=2025-06-29 00:00:47.140000 to 2025-07-05 23:59:38.680000
+[2026-09-11T18:58:44Z] Requesting chunk 006: [2025-07-06, 2025-07-13) span=7 days
+[2026-09-11T18:59:00Z] Chunk 006 complete: parsed_rows=7189, actual_range=2025-07-06 00:02:22.470000 to 2025-07-12 23:54:31.350000
+[2026-09-11T18:59:03Z] Requesting chunk 007: [2025-07-13, 2025-07-20) span=7 days
+[2026-09-11T18:59:14Z] Chunk 007 complete: parsed_rows=5074, actual_range=2025-07-13 00:00:16.450000 to 2025-07-19 23:57:56.800000
+[2026-09-11T18:59:17Z] Requesting chunk 008: [2025-07-20, 2025-07-27) span=7 days
+[2026-09-11T18:59:28Z] Chunk 008 complete: parsed_rows=5250, actual_range=2025-07-20 00:01:44.930000 to 2025-07-26 23:58:09.750000
+[2026-09-11T18:59:31Z] Requesting chunk 009: [2025-07-27, 2025-08-03) span=7 days
+[2026-09-11T18:59:40Z] Chunk 009 complete: parsed_rows=4486, actual_range=2025-07-27 00:00:05.450000 to 2025-08-02 23:59:59.710000
+[2026-09-11T18:59:43Z] Requesting chunk 010: [2025-08-03, 2025-08-10) span=7 days
+[2026-09-11T18:59:58Z] Chunk 010 complete: parsed_rows=5812, actual_range=2025-08-03 00:00:16.970000 to 2025-08-09 23:59:10.750000
+[2026-09-11T19:00:01Z] Requesting chunk 011: [2025-08-10, 2025-08-17) span=7 days
+[2026-09-11T19:00:11Z] Chunk 011 complete: parsed_rows=5104, actual_range=2025-08-10 00:01:05.710000 to 2025-08-16 23:59:20.920000
+[2026-09-11T19:00:14Z] Requesting chunk 012: [2025-08-17, 2025-08-24) span=7 days
+[2026-09-11T19:00:27Z] Chunk 012 complete: parsed_rows=5852, actual_range=2025-08-17 00:00:10.210000 to 2025-08-23 23:59:33.520000
+[2026-09-11T19:00:30Z] Requesting chunk 013: [2025-08-24, 2025-08-31) span=7 days
+[2026-09-11T19:00:55Z] Chunk 013 complete: parsed_rows=5469, actual_range=2025-08-24 00:01:36.700000 to 2025-08-30 23:59:33.350000
+[2026-09-11T19:00:58Z] Requesting chunk 014: [2025-08-31, 2025-09-07) span=7 days
+[2026-09-11T19:01:09Z] Chunk 014 complete: parsed_rows=4458, actual_range=2025-08-31 00:01:55.380000 to 2025-09-06 23:58:37.120000
+[2026-09-11T19:01:12Z] Requesting chunk 015: [2025-09-07, 2025-09-14) span=7 days
+[2026-09-11T19:01:27Z] Chunk 015 complete: parsed_rows=6106, actual_range=2025-09-07 00:01:04.580000 to 2025-09-13 23:51:55.360000
+[2026-09-11T19:01:30Z] Requesting chunk 016: [2025-09-14, 2025-09-21) span=7 days
+[2026-09-11T19:01:43Z] Chunk 016 complete: parsed_rows=5095, actual_range=2025-09-14 00:01:20.570000 to 2025-09-20 23:58:39.170000
+[2026-09-11T19:01:46Z] Requesting chunk 017: [2025-09-21, 2025-09-28) span=7 days
+[2026-09-11T19:01:59Z] Chunk 017 complete: parsed_rows=4260, actual_range=2025-09-21 00:03:02.690000 to 2025-09-27 23:59:11.860000
+[2026-09-11T19:02:02Z] Requesting chunk 018: [2025-09-28, 2025-10-05) span=7 days
+[2026-09-11T19:02:16Z] Chunk 018 complete: parsed_rows=5421, actual_range=2025-09-28 00:00:53.210000 to 2025-10-04 23:59:01.500000
+[2026-09-11T19:02:19Z] Requesting chunk 019: [2025-10-05, 2025-10-12) span=7 days
+[2026-09-11T19:02:30Z] Chunk 019 complete: parsed_rows=4758, actual_range=2025-10-05 00:01:12.490000 to 2025-10-11 23:58:40.900000
+[2026-09-11T19:02:33Z] Requesting chunk 020: [2025-10-12, 2025-10-19) span=7 days
+[2026-09-11T19:02:40Z] Chunk 020 complete: parsed_rows=3995, actual_range=2025-10-12 00:02:33.630000 to 2025-10-18 23:50:21.330000
+[2026-09-11T19:02:43Z] Requesting chunk 021: [2025-10-19, 2025-10-26) span=7 days
+[2026-09-11T19:02:52Z] Chunk 021 complete: parsed_rows=3877, actual_range=2025-10-19 00:00:51.060000 to 2025-10-25 23:54:22.730000
+[2026-09-11T19:02:55Z] Requesting chunk 022: [2025-10-26, 2025-11-02) span=7 days
+[2026-09-11T19:03:11Z] Chunk 022 complete: parsed_rows=3930, actual_range=2025-10-26 00:05:46.940000 to 2025-11-01 23:53:14.260000
+[2026-09-11T19:03:14Z] Requesting chunk 023: [2025-11-02, 2025-11-09) span=7 days
+[2026-09-11T19:03:32Z] Chunk 023 complete: parsed_rows=5854, actual_range=2025-11-02 00:11:52.260000 to 2025-11-08 23:59:57.370000
+[2026-09-11T19:03:35Z] Requesting chunk 024: [2025-11-09, 2025-11-16) span=7 days
+[2026-09-11T19:03:49Z] Chunk 024 complete: parsed_rows=5849, actual_range=2025-11-09 00:00:34.310000 to 2025-11-15 23:58:50.520000
+[2026-09-11T19:03:52Z] Requesting chunk 025: [2025-11-16, 2025-11-23) span=7 days
+[2026-09-11T19:04:05Z] Chunk 025 complete: parsed_rows=4717, actual_range=2025-11-16 00:05:43.570000 to 2025-11-22 23:58:25.360000
+[2026-09-11T19:04:08Z] Requesting chunk 026: [2025-11-23, 2025-11-30) span=7 days
+[2026-09-11T19:04:37Z] Chunk 026 complete: parsed_rows=6338, actual_range=2025-11-23 00:02:56.740000 to 2025-11-29 23:59:50.580000
+[2026-09-11T19:04:40Z] Requesting chunk 027: [2025-11-30, 2025-12-07) span=7 days
+[2026-09-11T19:04:55Z] Chunk 027 complete: parsed_rows=6184, actual_range=2025-11-30 00:00:02.450000 to 2025-12-06 23:58:59.960000
+[2026-09-11T19:04:58Z] Requesting chunk 028: [2025-12-07, 2025-12-14) span=7 days
+[2026-09-11T19:05:21Z] Chunk 028 complete: parsed_rows=9384, actual_range=2025-12-07 00:03:35.250000 to 2025-12-13 23:58:27.580000
+[2026-09-11T19:05:24Z] Requesting chunk 029: [2025-12-14, 2025-12-21) span=7 days
+[2026-09-11T19:05:35Z] Chunk 029 complete: parsed_rows=5693, actual_range=2025-12-14 00:04:28.800000 to 2025-12-20 23:56:03.970000
+[2026-09-11T19:05:38Z] Requesting chunk 030: [2025-12-21, 2025-12-28) span=7 days
+[2026-09-11T19:05:46Z] Chunk 030 complete: parsed_rows=4387, actual_range=2025-12-21 00:02:24.780000 to 2025-12-27 23:59:39.480000
+[2026-09-11T19:05:49Z] Requesting chunk 031: [2025-12-28, 2026-01-04) span=7 days
+[2026-09-11T19:06:01Z] Chunk 031 complete: parsed_rows=6002, actual_range=2025-12-28 00:05:54.690000 to 2026-01-03 23:58:49.630000
+[2026-09-11T19:06:04Z] Requesting chunk 032: [2026-01-04, 2026-01-11) span=7 days
+[2026-09-11T19:06:21Z] Chunk 032 complete: parsed_rows=7706, actual_range=2026-01-04 00:00:41.150000 to 2026-01-10 23:58:00.880000
+[2026-09-11T19:06:24Z] Requesting chunk 033: [2026-01-11, 2026-01-18) span=7 days
+[2026-09-11T19:07:03Z] Chunk 033 complete: parsed_rows=5840, actual_range=2026-01-11 00:03:15.560000 to 2026-01-17 23:59:34.980000
+[2026-09-11T19:07:06Z] Requesting chunk 034: [2026-01-18, 2026-01-25) span=7 days
+[2026-09-11T19:07:37Z] Chunk 034 complete: parsed_rows=5531, actual_range=2026-01-18 00:00:10.030000 to 2026-01-24 23:59:42.900000
+[2026-09-11T19:07:40Z] Requesting chunk 035: [2026-01-25, 2026-02-01) span=7 days
+[2026-09-11T19:07:51Z] Chunk 035 complete: parsed_rows=5303, actual_range=2026-01-25 00:00:10.930000 to 2026-01-31 23:59:35.470000
+[2026-09-11T19:07:54Z] Requesting chunk 036: [2026-02-01, 2026-02-08) span=7 days
+[2026-09-11T19:08:06Z] Chunk 036 complete: parsed_rows=4179, actual_range=2026-02-01 00:01:06.350000 to 2026-02-07 23:58:37.870000
+[2026-09-11T19:08:09Z] Requesting chunk 037: [2026-02-08, 2026-02-15) span=7 days
+[2026-09-11T19:08:34Z] Chunk 037 complete: parsed_rows=4879, actual_range=2026-02-08 00:01:44 to 2026-02-14 23:59:44.300000
+[2026-09-11T19:08:37Z] Requesting chunk 038: [2026-02-15, 2026-02-22) span=7 days
+[2026-09-11T19:08:54Z] Chunk 038 complete: parsed_rows=5309, actual_range=2026-02-15 00:01:46.040000 to 2026-02-21 23:59:58.820000
+[2026-09-11T19:08:57Z] Requesting chunk 039: [2026-02-22, 2026-03-01) span=7 days
+[2026-09-11T19:09:07Z] Chunk 039 complete: parsed_rows=5548, actual_range=2026-02-22 00:00:06.830000 to 2026-02-28 23:58:56.550000
+[2026-09-11T19:09:10Z] Requesting chunk 040: [2026-03-01, 2026-03-08) span=7 days
+[2026-09-11T19:09:22Z] Chunk 040 complete: parsed_rows=5406, actual_range=2026-03-01 00:00:46.980000 to 2026-03-07 23:59:42.590000
+[2026-09-11T19:09:25Z] Requesting chunk 041: [2026-03-08, 2026-03-15) span=7 days
+[2026-09-11T19:09:34Z] Chunk 041 complete: parsed_rows=4181, actual_range=2026-03-08 00:01:06.560000 to 2026-03-14 23:59:59.780000
+[2026-09-11T19:09:37Z] Requesting chunk 042: [2026-03-15, 2026-03-22) span=7 days
+[2026-09-11T19:09:49Z] Chunk 042 complete: parsed_rows=6047, actual_range=2026-03-15 00:01:27.310000 to 2026-03-21 23:51:45.170000
+[2026-09-11T19:09:52Z] Requesting chunk 043: [2026-03-22, 2026-03-29) span=7 days
+[2026-09-11T19:10:03Z] Chunk 043 complete: parsed_rows=5587, actual_range=2026-03-22 00:00:23.240000 to 2026-03-28 23:59:53.720000
+[2026-09-11T19:10:06Z] Requesting chunk 044: [2026-03-29, 2026-04-05) span=7 days
+[2026-09-11T19:10:16Z] Chunk 044 complete: parsed_rows=4920, actual_range=2026-03-29 00:01:06.250000 to 2026-04-04 23:58:32.380000
+[2026-09-11T19:10:19Z] Requesting chunk 045: [2026-04-05, 2026-04-12) span=7 days
+[2026-09-11T19:10:27Z] Chunk 045 complete: parsed_rows=4537, actual_range=2026-04-05 00:01:42.760000 to 2026-04-11 23:56:55.390000
+[2026-09-11T19:10:30Z] Requesting chunk 046: [2026-04-12, 2026-04-19) span=7 days
+[2026-09-11T19:10:40Z] Chunk 046 complete: parsed_rows=5216, actual_range=2026-04-12 00:00:35.320000 to 2026-04-18 23:58:32.170000
+[2026-09-11T19:10:43Z] Requesting chunk 047: [2026-04-19, 2026-04-26) span=7 days
+[2026-09-11T19:10:58Z] Chunk 047 complete: parsed_rows=8438, actual_range=2026-04-19 00:00:02.600000 to 2026-04-25 23:59:42.480000
+[2026-09-11T19:11:01Z] Requesting chunk 048: [2026-04-26, 2026-05-02) span=6 days
+[2026-09-11T19:11:12Z] Chunk 048 complete: parsed_rows=5328, actual_range=2026-04-26 00:00:03.220000 to 2026-05-01 23:58:44.740000
+[2026-09-11T19:11:15Z] Workflow passed. CSV: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv
+[2026-09-11T19:11:15Z] Figure: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png
+[2026-09-11T19:11:15Z] Manifest: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv
+[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json

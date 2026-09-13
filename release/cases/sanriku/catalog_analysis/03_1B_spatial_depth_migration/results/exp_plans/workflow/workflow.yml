@@ -1,0 +1,335 @@
+tasks:
+- name: 01_m1_m3_spatial_depth_screening
+  description: Recompute the M1-M3 local-system spatial, depth, burst, centroid,
+    migration, robustness, and figure diagnostics in one cohesive 
+    catalog-analysis script.
+  script: 01_m1_m3_spatial_depth_screening.py
+  ancestors: []
+  subtasks:
+  - name: load_catalog_and_anchor_metadata
+    description: Load the relocated catalog and main-earthquake metadata and 
+      identify M1, M2, and M3 anchors.
+    inputs:
+    - relocated_filtered_catalog
+    - main_earthquake_metadata
+    - station_metadata
+    - mechanism_metadata
+    outputs:
+    - raw_event_catalog
+    - anchor_event_table
+    - optional_station_context
+    - optional_mechanism_context
+    params:
+      catalog_columns:
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      anchor_labels:
+      - M1
+      - M2
+      - M3
+      station_usage: map_context_only
+      mechanism_usage: followup_context_only
+  - name: build_m1_m3_geometry_framework
+    description: Compute event-level distances, axis projections, corridor 
+      membership, endpoint flags, and M2-related flags for the M1-M3 local 
+      system.
+    inputs:
+    - raw_event_catalog
+    - anchor_event_table
+    outputs:
+    - enriched_local_geometry_table
+    - anchor_geometry_summary
+    - spatial_framework_validation
+    params:
+      local_union_radius_km: 60
+      endpoint_core_radius_km: 30
+      endpoint_extended_radius_km: 60
+      corridor_widths_km:
+      - 20
+      - 30
+      m2_related_radius_km: 100
+      projection_reference: finite_M1_M3_segment_with_endpoint_buffers
+      distance_method: consistent_single_geodesic_or_local_projection
+  - name: assign_temporal_phases_and_detect_bursts
+    description: Assign events to the fixed phase windows and detect major local
+      bursts with transparent rate-based rules.
+    inputs:
+    - enriched_local_geometry_table
+    - anchor_event_table
+    outputs:
+    - phase_window_table
+    - event_phase_membership
+    - burst_definition_table
+    - event_burst_membership
+    params:
+      primary_windows:
+        pre_m1_background:
+          start: catalog_start
+          end: M1_minus_14d
+        m1_related_dominated:
+          start: M1_minus_14d
+          end: M1_plus_21d
+        middle_phase:
+          start: M1_plus_21d
+          end: M3_minus_35d
+        pre_m3_local_activation:
+          start: M3_minus_35d
+          end: M3
+        post_m3_context:
+          start: M3
+          end_options:
+          - M3_plus_7d
+          - M3_plus_14d
+      sensitivity_windows:
+        pre_m1_background:
+          end_options:
+          - M1_minus_7d
+        m1_related_dominated:
+          options:
+          - start: M1_minus_7d
+            end: M1_plus_14d
+          - start: M1_minus_14d
+            end: M1_plus_28d
+        pre_m3_local_activation:
+          options:
+          - start: M3_minus_42d
+            end: M3
+          - start: M3_minus_28d
+            end: M3
+      burst_detection_strategy: 
+        rate_peak_detection_with_phase_aware_boundary_expansion
+      burst_time_series:
+        primary_bin: daily
+        optional_finer_bin: adaptive_if_needed
+      preserve_ambiguous_segmentation: true
+  - name: summarize_phase_and_burst_spatial_depth_patterns
+    description: Compute phase-level and burst-level spatial, depth, 
+      composition, and magnitude-threshold summaries for raw and M2-aware event 
+      sets.
+    inputs:
+    - enriched_local_geometry_table
+    - event_phase_membership
+    - burst_definition_table
+    - event_burst_membership
+    outputs:
+    - phase_spatial_depth_summary_raw
+    - phase_spatial_depth_summary_m2aware
+    - burst_spatial_depth_summary_raw
+    - burst_spatial_depth_summary_m2aware
+    - phase_burst_spatial_category_flags
+    params:
+      magnitude_thresholds:
+      - M3_plus
+      - M4_plus
+      - M5_plus
+      event_set_variants:
+      - raw
+      - m2_aware
+      summary_metrics:
+      - event_count
+      - largest_magnitude
+      - centroid_latitude_longitude
+      - median_depth
+      - depth_range
+      - depth_bin_fractions
+      - median_projected_distance
+      - median_perpendicular_distance
+      - distance_to_M1
+      - distance_to_M3
+      - endpoint_corridor_offcorridor_composition
+      - m2_related_fraction
+      depth_bins_km:
+      - 0_to_30
+      - 30_to_60
+      - over_60
+      burst_spatial_categories:
+      - M1_endpoint
+      - M3_endpoint
+      - corridor
+      - off_corridor
+      - mixed
+      - ambiguous
+      low_count_policy: mark_unstable_do_not_force_classification
+  - name: evaluate_centroid_evolution_and_migration_diagnostics
+    description: Quantify centroid transitions and event-level time-position 
+      trends to distinguish endpoint switching, stepwise activation, diffuse 
+      occupancy, and any robust migration.
+    inputs:
+    - enriched_local_geometry_table
+    - event_phase_membership
+    - event_burst_membership
+    - burst_definition_table
+    - phase_spatial_depth_summary_raw
+    - phase_spatial_depth_summary_m2aware
+    - burst_spatial_depth_summary_raw
+    - burst_spatial_depth_summary_m2aware
+    outputs:
+    - centroid_evolution_table
+    - centroid_transition_metrics
+    - centroid_movement_classification
+    - migration_projection_diagnostics
+    - time_binned_projected_position_summary
+    - phase_vs_full_interval_trend_comparison
+    - migration_support_classification
+    params:
+      analysis_windows:
+      - full_M1_to_M3_interval
+      - m1_related_dominated
+      - middle_phase
+      - pre_m3_local_activation
+      threshold_variants:
+      - M3_plus
+      - M4_plus
+      - M5_plus
+      event_set_variants:
+      - raw
+      - m2_aware
+      corridor_widths_km:
+      - 20
+      - 30
+      rank_correlation_methods:
+      - spearman
+      - kendall
+      trend_metrics:
+      - projected_distance_vs_time_slope
+      - time_vs_projected_distance_correlation
+      - median_projected_position_by_time_bin
+      - distance_to_M1_trend
+      - distance_to_M3_trend
+      - burst_front_movement
+      movement_classes:
+      - near_stationary_M1
+      - near_stationary_M3
+      - endpoint_switching
+      - separated_local_bursts
+      - stepwise_corridor_advance
+      - diffuse_ambiguous
+      artifact_rule: full_interval_only_shift_is_phase_mixing_artifact
+  - name: analyze_depth_domains_and_large_event_consistency
+    description: Compare depth occupancy across endpoint, corridor, 
+      off-corridor, burst, and large-event subsets to test for common or 
+      distinct structural domains.
+    inputs:
+    - enriched_local_geometry_table
+    - event_phase_membership
+    - event_burst_membership
+    - anchor_event_table
+    outputs:
+    - depth_domain_by_spatial_class
+    - depth_domain_by_phase
+    - depth_domain_by_burst
+    - large_event_depth_comparison
+    params:
+      spatial_classes:
+      - M1_endpoint_core
+      - M3_endpoint_core
+      - corridor_noncore
+      - off_corridor_local
+      threshold_variants:
+      - M3_plus
+      - M4_plus
+      - M5_plus
+      depth_bins_km:
+      - 0_to_30
+      - 30_to_60
+      - over_60
+      comparison_targets:
+      - endpoint_vs_endpoint
+      - corridor_vs_offcorridor
+      - burst_to_burst
+      - large_events_vs_smaller_local_events
+      sparse_class_policy: mark_insufficient
+  - name: run_robustness_checks_and_followup_screening
+    description: Re-evaluate the main spatial-depth interpretations across 
+      thresholds, M2-aware filtering, corridor widths, endpoint definitions, and
+      sensitivity windows, then identify non-causal follow-up targets.
+    inputs:
+    - phase_spatial_depth_summary_raw
+    - phase_spatial_depth_summary_m2aware
+    - burst_spatial_depth_summary_raw
+    - burst_spatial_depth_summary_m2aware
+    - centroid_movement_classification
+    - migration_support_classification
+    - depth_domain_by_spatial_class
+    - depth_domain_by_phase
+    - depth_domain_by_burst
+    - large_event_depth_comparison
+    - optional_mechanism_context
+    outputs:
+    - robustness_summary
+    - spatial_depth_evidence_matrix
+    - working_context_contradiction_log
+    - followup_candidate_event_list
+    params:
+      robustness_axes:
+      - magnitude_threshold
+      - m2_aware_filtering
+      - corridor_width
+      - endpoint_definition
+      - temporal_window_sensitivity
+      corridor_widths_km:
+      - 20
+      - 30
+      endpoint_definitions:
+        core_radius_km: 30
+        extended_radius_km: 60
+      evidence_hypotheses:
+      - endpoint_switching
+      - separated_local_bursts
+      - corridor_like_stepwise_activation
+      - spatial_depth_coherent_activation
+      - diffuse_local_occupancy
+      - no_organized_migration
+      followup_categories:
+      - relocation_refinement
+      - waveform_similarity
+      - focal_mechanism_comparison
+      - stress_modeling
+      interpretation_constraints:
+      - no_triggering_inference
+      - no_stress_transfer_inference
+      - corridor_not_equal_migration
+  - name: generate_figures_and_final_structured_outputs
+    description: Produce the compact diagnostic figure set and structured 
+      summary fields answering the catalog-screening questions.
+    inputs:
+    - enriched_local_geometry_table
+    - phase_spatial_depth_summary_raw
+    - burst_spatial_depth_summary_raw
+    - centroid_evolution_table
+    - migration_projection_diagnostics
+    - depth_domain_by_spatial_class
+    - depth_domain_by_phase
+    - depth_domain_by_burst
+    - robustness_summary
+    - spatial_depth_evidence_matrix
+    - optional_station_context
+    outputs:
+    - fig_phase_burst_centroid_map
+    - fig_projected_distance_time
+    - fig_depth_vs_projected_distance
+    - fig_depth_time_thresholds
+    - fig_phase_centroid_trajectory
+    - fig_spatial_composition_by_phase
+    - fig_raw_vs_m2aware_comparison
+    - fig_spatial_depth_evidence_matrix
+    - final_screening_summary
+    - final_answer_fields
+    params:
+      default_view: primary_windows_raw_results
+      conditional_figure_rule: 
+        include_raw_vs_m2aware_only_if_interpretation_differs
+      required_answer_fields:
+      - preferred_overall_description
+      - systematic_phase_or_burst_movement_toward_M3
+      - pre_M3_connection_to_middle_or_M1_related_phase
+      - large_event_pattern_consistency
+      - m2_aware_effect_on_interpretation
+      - next_step_hypotheses_for_followup
+      reporting_constraints:
+      - catalog_screening_level_only
+      - report_ambiguity_explicitly
+      - avoid_causal_language

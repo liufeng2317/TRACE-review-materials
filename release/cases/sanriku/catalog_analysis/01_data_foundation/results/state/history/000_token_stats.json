@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "01_data_foundation",
+  "run_name": "01_data_foundation",
+  "root": "<CASE_ROOT>/run/01_data_foundation",
+  "status": "failed",
+  "next_stage": "input_guard",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-05-22T17:39:38.129265+00:00",
+  "updated_at": "2026-05-22T17:40:26.610489+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are an earthquake scientist and data-analysis agent.\n\nGoal:\nBuild a reliable data foundation, characterize the regional seismicity background, generate publication-quality diagnostic figures, and prepare reusable data products for further sequence analysis.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nTasks:\n\n1. Data audit and cleaning\nInspect all files for schema, record count, time/location/depth/magnitude ranges, missing values, duplicates, abnormal values, and usable fields.\nCreate a clean Stage-1 catalog with parsed time, latitude, longitude, depth, magnitude, event ID if available, and quality flags.\n\n2. Major-earthquake matching\nMatch the major earthquakes in main_earthquake.csv with the regional catalog (a very small time shift caused by relocation).\nFor each major earthquake, report the nearest matched catalog event, time difference, spatial distance, depth difference, magnitude difference, and match confidence.\n\n3. Regional seismicity background\nCharacterize the regional catalog in terms of:\n- spatial distribution and event density\n- temporal activity rate\n- magnitude distribution\n- depth distribution and depth segmentation\n- magnitude-depth relationship\n- preliminary completeness magnitude Mc and b-value (estimated with Gutenberg-Richter law)\n- station distribution and simple coverage metrics\n- focal-mechanism feature and distribution\n\n4. Mainshock regional context\nFor each major earthquake, summarize its regional context:\n- local event density\n- surrounding depth distribution\n- nearby station distribution and coverage\n- nearby focal-mechanism distribution and availability\n- whether the event lies in a distinct spatial/depth domain\n- whether later sequence analysis should use special radius, depth, or magnitude thresholds\n\n5. Diagnostic figures\nGenerate **Nature-Style** publication-quality figures\n- regional map of earthquakes, major earthquakes, stations, and focal mechanisms if available\n- time–magnitude plot\n- depth–time plot\n- magnitude–depth plot\n- magnitude-frequency / Mc plot / b-value plot\n- spatial event-density or cluster diagnostic\n- depth-distribution or cross-section diagnostic\n- station coverage diagnostic\n- focal-mechanism distribution and availability diagnostic\n- other useful regional-background plots that support further sequence analysis and hypothesis testing\n\nFigures should use clear labels, units, legends, readable fonts, appropriate color scales, and should be saved as high-resolution PNG.\n\n6. Candidate patterns estimation\nIdentify compact, testable candidate patterns for further sequence analysis and hypothesis testing, such as:\n- spatial clusters\n- temporal bursts or quiet periods\n- depth segmentation\n- magnitude-depth-space relationships\n- station-coverage effects\n- focal-mechanism data gaps\n- regional differences around the major earthquakes\n\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_data_foundation",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are an earthquake scientist and data-analysis agent.\n\nGoal:\nBuild a reliable data foundation, characterize the regional seismicity background, generate publication-quality diagnostic figures, and prepare reusable data products for further sequence analysis.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nTasks:\n\n1. Data audit and cleaning\nInspect all files for schema, record count, time/location/depth/magnitude ranges, missing values, duplicates, abnormal values, and usable fields.\nCreate a clean Stage-1 catalog with parsed time, latitude, longitude, depth, magnitude, event ID if available, and quality flags.\n\n2. Major-earthquake matching\nMatch the major earthquakes in main_earthquake.csv with the regional catalog (a very small time shift caused by relocation).\nFor each major earthquake, report the nearest matched catalog event, time difference, spatial distance, depth difference, magnitude difference, and match confidence.\n\n3. Regional seismicity background\nCharacterize the regional catalog in terms of:\n- spatial distribution and event density\n- temporal activity rate\n- magnitude distribution\n- depth distribution and depth segmentation\n- magnitude-depth relationship\n- preliminary completeness magnitude Mc and b-value (estimated with Gutenberg-Richter law)\n- station distribution and simple coverage metrics\n- focal-mechanism feature and distribution\n\n4. Mainshock regional context\nFor each major earthquake, summarize its regional context:\n- local event density\n- surrounding depth distribution\n- nearby station distribution and coverage\n- nearby focal-mechanism distribution and availability\n- whether the event lies in a distinct spatial/depth domain\n- whether later sequence analysis should use special radius, depth, or magnitude thresholds\n\n5. Diagnostic figures\nGenerate **Nature-Style** publication-quality figures\n- regional map of earthquakes, major earthquakes, stations, and focal mechanisms if available\n- time–magnitude plot\n- depth–time plot\n- magnitude–depth plot\n- magnitude-frequency / Mc plot / b-value plot\n- spatial event-density or cluster diagnostic\n- depth-distribution or cross-section diagnostic\n- station coverage diagnostic\n- focal-mechanism distribution and availability diagnostic\n- other useful regional-background plots that support further sequence analysis and hypothesis testing\n\nFigures should use clear labels, units, legends, readable fonts, appropriate color scales, and should be saved as high-resolution PNG.\n\n6. Candidate patterns estimation\nIdentify compact, testable candidate patterns for further sequence analysis and hypothesis testing, such as:\n- spatial clusters\n- temporal bursts or quiet periods\n- depth segmentation\n- magnitude-depth-space relationships\n- station-coverage effects\n- focal-mechanism data gaps\n- regional differences around the major earthquakes\n\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": [
+      {
+        "round_index": 0,
+        "plan_path": null,
+        "tasks": [],
+        "evaluation_path": null,
+        "evaluation_satisfactory": null
+      }
+    ]
+  },
+  "artifacts": {
+    "request_txt": "<CASE_ROOT>/run/01_data_foundation/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/01_data_foundation/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/01_data_foundation/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/01_data_foundation/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": {
+    "stage": "input_guard",
+    "message": "Error in input guard agent:\nInput Guard Agent (Request): Max retries exceeded when getting response. Error: Error code: 503 - {'error': {'message': 'No available channel for model gpt-5.4-mini under group *** (distributor) (request id: 2026052301402616958993632675583)', 'type': 'shell_api_error', 'param': '', 'code': 'model_not_found'}}\nTime cost: 48.337s",
+    "traceback": "Traceback (most recent call last):\n  File \"<REPO_ROOT>/seismoagent/agent/agent.py\", line 361, in _get_response\n    response = await asyncio.wait_for(\n               ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_core/runnables/base.py\", line 5708, in ainvoke\n    return await self.bound.ainvoke(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py\", line 425, in ainvoke\n    llm_result = await self.agenerate_prompt(\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py\", line 1160, in agenerate_prompt\n    return await self.agenerate(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py\", line 1118, in agenerate\n    raise exceptions[0]\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/asyncio/tasks.py\", line 314, in __step_run_and_handle_result\n    result = coro.send(None)\n             ^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_core/language_models/chat_models.py\", line 1387, in _agenerate_with_cache\n    result = await self._agenerate(\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_openai/chat_models/base.py\", line 1546, in _agenerate\n    raise e\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/langchain_openai/chat_models/base.py\", line 1539, in _agenerate\n    raw_response = await self.async_client.with_raw_response.create(\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/openai/_legacy_response.py\", line 384, in wrapped\n    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py\", line 2714, in create\n    return await self._post(\n           ^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/openai/_base_client.py\", line 1884, in post\n    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<ENV_ROOT>/miniconda3/envs/trace/lib/python3.12/site-packages/openai/_base_client.py\", line 1669, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.InternalServerError: Error code: 503 - {'error': {'message': 'No available channel for model gpt-5.4-mini under group *** (distributor) (request id: 2026052301402616958993632675583)', 'type': 'shell_api_error', 'param': '', 'code': 'model_not_found'}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<REPO_ROOT>/seismoagent/main.py\", line 1125, in run_agent\n    run_info = await chat_input_guard_agent(run_info)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO_ROOT>/seismoagent/agent/input_guard.py\", line 121, in chat_input_guard_agent\n    result: InputGuardResult = await agent.chat(input_msg)\n                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO_ROOT>/seismoagent/agent/agent.py\", line 636, in chat\n    response = await self._get_response()\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<REPO_ROOT>/seismoagent/agent/agent.py\", line 404, in _get_response\n    raise RuntimeError(f\"{self.name}: Max retries exceeded when getting response. Error: {e}\")\nRuntimeError: Input Guard Agent (Request): Max retries exceeded when getting response. Error: Error code: 503 - {'error': {'message': 'No available channel for model gpt-5.4-mini under group *** (distributor) (request id: 2026052301402616958993632675583)', 'type': 'shell_api_error', 'param': '', 'code': 'model_not_found'}}\n",
+    "timestamp": "2026-05-22T17:40:26.586316+00:00"
+  }
+}

@@ -1,0 +1,4 @@
+working_context_statement,expected,status,evidence
+endpoint_core_dominates_main_windows,endpoint_preferred,consistent,Primary phases compared using M3+ composition fractions.
+full_interval_not_homogeneous_migration,no_phase_stable_monotonic_migration,consistent,Full trend=no_robust_monotonic_migration; phase-robust=False.
+pre_m3_clear_activation,pre_m3_present,consistent,pre_m3_primary M3+ event_count=51

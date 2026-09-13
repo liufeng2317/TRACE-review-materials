@@ -1,0 +1,9 @@
+check,passed,value
+event_ids_unique,True,33702
+event_pick_foreign_key,True,0
+jma_weight_values_preserved,True,"[0.0, 1.0]"
+regional_bounds,True,38.500000-42.499833; 141.000500-144.500000
+physical_depth_range,True,0.000-149.240 km
+phase_event_count,True,33702
+phase_pick_count,True,637812
+station_coverage,True,386

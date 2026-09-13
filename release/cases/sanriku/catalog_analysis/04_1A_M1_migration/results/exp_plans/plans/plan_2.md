@@ -1,0 +1,193 @@
+# Goal
+Quantify immediate seismicity changes around the 2025-11-09 JMA M6.9 Sanriku-Oki mainshock using the relocated local catalog, with a focused comparison between the final 2 days before the mainshock and the first 0.5 days after it, emphasizing screening diagnostics of rate change, apparent migration, activated-area expansion, moderate-event occurrence, and foreshock-window magnitude-frequency behavior.
+
+## Planning Assumptions
+- Use observation-based catalog data only: the relocated catalog is the primary source, and `main_earthquake.csv` provides the mainshock anchor and rematch target.
+- Main reference event is `M1` from `data/catalog/main_earthquake.csv` with origin time `2025-11-09 08:03:39.240`, latitude `39.402`, longitude `143.507`, depth `15.9 km`, magnitude `6.9`.
+- If a relocated-catalog event matches M1 within a tight near-time/near-space tolerance, use the relocated event as the reference epicenter/origin; otherwise use the M1 table values. The rematch rule must be recorded in outputs.
+- Primary local-sequence selection radius is 80 km from the M6.9 reference epicenter. Use 60 km as a compact-core sensitivity check and 100 km / 150 km only as contamination diagnostics.
+- Analysis windows:
+  - Context only: `-10 d <= t < -2 d` and optionally `-10 d <= t <= +0.5 d` for display
+  - Final foreshock window: `-2 d <= t < 0`
+  - Early aftershock window: `0 < t <= +0.5 d`
+- The M6.9 mainshock at `t = 0` must be excluded from aftershock counts, aftershock rates, largest-distinct-aftershock selection, aftershock migration-front fitting, and exploratory aftershock b-value estimation.
+- Activated-area metrics use local Cartesian coordinates relative to M6.9 and PCA-derived along/across axes, computed separately for the two main windows after trimming to the closest 90% of events by epicentral distance.
+- For migration-front estimates, use the 90th-percentile epicentral distance within each time bin and simple linear fits:
+  - Foreshock: 0.2 day bins
+  - Early aftershock: 0.025 day bins
+  - Exclude bins with fewer than 5 events from both plotted front points and the fit; record total bins, retained bins, and excluded bins.
+- For b-value/Mc work, use catalog-statistics methods appropriate for Gutenberg-Richter analysis and explicitly report the Mc method used; early-aftershock results are exploratory only because of likely short-term incompleteness.
+- Optional files:
+  - `data/source_mechanism/Snet_mecha.csv` only for cross-checking whether the largest early aftershock has supplemental mechanism information
+  - `data/stations/station.sta` only for optional network-geometry context on the map, not for quantitative metrics
+
+## Analysis Plan
+
+### Task 1 — Build the M6.9-centered analysis table and reference-event match
+- Task description
+  - Read the relocated catalog and mainshock table, identify the M1 anchor, attempt rematch to the relocated catalog, construct an event table centered on M6.9, and assign phase/window labels for downstream analyses.
+- Required data sources
+  - `data/catalog/Snet_catalog_relocate_250601_260501.csv`
+  - `data/catalog/main_earthquake.csv`
+- Parameter selection strategy
+  - Parse origin times to a uniform timezone-aware or explicitly timezone-naive datetime convention consistent across files.
+  - Rematch M1 to the relocated catalog using a documented near-time/near-space search centered on the M1 table values; prefer the closest candidate in combined time-distance space if multiple candidates exist.
+  - Compute for every catalog event:
+    - origin time
+    - relative time in days and hours from M6.9
+    - latitude, longitude, depth, magnitude
+    - epicentral distance to M6.9 in km
+    - local east/north coordinates in km relative to M6.9
+    - radius label for 60/80/100/150 km inclusion
+    - phase label: context_pre10to2d, foreshock_final2d, mainshock, early_aftershock_0to0.5d, outside_main_windows
+- Constraints
+  - Keep all catalog rows in the master derived table, but flag window/radius membership explicitly.
+  - Use the 80 km selection as the default for the main quantitative comparisons.
+  - Preserve a boolean flag identifying the mainshock row if the rematched catalog event is found.
+- Key outputs
+  - `m69_centered_event_table.csv`
+  - `reference_event_match.json` or CSV with rematch decision, candidate count, selected event metadata, and fallback status
+  - `window_event_counts_by_radius.csv`
+
+### Task 2 — Quantify event-rate and magnitude occurrence changes
+- Task description
+  - Compare the final-2-day foreshock window and first-0.5-day early-aftershock window inside the 80 km radius using simple catalog statistics.
+- Required data sources
+  - `m69_centered_event_table.csv` from Task 1
+- Parameter selection strategy
+  - Main comparison uses only events with epicentral distance `<= 80 km`.
+  - Foreshock window: `-2 d <= t < 0`
+  - Early aftershock window: `0 < t <= 0.5 d`, excluding the mainshock row at `t = 0`
+  - Compute per window:
+    - event count
+    - duration in days and hours
+    - mean event rate and rate ratio
+    - maximum magnitude
+    - median magnitude
+    - counts of M3+, M4+, M5+
+  - Identify the largest distinct event in `0 < t <= 0.5 d`; if multiple equal-magnitude candidates exist, choose the earliest occurrence and record ties.
+- Constraints
+  - Do not allow the M6.9 event to populate any early-aftershock count, rate, maximum-magnitude, or threshold-count metric.
+  - Keep the largest-distinct early-aftershock selection limited to the `0–0.5 d` window only; do not include later M6.4-class events outside the window.
+- Key outputs
+  - `window_rate_magnitude_summary.csv`
+  - `largest_early_aftershock.csv`
+  - `magnitude_threshold_counts_by_window.csv`
+
+### Task 3 — Diagnose apparent migration / distance-front evolution
+- Task description
+  - Use the 80 km local selection to build time-distance diagnostics and estimate apparent front speeds from the 90th-percentile epicentral distance through time.
+- Required data sources
+  - `m69_centered_event_table.csv`
+- Parameter selection strategy
+  - Use epicentral distance from M6.9 as the distance measure.
+  - Build separate binned front series for:
+    - Foreshock window with 0.2 day bins over `[-2, 0)`
+    - Early aftershock window with 0.025 day bins over `(0, 0.5]`
+  - For each bin, compute:
+    - event count
+    - 90th-percentile distance
+    - optional median and maximum distance for context
+  - Exclude bins with fewer than 5 events from front plotting and from linear fitting.
+  - Fit simple linear models of front distance versus time separately for the two windows; report slope as apparent speed in km/day and optionally km/hour.
+  - Save fit diagnostics such as intercept, number of retained bins, excluded bins, and a simple goodness-of-fit measure.
+- Constraints
+  - Use all events inside the 80 km region for the percentile front estimate; do not trim by magnitude for the main front.
+  - Do not include the mainshock at `t = 0` in the aftershock front series.
+  - Treat speed as a screening metric only; do not infer mechanism.
+- Key outputs
+  - `distance_front_timeseries_foreshock.csv`
+  - `distance_front_timeseries_aftershock.csv`
+  - `front_fit_summary.csv`
+  - `front_fit_summary.json`
+  - figure: `time_distance_front_diagnostics`
+
+### Task 4 — Estimate activated-area expansion with PCA-aligned geometry
+- Task description
+  - Compare compact activated-area geometry between the two main windows using local Cartesian coordinates, PCA rotation, and convex-hull metrics.
+- Required data sources
+  - `m69_centered_event_table.csv`
+- Parameter selection strategy
+  - For each main window separately and within `<= 80 km`:
+    - retain the closest 90% of events by epicentral distance to M6.9
+    - compute PCA on local east/north coordinates of the retained set
+    - rotate into along-sequence and across-sequence axes
+    - compute convex hull area in km²
+    - compute along-axis span and across-axis span
+    - compute equivalent hull radius `sqrt(area/pi)`
+  - Optionally compute the same metrics for 60 km as a sensitivity check and 100/150 km as contamination diagnostics, but keep the 80 km comparison as primary.
+- Constraints
+  - Use the same geometric definitions in both windows for comparability.
+  - If a window has too few retained events for a valid convex hull or PCA, record failure status explicitly instead of substituting fallback metrics as success.
+  - Mark M6.9 and the largest distinct early-aftershock event on the geometry figures.
+- Key outputs
+  - `activated_area_metrics_by_window.csv`
+  - `activated_area_sensitivity_by_radius.csv`
+  - `pca_axis_parameters_by_window.csv`
+  - figure: `activated_area_comparison_map`
+  - figure: `pca_hull_comparison`
+
+### Task 5 — Estimate Mc and b-value for the final foreshock stage
+- Task description
+  - Compute magnitude-frequency diagnostics for the final-2-day foreshock window as the primary catalog-statistics analysis, with optional exploratory repetition for the early-aftershock window.
+- Required data sources
+  - `m69_centered_event_table.csv`
+- Parameter selection strategy
+  - Main sample: final-2-day foreshock events within `<= 80 km`.
+  - Estimate Mc using a documented completeness method appropriate for the sample size; if feasible, compare at least one robustness-oriented method against a standard reference method and record the chosen primary estimate.
+  - Estimate b-value using only magnitudes meeting the adopted completeness threshold.
+  - Save supporting counts:
+    - total events in window
+    - events above/equal Mc
+    - magnitude bin width used
+    - uncertainty estimate for b-value if available
+  - Optionally repeat for the early-aftershock window with strong caveat labeling as exploratory.
+- Constraints
+  - Do not infer completeness from decimal formatting alone; use metadata assumptions or package method defaults and record them.
+  - Early-aftershock Mc/b outputs must be labeled exploratory and not combined with the main conclusion metrics.
+- Key outputs
+  - `mc_bvalue_summary.csv`
+  - `foreshock_fmd_table.csv`
+  - optional `aftershock_mc_bvalue_exploratory.csv`
+  - figure: `foreshock_mc_bvalue_diagnostic`
+  - optional figure: `aftershock_mc_bvalue_exploratory`
+
+### Task 6 — Generate compact diagnostic figures and final machine-readable summaries
+- Task description
+  - Produce the requested compact figure set and a consolidated summary table/JSON containing the main screening measurements and method settings.
+- Required data sources
+  - Outputs from Tasks 1–5
+  - Optional context:
+    - `data/source_mechanism/Snet_mecha.csv`
+    - `data/stations/station.sta`
+- Parameter selection strategy
+  - Build figures:
+    - M6.9-centered map of the two analysis windows, marking M6.9 and the largest distinct early-aftershock
+    - time-distance plot with foreshock and aftershock 90th-percentile fronts and fitted speeds in legend
+    - event-rate and magnitude timeline across `-10 d to +0.5 d`, with `-10 d to -2 d` shown only as context
+    - convex-hull / activated-area comparison for final foreshock versus early aftershock
+    - final-2-day Mc / b-value diagnostic, plus optional exploratory early-aftershock panel
+  - Consolidate key numbers:
+    - rematch status
+    - event counts and rates
+    - max/median magnitude
+    - M3+/M4+/M5+ counts
+    - largest early-aftershock metadata
+    - front-fit speeds and excluded-bin counts
+    - hull area, equivalent radius, along/across spans
+    - Mc and b-value settings/results
+- Constraints
+  - Do not write a narrative report.
+  - Do not claim slow slip, aseismic slip, triggering, fluid migration, or stress transfer.
+  - Use optional mechanism/station files only as context overlays if they improve figure readability without altering the quantitative workflow.
+- Key outputs
+  - figures:
+    - `map_two_window_sequence`
+    - `time_distance_fronts`
+    - `rate_magnitude_timeline`
+    - `activated_area_hull_comparison`
+    - `foreshock_mc_bvalue`
+    - optional `aftershock_mc_bvalue_exploratory`
+  - `sanriku_m69_screening_summary.csv`
+  - `sanriku_m69_screening_summary.json`
+  - `analysis_method_settings.json`

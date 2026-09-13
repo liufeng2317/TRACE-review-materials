@@ -1,0 +1,151 @@
+{
+  "synthesis_request": "\nFocus the synthesis on the evolutionary relationship between the M1 and M3 earthquakes in the recent Aomori M7.7-area sequence.\n\nBuild a coherent scientific story for the regional seismicity evolution around the M1 and M3 earthquakes.\n\nUse the available evidence to connect background seismicity, M1/M3 local activation, event-chain or burst behavior, spatial and depth evolution, focal-mechanism context, and background-rate/statistical checks.\n\nFor the most evidence-supported M1-M3 interpretation, identify supporting evidence, weakening or non-comparable evidence, and external validation needed to distinguish tectonic linkage, aftershock triggering, regional activation, migration-like behavior, or catalog/observational bias.\n",
+  "paper_sources": [
+    {
+      "source_type": "article_markdown",
+      "paper_path": "<CASE_ROOT>/reference/A_review_on_slow_earthquakes_in_the_Japan_Trench.pdf",
+      "source_id": "<CASE_ROOT>/reference/A_review_on_slow_earthquakes_in_the_Japan_Trench/full.md"
+    },
+    {
+      "source_type": "article_markdown",
+      "paper_path": "<CASE_ROOT>/reference/The_2025_Mw7.6_Aomori-Oki_megathrust_sequence_and_a_slip_parallel_seismic_belt_to_the_trench.pdf",
+      "source_id": "<CASE_ROOT>/reference/The_2025_Mw7.6_Aomori-Oki_megathrust_sequence_and_a_slip_parallel_seismic_belt_to_the_trench/full.md"
+    },
+    {
+      "source_type": "article_markdown",
+      "paper_path": "<CASE_ROOT>/reference/The_forearc_seismic_belt_a_fluid_pathway_constraining_down_dip_megathrust_earthquake_rupture.pdf",
+      "source_id": "<CASE_ROOT>/reference/The_forearc_seismic_belt_a_fluid_pathway_constraining_down_dip_megathrust_earthquake_rupture/full.md"
+    }
+  ],
+  "paper_contexts": [
+    {
+      "relevance": "Moderately relevant as regional context for interpreting a possible M1-M3 relationship in the Aomori/Iwate-Aomori-Oki sector, but the paper does not analyze the user's specific recent sequence or named M1/M3 events.",
+      "useful_context": [
+        "In the northern Japan Trench, the review reports coexisting slow and fast fault-slip phenomena, including VLFEs, tectonic tremor, repeating earthquakes, earthquake swarms, foreshock activity, and large transient aseismic slips.",
+        "Repeating-earthquake analyses in the northern Japan Trench suggested preseismic aseismic-slip accelerations before some Sanriku-Oki earthquakes, and Uchida et al. (2016) inferred widespread 1-6 year periodic slip-rate changes with pronounced ~3-year periodicity in a northern sector.",
+        "The offshore northern region around 39-40.4°N is highlighted as overlapping periodic slow slip inferred from repeating earthquakes and geodetically observed 1992 and 2015 transient aseismic slips, both interpreted in the review as slow slip triggered by preceding earthquakes rather than classical afterslip.",
+        "Earthquake swarms are treated as sequences without a distinguishable mainshock and as not obeying Omori-Utsu decay; in subduction settings they may indicate transient aseismic forcing such as SSE-induced stress loading.",
+        "Foreshock-prone areas in the Japan Trench are close to areas where tectonic tremors and VLFEs occur, and some foreshock activity was argued to be inadequately explained by earthquake-to-earthquake triggering alone, suggesting possible involvement of transient aseismic processes."
+      ],
+      "diagnostic_criteria": [
+        "Test whether any burst near M1 or M3 follows Omori-Utsu aftershock decay; the review treats non-Omori increases as swarm-like behavior rather than a regular mainshock-aftershock sequence.",
+        "Identify repeating earthquakes using co-location and very high waveform similarity/cross-correlation/coherence; changes in their recurrence can support inference of surrounding aseismic slip.",
+        "Check whether local activation is synchronous or near-synchronous with independent slow-earthquake evidence such as tremor, VLFE, or SSE signals; the review repeatedly uses such coincidence as evidence of common transient forcing.",
+        "If a transient slip candidate follows a moderate interplate earthquake but is unusually large relative to that earthquake, the review suggests considering earthquake-triggered slow slip rather than automatically classifying it as classical afterslip.",
+        "For statistical checks, compare observed rate changes against ETAS/background expectations; the review uses rate increases not fully reproduced by ETAS as evidence that earthquake-to-earthquake triggering alone may be insufficient."
+      ],
+      "interpretation_cautions": [
+        "The paper does not study the user's recent Aomori sequence, so its regional findings should not be used as direct evidence that M1 and M3 were linked in any specific way.",
+        "Absence of a detected SSE does not rule out transient aseismic slip, especially offshore or near the trench axis, because the review stresses limited detectability with onshore observations alone.",
+        "Some pre-Tohoku slow-earthquake source locations were uncertain because they were observed at only a small number of ocean-bottom stations, so precise spatial comparisons can be uncertain.",
+        "The review explicitly notes that classification among short-term SSEs, long-term SSEs, afterslip, and unusual triggered transients can be ambiguous for some events.",
+        "Apparent differences in composite slow-fast behavior may reflect observational conditions such as station density and noise level, not only true physical differences."
+      ],
+      "external_validation_guidance": [
+        "Use waveform-based repeating-earthquake analysis around M1 and M3, because the review identifies repeating-earthquake recurrence changes as a practical proxy for transient interplate slip.",
+        "Apply ETAS and Omori-Utsu based statistical tests to determine whether any M1/M3-centered burst is better characterized as a swarm or a regular aftershock sequence.",
+        "Seek independent slow-earthquake evidence from broadband VLFE detection, tremor catalogs, GNSS, seafloor pressure, or GNSS-acoustic observations; the review relies on multimodal confirmation for stronger inference.",
+        "Compare M1 and M3 depths and mechanisms with plate-interface geometry and known northern Japan Trench slow-slip or foreshock-prone regions to assess whether a shallow interplate analogy is actually comparable.",
+        "If proposing migration or aseismic triggering, validate it with explicit space-time propagation analysis and, where possible, geodetic confirmation rather than visual clustering alone."
+      ],
+      "paper_path": "<CASE_ROOT>/reference/A_review_on_slow_earthquakes_in_the_Japan_Trench.pdf",
+      "source_type": "article_markdown"
+    },
+    {
+      "relevance": "Relevant for interpreting M1-M3 only if those events are part of or adjacent to the 2025 Aomori-Oki sequence studied here; the paper gives sequence-scale context but does not analyze events labeled M1 or M3.",
+      "useful_context": [
+        "The 2025 Mw 7.6 rupture was asymmetric: large slip concentrated near the hypocenter and extended northward, while smaller later slip extended eastward/updip; major later events occurred near that eastern updip limit rather than in the main high-slip patch.",
+        "Relocated aftershocks define a dipping interplate zone with mostly reverse-faulting mechanisms and a minor population of normal-faulting events near the plate boundary.",
+        "Aftershock activation reached the eastern edge of the aftershock zone within about 5 minutes of the mainshock, and the Mw 6.6 and Mw 6.7 events occurred about 100 km east of the mainshock hypocenter.",
+        "Within the aftershock zone, seismicity is organized into thin parallel streaks aligned with the inferred interplate slip direction; one streak appears to connect directly to the dense circular cluster of the Mw 6.7 sequence.",
+        "The 2025 sequence together with historical M≥5 events defines a broader slip-parallel seismic belt extending trenchward across a tremor gap, suggesting local clusters can sit within a longer-lived regional seismic structure."
+      ],
+      "diagnostic_criteria": [
+        "To assess linkage between two local events, test whether they lie on the same relocated streak, on adjacent parallel streaks, or in a streak-to-circular-cluster geometry like that seen for the Mw 6.7 sequence.",
+        "A simple mainshock-aftershock relation is more consistent with this paper if the later event is near the eastern/updip minor-slip area or near streak terminations, rather than inside the main high-slip patch where aftershocks were sparse.",
+        "A migration-like interpretation should be checked against the paper's space-time result that distant eastern activation began within minutes, because later eastward concentration alone does not require slow progressive migration.",
+        "Mechanism and depth structure matter: predominantly reverse events on the dipping plate-boundary zone fit the main interplate pattern, whereas inclusion of normal-faulting events and a few-kilometer vertical spread suggests more complex local deformation.",
+        "A broader regional-activation interpretation is strengthened if the event pair aligns not only with local streaks but also with the larger slip-parallel seismic belt recognized from the 2025 sequence plus historical seismicity."
+      ],
+      "interpretation_cautions": [
+        "The paper does not identify events named M1 or M3, so it cannot by itself support a specific causal relationship between them.",
+        "The authors emphasize that relative lateral locations are more reliable than absolute positions or exact depths because absolute locations depend on initial hypocenters and station corrections.",
+        "Relocated seismicity appears somewhat steeper than the model plate interface, so precise depth-based assignment to the interface versus nearby structures should be treated cautiously.",
+        "The eastern minor-slip feature is better resolved in teleseismic than regional inversion; the paper notes possible regional underresolution from coda masking, limited long-period recovery, or EGF limitations.",
+        "Structural interpretations involving subducting roughness, bathymetric highs, or inherited upper-plate structures are presented as plausible explanations, not definitive proof."
+      ],
+      "external_validation_guidance": [
+        "Use high-precision relocations with dense offshore data, if available, to determine whether M1 and M3 truly occupy the same streak, adjacent streaks, or a streak-to-cluster transition.",
+        "Compare M1 and M3 locations with the paper's slip models for the mainshock and large aftershocks to see whether they are in the main high-slip zone, the eastern minor-slip zone, or adjacent loaded areas.",
+        "Check moment tensor or focal-mechanism information to see whether M1 and M3 match the mostly reverse-faulting interplate population and the documented slip-parallel orientation.",
+        "Compare the event locations with bathymetry, residual gravity, density anomalies, and residual VGG lineations used in the paper to test for correspondence with proposed structural controls.",
+        "Place M1 and M3 in longer-term context using historical M≥5 seismicity and tremor/VLFE distributions, especially whether they fall within the broader slip-parallel belt that crosses the tremor gap."
+      ],
+      "paper_path": "<CASE_ROOT>/reference/The_2025_Mw7.6_Aomori-Oki_megathrust_sequence_and_a_slip_parallel_seismic_belt_to_the_trench.pdf",
+      "source_type": "article_markdown"
+    },
+    {
+      "relevance": "Relevant for regional interpretation because it describes northeastern Japan forearc seismicity structure, catalog-quality issues, and a fluid-related seismic belt framework, but it does not analyze the specific recent Aomori M1-M3 sequence.",
+      "useful_context": [
+        "The paper identifies a persistent forearc seismic belt in northeastern Japan where upper-plate, interplate repeating, and intraslab earthquakes align in a trench-parallel band and can form a vertically organized seismic system from the slab toward the surface.",
+        "Upper-plate seismicity commonly peaks where the plate boundary is about 35 to 45 km deep and 130 to 190 km from the trench; interplate repeating earthquakes tend to lie slightly downdip of upper-plate clusters, and concentrated intraslab seismicity occurs nearby.",
+        "The authors interpret the intraslab part of this belt as a dewatering front of the subducting slab, while stating that the exact dewatering mechanism cannot be uniquely specified from their data.",
+        "Upper-plate earthquakes above or slightly updip of repeating interplate earthquakes are interpreted as suggestive of near-vertical fluid migration at the dewatering front rather than only updip transport along the plate boundary.",
+        "The study shows that improved offshore detection and relocation with S-net and a retrained PhaseNet model substantially changed offshore event counts and lowered completeness, so apparent activation patterns can depend strongly on catalog capability."
+      ],
+      "diagnostic_criteria": [
+        "Check whether M1 and M3 and their surrounding seismicity occupy upper-plate, near-plate-boundary, or intraslab positions relative to the slab geometry, because the paper distinguishes these classes by distance from the plate boundary.",
+        "Test whether the local sequence forms a vertically organized slab-interplate-upper-plate pattern in cross section; the paper treats that geometry as a key signature of the forearc seismic belt.",
+        "If focal mechanisms are available, examine whether the local events show diverse mechanisms rather than a single uniform style, because the paper treats such diversity as potentially compatible with high pore pressure.",
+        "If repeating earthquakes or low-angle thrust events are present, check whether they align tightly with the plate boundary; the paper uses this as both a quality control and tectonic-context indicator.",
+        "Compare any apparent migration or activation trend to slab-referenced geometry rather than map view alone, because the paper's interpretation is based on position relative to the trench and plate boundary."
+      ],
+      "interpretation_cautions": [
+        "The paper did not study the recent Aomori M7.7-area sequence or the specific M1 and M3 earthquakes, so it cannot by itself establish a causal relationship between them.",
+        "Fluid involvement is inferred indirectly from spatial organization, focal-mechanism diversity, velocity structure, and coupling context, so it is suggestive but not uniquely diagnostic for any one sequence.",
+        "The authors explicitly note that the exact dewatering mechanism cannot be specified, so mechanism-level interpretations for M1-M3 should remain tentative.",
+        "Stress concentration near major rupture zones can also elevate earthquake rates; the paper argues this is not the sole explanation for the regional belt, but it does not eliminate stress-triggering for a specific local sequence.",
+        "Catalog and classification limitations matter: offshore completeness changed strongly with S-net use, and earthquake categorization becomes less reliable where the plate boundary is shallow or repeating-earthquake depth accuracy is insufficient."
+      ],
+      "external_validation_guidance": [
+        "Use the best available relocated catalog, preferably with offshore data where relevant, because the paper shows that improved network coverage and relocation materially improve offshore hypocenters and event detection.",
+        "Validate event positions against an external plate-boundary model, since the paper's interpretations depend on whether earthquakes are above, near, or below the plate interface.",
+        "Use focal-mechanism catalogs such as F-net, if available, to test whether the sequence faulting style matches upper-plate, interplate, or intraslab context and whether mechanism diversity is present.",
+        "Check for repeating earthquakes and low-angle thrust events in the same area to determine whether the sequence overlaps an interplate repeating zone or instead lies mainly in the upper plate or slab.",
+        "Before interpreting background-rate changes or burst behavior, confirm stable magnitude completeness and network performance through time, because the paper demonstrates strong sensitivity of offshore seismicity patterns to observational capability."
+      ],
+      "paper_path": "<CASE_ROOT>/reference/The_forearc_seismic_belt_a_fluid_pathway_constraining_down_dip_megathrust_earthquake_rupture.pdf",
+      "source_type": "article_markdown"
+    }
+  ],
+  "failed_papers": [],
+  "reference_scope": "The references provide regional and sequence-scale frameworks for evaluating possible M1-M3 linkage in the Aomori/northern Japan Trench setting, including interplate streak geometry, swarm-versus-aftershock behavior, slow-slip/foreshock analogies, and forearc belt structure; they do not identify the user's M1 or M3 events and therefore cannot serve as direct evidence that any specific linkage, migration, or mechanism occurred in the present case.",
+  "relevant_concepts": [
+    "Interplate seismicity in this region can organize into slip-parallel streaks and broader long-lived seismic belts, so a local M1-M3 pair may need to be interpreted within both immediate sequence geometry and larger regional structure.",
+    "Bursting seismicity that lacks clear Omori-Utsu decay is regionally comparable to swarm-like activation, whereas classic aftershock behavior is expected to show decaying rates tied to a mainshock.",
+    "In the northern Japan Trench, some foreshock/swam-like activations have been discussed together with transient aseismic forcing, but such analogies require independent support and should not be assumed from clustering alone.",
+    "Depth and mechanism relative to the plate boundary are central discriminants: reverse-faulting near the dipping interface fits the main interplate framework, while vertical spread or mixed mechanisms can indicate more complex upper-plate or intraslab involvement.",
+    "Apparent activation histories offshore are sensitive to catalog completeness, relocation quality, and station coverage, so background-rate and event-chain interpretations must be conditioned on observational stability."
+  ],
+  "diagnostic_criteria": [
+    "Test whether M1 and M3 lie on the same relocated streak, adjacent parallel streaks, or a streak-to-cluster geometry; this is more informative for linkage than map proximity alone.",
+    "Compare the local rate evolution with Omori-Utsu and ETAS expectations: a decaying sequence supports ordinary aftershock triggering more than a sustained or renewed burst that ETAS fails to reproduce.",
+    "Evaluate M1 and M3 in slab-referenced cross section to determine whether they are upper-plate, plate-boundary, or intraslab events, and whether the sequence shows a vertically organized forearc-belt pattern.",
+    "Use focal mechanisms and depth spread jointly: mostly reverse, interface-parallel events favor interplate comparability, whereas inclusion of normal faulting or several-kilometer vertical scatter weakens a simple single-fault interpretation.",
+    "For any migration-like story, require explicit space-time propagation analysis and compare its timescale with the known possibility of near-immediate distant activation in this region, so eastward or trenchward concentration is not over-read as slow migration."
+  ],
+  "interpretation_cautions": [
+    "None of the references analyze the specific M1 and M3 events, so they cannot by themselves establish tectonic linkage, aftershock causation, or regional activation in the current sequence.",
+    "Absolute depths and exact interface assignment are uncertain in the cited studies; lateral patterns are generally more robust than precise vertical placement, especially offshore.",
+    "Slow-slip, afterslip, swarm forcing, and unusual triggered transients can be difficult to separate observationally, so interpretive labels should follow the strongest independent constraints rather than sequence appearance alone.",
+    "A broader seismic belt or fluid-related forearc framework is contextual rather than diagnostic for a given pair of events; similar geometry can arise without a direct M1-M3 causal chain.",
+    "Changes in detection threshold, network geometry, and relocation method can create or suppress apparent background-rate shifts, burstiness, and migration trends."
+  ],
+  "external_validation_guidance": [
+    "Use the highest-quality relocated catalog available, ideally including offshore data, and benchmark M1/M3 against a plate-boundary model to classify interface versus upper-plate versus intraslab positions.",
+    "Run formal ETAS and Omori-Utsu tests, with time-varying completeness checks, to determine whether the M1/M3 neighborhood is better described as ordinary aftershock decay, excess activation, or catalog artifact.",
+    "Obtain focal-mechanism and waveform-similarity constraints, including repeating-earthquake searches if possible, to test whether M1 and M3 share interplate behavior or belong to different structural domains.",
+    "If proposing migration or regional activation, quantify propagation in space-time and compare with the known slip-parallel streak/belt geometry and with historical M>=5 seismicity in the same corridor.",
+    "If invoking transient aseismic forcing, seek independent confirmation from tremor/VLFE detections, GNSS or seafloor geodesy, or recurrence changes in repeaters rather than relying on seismic clustering alone."
+  ]
+}

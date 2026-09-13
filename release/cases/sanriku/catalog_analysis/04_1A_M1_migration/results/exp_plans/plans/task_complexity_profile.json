@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single catalog-centered observational workflow with two primary time windows, spatial screening, migration-front fitting, PCA/hull metrics, and Mc/b-value diagnostics; moderate risk comes from event rematching, sparse-bin exclusions, and possible early-aftershock incompleteness, but no multi-package inversion or model execution is required.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate",
+  "expected_script_count": 1
+}

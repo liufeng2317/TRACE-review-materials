@@ -1,0 +1,38 @@
+{
+  "status": "reference_synchronized",
+  "workflow": "catalog_construction_from_JMA",
+  "step": "01_relocation_HypoDD",
+  "agent_rerun": false,
+  "input": {
+    "directory": "examples/sanriku/catalog_construction/data/hypodd_info",
+    "events": 33702,
+    "picks": 637812,
+    "stations": 386,
+    "time_range": [
+      "2025-06-01",
+      "2026-05-01"
+    ],
+    "latitude_range": [
+      38.5,
+      42.5
+    ],
+    "longitude_range": [
+      141.0,
+      144.5
+    ]
+  },
+  "output": {
+    "directory": "exp_run/outputs/01_hypodd_catalog_only_relocation/production",
+    "source_native_run": "seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_20250601_20260501",
+    "catalog_code": "japan_aomori_nocc_full",
+    "time_windows": 12,
+    "initial_locations": 29036,
+    "relocated_events": 25648,
+    "residual_rows": 276172
+  },
+  "verification": {
+    "native_output_files_copied_without_editing": true,
+    "article_data_alignment_verified": true,
+    "historical_agent_logs_preserved_outside_run_directory": true
+  }
+}

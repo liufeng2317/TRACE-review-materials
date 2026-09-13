@@ -1,0 +1,24 @@
+Aomori M1-M2-M3 relationship synthesis
+====================================
+
+Top scientific takeaways:
+- M1-M3 is the highest-priority pair for deeper physical follow-up.
+- M1-M2 and M2-M3 are better framed as regional-episode candidates than as simple local pair-linkages.
+- Broader regional activation remains a strong competing explanation across the system.
+
+Pair screens:
+- M1-M2: raw=high, controls=survives_controls, distance=not_local_linkage_plausible.
+- M1-M3: raw=high, controls=partly_weakened, distance=nearby_plausible.
+- M2-M3: raw=high, controls=partly_weakened, distance=not_local_linkage_plausible.
+
+Highest-priority pair-hypothesis combinations:
+- M1-M2 — independent local clusters (medium)
+- M1-M2 — linked local fault-system activation (medium)
+- M1-M2 — broader regional activation (high)
+- M1-M2 — common regional rate pulse without pair-specific linkage (high)
+- M1-M3 — overlapping activation zones (high)
+- M1-M3 — delayed activation between clusters (medium)
+- M1-M3 — linked local fault-system activation (high)
+- M1-M3 — corridor-like migration or expansion (high)
+
+See final_scientific_report.md and companion CSV tables for the full evidence matrix.

@@ -1,0 +1,258 @@
+# Goal
+Quantify and interpret long-period evolution of magnitude of completeness (Mc), b-value, seismicity rate, and optional spatial b-value patterns in the Aomori 2020-2026 catalog for the M1-M3 system, using a simple oriented study area plus M1- and M3-centered subregions, to describe catalog-level activation-state evolution without overinterpreting physical mechanisms.
+
+## Planning Assumptions
+- Observation data are sufficient; no model data are needed.
+- Primary catalog input is `data/catalog/Snet_catalog_20200101_20260522_filter.csv`; event times, locations, depths, and magnitudes are complete and suitable for catalog statistics.
+- Phase markers M1, M2, M3 are taken from `catalog/main_earthquake.csv`; only M1 and M3 define the main spatial axis and temporal interpretation windows.
+- SeismoStats contract relevant to this task:
+  - Mc methods available: `estimate_mc_maxc`, `estimate_mc_ks`, `estimate_mc_b_stability`.
+  - Classical b-value estimation is available through `ClassicBValueEstimator` / `estimate_b`; magnitudes below Mc are excluded automatically.
+  - Magnitude discretization `delta_m` must be specified from catalog metadata/inspection and used consistently in Mc and b-value estimation.
+- Main time-series method should use fixed-count sliding windows with 500-event windows and 100-event step, assigning each result to the median event time in the window.
+- Reliability must be tied to Mc stability and effective event count above Mc; windows with too few complete events or unstable Mc should be flagged and not overinterpreted.
+- Grid/adaptive-cell mapping is conditional: only produce if each mapped cell passes minimum event-count and Mc-stability requirements; otherwise omit from main evidence.
+- Keep the workflow compact: one primary script for data preparation, spatial selection, catalog statistics, robustness checks, and figure generation; one optional secondary script only for conditional spatial-grid mapping if warranted by event density.
+
+## Analysis Plan
+### Task 1: Build the analysis-ready catalog and define M1-M3 temporal markers
+- Task description:
+  - Load the filtered catalog and mainshock table, standardize fields, derive analysis periods, and create a reusable event table for all downstream calculations.
+- Required data sources:
+  - `data/catalog/Snet_catalog_20200101_20260522_filter.csv`
+  - `catalog/main_earthquake.csv`
+  - Optional context only for plotting/reference: `stations/station.sta`, `source_mechanism/Snet_mecha.csv`
+- Parameter selection strategy:
+  - Restrict analysis time span to 2020-01-01 through 2026-05-22.
+  - Parse origin times to UTC-like datetime objects and sort catalog chronologically.
+  - Read M1, M2, M3 times/locations from the mainshock table; use M1 and M3 to define the axis and interpretation phases:
+    - pre-M1 reference: 2020-01-01 to M1-14 d
+    - sensitivity pre-M1: 2020-01-01 to M1-7 d
+    - M1-related: M1-14 d to M1+21 d
+    - middle: M1+21 d to M3-35 d
+    - final pre-M3: M3-35 d to M3
+    - post-M3: M3 to catalog end
+  - Determine magnitude discretization `delta_m` from documented catalog binning or direct histogram spacing inspection; if not explicit, verify the most common magnitude increment before fixing `delta_m`.
+- Constraints:
+  - Do not infer precision solely from decimal formatting without checking catalog spacing.
+  - Preserve the original magnitudes for reporting, but bin consistently for Mc/b-value estimation if required by the chosen Mc method.
+- Key outputs:
+  - Clean event table with datetime, lat, lon, dep, mag, ordinal time, and phase labels.
+  - Mainshock marker table with M1/M2/M3 metadata and phase-boundary timestamps.
+  - Compact catalog summary table including total event count and magnitude increment choice.
+
+### Task 2: Select and document the primary oriented M1-M3 study area
+- Task description:
+  - Construct a simple oriented study region aligned with the M1-M3 direction, compare candidate shapes briefly, choose the interpretable boundary, and quantify included events.
+- Required data sources:
+  - Clean catalog from Task 1
+  - `catalog/main_earthquake.csv`
+  - Optional map context: `stations/station.sta`
+- Parameter selection strategy:
+  - Compute the M1→M3 azimuth from epicenters.
+  - Build a primary rotated rectangle aligned with that azimuth; length should span M1-M3 plus at least ~60 km margin beyond both ends.
+  - Set width to include the main M1-M3 seismic corridor while excluding the unrelated southwestern dense cluster visible in a broad lat-lon box.
+  - Construct a simple ellipse aligned to the same axis as a sensitivity geometry.
+  - Choose the final primary boundary by maximizing coverage of M1/M3-associated activity and minimizing contamination from the southwestern high-density cluster.
+  - Record explicit boundary parameters: center, azimuth, half-length, half-width (or ellipse semi-axes).
+- Constraints:
+  - Keep geometry simple: one rotated rectangle or one ellipse as the final primary area.
+  - The chosen area must contain both M1 and M3 and surrounding activity with the requested margin.
+  - If the ellipse and rectangle give similar inclusion patterns, prefer the rectangle for interpretability.
+- Key outputs:
+  - Final study-area definition with explicit geometric parameters.
+  - Event count inside the chosen oriented area.
+  - Comparison counts for at least the final chosen area and one alternative geometry.
+  - Map figure showing all events, M1, M3, and the chosen boundary; optional secondary diagnostic panel showing why the oriented area avoids the unrelated southwestern cluster better than a broad rectangle.
+
+### Task 3: Define comparison subregions and compute baseline phase summaries
+- Task description:
+  - Create the whole-area and local comparison regions, then summarize counts, Mc, b-value, and rate by the user-defined temporal phases before running sliding analyses.
+- Required data sources:
+  - Clean catalog from Task 1
+  - Primary study-area geometry from Task 2
+  - `catalog/main_earthquake.csv`
+- Parameter selection strategy:
+  - Region set:
+    - whole oriented M1-M3 study area
+    - M1-centered circle, radius 80 km
+    - M3-centered circle, radius 80 km
+    - sensitivity circles at 60 km for M1 and M3
+  - For each region and each phase, calculate:
+    - total event count
+    - phase duration
+    - simple event rate (events/day)
+    - Mc using primary method
+    - b-value using events above Mc
+    - uncertainty and effective complete-event count
+  - Use phase summaries to provide a coarse interpretive backbone for the sliding-window results.
+- Constraints:
+  - Keep phase interpretation descriptive only; avoid causal claims.
+  - If a phase in a local subregion has too few events above Mc, report as insufficient rather than forcing a b-value.
+- Key outputs:
+  - Region definition table.
+  - Phase-by-region summary table for counts, rates, Mc, b-value, uncertainty, and reliability flag.
+
+### Task 4: Compute the primary sliding Mc and b-value time series
+- Task description:
+  - Estimate time-varying Mc and b-value using the requested fixed-count windows for each main region, and produce the main long-period evolution products.
+- Required data sources:
+  - Region-filtered event tables from Tasks 2-3
+- Parameter selection strategy:
+  - Primary settings:
+    - window size: 500 events
+    - step: 100 events
+    - assign result time to median event time in each window
+  - Within each window:
+    - estimate Mc using a primary method chosen for interpretability and stability
+    - compute b-value with the classical estimator using that Mc and fixed `delta_m`
+    - compute uncertainty for b-value
+    - count complete events (N above Mc)
+    - store reliability indicators
+  - Primary Mc method selection:
+    - use `estimate_mc_maxc` as the default fast baseline for all windows
+    - verify interpretive stability against one alternative method on selected windows or summarized reruns (preferred alternative: KS; MBS only if event counts are comfortably adequate)
+  - Smoothing:
+    - derive a smoothed b-value trend from the windowed series using a simple rolling median or rolling mean across neighboring windows
+    - choose one smoothing span that preserves phase-scale changes rather than short transients
+- Constraints:
+  - Do not smooth the raw Mc estimates into the primary completeness diagnostic; keep raw and optionally lightly smoothed Mc separate.
+  - Reliability flag should combine at least:
+    - sufficient complete-event count above Mc
+    - Mc not at/near the upper tail of the window magnitude range
+    - no pathological jumps caused by sparse FMD tails
+  - Avoid interpreting individual short-lived excursions when neighboring windows are unreliable.
+- Key outputs:
+  - Window-level results table for each region containing:
+    - window start/end indices or times
+    - median event time
+    - Mc
+    - b-value
+    - b-value uncertainty
+    - total events in window
+    - complete-event count
+    - reliability flag
+  - Main figure: sliding b-value time series with raw points/line, smoothed trend, and vertical markers for M1/M2/M3 plus phase boundaries.
+  - Companion figure: sliding Mc timeline and reliability timeline.
+
+### Task 5: Compute seismicity-rate evolution and compare with b-value
+- Task description:
+  - Derive simple long-period rate metrics that are directly comparable with the b-value series and summarize whether rate and b-value indicate background, elevated activation, relaxation, or renewed pre-M3 activation.
+- Required data sources:
+  - Region-filtered catalogs
+  - Sliding-window products from Task 4
+- Parameter selection strategy:
+  - Primary event-rate series:
+    - compute event rate from the same 500-event windows using elapsed time span of each window (events/day)
+    - assign to the median event time of the window for direct comparison with b-value
+  - Secondary rate context:
+    - compute fixed-time counts (e.g., monthly or 30-day bins) for interpretability on the full study area
+  - Compare:
+    - pre-M1 baseline vs M1-related vs middle vs final pre-M3 vs post-M3
+    - whole area vs M1-centered vs M3-centered regions
+  - Summarize whether b-value changes coincide with rate increases, lag them, or diverge spatially.
+- Constraints:
+  - Rate should remain descriptive and not be used to infer triggering or transient physical mechanisms.
+  - Keep one primary rate definition in the main figure; use the second only as context if it clarifies interpretation.
+- Key outputs:
+  - Window-based rate series matched to b-value times.
+  - Phase-level rate comparison table.
+  - Combined figure with b-value and event-rate evolution, including M1/M2/M3 and phase markers.
+
+### Task 6: Compare whole-area, M1-centered, and M3-centered evolution
+- Task description:
+  - Directly compare the temporal behavior among the primary study area and local subregions to test for mixed spatial behavior without overcomplicating the analysis.
+- Required data sources:
+  - Sliding-window results and phase summaries from Tasks 3-5
+- Parameter selection strategy:
+  - Plot and tabulate the 80 km M1-centered and M3-centered results together with the whole-area series.
+  - Use 60 km circles as sensitivity checks, focusing only on whether the main interpretation changes.
+  - Summarize:
+    - relative mean/median b-value by phase
+    - timing of major b-value departures
+    - whether one subregion dominates final pre-M3 behavior
+- Constraints:
+  - Do not elevate subregion differences to main conclusions if they disappear under the 60 km sensitivity check or are driven by unstable Mc.
+  - Prefer simple side-by-side comparison over formal hypothesis testing.
+- Key outputs:
+  - Comparison figure of b-value evolution for whole area, M1-centered 80 km, and M3-centered 80 km.
+  - Sensitivity summary table for 60 km vs 80 km local regions.
+  - Concise interpretive bullets on regional similarity/difference.
+
+### Task 7: Conditional spatial b-value mapping
+- Task description:
+  - Evaluate whether a simple spatial b-value map is interpretable; if yes, produce a limited map product, otherwise explicitly document why it is omitted.
+- Required data sources:
+  - Event subset inside the chosen oriented study area
+  - Optional station context for map overlay: `stations/station.sta`
+- Parameter selection strategy:
+  - First test spatial support:
+    - candidate regular grid or adaptive cells inside the oriented region
+    - require minimum event count and minimum complete-event count per cell sufficient for stable Mc/b-value estimation
+  - If support is adequate:
+    - compute cell-level Mc and b-value for the full analysis period and, only if still stable, for broad subperiods such as pre-M1, middle, and final pre-M3
+  - If support is inadequate:
+    - skip grid maps and state that cell-level Mc/b-values are not interpretable.
+- Constraints:
+  - Grid/adaptive-cell results are optional and must not be used as main evidence unless most displayed cells pass reliability criteria.
+  - Avoid producing visually dense maps with unstable or sparsely supported cells.
+- Key outputs:
+  - Decision note: mapping performed or skipped, with threshold rationale.
+  - If performed: whole-area b-value map and paired Mc or support-count map.
+  - If skipped: explicit non-interpretability statement for the final report.
+
+### Task 8: Limited robustness checks targeting the main conclusion
+- Task description:
+  - Test only the alternatives that could materially change the interpretation of long-period b-value evolution.
+- Required data sources:
+  - Outputs from Tasks 2-7
+- Parameter selection strategy:
+  - Run a compact sensitivity matrix covering:
+    - geometry: final rotated rectangle vs aligned ellipse
+    - local radius: 80 km vs 60 km
+    - window size: 300 / 500 / 750 events
+    - Mc method: primary method vs one alternative (prefer MAXC vs KS)
+  - For each alternative, compare only:
+    - broad phase ordering of b-value state
+    - whether post-M1 differs from pre-M1
+    - whether final pre-M3 differs from earlier M1-to-M3 interval
+    - whether M1- and M3-centered areas remain distinct or not
+- Constraints:
+  - Do not expand into exhaustive model checking.
+  - Treat a result as robust only if the sign/order of the main contrasts is preserved across the compact sensitivity set.
+- Key outputs:
+  - Small robustness table listing each alternative setup and whether the main interpretation is unchanged, weakened, or unstable.
+  - Short note identifying which parameter choice contributes the most uncertainty.
+
+### Task 9: Assemble final concise answer products
+- Task description:
+  - Synthesize the outputs into the requested concise scientific answers and ensure every interpretive statement is anchored to Mc stability, event counts, and simple descriptive evidence.
+- Required data sources:
+  - All validated outputs from Tasks 2-8
+- Parameter selection strategy:
+  - Organize final answers around the user’s requested questions:
+    - coverage area used and why
+    - whether oriented region better avoids unrelated southwestern clustering
+    - main temporal pattern of b-value evolution
+    - before/after M1 behavior
+    - M1-to-M3 state vs pre-M1 background
+    - whether final pre-M3 differs from earlier M1-to-M3 interval
+    - suggested catalog-level activation/stress-state implication
+    - Mc and rate behavior alongside b-value
+    - M1- vs M3-centered differences
+    - whether grid results are meaningful
+    - most justified physical follow-up
+  - Use only the simplest figure set necessary:
+    - study-area selection map
+    - optional geometry-choice diagnostic
+    - sliding b-value time series with smoothed trend and phase markers
+    - sliding Mc and reliability timeline
+    - event-rate and b-value comparison
+    - whole-area vs M1/M3 subregion comparison
+    - optional spatial b-value/Mc maps only if interpretable
+- Constraints:
+  - Explicitly avoid claims of slow slip, fluid migration, stress transfer, or triggering from catalog statistics alone.
+  - Any physical mechanism discussion must be framed as a follow-up hypothesis requiring independent data.
+- Key outputs:
+  - Final figure inventory and caption checklist.
+  - Final concise interpretation table keyed to the user’s required report questions.

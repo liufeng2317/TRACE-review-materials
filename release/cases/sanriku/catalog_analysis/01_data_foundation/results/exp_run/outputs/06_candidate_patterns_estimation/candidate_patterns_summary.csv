@@ -1,0 +1,11 @@
+item,value
+catalog_events,25243
+mainshock_events,3
+station_count,371
+mechanism_records,354
+major_matches,3
+pattern_count,9
+followup_axis_count,5
+top_pattern_id,MS_M1
+top_pattern_type,mainshock_local_context
+top_followup_axis,space

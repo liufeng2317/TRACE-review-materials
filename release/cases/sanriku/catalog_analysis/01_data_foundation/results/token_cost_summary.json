@@ -1,0 +1,113 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2207,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 288698,
+      "output_tokens": 21874
+    },
+    "Planing": {
+      "input_tokens": 90662,
+      "output_tokens": 10696
+    },
+    "Plan Merging": {
+      "input_tokens": 20097,
+      "output_tokens": 2347
+    },
+    "Workflow Agent": {
+      "input_tokens": 78728,
+      "output_tokens": 4696
+    },
+    "Coding Agent (01_data_audit_cleaning)": {
+      "input_tokens": 191293,
+      "output_tokens": 7086
+    },
+    "Result Check Agent (01_data_audit_cleaning)": {
+      "input_tokens": 27808,
+      "output_tokens": 891
+    },
+    "Task Analysis Agent (01_data_audit_cleaning)": {
+      "input_tokens": 27955,
+      "output_tokens": 4332
+    },
+    "Coding Agent (02_major_earthquake_matching)": {
+      "input_tokens": 372799,
+      "output_tokens": 6624
+    },
+    "Result Check Agent (02_major_earthquake_matching)": {
+      "input_tokens": 9888,
+      "output_tokens": 849
+    },
+    "Coding Agent (03_regional_background_characterization)": {
+      "input_tokens": 729488,
+      "output_tokens": 14607
+    },
+    "Result Check Agent (03_regional_background_characterization)": {
+      "input_tokens": 18530,
+      "output_tokens": 1060
+    },
+    "Task Analysis Agent (02_major_earthquake_matching)": {
+      "input_tokens": 27518,
+      "output_tokens": 2280
+    },
+    "Coding Agent (04_mainshock_regional_context)": {
+      "input_tokens": 282756,
+      "output_tokens": 7681
+    },
+    "Result Check Agent (04_mainshock_regional_context)": {
+      "input_tokens": 10663,
+      "output_tokens": 842
+    },
+    "Task Analysis Agent (04_mainshock_regional_context)": {
+      "input_tokens": 23774,
+      "output_tokens": 3819
+    },
+    "Coding Agent (06_candidate_patterns_estimation)": {
+      "input_tokens": 673306,
+      "output_tokens": 14205
+    },
+    "Result Check Agent (06_candidate_patterns_estimation)": {
+      "input_tokens": 16509,
+      "output_tokens": 1054
+    },
+    "Coding Agent (05_diagnostic_figures)": {
+      "input_tokens": 575888,
+      "output_tokens": 12456
+    },
+    "Result Check Agent (05_diagnostic_figures)": {
+      "input_tokens": 9933,
+      "output_tokens": 721
+    },
+    "Task Analysis Agent (06_candidate_patterns_estimation)": {
+      "input_tokens": 22644,
+      "output_tokens": 3677
+    },
+    "Task Analysis Agent (03_regional_background_characterization)": {
+      "input_tokens": 147795,
+      "output_tokens": 6795
+    },
+    "Task Analysis Agent (05_diagnostic_figures)": {
+      "input_tokens": 60707,
+      "output_tokens": 4581
+    },
+    "Evaluation": {
+      "input_tokens": 29756,
+      "output_tokens": 724
+    },
+    "Report Synthesis": {
+      "input_tokens": 90078,
+      "output_tokens": 5468
+    }
+  },
+  "total": {
+    "input_tokens": 3829480,
+    "output_tokens": 139380,
+    "total_tokens": 3968860
+  }
+}

@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_download_validate_sanriku_jma_catalog
+Status: success
+Execution stage: analysis_done
+Debug rounds: 4
+Result check rounds: 1
+Elapsed seconds: 7755.908
+Started at: 2026-09-11T17:05:58.795204+00:00
+Finished at: 2026-09-11T19:15:14.703524+00:00
+Latest log: <CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt
+Script: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py
+Output dir: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog
+Analysis: <CASE_ROOT>/run/00_catalog_download/exp_run/analysis/01_download_validate_sanriku_jma_catalog.md
+Runtime action: pass
+Code changes: 4
+Last activity: 2026-09-11T19:15:14.703426+00:00
+Last event: task_analysis_done
+Progress message: Task-level analysis file was generated.
+Timing: code_review_sec=63.781, coding_agent_sec=480.241, preflight_sec=1.971, result_check_sec=104.143, script_execution_sec=6969.691, task_analysis_sec=130.457, total_sec=7755.908
+Coding plan context: mode=full_experiment_plan, original_chars=12437, compact_chars=12437
+Coding tool usage: total=35, read_file=13, unique_files=6, used_retrieve=False, tools={'bash_executor': 5, 'read_file': 13, 'python_executor': 12, 'write_file': 1, 'apply_diff': 4}
+Debug summary: <CASE_ROOT>/run/00_catalog_download/exp_run/log/coding_progress/debug_summary.json

@@ -1,0 +1,5 @@
+{"record_type":"run_status","status":"reference_synchronized","agent_rerun":false,"workflow":"catalog_construction_from_JMA","step":"01_relocation_HypoDD"}
+{"record_type":"input_validation","input_directory":"examples/sanriku/catalog_construction/data/hypodd_info","events":33702,"picks":637812,"stations":386,"time_range":["2025-06-01","2026-05-01"]}
+{"record_type":"native_output_validation","source":"seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_20250601_20260501","catalog_code":"japan_aomori_nocc_full","time_windows":12,"initial_locations":29036,"relocated_events":25648,"residual_rows":276172,"status":"verified"}
+{"record_type":"article_alignment","initial_catalog":"verified","relocated_catalog":"verified","status":"consistent"}
+{"record_type":"provenance_note","message":"This trajectory records synchronization and validation of an existing native relocation result. It is not a newly generated agent conversation."}

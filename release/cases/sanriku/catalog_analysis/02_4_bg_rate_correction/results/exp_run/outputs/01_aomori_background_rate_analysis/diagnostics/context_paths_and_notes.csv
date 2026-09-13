@@ -1,0 +1,7 @@
+key,value
+active_catalog_source_note,Active-period analysis catalog path resolved to: <CASE_ROOT>/data/catalog/Snet_catalog_relocate_250930_260501.csv
+requested_active_path_exists,False
+requested_active_path,<CASE_ROOT>/data/Snet_catalog_20251001_20260501_filter.csv
+resolved_active_path,<CASE_ROOT>/data/catalog/Snet_catalog_relocate_250930_260501.csv
+mechanism_path,<CASE_ROOT>/data/source_mechanism/Snet_mecha.csv
+station_path,<CASE_ROOT>/data/stations/station.sta

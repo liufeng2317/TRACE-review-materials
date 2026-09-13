@@ -1,0 +1,12 @@
+test_type,setting,pre_minus_middle_b,final_minus_middle_b,note
+window_size,300_events,0.06830394032897691,-0.12158252862547547,whole oriented area
+window_size,500_events,0.029231305150974607,-0.2383258748066719,whole oriented area
+window_size,750_events,0.03998277173670117,-0.1935406275033058,whole oriented area
+geometry,pre_M1_reference,-0.009832824369450432,,rectangle_minus_ellipse median reliable b for phase
+geometry,middle_phase,0.01746695797598452,,rectangle_minus_ellipse median reliable b for phase
+geometry,final_pre_M3,-0.0020268775590489563,,rectangle_minus_ellipse median reliable b for phase
+radius,M1_60km,0.04589145183228027,-0.19475775142919982,subregion radius sensitivity
+radius,M1_80km,0.11691027544090904,-0.16923135871227424,subregion radius sensitivity
+radius,M3_60km,0.12204632761130507,-0.1665569189941607,subregion radius sensitivity
+radius,M3_80km,0.047356184766358056,-0.2047821335854192,subregion radius sensitivity
+mc_method,maxc_vs_ks_checkpoints,0.2499999999999999,0.04554097438693372,median maxc-minus-ks difference across sampled whole-area windows

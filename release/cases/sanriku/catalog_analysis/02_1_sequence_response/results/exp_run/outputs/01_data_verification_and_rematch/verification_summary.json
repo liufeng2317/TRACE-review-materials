@@ -1,0 +1,101 @@
+{
+  "inputs": {
+    "catalog": {
+      "path": "<CASE_ROOT>/data/catalog/Snet_catalog_relocate.csv",
+      "n_rows": 25646,
+      "columns": [
+        "datetime",
+        "lat",
+        "lon",
+        "dep",
+        "mag"
+      ],
+      "required_fields_present": true,
+      "missing_required_fields": [],
+      "time_parse_missing": 0,
+      "lat_missing": 0,
+      "lon_missing": 0,
+      "dep_missing": 0,
+      "mag_missing": 0
+    },
+    "main_earthquake": {
+      "path": "<CASE_ROOT>/data/catalog/main_earthquake.csv",
+      "n_rows": 3,
+      "columns": [
+        "index",
+        "datetime",
+        "lat",
+        "lon",
+        "dep",
+        "mag"
+      ],
+      "required_fields_present": true,
+      "missing_required_fields": []
+    },
+    "mechanism": {
+      "path": "<CASE_ROOT>/data/source_mechanism/Snet_mecha.csv",
+      "n_rows": 354,
+      "columns": [
+        "event_code",
+        "origin_time",
+        "lat_deg",
+        "lon_deg",
+        "depth_km",
+        "mag_1",
+        "mag_1_type",
+        "mag_2",
+        "mag_2_type",
+        "region_name",
+        "n_hypo_stations",
+        "m_method",
+        "m_source",
+        "P_axis_azimuth",
+        "P_axis_dip",
+        "T_axis_azimuth",
+        "T_axis_dip",
+        "N_axis_azimuth",
+        "N_axis_dip",
+        "strike_plane1",
+        "dip_plane1",
+        "rake_plane1",
+        "strike_plane2",
+        "dip_plane2",
+        "rake_plane2",
+        "focal_mech_score",
+        "n_mech_stations",
+        "focal_mech_projection",
+        "source_file"
+      ],
+      "required_fields_present": true,
+      "missing_required_fields": [],
+      "non_missing_counts": {
+        "focal_mech_score": 139,
+        "n_mech_stations": 139,
+        "strike_plane1": 139,
+        "dip_plane1": 139,
+        "rake_plane1": 139
+      }
+    },
+    "stations": {
+      "path": "<CASE_ROOT>/data/stations/station.sta",
+      "n_rows": 371,
+      "columns": [
+        "station_code",
+        "station_number",
+        "latitude",
+        "longitude",
+        "elevation_m",
+        "matched"
+      ],
+      "required_fields_present": true,
+      "missing_required_fields": []
+    }
+  },
+  "n_mainshocks": 3,
+  "n_catalog_events": 25646,
+  "n_mechanism_events": 354,
+  "n_stations": 371,
+  "match_status_counts": {
+    "matched": 3
+  }
+}

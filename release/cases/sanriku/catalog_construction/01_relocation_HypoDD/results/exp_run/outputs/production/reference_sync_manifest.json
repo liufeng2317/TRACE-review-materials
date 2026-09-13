@@ -1,0 +1,21 @@
+{
+  "status": "synchronized_from_existing_native_run",
+  "source": "seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_20250601_20260501",
+  "input_workflow": "../00_travel_time_download/results/exp_run/expert/outputs",
+  "catalog_code": "japan_aomori_nocc_full",
+  "native_outputs": {
+    "initial_location_file": "production/japan_aomori_nocc_full.loc",
+    "relocated_catalog_file": "production/japan_aomori_nocc_full.reloc",
+    "clean_relocated_catalog_file": "expert/outputs/japan_aomori_nocc_full_clean.reloc",
+    "residual_file": "production/japan_aomori_nocc_full.res",
+    "time_window_manifest": "production/time_window_manifest.json",
+    "time_window_status": "production/time_window_status.csv"
+  },
+  "counts": {
+    "input_events": 33702,
+    "events_with_initial_locations": 29036,
+    "events_with_relocated_locations": 25646,
+    "time_windows": 12
+  },
+  "note": "The native relocation output contains 25,648 rows. The manuscript-aligned clean product removes two rows outside the physical depth range and contains 25,646 events."
+}

@@ -1,0 +1,16 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Computing catalog diagnostics
+Running screening case dense_damp120 for ('2025-12-01 00:19:25.030000+00:00', '2025-12-31 23:59:28.410000+00:00')
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 963, in <module>
+    main()
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 902, in main
+    screening_records.append(run_one_screening_case(
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 450, in run_one_screening_case
+    inputs, selection, ph2dt, hypodd, runtime = make_grouped_params(
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 372, in make_grouped_params
+    ph2dt = Ph2dtParams(**ph2dt_kwargs)
+TypeError: __init__() got an unexpected keyword argument 'minobs_ct'
+

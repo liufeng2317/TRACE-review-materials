@@ -1,0 +1,47 @@
+Aomori background-rate analysis report
+====================================
+
+Active catalog source note: Active-period analysis catalog path resolved to: <CASE_ROOT>/data/catalog/Snet_catalog_relocate_250930_260501.csv
+Long-term common-region events: 159,087
+Active common-region events: 22,090
+
+Catalog crosswalk and threshold reliability
+----------------------------------------
+Long-term Mc (common region, max-curvature): 1.15
+Active Mc (common region, max-curvature): 1.45
+Preferred cross-catalog thresholds: M>=3, M>=4, and M>=5.
+M>=1.2 is retained for active-period relocated analysis only unless later completeness work justifies broader use.
+
+Overlap-period count comparison in the common region
+-----------------------------------------------
+Threshold M>=1.2: long-term raw overlap=20665, active relocated overlap=17198
+Threshold M>=2.0: long-term raw overlap=6254, active relocated overlap=5515
+Threshold M>=3.0: long-term raw overlap=1389, active relocated overlap=1267
+Threshold M>=4.0: long-term raw overlap=280, active relocated overlap=259
+Threshold M>=5.0: long-term raw overlap=69, active relocated overlap=68
+Threshold M>=6.0: long-term raw overlap=13, active relocated overlap=13
+
+Long-term background interpretation
+-------------------------------
+Common-region active-period M>=4 count=259, expected=62.62, obs/exp=4.14, percentile=98.5.
+Common-region active-period M>=5 count=68, expected=12.03, obs/exp=5.65, percentile=98.7.
+
+Strongest regional and depth anomalies by observed/expected ratio
+-------------------------------------------------------------
+m1_m3_local_union | 30-60 km | M>=5.0: observed=1, expected=0.09, obs/exp=10.96
+m1_m3_local_union | 0-30 km | M>=5.0: observed=44, expected=4.56, obs/exp=9.64
+m1_m3_local_union | 0-30 km | M>=4.0: observed=139, expected=15.79, obs/exp=8.80
+m1_m3_local_union | 0-30 km | M>=3.0: observed=637, expected=82.77, obs/exp=7.70
+m2_near_field | 30-60 km | M>=5.0: observed=8, expected=1.10, obs/exp=7.31
+common_region | 0-30 km | M>=5.0: observed=54, expected=7.48, obs/exp=7.22
+m1_m3_local_union | 0-30 km | M>=2.0: observed=2586, expected=363.85, obs/exp=7.11
+m1_m3_local_union | 0-30 km | M>=1.2: observed=6893, expected=1140.47, obs/exp=6.04
+common_region | 0-30 km | M>=4.0: observed=204, expected=35.04, obs/exp=5.82
+m2_outer_band | 0-30 km | M>=3.0: observed=317, expected=57.31, obs/exp=5.53
+
+Interpretive answers
+--------------------
+1) The script evaluates exceptionality relative to the 2020-2026 raw background only inside the relocated-catalog-derived common region.
+2) Strong anomalies are identified where active-period observed/expected ratios and percentile ranks are high across the region-depth-threshold summaries.
+3) Regional versus localized behavior should be judged from the common-region baseline together with the m1_m3_local_union, m2_near_field, m2_outer_band, and control-region comparisons.
+4) The evidence matrix is statistical only and should not be interpreted as proof of triggering or any specific physical mechanism.

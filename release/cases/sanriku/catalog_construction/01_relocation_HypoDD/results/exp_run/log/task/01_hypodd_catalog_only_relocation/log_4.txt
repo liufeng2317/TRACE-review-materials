@@ -1,0 +1,38 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Computing catalog diagnostics
+Running screening case dense_damp120 for (datetime.datetime(2025, 12, 1, 0, 19, 25, 30000), datetime.datetime(2025, 12, 31, 23, 59, 28, 410000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Running screening case alt_damp80 for (datetime.datetime(2026, 4, 1, 0, 16, 22, 930000), datetime.datetime(2026, 4, 30, 23, 59, 40, 750000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Selecting production parameters from screening evidence
+Running production catalog-only auto-time-window relocation
+Catalog-only auto time-window plan: windows=7, min_events_per_window=300, max_events_per_window=10800, base=month. Per-window details are recorded in time_window_manifest.json.
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=959, relocated_rows=920
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=23284 P50=0.007ms P90=19.344ms P95=24.015ms RMS=14.508ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Merging real native outputs and accounting for all events
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 974, in <module>
+    main()
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 951, in main
+    merged, unrelocated, failed_runs, accounting = merge_outputs(events, production_record)
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 698, in merge_outputs
+    res_df = pd.concat([df for df in res_frames if not df.empty], ignore_index=True) if res_frames else pd.DataFrame()
+  File "<LOCAL_PATH>", line 382, in concat
+    op = _Concatenator(
+  File "<LOCAL_PATH>", line 445, in __init__
+    objs, keys = self._clean_keys_and_objs(objs, keys)
+  File "<LOCAL_PATH>", line 507, in _clean_keys_and_objs
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+

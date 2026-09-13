@@ -1,0 +1,214 @@
+# Goal
+Build a regional background-rate model for the Aomori earthquake catalog that uses the 2020–2026 long-term raw catalog as the background reference and the 2025-10 to 2026-05 relocated catalog as the fine-scale active-period dataset, in order to test whether the 2025–2026 activity is exceptional relative to long-term background seismicity and to identify the regions, depth ranges, and time periods with significant rate anomalies.
+
+## Planning Assumptions
+- Primary comparison rule: the long-term raw catalog and the active-period relocated catalog must not be merged into a single homogeneous catalog. All long-term vs active-period anomaly claims must use a spatial mask derived from the relocated active-period catalog, optionally expanded by a small documented buffer.
+- Available active-period catalog path differs from the requested name. Use `catalog/Snet_catalog_relocate_250930_260501.csv` as the active-period relocated catalog, and document this crosswalk explicitly.
+- Both main catalogs share a minimal 5-column schema: `datetime, lat, lon, dep, mag`. Timestamp format differs across catalogs and must be normalized to UTC-aware datetimes before any overlap or rolling-window analysis.
+- Long-term background comparisons should prioritize thresholds `M>=3`, `M>=4`, and `M>=5`; `M>=6` only if counts are non-trivial. `M>=1.2` is restricted to the relocated active-period catalog unless completeness is explicitly demonstrated for the long-term filtered raw catalog in the common region.
+- Completeness magnitude `Mc` should be estimated separately by catalog, time period, and region where feasible; long-term anomaly claims should use only thresholds supported by catalog completeness and sufficient counts.
+- Mainshock context should be anchored with `catalog/main_earthquake.csv` (`M1`, `M2`, `M3`) and used for time markers and region construction.
+- `source_mechanism/Snet_mecha.csv` and `stations/station.sta` are contextual datasets for interpretation, mapping, and quality checks, not primary rate-estimation catalogs.
+- Full-region long-term statistics from the unfiltered raw catalog may be reported only as supplementary context and must not be the basis for primary anomaly claims.
+
+## Analysis Plan
+
+### Task 1 — Catalog harmonization, crosswalk, and common analysis region
+- Task description
+  - Standardize the two catalogs, verify field meanings, compare the overlapping period, define the common analysis region from the relocated active-period catalog, and determine which magnitude thresholds are defensible for long-term background comparison.
+- Required data sources
+  - `data/Snet_catalog_20200101_20260522_filter.csv`
+  - `catalog/Snet_catalog_relocate_250930_260501.csv`
+  - `catalog/main_earthquake.csv`
+- Parameter selection strategy
+  - Parse both catalog timestamps into normalized UTC datetimes.
+  - Confirm the 5 columns as origin time, latitude, longitude, depth, and magnitude; record units and null-value handling.
+  - Define the common analysis region from the relocated catalog footprint using either:
+    - the relocated-catalog convex hull plus a small geographic buffer, or
+    - a rectangular bounding box spanning relocated events plus the same buffer.
+  - Choose the buffer conservatively so that relocated edge events are retained while avoiding importing large extra raw-catalog areas; test at least one no-buffer and one small-buffer version and adopt the smallest stable mask.
+  - Filter the long-term raw catalog to this common region before all primary background-rate calculations.
+  - For overlap comparison, restrict both catalogs to the shared time interval covered by the relocated catalog.
+  - Evaluate counts above thresholds `M>=1.2`, `M>=2`, `M>=3`, `M>=4`, `M>=5`, `M>=6`.
+  - Estimate `Mc` by catalog and by key region/time subset where event counts permit; use established catalog-based methods and report uncertainty or instability when sample sizes are low.
+  - For feasible event matching, match candidate events during the overlap at `M>=4` and `M>=5` using time-first nearest-neighbor logic with documented maximum time and hypocentral-distance tolerances; compare magnitude and depth residuals for matched pairs.
+- Constraints
+  - Do not use relocated-catalog geometry to reinterpret the raw catalog as relocated-quality structure.
+  - Do not claim completeness below thresholds supported by `Mc` estimation.
+  - Treat any unmatched events in overlap as potential differences in detection, filtering, or relocation coverage rather than errors by default.
+- Key outputs
+  - Harmonized catalog summary table
+  - Common-region definition and retained-event counts
+  - Overlap crosswalk table for event counts by threshold
+  - Matched-event residual table for `M4+` and `M5+`
+  - Event retention-rate summary from raw to relocated during overlap
+  - `Mc` summary by catalog/region/period
+  - Decision table listing reliable long-term comparison thresholds
+
+### Task 2 — Regional subregion construction for anomaly testing
+- Task description
+  - Build the analysis regions required for long-term and active-period comparisons: common region, M1–M3 local region, M2 near-field, M2 outer-band, and broader control regions.
+- Required data sources
+  - `catalog/main_earthquake.csv`
+  - `catalog/Snet_catalog_relocate_250930_260501.csv`
+  - `data/Snet_catalog_20200101_20260522_filter.csv`
+  - `stations/station.sta`
+- Parameter selection strategy
+  - Center local regions on the M1, M2, and M3 hypocenters or on the centroid of the three-event cluster, depending on the user’s intended M1–M3 local definition.
+  - Define:
+    - common analysis region from Task 1
+    - M1–M3 local region enclosing the three mainshock neighborhoods
+    - M2 near-field region as a compact radius or local polygon around M2
+    - M2 outer-band region as an annulus around M2 excluding the near-field core
+    - broader control regions within the common mask but outside the principal active clusters
+  - Select radii/annulus widths using event-density structure in the relocated catalog and document exact values; ensure control regions have sufficient area and counts for stable rate estimation.
+  - Check station distribution from `station.sta` to ensure obvious network-edge artifacts are recognized when comparing subregions.
+- Constraints
+  - Subregions used for long-term comparison must all lie inside the common analysis region.
+  - The M2 outer-band must exclude the M2 near-field core by construction.
+  - Control regions must be defined before anomaly testing and not tuned to maximize contrast.
+- Key outputs
+  - Region-definition table with exact geometric parameters
+  - Region-membership event counts for both catalogs
+  - Station-context map summary for network-footprint checks
+
+### Task 3 — Long-term background-rate reference model
+- Task description
+  - Use the spatially filtered 2020–2026 raw catalog to estimate baseline seismicity rates and expected count distributions for the common region and all required subregions.
+- Required data sources
+  - Filtered subset of `data/Snet_catalog_20200101_20260522_filter.csv` from Task 1
+  - Region definitions from Task 2
+  - `catalog/main_earthquake.csv`
+- Parameter selection strategy
+  - Compute rates for thresholds `M>=3`, `M>=4`, `M>=5`, `M>=6`, and `M>=Mc` where `Mc` is stable and appropriate.
+  - Produce monthly rates across the full 2020–2026 period; additionally compute rolling windows matching active-period durations, including:
+    - daily or 7-day only for higher-count thresholds if stable
+    - 14-day
+    - 30-day
+    - full active-period window length (2025-10-01 to 2026-05-01 matched duration)
+  - For each region and threshold, calculate:
+    - total counts
+    - windowed counts and rates
+    - empirical percentile rank of the active-period window relative to all comparable long-term windows
+    - expected background counts for matched-duration windows
+    - exceedance probability from empirical and bootstrap distributions
+  - For `M4+`, `M5+`, and `M6+`, use count-based anomaly metrics suited to sparse catalogs, including empirical quantiles and Poisson or bootstrap interval checks.
+  - Report supplementary full-region long-term statistics only as context, separate from primary common-region results.
+- Constraints
+  - All primary anomaly statistics must use the long-term raw catalog filtered to the common region or derived subregions.
+  - Sparse thresholds with too few events must be labeled as count-limited rather than over-interpreted.
+  - Rolling-window comparisons must use windows of identical duration when comparing active-period counts to background.
+- Key outputs
+  - Long-term rate tables by region and magnitude threshold
+  - Percentile/exceedance summary for the active period
+  - Expected-vs-observed count table for matched windows
+  - Long-term anomaly table for `M4+`, `M5+`, `M6+`
+
+### Task 4 — Active-period fine-scale regional and depth-stratified rate decomposition
+- Task description
+  - Use the relocated 2025-10 to 2026-05 catalog to quantify short-term rate evolution by region, magnitude threshold, and depth band, with mainshock timing markers.
+- Required data sources
+  - `catalog/Snet_catalog_relocate_250930_260501.csv`
+  - `catalog/main_earthquake.csv`
+  - Region definitions from Task 2
+- Parameter selection strategy
+  - Compute time series for thresholds `M>=1.2`, `M>=2`, `M>=3`, `M>=4`, `M>=5`.
+  - Use multiple time scales:
+    - daily
+    - weekly
+    - 14-day rolling
+    - monthly
+  - Stratify by depth:
+    - `0–30 km`
+    - `30–60 km`
+    - `>60 km`
+  - For each region, compute:
+    - raw counts per bin
+    - normalized rates per day or per week
+    - cumulative counts
+    - proportion of events in each depth band
+  - Mark M1, M2, and M3 times on all key active-period rate plots.
+  - Compare near-field and outer-band trajectories to the broader control region to determine whether bursts are localized or embedded in a regional pulse.
+- Constraints
+  - `M>=1.2` analysis is restricted to the relocated active-period catalog unless long-term completeness is explicitly validated elsewhere.
+  - Fine-scale spatial interpretations should be based on the relocated catalog only within the active period.
+  - Depth-stratified analyses should report counts per band to avoid over-reading low-sample fluctuations.
+- Key outputs
+  - Active-period rate tables by region, threshold, and depth band
+  - Time-aligned burst chronology relative to M1/M2/M3
+  - Local vs outer-band vs control comparison summary
+
+### Task 5 — Background-corrected anomaly tests and controls
+- Task description
+  - Evaluate whether observed active-period rates exceed long-term background expectations and whether anomalies remain after regional correction and simple control tests.
+- Required data sources
+  - Outputs from Tasks 3 and 4
+  - `catalog/main_earthquake.csv`
+- Parameter selection strategy
+  - For each region and threshold, compare active-period observed counts/rates against long-term matched-duration background distributions.
+  - Apply simple controls:
+    - random windows drawn from the long-term common-region catalog
+    - same-duration windows outside the main active-period intervals
+    - shifted windows within the active period
+    - spatial control regions from Task 2
+    - bootstrap confidence intervals for rate ratios, count excess, and percentile ranks
+  - Compute background-corrected metrics such as:
+    - observed / expected count ratio
+    - excess count above expected
+    - local-region rate divided by control-region rate
+    - outer-band rate divided by regional baseline
+  - Test whether M1–M3 local anomalies persist after subtracting or ratio-normalizing by the broader common-region pulse.
+  - Evaluate synchronization by comparing timing of peaks across M1–M3 local, M2 near-field, M2 outer-band, and control regions.
+- Constraints
+  - Statistical anomaly support must be separated from physical mechanism claims.
+  - Window shifts and random-window controls must preserve duration and threshold consistency.
+  - If sample size is too low for formal testing at high magnitudes, report effect size and empirical rank only.
+- Key outputs
+  - Background-corrected anomaly matrix by region, threshold, and depth range
+  - Bootstrap confidence interval table
+  - Local-vs-regional correction summary
+  - Synchronization/lag summary across target regions
+
+### Task 6 — Diagnostic figure set and compact scientific synthesis
+- Task description
+  - Produce a compact set of figures and summary tables that directly answer the anomaly questions without exhaustive plotting.
+- Required data sources
+  - Outputs from Tasks 1–5
+  - `source_mechanism/Snet_mecha.csv` for optional contextual overlay on selected maps
+  - `stations/station.sta` for optional station footprint context
+- Parameter selection strategy
+  - Generate the following high-value figures:
+    - long-term common-region rate time series with the 2025-10 to 2026-05 active period highlighted
+    - active-period rate time series with M1/M2/M3 marked
+    - comparative regional time series for M1–M3 local, M2 near-field, M2 outer-band, and control regions
+    - spatial map of rate anomaly or observed/expected ratio within the common region
+    - depth-stratified rate evolution through the active period
+    - percentile-comparison plot for active-period windows against long-term windows
+    - background-rate evidence matrix summarizing anomaly strength by region/threshold/depth
+  - Include figure panels only for thresholds with sufficient support and direct relevance.
+  - Summarize results in a concise scientific report addressing:
+    - whether the active period is exceptional in the common region
+    - strongest anomalous regions and depth ranges
+    - localized vs broader regional pulse character
+    - persistence of M1–M3 anomaly after correction
+    - whether M2 outer-band can be explained by regional background changes
+    - which observations warrant later physical follow-up
+- Constraints
+  - Do not present anomalies as proof of triggering, fluid migration, stress transfer, slow slip, or fault interaction.
+  - Keep full-region long-term results visually and interpretively separate from common-region anomaly evidence.
+  - Clearly distinguish catalog-level support from contextual mechanism information.
+- Key outputs
+  - Compact figure set
+  - Evidence matrix table
+  - Final concise scientific report with direct answers to the user’s six interpretation questions
+
+### Task Script Organization
+- Primary task script: end-to-end catalog harmonization, region construction, long-term background estimation, active-period decomposition, anomaly testing, and figure/table generation in one cohesive workflow because all stages share common data cleaning, region masks, and rate-comparison logic.
+- Optional second task script: only if needed for reusable figure assembly or independent bootstrap resampling that reads validated intermediate summary tables from the primary script; otherwise keep all work in the primary script.
+- Data dependency flow:
+  - Task 1 produces normalized catalogs, overlap crosswalks, and common-region masks.
+  - Task 2 uses Task 1 outputs plus mainshock metadata to define subregions.
+  - Task 3 uses Task 1–2 outputs to build long-term background distributions.
+  - Task 4 uses Task 2 outputs and relocated active-period data for short-term decomposition.
+  - Task 5 combines Task 3 and Task 4 summaries for anomaly tests.
+  - Task 6 uses validated outputs from Tasks 1–5 for figures and scientific synthesis.

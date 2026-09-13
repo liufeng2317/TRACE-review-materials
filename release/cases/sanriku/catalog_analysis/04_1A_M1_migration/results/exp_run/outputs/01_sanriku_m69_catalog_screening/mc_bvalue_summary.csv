@@ -1,0 +1,3 @@
+window,radius_km,status,method_mc_primary,method_mc_secondary,method_mc_tertiary,method_b,bin_width,event_count_total,event_count_ge_mc,mc_maxc,mc_ks,mc_b_stability,mc_primary,b_value,b_uncertainty,exploratory_only
+foreshock_final2d,80.0,ok,estimate_mc_maxc,estimate_mc_ks,estimate_mc_b_stability,ClassicBValueEstimator,0.1,396,201,1.8,1.4,1.4,1.8,0.5142404135707136,0.037036375288727934,False
+aftershock_0_0p5d,80.0,ok,estimate_mc_maxc,estimate_mc_ks,estimate_mc_b_stability,ClassicBValueEstimator,0.1,415,308,2.0,2.2,2.1,2.0,0.4328270255338892,0.020415851010438968,True

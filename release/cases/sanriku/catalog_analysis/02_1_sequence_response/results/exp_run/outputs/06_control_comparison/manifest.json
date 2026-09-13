@@ -1,0 +1,20 @@
+{
+  "status": "success",
+  "output_dir": "<CASE_ROOT>/run/02_1_sequence_response/exp_run/outputs/06_control_comparison",
+  "files": [
+    "background_control_rates.csv",
+    "control_background_comparison.csv",
+    "control_metrics_summary.csv",
+    "control_observed_rates.csv",
+    "control_observed_vs_randomized_summary.csv",
+    "control_randomized_rates.csv",
+    "control_rate_ratio_comparison.png",
+    "control_significance_summary.csv",
+    "control_summary.csv",
+    "input_inventory.json",
+    "observed_control_rates.csv",
+    "observed_vs_randomized_control_summary.csv",
+    "observed_vs_randomized_post_rates.png",
+    "randomized_control_rates.csv"
+  ]
+}

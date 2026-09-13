@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "Requires multi-stage event-centered catalog analysis on a large relocated catalog, matching three mainshocks, extracting multiple spatial/temporal/depth/magnitude subsets, computing several diagnostics and robustness checks, and producing multiple comparative figures and control analyses.",
+  "data_source_count": 4,
+  "workflow_risk": "high",
+  "expected_script_count": 2
+}

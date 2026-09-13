@@ -1,0 +1,303 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{textcomp}
+
+\geometry{margin=1in}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!60!black
+}
+\setlist[itemize]{leftmargin=1.5em}
+\setlist[enumerate]{leftmargin=1.5em}
+\captionsetup{font=small,labelfont=bf}
+\sisetup{detect-all=true}
+
+\newcommand{\catalogcsvurl}{\url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv}}
+\newcommand{\manifestcsvurl}{\url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv}}
+\newcommand{\validationjsonurl}{\url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json}}
+\newcommand{\distributionfigurl}{\url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png}}
+\newcommand{\distributionfigpath}{\detokenize{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png}}
+\newcommand{\scriptpathurl}{\url{<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py}}
+
+\title{Implementation and Validation of a NIED Hi-net/JMA Unified Hypocenter Catalog Download Workflow for the Sanriku Region}
+\author{TRACE}
+\date{\today}
+
+
+
+% --- EarthLink enforced font settings (XeLaTeX) ---
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{unicode-math}
+\setmainfont{DejaVu Serif}
+\setCJKmainfont{Noto Serif CJK SC}
+\setmathfont{XITS Math}
+\usepackage[htt]{hyphenat}
+% --- end enforced font settings ---
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report documents an implemented and validated workflow for downloading, parsing, cleaning, and visualizing the authenticated NIED Hi-net/JMA unified hypocenter catalog for the Sanriku, northeast Japan study region. The workflow used the required login endpoint \url{https://hinetwww11.bosai.go.jp/auth/?LANG=en} and catalog endpoint \url{https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php}. It preserved the manuscript-aligned half-open time interval $2025$-06-01 $\leq t <$ $2026$-05-02, corresponding to requested records from 2025-06-01 through 2026-05-01, and applied inclusive Sanriku bounds of 38.50--42.50\textdegree{}N and 141.00--144.50\textdegree{}E after catalog parsing. The delivered ASPECT-ready CSV contains exactly the required fields \texttt{datetime,lat,lon,dep,mag}. Validation confirms 33,711 cleaned events, no missing required values, no duplicate rows, all events within the requested temporal and spatial bounds, and a generated catalog distribution figure. The workflow is scientifically usable as a cleaned input catalog, while remaining dependent on authenticated service access and not independently assessing JMA catalog completeness or uncertainty.
+\end{abstract}
+
+\section{Objective and Scope}
+
+The task objective was to implement and validate a reproducible workflow for the NIED Hi-net/JMA unified hypocenter catalog over the Sanriku region of northeast Japan. The workflow had six principal scientific and technical requirements:
+
+\begin{enumerate}
+  \item Authenticate against the NIED Hi-net service using the specified login endpoint and use the authenticated JMA catalog endpoint for catalog requests.
+  \item Preserve the manuscript-aligned interval with start date 2025-06-01 and end date 2026-05-02 treated as exclusive, so the requested service coverage spans 2025-06-01 through 2026-05-01.
+  \item Apply inclusive Sanriku spatial bounds only after catalog parsing: latitude 38.50--42.50\textdegree{}N and longitude 141.00--144.50\textdegree{}E.
+  \item Respect the JMA service limit by splitting the query into chunks of no more than 7 days, and record the exact chunk boundaries and actual returned dates.
+  \item Produce an ASPECT-ready CSV with exactly \texttt{datetime,lat,lon,dep,mag} and with filename pattern \texttt{Snet\_catalog\_YYYYMMDD\_YYYYMMDD.csv}.
+  \item Generate a catalog distribution figure suitable for visual validation of spatial, depth, and temporal coverage.
+\end{enumerate}
+
+This report follows the evidence chain from implementation choices to validated outputs and then states limitations. The primary evidence files are the cleaned catalog CSV, the chunk manifest, the validation JSON, and the distribution figure listed in Table~\ref{tab:outputs}.
+
+\section{Implementation Summary}
+
+The workflow implementation is stored in the script at \scriptpathurl. Validation metadata record that the workflow used the authenticated Hi-net/JMA endpoints listed in Table~\ref{tab:method}. Credentials were read from the specified \texttt{.env} source unless command-line overrides were supplied; in this execution the validation JSON records \texttt{credential\_source: .env}. The script used a \texttt{requests.Session} to maintain authentication state across catalog requests, and it used retry/backoff logic for network access.
+
+\begin{table}[H]
+\centering
+\caption{Key implementation choices and validation evidence.}
+\label{tab:method}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+Item & Implemented value or evidence \\
+\midrule
+Login endpoint & \url{https://hinetwww11.bosai.go.jp/auth/?LANG=en} \\
+Catalog endpoint & \url{https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php} \\
+Credential source in this run & \texttt{.env}; default credential file was the requested Hi-net account file, with command-line override support retained. \\
+Session handling & Authentication performed with \texttt{requests.Session}, preserving the authenticated session for subsequent catalog requests. \\
+Network robustness & Requests were made through retry/backoff logic. \\
+Parser strategy & The JMA fixed-width catalog table was parsed using fixed-width field positions rather than fragile comma splitting. \\
+Unparseable HTML handling & The implementation saves original failed HTML/text responses to debug/raw files and reports the saved path in the error message. No parse-failure debug files were required in this successful run. \\
+Optional raw responses & The optional raw-directory argument was retained. It was not used in this execution, so raw per-chunk catalog response files were not saved. \\
+Implementation script & \scriptpathurl \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Temporal Chunking}
+
+The requested time interval was implemented as a half-open interval,
+\[
+  \text{2025-06-01} \leq t < \text{2026-05-02},
+\]
+which is equivalent to requesting records dated 2025-06-01 through 2026-05-01 from a date-based service. The workflow split this interval into 48 request chunks: 47 chunks of 7 days and one final chunk of 6 days. The first chunk was 2025-06-01 to 2025-06-08 exclusive, with submitted inclusive service end date 2025-06-07. The final chunk was 2026-04-26 to 2026-05-02 exclusive, with submitted inclusive service end date 2026-05-01. The maximum chunk length was therefore exactly within the required 7-day service limit.
+
+The exact chunk-level audit is preserved in \manifestcsvurl. The manifest includes, for each chunk, the requested half-open boundaries, submitted service date fields, submitted inclusive end date, status, parse status, attempt count, HTTP status, response size, parsed-row count, actual returned datetime range, retained Sanriku row count, retained Sanriku datetime range, and any raw/debug file paths or messages.
+
+\subsection{Cleaning and ASPECT Output Construction}
+
+After fixed-width parsing, the workflow applied the requested cleaning sequence. Datetimes were parsed as temporal values; latitude, longitude, depth, and magnitude were converted to numeric values; rows with missing required values were removed; the requested time interval was enforced; inclusive Sanriku spatial bounds were applied; a physical sanity check was applied; rows were sorted by datetime; and duplicate ASPECT rows were removed. The physical sanity filter removed zero rows in this run, but it is documented here because it is an additional quality-control check beyond the minimum requested steps.
+
+The final CSV was written to:
+\begin{center}
+\catalogcsvurl
+\end{center}
+Its filename, \texttt{Snet\_catalog\_20250601\_20260502.csv}, follows the requested naming convention and uses the exclusive end date in the second date token. The file header is exactly:
+\begin{center}
+\texttt{datetime,lat,lon,dep,mag}.
+\end{center}
+
+\section{Validated Outputs}
+
+\begin{table}[H]
+\centering
+\caption{Primary output artifacts used as report evidence. All paths are under the required run output directory.}
+\label{tab:outputs}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+Artifact & Absolute path \\
+\midrule
+Cleaned ASPECT-ready catalog CSV & \catalogcsvurl \\
+Chunk manifest CSV & \manifestcsvurl \\
+Validation JSON & \validationjsonurl \\
+Catalog distribution figure & \distributionfigurl \\
+Login page debug HTML & \url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/debug/raw/login_page.html} \\
+Login response debug HTML & \url{<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/debug/raw/login_response.html} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The validation JSON at \validationjsonurl{} reports \texttt{status: pass}. The cleaned CSV, manifest, validation JSON, and figure were locally verified to exist before preparing this report.
+
+\section{Catalog Validation Results}
+
+\subsection{Final Catalog Properties}
+
+The final ASPECT-ready catalog contains 33,711 cleaned events. The validated temporal, spatial, depth, and magnitude ranges are summarized in Table~\ref{tab:catalog_stats}. These checks verify that the catalog preserves the intended half-open time interval and inclusive spatial filtering and that no required output fields are missing.
+
+\begin{table}[H]
+\centering
+\caption{Validated properties of the cleaned ASPECT-ready Sanriku catalog.}
+\label{tab:catalog_stats}
+\begin{tabular}{ll}
+\toprule
+Quantity & Validated value \\
+\midrule
+CSV columns & \texttt{datetime,lat,lon,dep,mag} \\
+Final event count & 33,711 \\
+Datetime minimum & 2025-06-01 00:09:02.360000 \\
+Datetime maximum & 2026-05-01 23:58:44.740000 \\
+Latitude range & 38.5 to 42.5\textdegree{}N \\
+Longitude range & 141.0 to 144.5\textdegree{}E \\
+Depth range & 0.0 to 149.2 km \\
+Magnitude range & 0.0 to 7.7 \\
+Missing required values & 0 \\
+Duplicate ASPECT rows & 0 \\
+Datetime order & Monotonically increasing after sorting \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The first retained record in the delivered CSV has the expected ASPECT schema and begins at 2025-06-01 00:09:02.36 with latitude 42.337\textdegree{}N, longitude 144.484\textdegree{}E, depth 16.0 km, and magnitude 1.8. This example is not used as a scientific interpretation by itself; it verifies the delivered field order and formatting.
+
+\subsection{Download and Chunk Audit}
+
+All 48 chunks completed successfully and parsed successfully. The manifest recorded HTTP status 200 for all successful chunks, and every chunk completed in one attempt. Table~\ref{tab:chunk_summary} summarizes the chunk-level validation evidence.
+
+\begin{table}[H]
+\centering
+\caption{Chunk-level download and parsing validation.}
+\label{tab:chunk_summary}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.38\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+Metric & Validated value \\
+\midrule
+Total chunks requested & 48 \\
+Chunk duration range & 6 to 7 days \\
+Status counts & 48 success \\
+Parse status counts & 48 parsed \\
+Attempt counts & All chunks completed in 1 attempt \\
+HTTP status & 200 for all successful chunks \\
+Total parsed rows before regional filtering & 270,338 \\
+Total retained Sanriku rows & 33,711 \\
+Chunks with zero retained Sanriku events & 0 \\
+Global returned datetime range before regional filtering & 2025-06-01 00:03:37.790000 to 2026-05-01 23:58:44.740000 \\
+Global retained Sanriku datetime range & 2025-06-01 00:09:02.360000 to 2026-05-01 23:58:44.740000 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The first chunk, from 2025-06-01 to 2025-06-08 exclusive, parsed 5,359 rows and retained 502 Sanriku events. The final chunk, from 2026-04-26 to 2026-05-02 exclusive, parsed 5,328 rows and retained 1,543 Sanriku events. The final manifest row confirms that the final submitted inclusive service end date was 2026-05-01, consistent with treating 2026-05-02 as the exclusive endpoint.
+
+\subsection{Cleaning Audit}
+
+The cleaning statistics in the validation JSON show that parsing and required-value conversion did not remove any records prior to spatial filtering. The dominant reduction was the requested Sanriku regional selection applied after parsing. Table~\ref{tab:cleaning} gives the full cleaning audit.
+
+\begin{table}[H]
+\centering
+\caption{Cleaning audit for the parsed JMA catalog.}
+\label{tab:cleaning}
+\begin{tabular}{lr}
+\toprule
+Cleaning stage & Rows \\
+\midrule
+Initial parsed rows & 270,338 \\
+Rows after datetime/numeric parsing and missing-value removal & 270,338 \\
+Rows removed for invalid datetime or numeric fields & 0 \\
+Rows after requested time filter & 270,338 \\
+Rows removed outside requested time & 0 \\
+Rows after Sanriku spatial filter & 33,711 \\
+Rows removed outside Sanriku bounds & 236,627 \\
+Rows after physical sanity filter & 33,711 \\
+Rows removed by physical sanity filter & 0 \\
+Duplicates removed & 0 \\
+Final rows & 33,711 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These results support the conclusion that the ASPECT-ready file is a clean regional subset of the broader returned JMA catalog for the specified date range, rather than a current-date-derived or 2026-only default.
+
+\section{Catalog Distribution Figure}
+
+Figure~\ref{fig:distribution} is the required distribution figure generated from the final cleaned CSV. It provides visual validation of the Sanriku spatial bounds, hypocentral depth distribution, and temporal clustering over the requested interval.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{\distributionfigpath}
+\caption{Distribution of the cleaned Hi-net/JMA Sanriku catalog for 2025-06-01 $\leq t <$ 2026-05-02. The left panel maps hypocenters within the Sanriku bounds, colored by depth, with a red rectangle marking the inclusive selection box. The right panel shows 7-day event counts for the 33,711 retained events.}
+\label{fig:distribution}
+\end{figure}
+
+The left panel of Figure~\ref{fig:distribution} spans approximately 141.0--144.5\textdegree{}E and 38.5--42.5\textdegree{}N and displays events throughout the red Sanriku bounding rectangle. Events are colored by depth from approximately 0 to 150 km. The visible distribution includes dense offshore-to-nearshore clusters, especially around 142--143.5\textdegree{}E and 39--42\textdegree{}N. Deeper events appear more common toward the western part of the mapped domain, while shallower events are widespread across central and eastern portions of the selection box.
+
+The right panel of Figure~\ref{fig:distribution} summarizes temporal occurrence using 7-day bins. The event rate is not uniform through time: many bins contain several hundred events, but late 2025 includes a prominent burst exceeding 3,000 events per 7 days, and another large increase occurs around April 2026. This temporal clustering should be considered in downstream rate-based analyses, model training, or validation workflows.
+
+\section{Requirement Compliance}
+
+Table~\ref{tab:compliance} compares the requested workflow requirements with the implemented and validated behavior.
+
+\begin{longtable}{>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}p{0.56\textwidth}}
+\caption{Compliance of the implementation with the requested catalog workflow requirements.}\label{tab:compliance}\\
+\toprule
+Requirement & Evidence of compliance \\
+\midrule
+\endfirsthead
+\toprule
+Requirement & Evidence of compliance \\
+\midrule
+\endhead
+Use NIED Hi-net login and JMA catalog endpoints & Validation JSON records the requested login endpoint \url{https://hinetwww11.bosai.go.jp/auth/?LANG=en} and catalog endpoint \url{https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php}. \\
+Read credentials from requested \texttt{.env}, with command-line overrides allowed & Validation JSON records \texttt{credential\_source: .env}; implementation summary confirms override support. Credential values are not exposed in this report. \\
+Use \texttt{requests.Session} & Implementation evidence confirms session-based authenticated requests. \\
+Add retry and backoff & Implementation evidence confirms a retry/backoff request wrapper. \\
+Save failed unparseable HTML responses to debug/raw files & Implemented; no parse-failure files were generated because all 48 chunks parsed successfully. Login/debug HTML files were saved. \\
+Use manuscript-aligned interval, not a current-date or 2026-only default & Validation records start date 2025-06-01 and exclusive end date 2026-05-02; cleaned catalog spans 2025-06-01 00:09:02.360000 to 2026-05-01 23:58:44.740000. \\
+Treat end date as exclusive & The final chunk is 2026-04-26 to 2026-05-02 exclusive and submitted service end date 2026-05-01. \\
+Apply Sanriku bounds inclusively after parsing & Cleaning audit shows 270,338 parsed records were reduced to 33,711 after spatial filtering; final latitude and longitude ranges are exactly within 38.5--42.5\textdegree{}N and 141.0--144.5\textdegree{}E. \\
+Split requests into chunks no longer than 7 days & Manifest records 48 chunks, with 47 chunks of 7 days and one final chunk of 6 days. \\
+Record exact chunk boundaries and actual returned dates & Chunk manifest includes half-open chunk boundaries, submitted service dates, actual returned datetime minima and maxima, and retained Sanriku datetime ranges for each chunk. \\
+Output ASPECT-ready CSV with exactly \texttt{datetime,lat,lon,dep,mag} & Delivered CSV at \catalogcsvurl; validation confirms exactly the required columns. \\
+Use filename pattern \texttt{Snet\_catalog\_YYYYMMDD\_YYYYMMDD.csv} & Delivered file is \texttt{Snet\_catalog\_20250601\_20260502.csv}. \\
+Generate catalog distribution figure & Figure generated at \distributionfigurl{} and shown in Figure~\ref{fig:distribution}. \\
+\bottomrule
+\end{longtable}
+
+\section{Limitations and Assumptions}
+
+The workflow meets the requested implementation and validation objectives, but several limitations should accompany any scientific use of the delivered catalog:
+
+\begin{itemize}
+  \item \textbf{Authenticated external dependency.} Reproduction requires valid NIED Hi-net credentials and continued availability of the login and catalog endpoints. Future downloads may be affected by credential access, endpoint changes, service availability, or catalog revisions by the provider.
+  \item \textbf{Catalog completeness not independently evaluated.} Validation confirms successful download, parsing, cleaning, and regional filtering, but it does not independently assess the completeness, detection threshold, or scientific quality of the JMA unified hypocenter catalog. The reported magnitude range is 0.0--7.7, but the magnitude of completeness may vary in space, time, and especially following large sequences.
+  \item \textbf{Limited ASPECT schema.} The required output schema contains only \texttt{datetime,lat,lon,dep,mag}. Uncertainty fields, phase counts, location quality metrics, and other catalog metadata were not retained in the ASPECT-ready CSV.
+  \item \textbf{No full raw per-chunk response archive in this execution.} The implementation supports an optional raw-output directory, but it was not used for this run. The chunk manifest and validation JSON provide strong auditability, and login/debug HTML files were saved, but the original raw catalog response for every successful chunk is not archived here.
+  \item \textbf{Temporal clustering affects downstream analyses.} The validated catalog contains strong event-rate bursts in late 2025 and around April 2026. Any downstream seismicity-rate, hazard, or machine-learning application should consider whether clustered sequences require declustering, weighting, or separate treatment.
+  \item \textbf{Distribution figure is diagnostic, not exhaustive.} The figure validates spatial, depth, and temporal behavior, but it does not include magnitude-frequency analysis, completeness estimation, or uncertainty diagnostics.
+  \item \textbf{Physical sanity filter documented.} A physical sanity filter was applied after spatial filtering and removed zero rows. This does not affect the delivered catalog but should be recognized as an additional quality-control step.
+\end{itemize}
+
+\section{Conclusion}
+
+A complete authenticated NIED Hi-net/JMA unified hypocenter catalog workflow was implemented and validated for the Sanriku, northeast Japan study region. The workflow used the required endpoints, read credentials from the intended source for this run, maintained an authenticated session, used retry/backoff network handling, parsed the fixed-width JMA table, enforced a half-open date interval of 2025-06-01 to 2026-05-02, split requests into 7-day-or-shorter chunks, applied inclusive Sanriku spatial bounds after parsing, and generated both a cleaned ASPECT-ready CSV and a diagnostic distribution figure.
+
+The primary scientific output is the cleaned catalog at \catalogcsvurl. It contains 33,711 events with exactly \texttt{datetime,lat,lon,dep,mag}, spans 2025-06-01 00:09:02.360000 through 2026-05-01 23:58:44.740000, has depths from 0.0 to 149.2 km and magnitudes from 0.0 to 7.7, and contains no missing required values or duplicate ASPECT rows. The chunk manifest at \manifestcsvurl{} verifies that all 48 chunks succeeded and parsed correctly, with no request exceeding the 7-day limit. The distribution figure in Figure~\ref{fig:distribution} confirms the regional spatial selection and highlights important temporal clustering that should be considered in subsequent analyses.
+
+\end{document}

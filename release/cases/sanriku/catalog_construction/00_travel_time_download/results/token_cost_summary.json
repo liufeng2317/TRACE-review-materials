@@ -1,0 +1,37 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2439,
+      "output_tokens": 37
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 42107,
+      "output_tokens": 9952
+    },
+    "Planing": {
+      "input_tokens": 270212,
+      "output_tokens": 26969
+    },
+    "Plan Merging": {
+      "input_tokens": 64459,
+      "output_tokens": 4249
+    },
+    "Workflow Agent": {
+      "input_tokens": 29866,
+      "output_tokens": 5148
+    },
+    "Report Synthesis": {
+      "input_tokens": 248275,
+      "output_tokens": 10079
+    }
+  },
+  "total": {
+    "input_tokens": 657358,
+    "output_tokens": 56434,
+    "total_tokens": 713792
+  }
+}

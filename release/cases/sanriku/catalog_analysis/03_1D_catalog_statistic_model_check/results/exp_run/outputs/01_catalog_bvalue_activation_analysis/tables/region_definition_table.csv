@@ -1,0 +1,6 @@
+region,center_name,center_lat,center_lon,radius_km,event_count
+whole_oriented_area,M1-M3 corridor,39.622,143.332,,23291
+M1_80km,M1,39.402,143.507,80.0,19654
+M1_60km,M1,39.402,143.507,60.0,14980
+M3_80km,M3,39.842,143.157,80.0,31026
+M3_60km,M3,39.842,143.157,60.0,17584

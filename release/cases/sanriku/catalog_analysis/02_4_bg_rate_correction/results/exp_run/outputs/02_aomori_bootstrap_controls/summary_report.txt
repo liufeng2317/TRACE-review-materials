@@ -1,0 +1,31 @@
+Aomori bootstrap/control resampling summary
+Primary outputs source: <CASE_ROOT>/run/02_4_bg_rate_correction/exp_run/outputs/01_aomori_background_rate_analysis
+Long-term catalog: <CASE_ROOT>/data/catalog/Snet_catalog_20200101_20260522_filter.csv
+Active-period window: 2025-10-01T00:00:00+00:00 to 2026-05-01T23:59:59+00:00
+Bootstrap/random resamples per combination: 4000
+Parallel workers requested: 8
+
+Top active-period anomalies after control resampling:
+- m1_m3_local_union | 0-30 km | M>=4: obs/exp(primary)=8.80, random_ratio_mean=94.10, random_percentile=99.1, outside_percentile=100.0, support=very_strong
+- m1_m3_local_union | 0-30 km | M>=5: obs/exp(primary)=9.64, random_ratio_mean=58.97, random_percentile=99.1, outside_percentile=100.0, support=very_strong
+- m1_m3_local_union | 0-30 km | M>=3: obs/exp(primary)=7.70, random_ratio_mean=32.49, random_percentile=98.9, outside_percentile=100.0, support=very_strong
+- common_region | 0-30 km | M>=5: obs/exp(primary)=7.22, random_ratio_mean=30.63, random_percentile=98.5, outside_percentile=100.0, support=very_strong
+- m2_near_field | 30-60 km | M>=4: obs/exp(primary)=5.37, random_ratio_mean=13.84, random_percentile=98.2, outside_percentile=100.0, support=very_strong
+- m2_outer_band | 0-30 km | M>=4: obs/exp(primary)=5.05, random_ratio_mean=13.64, random_percentile=98.9, outside_percentile=100.0, support=very_strong
+- common_region | 0-30 km | M>=4: obs/exp(primary)=5.82, random_ratio_mean=12.46, random_percentile=98.8, outside_percentile=100.0, support=very_strong
+- m2_near_field | 30-60 km | M>=5: obs/exp(primary)=7.31, random_ratio_mean=12.26, random_percentile=100.0, outside_percentile=100.0, support=very_strong
+- m2_near_field | 0-30 km | M>=3: obs/exp(primary)=4.63, random_ratio_mean=11.63, random_percentile=96.2, outside_percentile=100.0, support=strong
+- m2_outer_band | 0-30 km | M>=3: obs/exp(primary)=5.53, random_ratio_mean=10.46, random_percentile=98.9, outside_percentile=100.0, support=very_strong
+- common_region | 0-30 km | M>=3: obs/exp(primary)=5.38, random_ratio_mean=10.07, random_percentile=98.8, outside_percentile=100.0, support=very_strong
+- m2_near_field | 30-60 km | M>=3: obs/exp(primary)=4.94, random_ratio_mean=9.02, random_percentile=97.7, outside_percentile=100.0, support=very_strong
+
+Execution diagnostics:
+- script_path: <CASE_ROOT>/run/02_4_bg_rate_correction/exp_run/scripts/02_aomori_bootstrap_controls.py
+- primary_output_dir: <CASE_ROOT>/run/02_4_bg_rate_correction/exp_run/outputs/01_aomori_background_rate_analysis
+- active_catalog_path: <CASE_ROOT>/data/catalog/Snet_catalog_relocate_250930_260501.csv
+- selected_thresholds: 3.0,4.0,5.0
+- resample_n: 4000
+- max_workers: 8
+- task_count: 180
+- long_term_common_events: 159087
+- active_common_events: 22090

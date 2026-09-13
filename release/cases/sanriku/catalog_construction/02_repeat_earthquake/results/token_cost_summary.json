@@ -1,0 +1,65 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 3515,
+      "output_tokens": 17
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 651521,
+      "output_tokens": 93558
+    },
+    "Planing": {
+      "input_tokens": 36926,
+      "output_tokens": 12167
+    },
+    "Plan Merging": {
+      "input_tokens": 23279,
+      "output_tokens": 5455
+    },
+    "Workflow Agent": {
+      "input_tokens": 35824,
+      "output_tokens": 4986
+    },
+    "Coding Agent (01_repeat_event_analysis)": {
+      "input_tokens": 255565,
+      "output_tokens": 14406
+    },
+    "Result Check Agent (01_repeat_event_analysis)": {
+      "input_tokens": 63406,
+      "output_tokens": 1680
+    },
+    "Task Analysis Agent (01_repeat_event_analysis)": {
+      "input_tokens": 56155,
+      "output_tokens": 7829
+    },
+    "Coding Agent (02_repeat_event_visualization)": {
+      "input_tokens": 1573219,
+      "output_tokens": 24533
+    },
+    "Result Check Agent (02_repeat_event_visualization)": {
+      "input_tokens": 583162,
+      "output_tokens": 6721
+    },
+    "Task Analysis Agent (02_repeat_event_visualization)": {
+      "input_tokens": 65547,
+      "output_tokens": 7166
+    },
+    "Evaluation": {
+      "input_tokens": 24205,
+      "output_tokens": 920
+    },
+    "Report Synthesis": {
+      "input_tokens": 139653,
+      "output_tokens": 11271
+    }
+  },
+  "total": {
+    "input_tokens": 3511977,
+    "output_tokens": 190709,
+    "total_tokens": 3702686
+  }
+}

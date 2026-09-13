@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-05-30T14:16:37.910551+00:00",
+  "mode": "llm",
+  "completed_stages": [
+    "runs_index",
+    "frame",
+    "reference_context",
+    "run_summaries",
+    "core_observations",
+    "story_candidates",
+    "story_chains",
+    "mechanism_figures",
+    "story_report"
+  ],
+  "stop_after": null,
+  "inputs": {
+    "run_paths": [
+      "<CASE_ROOT>/run/01_data_foundation",
+      "<CASE_ROOT>/run/02_1_sequence_response",
+      "<CASE_ROOT>/run/02_2_behavior_diagnosis",
+      "<CASE_ROOT>/run/02_3_relationship_screening",
+      "<CASE_ROOT>/run/02_4_bg_rate_correction",
+      "<CASE_ROOT>/run/03_1A_event_chain_and_bursts",
+      "<CASE_ROOT>/run/03_1B_spatial_depth_migration",
+      "<CASE_ROOT>/run/03_1C_mechanism_screening",
+      "<CASE_ROOT>/run/03_1D_catalog_statistic_model_check"
+    ],
+    "synthesis_request": "\nFocus the synthesis on the evolutionary relationship between the M1 and M3 earthquakes in the recent Aomori M7.7-area sequence.\n\nBuild a coherent scientific story for the regional seismicity evolution around the M1 and M3 earthquakes.\n\nUse the available evidence to connect background seismicity, M1/M3 local activation, event-chain or burst behavior, spatial and depth evolution, focal-mechanism context, and background-rate/statistical checks.\n\nFor the most evidence-supported M1-M3 interpretation, identify supporting evidence, weakening or non-comparable evidence, and external validation needed to distinguish tectonic linkage, aftershock triggering, regional activation, migration-like behavior, or catalog/observational bias.\n",
+    "reference_papers": [
+      "<CASE_ROOT>/reference/A_review_on_slow_earthquakes_in_the_Japan_Trench.pdf",
+      "<CASE_ROOT>/reference/The_2025_Mw7.6_Aomori-Oki_megathrust_sequence_and_a_slip_parallel_seismic_belt_to_the_trench.pdf",
+      "<CASE_ROOT>/reference/The_forearc_seismic_belt_a_fluid_pathway_constraining_down_dip_megathrust_earthquake_rupture.pdf"
+    ]
+  },
+  "outputs": {
+    "output_dir": "<CASE_ROOT>/run/scientific_synthesis_ref-v1",
+    "artifact_dir": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis",
+    "log_dir": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/log",
+    "trajectory_dir": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/log/trajectory",
+    "config": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/config.yaml",
+    "runs_index": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/01_runs_index.json",
+    "pipeline_manifest": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/log/pipeline_manifest.json",
+    "run_info": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/log/run_info.json",
+    "run_log": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/log/run_log.log",
+    "synthesis_frame": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/00_synthesis_frame.json",
+    "reference_context": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/00_reference_context.json",
+    "run_mini_summaries": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/02_run_mini_summaries.json",
+    "core_observations": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/03_core_observations.json",
+    "scientific_story_candidates": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/04_scientific_story_candidates.json",
+    "scientific_synthesis": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/05_scientific_story_chains.json",
+    "mechanism_figures_dir": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/06_mechanism_figures",
+    "mechanism_figures": [
+      "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/06_mechanism_figures/story_01/mechanism_figure.png"
+    ],
+    "scientific_story_report": "<CASE_ROOT>/run/scientific_synthesis_ref-v1/synthesis/07_scientific_story_report/report.md"
+  },
+  "counts": {
+    "run_count": 9,
+    "task_count": 26,
+    "reference_paper_count": 3
+  },
+  "status": {
+    "state": "success",
+    "notes": [
+      "one_or_more_runs_without_task_context"
+    ]
+  }
+}

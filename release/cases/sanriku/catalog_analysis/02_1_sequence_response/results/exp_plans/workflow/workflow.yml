@@ -1,0 +1,407 @@
+tasks:
+- name: 01_data_verification_and_rematch
+  description: Validate source tables and rematch the three mainshocks to the 
+    relocated catalog.
+  script: 01_data_verification_and_rematch.py
+  ancestors: []
+  subtasks:
+  - name: load_inputs
+    description: Read the catalog, mainshock, mechanism, and station tables.
+    inputs:
+    - relocated_catalog
+    - main_earthquake_table
+    - mechanism_table
+    - station_table
+    outputs:
+    - loaded_catalog
+    - loaded_mainshocks
+    - loaded_mechanisms
+    - loaded_stations
+    params: {}
+  - name: verify_required_fields
+    description: Check that sequence-analysis fields are present and usable.
+    inputs:
+    - loaded_catalog
+    - loaded_mainshocks
+    - loaded_mechanisms
+    - loaded_stations
+    outputs:
+    - field_audit_table
+    - coverage_summary
+    - missing_field_flags
+    params:
+      required_fields:
+      - time
+      - latitude
+      - longitude
+      - depth
+      - magnitude
+  - name: rematch_mainshocks
+    description: Match M1, M2, and M3 to relocated catalog events using tolerant
+      time and location criteria.
+    inputs:
+    - loaded_catalog
+    - loaded_mainshocks
+    outputs:
+    - matched_mainshock_registry
+    - match_diagnostics
+    - candidate_match_table
+    params:
+      strategy: joint_time_location_match
+      preserve_labels:
+      - M1
+      - M2
+      - M3
+      allow_small_time_shift: true
+      allow_small_location_shift: true
+      record_close_candidates: true
+  - name: link_context_metadata
+    description: Summarize station and mechanism availability for downstream 
+      sequence analysis.
+    inputs:
+    - matched_mainshock_registry
+    - loaded_mechanisms
+    - loaded_stations
+    outputs:
+    - context_metadata_summary
+    params: {}
+- name: 02_sequence_extraction
+  description: Extract event-centered sequences around each matched mainshock 
+    across the full parameter grid.
+  script: 02_sequence_extraction.py
+  ancestors:
+  - 01_data_verification_and_rematch
+  subtasks:
+  - name: define_parameter_grid
+    description: Set the spatial, temporal, depth, and magnitude definitions for
+      extraction.
+    inputs:
+    - matched_mainshock_registry
+    outputs:
+    - extraction_parameter_grid
+    params:
+      radii_km:
+      - 30
+      - 44
+      - 50
+      - 80
+      - 100
+      time_windows:
+      - pre_90d
+      - pre_60d
+      - pre_30d
+      - pre_7d
+      - post_7d
+      - post_30d
+      - post_60d
+      - post_90d
+      depth_windows:
+      - all_depths
+      - local_mainshock_centered
+      - depth_stratified
+      magnitude_thresholds:
+      - all_events
+      - 1.2
+      - 1.5
+      - 2.0
+      - 2.5
+  - name: extract_event_centered_sequences
+    description: Build event-centered subsets for all mainshocks and parameter 
+      combinations.
+    inputs:
+    - relocated_catalog
+    - matched_mainshock_registry
+    - extraction_parameter_grid
+    outputs:
+    - event_centered_sequence_tables
+    - extraction_count_matrix
+    - sparse_window_flags
+    params:
+      origin_reference: mainshock_origin_time
+      distance_reference: mainshock_hypocenter
+      keep_empty_subsets: true
+  - name: standardize_sequence_records
+    description: Annotate each extracted event with relative time, distance, and
+      parameter metadata.
+    inputs:
+    - event_centered_sequence_tables
+    outputs:
+    - standardized_sequence_tables
+    - sequence_metadata_index
+    params:
+      include_relative_time: true
+      include_radial_distance: true
+      include_depth_offset: true
+- name: 03_sequence_diagnostics
+  description: Compute counts, rates, distributions, spatial patterns, and decay
+    diagnostics for each sequence.
+  script: 03_sequence_diagnostics.py
+  ancestors:
+  - 02_sequence_extraction
+  subtasks:
+  - name: compute_count_metrics
+    description: Calculate event counts and cumulative counts for each sequence 
+      window.
+    inputs:
+    - standardized_sequence_tables
+    outputs:
+    - count_metrics_table
+    params:
+      baseline_mc: 1.2
+  - name: compute_rate_metrics
+    description: Estimate moving-window seismicity rates and pre/post ratios.
+    inputs:
+    - standardized_sequence_tables
+    outputs:
+    - rate_metrics_table
+    params:
+      moving_window_strategy: consistent_across_mainshocks
+      compare_equal_duration_windows: true
+  - name: compute_distribution_metrics
+    description: Summarize magnitude and depth distributions plus radial and 
+      time-distance patterns.
+    inputs:
+    - standardized_sequence_tables
+    outputs:
+    - distribution_metrics_table
+    - radial_distance_table
+    - time_distance_table
+    params:
+      summarize_magnitude: true
+      summarize_depth: true
+      summarize_radial_patterns: true
+      summarize_time_distance_patterns: true
+  - name: fit_post_event_decay
+    description: Fit simple Omori-style decay where the post-event window 
+      supports it.
+    inputs:
+    - standardized_sequence_tables
+    outputs:
+    - decay_fit_table
+    - decay_fit_quality_flags
+    params:
+      fit_model: omori_style
+      minimum_support_for_fit: sparse_window_dependent
+  - name: summarize_spatial_and_mechanism_context
+    description: Derive spatial concentration indicators and focal-mechanism 
+      availability summaries.
+    inputs:
+    - standardized_sequence_tables
+    - loaded_mechanisms
+    - loaded_stations
+    outputs:
+    - spatial_concentration_table
+    - mechanism_availability_table
+    - mechanism_summary_table
+    params:
+      mechanism_summary_mode: coverage_limited
+- name: 04_robustness_analysis
+  description: Test which sequence features remain stable across alternative 
+    parameter definitions.
+  script: 04_robustness_analysis.py
+  ancestors:
+  - 03_sequence_diagnostics
+  subtasks:
+  - name: build_sensitivity_matrices
+    description: Assemble feature sensitivities across radius, time, depth, and 
+      magnitude settings.
+    inputs:
+    - count_metrics_table
+    - rate_metrics_table
+    - distribution_metrics_table
+    - decay_fit_table
+    - spatial_concentration_table
+    outputs:
+    - radius_sensitivity_matrix
+    - time_window_sensitivity_matrix
+    - depth_window_sensitivity_matrix
+    - magnitude_threshold_sensitivity_matrix
+    params:
+      robustness_basis: baseline_mc_and_higher_thresholds
+  - name: classify_robust_features
+    description: Separate stable sequence signatures from parameter-dependent 
+      ones.
+    inputs:
+    - radius_sensitivity_matrix
+    - time_window_sensitivity_matrix
+    - depth_window_sensitivity_matrix
+    - magnitude_threshold_sensitivity_matrix
+    outputs:
+    - robust_feature_summary
+    - parameter_dependent_feature_summary
+    - sensitivity_flag_table
+    params:
+      stability_criteria:
+      - sign_persistence
+      - rank_persistence
+      - qualitative_shape_persistence
+- name: 05_three_sequence_comparison
+  description: Compare M1, M2, and M3 using a common baseline and then across 
+    alternate definitions.
+  script: 05_three_sequence_comparison.py
+  ancestors:
+  - 04_robustness_analysis
+  subtasks:
+  - name: compare_baseline_sequences
+    description: Contrast background, pre-event, post-event, burstiness, decay, 
+      spatial, depth, and magnitude behavior.
+    inputs:
+    - count_metrics_table
+    - rate_metrics_table
+    - distribution_metrics_table
+    - decay_fit_table
+    - spatial_concentration_table
+    - robust_feature_summary
+    outputs:
+    - baseline_three_sequence_comparison_table
+    - ranked_sequence_summary
+    params:
+      baseline_definition: common_parameter_set
+      emphasize_local_enrichment: true
+      emphasize_depth_distinctness: true
+  - name: summarize_definition_sensitivity
+    description: Document how the cross-event comparison changes under alternate
+      sequence definitions.
+    inputs:
+    - sensitivity_flag_table
+    - baseline_three_sequence_comparison_table
+    outputs:
+    - comparison_sensitivity_summary
+    params:
+      compare_alternate_definitions: true
+- name: 06_control_comparison
+  description: Evaluate observed sequence behavior against simple background or 
+    randomized controls.
+  script: 06_control_comparison.py
+  ancestors:
+  - 02_sequence_extraction
+  - 03_sequence_diagnostics
+  subtasks:
+  - name: build_control_windows
+    description: Define background or randomized control windows matched to the 
+      event-centered study design.
+    inputs:
+    - relocated_catalog
+    - matched_mainshock_registry
+    outputs:
+    - control_window_table
+    params:
+      control_types:
+      - background_away_from_mainshock
+      - randomized_mainshock_time
+      - higher_magnitude_threshold_comparison
+      avoid_edge_effects: true
+  - name: compute_control_metrics
+    description: Calculate control-window counts and rate benchmarks for direct 
+      comparison.
+    inputs:
+    - relocated_catalog
+    - control_window_table
+    outputs:
+    - control_metrics_table
+    - observed_vs_control_difference_table
+    params:
+      matched_window_lengths: true
+      matched_radii: true
+- name: 07_figure_generation
+  description: Generate publication-quality sequence-analysis figures for all 
+    mainshocks and comparisons.
+  script: 07_figure_generation.py
+  ancestors:
+  - 03_sequence_diagnostics
+  - 04_robustness_analysis
+  - 05_three_sequence_comparison
+  - 06_control_comparison
+  subtasks:
+  - name: make_event_centered_maps
+    description: Plot event-centered maps for M1, M2, and M3.
+    inputs:
+    - standardized_sequence_tables
+    - matched_mainshock_registry
+    outputs:
+    - event_centered_map_figures
+    params:
+      style: nature
+      consistent_markers: true
+  - name: make_sequence_diagnostic_panels
+    description: Plot cumulative counts, rate curves, decay fits, and 
+      time-distance or radial-distance views.
+    inputs:
+    - count_metrics_table
+    - rate_metrics_table
+    - decay_fit_table
+    - radial_distance_table
+    - time_distance_table
+    outputs:
+    - diagnostic_panel_figures
+    params:
+      style: nature
+  - name: make_sensitivity_figures
+    description: Plot radius, time-window, magnitude-threshold, and 
+      depth-stratified sensitivity summaries.
+    inputs:
+    - radius_sensitivity_matrix
+    - time_window_sensitivity_matrix
+    - depth_window_sensitivity_matrix
+    - magnitude_threshold_sensitivity_matrix
+    outputs:
+    - sensitivity_heatmap_figures
+    - depth_stratified_sequence_figures
+    params:
+      style: nature
+  - name: make_comparison_summary_figure
+    description: Plot the three-sequence comparison summary and control 
+      benchmarks.
+    inputs:
+    - baseline_three_sequence_comparison_table
+    - comparison_sensitivity_summary
+    - control_metrics_table
+    - observed_vs_control_difference_table
+    outputs:
+    - three_sequence_summary_figure
+    - control_comparison_figure
+    params:
+      style: nature
+- name: 08_reusable_outputs
+  description: Export validated tables and figure-ready datasets for downstream 
+    reuse.
+  script: 08_reusable_outputs.py
+  ancestors:
+  - 01_data_verification_and_rematch
+  - 02_sequence_extraction
+  - 03_sequence_diagnostics
+  - 04_robustness_analysis
+  - 05_three_sequence_comparison
+  - 06_control_comparison
+  - 07_figure_generation
+  subtasks:
+  - name: export_master_tables
+    description: Package core validated sequence-analysis tables into reusable 
+      machine-readable outputs.
+    inputs:
+    - field_audit_table
+    - matched_mainshock_registry
+    - extraction_count_matrix
+    - count_metrics_table
+    - rate_metrics_table
+    - distribution_metrics_table
+    outputs:
+    - master_match_table
+    - sequence_summary_tables
+    - figure_ready_data_tables
+    params:
+      preserve_metadata: true
+  - name: export_robustness_and_controls
+    description: Save robustness, sensitivity, and control-comparison tables for
+      downstream analysis.
+    inputs:
+    - robust_feature_summary
+    - parameter_dependent_feature_summary
+    - sensitivity_flag_table
+    - control_metrics_table
+    - observed_vs_control_difference_table
+    outputs:
+    - robustness_tables
+    - control_comparison_tables
+    params:
+      preserve_window_definitions: true

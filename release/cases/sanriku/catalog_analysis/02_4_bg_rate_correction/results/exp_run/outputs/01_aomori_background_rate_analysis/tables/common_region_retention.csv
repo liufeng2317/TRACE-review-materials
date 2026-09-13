@@ -1,0 +1,3 @@
+catalog,region,retained_events,original_events,retention_fraction
+long_term_raw,common_region,159087,227755,0.6985005817654937
+active_relocated,common_region,22090,22096,0.9997284576393918

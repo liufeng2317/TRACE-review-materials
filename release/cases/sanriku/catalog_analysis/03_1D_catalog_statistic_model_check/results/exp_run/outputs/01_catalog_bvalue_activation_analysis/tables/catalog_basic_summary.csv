@@ -1,0 +1,2 @@
+catalog_start,catalog_end,n_events,latitude_min,latitude_max,longitude_min,longitude_max,magnitude_min,magnitude_max,delta_m
+2020-01-01 00:03:00.070,2026-05-22 14:41:14.740,227733,38.001,42.999,140.001,145.999,-1.0,7.7,0.1

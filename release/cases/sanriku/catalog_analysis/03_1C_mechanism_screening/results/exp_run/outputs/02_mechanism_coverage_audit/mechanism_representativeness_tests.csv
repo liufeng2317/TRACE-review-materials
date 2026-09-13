@@ -1,0 +1,16 @@
+group_name,variable,n_total,n_matched,matched_median,unmatched_median,median_difference
+all_catalog,mag,25646,240,3.8,1.5,2.3
+combined_local,mag,9109,8,3.7,1.7,2.0
+combined_local,depth_km,9109,8,30.119999999999997,12.27,17.849999999999998
+combined_local,dist_m1_km,9109,8,83.62817306804102,31.644843444099862,51.98332962394116
+combined_local,dist_m3_km,9109,8,32.99806545253598,43.4934713798833,-10.49540592734732
+phase::baseline_to_M1_minus14d,mag,4163,7,3.9,1.0,2.9
+phase::baseline_to_M1_minus14d,depth_km,4163,7,43.79,30.18,13.61
+phase::M1_related_M1minus14d_to_M1plus21d,mag,3971,12,3.7,1.7,2.0
+phase::M1_related_M1minus14d_to_M1plus21d,depth_km,3971,12,45.555,12.14,33.415
+phase::middle_M1plus21d_to_M3minus35d,mag,11293,195,3.8,1.5,2.3
+phase::middle_M1plus21d_to_M3minus35d,depth_km,11293,195,20.7,18.64,2.0599999999999987
+phase::preM3_M3minus35d_to_M3,mag,2203,13,3.9,1.3,2.5999999999999996
+phase::preM3_M3minus35d_to_M3,depth_km,2203,13,42.97,15.02,27.95
+phase::post_M3_context,mag,4016,13,3.8,1.6,2.1999999999999997
+phase::post_M3_context,depth_km,4016,13,36.48,13.12,23.36

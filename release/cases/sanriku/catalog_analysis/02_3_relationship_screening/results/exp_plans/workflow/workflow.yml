@@ -1,0 +1,302 @@
+tasks:
+- name: 01_relationship_analysis
+  description: Build the unified event-feature dataset, compute symmetric 
+    pairwise relationship metrics and controls, evaluate hypotheses, and 
+    generate compact diagnostic outputs for the Aomori M1-M2-M3 catalog 
+    analysis.
+  script: 01_relationship_analysis.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_qc_catalog_inputs
+    description: Load the relocated catalog and mainshock table, standardize 
+      fields, verify anchor events, and record catalog quality checks.
+    inputs:
+    - relocated_catalog
+    - mainshock_table
+    - mechanism_catalog_optional
+    - station_metadata_optional
+    outputs:
+    - standardized_catalog
+    - standardized_mainshocks
+    - catalog_qc_summary
+    - mechanism_match_summary_optional
+    params:
+      anchor_labels:
+      - M1
+      - M2
+      - M3
+      deduplicate_exact_rows_only: true
+      datetime_standard: UTC
+      use_context_data_for_core_metrics: false
+  - name: derive_event_and_pair_geometry_features
+    description: Compute event-relative temporal and geometric features to each 
+      mainshock and to each mainshock pair.
+    inputs:
+    - standardized_catalog
+    - standardized_mainshocks
+    outputs:
+    - relationship_event_features
+    - mainshock_pair_geometry
+    params:
+      geodetic_distance_method: consistent_single_method
+      compute_features:
+      - relative_time_to_each_mainshock
+      - epicentral_distance_to_each_mainshock
+      - depth_difference_to_each_mainshock
+      - nearest_mainshock_identity
+      - nearest_second_nearest_distance_margin
+      - nearest_second_nearest_distance_ratio
+      - magnitude_threshold_flags
+      - pair_time_separation
+      - pair_epicentral_separation
+      - pair_depth_offset
+      - pair_azimuth
+      - along_pair_projection
+      - cross_corridor_offset
+      - normalized_endpoint_position
+      - distance_to_pair_midpoint
+      hypocentral_proxy_strategy: use_only_if_depth_completeness_is_consistent
+      magnitude_flags:
+      - M3_plus
+      - M4_plus
+      - M5_plus
+      - M6_plus
+  - name: assign_pairwise_relationship_classes
+    description: Apply the same ambiguity-aware association framework to all 
+      three pairs and summarize stability across spatial settings.
+    inputs:
+    - relationship_event_features
+    - mainshock_pair_geometry
+    outputs:
+    - pairwise_event_assignment_M1_M2
+    - pairwise_event_assignment_M1_M3
+    - pairwise_event_assignment_M2_M3
+    - assignment_stability_summary
+    params:
+      pairs:
+      - M1_M2
+      - M1_M3
+      - M2_M3
+      class_labels:
+      - uniquely_associated_with_endpoint_A
+      - uniquely_associated_with_endpoint_B
+      - shared_or_overlapping
+      - corridor_like
+      - endpoint_centered_corridor_adjacent
+      - outer_cluster
+      - regional_background
+      - unresolved
+      spatial_components:
+      - endpoint_near_field
+      - intermediate_zone
+      - outer_band
+      - pair_corridor
+      - side_band
+      corridor_width_variants:
+      - narrower_pair_scaled
+      - default_pair_scaled
+      - broader_pair_scaled
+      ambiguity_rules:
+      - nearest_mainshock_margin
+      - nearest_mainshock_ratio
+      - absolute_endpoint_distance
+      - corridor_membership
+      - endpoint_centered_position
+  - name: compute_raw_pairwise_and_regional_metrics
+    description: Quantify symmetric raw relationship metrics for all three pairs
+      and summarize broader three-cluster regional activation patterns.
+    inputs:
+    - relationship_event_features
+    - pairwise_event_assignment_M1_M2
+    - pairwise_event_assignment_M1_M3
+    - pairwise_event_assignment_M2_M3
+    outputs:
+    - pairwise_raw_metrics
+    - pairwise_intervening_event_chains
+    - regional_activation_summary
+    - pairwise_raw_evidence_table
+    params:
+      magnitude_subsets:
+      - all_events
+      - M3_plus
+      - M4_plus
+      - M5_plus
+      - M6_plus_descriptive_if_sparse
+      metric_groups:
+      - matched_pre_post_counts_and_rates
+      - between_mainshock_interval_counts_and_rates
+      - zone_counts_for_endpoint_shared_corridor_sideband_outerband_regional
+      - nearest_mainshock_dominance
+      - ambiguous_assignment_fraction
+      - endpoint_balance
+      - corridor_fraction
+      - midpoint_fraction
+      - depth_distribution_summary
+      - first_intervening_event_times
+      - first_M4_M5_M6_intervening_event_times
+      - ordered_moderate_large_event_chain_descriptors
+      - migration_indicators_descriptive_if_sparse
+      - opposite_endpoint_lagged_activity_change
+      evaluate_pairs_symmetrically: true
+  - name: apply_temporal_geometric_and_background_controls
+    description: Compare observed pairwise signals against temporal, geometric, 
+      and local-background controls to identify artifacts and robust effects.
+    inputs:
+    - relationship_event_features
+    - pairwise_raw_metrics
+    - pairwise_intervening_event_chains
+    - regional_activation_summary
+    outputs:
+    - pairwise_control_corrected_metrics
+    - control_test_summary
+    - robustness_summary
+    - artifact_flag_summary
+    params:
+      control_families:
+      - random_or_shifted_temporal_windows
+      - rotated_or_shifted_pseudo_corridors
+      - local_sideband_or_annulus_background
+      control_statistics:
+      - control_median
+      - observed_minus_control
+      - empirical_exceedance_rank
+      - standardized_effect_if_stable
+      control_interpretation_labels:
+      - raw_only
+      - survives_controls
+      - weakened_by_controls
+      - unresolved_due_to_instability_or_small_sample
+      preserve_catalog_burstiness_as_practical: true
+      compact_sensitivity_checks:
+      - alternative_time_windows
+      - alternative_corridor_widths
+  - name: evaluate_pair_hypothesis_evidence
+    description: Score each pair-hypothesis combination with separate raw, 
+      control-corrected, and distance-aware evidence layers and assign follow-up
+      priorities.
+    inputs:
+    - pairwise_raw_evidence_table
+    - pairwise_control_corrected_metrics
+    - control_test_summary
+    - robustness_summary
+    - artifact_flag_summary
+    - mainshock_pair_geometry
+    - mechanism_match_summary_optional
+    outputs:
+    - pair_hypothesis_evidence_matrix
+    - pairwise_distance_aware_plausibility
+    - followup_priority_table
+    - strongest_signals_and_gaps
+    params:
+      hypotheses:
+      - independent_local_clusters
+      - overlapping_activation_zones
+      - delayed_activation_between_clusters
+      - linked_local_fault_system_activation
+      - corridor_like_migration_or_expansion
+      - broader_regional_activation
+      - compound_swarm_like_multi_event_clustering
+      - apparent_relationship_from_background_burstiness_or_window_choice
+      - common_regional_rate_pulse_without_pair_specific_linkage
+      evidence_layers:
+      - raw_catalog_evidence
+      - control_corrected_evidence
+      - distance_aware_plausibility
+      evidence_levels:
+      - low
+      - possible
+      - moderate
+      - strong
+      followup_priority_levels:
+      - low
+      - medium
+      - high
+      priority_rule: corrected_and_distance_aware_support_drive_priority
+      mechanism_use_policy: followup_discriminator_only
+  - name: generate_figures_and_machine_readable_summaries
+    description: Create the compact diagnostic figure set and export structured 
+      summary tables for pairwise interpretation and next-step prioritization.
+    inputs:
+    - relationship_event_features
+    - mainshock_pair_geometry
+    - pairwise_event_assignment_M1_M2
+    - pairwise_event_assignment_M1_M3
+    - pairwise_event_assignment_M2_M3
+    - pairwise_intervening_event_chains
+    - pairwise_control_corrected_metrics
+    - pair_hypothesis_evidence_matrix
+    - followup_priority_table
+    - strongest_signals_and_gaps
+    outputs:
+    - fig_pairwise_overview_map
+    - fig_pairwise_time_projection
+    - fig_intervening_event_chains
+    - fig_corridor_vs_control
+    - fig_relationship_evidence_matrix
+    - fig_followup_priority
+    - pairwise_relationship_summary
+    - cluster_level_synthesis
+    - recommended_next_steps
+    params:
+      required_figures:
+      - pairwise_relationship_overview_map
+      - three_panel_pairwise_time_distance_or_projection
+      - M4_M5_M6_intervening_event_chain_comparison
+      - corridor_vs_offcorridor_control_comparison
+      - relationship_evidence_matrix
+      - followup_priority_summary
+      optional_figure_candidates:
+      - nearest_mainshock_ambiguity_map
+      - depth_vs_along_corridor_plot
+      - regional_outer_band_activation_timeline
+      keep_figure_set_compact: true
+      emphasize_corrected_and_distance_aware_interpretation: true
+
+- name: 02_report_synthesis
+  description: Assemble the final concise scientific report from validated 
+    relationship-analysis outputs without recomputing core metrics.
+  script: 02_report_synthesis.py
+  ancestors:
+  - 01_relationship_analysis
+  subtasks:
+  - name: compile_pairwise_scientific_summary
+    description: Summarize the evidence for M1-M2, M1-M3, and M2-M3 with 
+      separate raw, corrected, and distance-aware interpretations.
+    inputs:
+    - pairwise_relationship_summary
+    - pair_hypothesis_evidence_matrix
+    - followup_priority_table
+    - strongest_signals_and_gaps
+    outputs:
+    - final_pairwise_summary
+    params:
+      required_sections:
+      - pairwise_relationship_evidence_summary
+      - strongest_supported_signals
+      - weak_negative_unresolved_evidence
+      - recommended_next_research_directions
+  - name: assemble_final_report_products
+    description: Produce the final concise report tables and machine-readable 
+      synthesis artifacts requested by the study.
+    inputs:
+    - final_pairwise_summary
+    - cluster_level_synthesis
+    - recommended_next_steps
+    - fig_relationship_evidence_matrix
+    - fig_followup_priority
+    outputs:
+    - final_scientific_report
+    - final_report_tables
+    - final_report_manifest
+    params:
+      include_evidence_scale:
+      - low
+      - possible
+      - moderate
+      - strong
+      include_priority_scale:
+      - low
+      - medium
+      - high
+      avoid_causal_triggering_claims: true
+      preserve_supporting_and_contradicting_evidence: true

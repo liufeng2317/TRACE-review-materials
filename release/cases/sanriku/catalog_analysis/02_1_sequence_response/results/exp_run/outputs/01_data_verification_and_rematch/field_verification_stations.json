@@ -1,0 +1,14 @@
+{
+  "path": "<CASE_ROOT>/data/stations/station.sta",
+  "n_rows": 371,
+  "columns": [
+    "station_code",
+    "station_number",
+    "latitude",
+    "longitude",
+    "elevation_m",
+    "matched"
+  ],
+  "required_fields_present": true,
+  "missing_required_fields": []
+}

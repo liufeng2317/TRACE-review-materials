@@ -1,0 +1,11 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Computing catalog diagnostics
+Running screening case dense_damp120 for ('2025-12-01 00:19:25.030000+00:00', '2025-12-31 23:59:28.410000+00:00')
+Running screening case alt_damp80 for ('2026-04-01 00:16:22.930000+00:00', '2026-04-30 23:59:40.750000+00:00')
+Selecting production parameters from screening evidence
+Running production catalog-only auto-time-window relocation
+Merging real native outputs and accounting for all events
+Generating figures from real outputs
+Workflow completed

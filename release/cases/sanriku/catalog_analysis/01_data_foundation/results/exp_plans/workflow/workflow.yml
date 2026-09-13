@@ -1,0 +1,317 @@
+tasks:
+- name: 01_data_audit_cleaning
+  description: Audit all source files and build a validated Stage-1 cleaned 
+    regional catalog with quality flags.
+  script: 01_data_audit_cleaning.py
+  ancestors: []
+  subtasks:
+  - name: inspect_inputs
+    description: Inspect schemas, record counts, field names, and raw value 
+      ranges for all files.
+    inputs:
+    - raw_catalog
+    - major_earthquake_table
+    - focal_mechanism_table
+    - station_inventory
+    outputs:
+    - file_audit_summary
+    - usable_field_summary
+    - raw_value_range_summary
+    params:
+      preserve_raw_columns: true
+      report_missing_values: true
+      report_duplicates: true
+  - name: clean_stage1_catalog
+    description: Parse event time and harmonize core event fields into a 
+      validated cleaned table.
+    inputs:
+    - raw_catalog
+    outputs:
+    - stage1_catalog
+    - quality_flag_table
+    - audit_corrections_log
+    params:
+      core_fields:
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      - event_id
+      preserve_original_values: true
+      create_surrogate_id_if_missing: true
+  - name: detect_abnormalities
+    description: Flag missing, impossible, duplicate, and physically implausible
+      records.
+    inputs:
+    - stage1_catalog
+    outputs:
+    - duplicate_report
+    - abnormal_value_report
+    - exclusion_reason_summary
+    params:
+      coordinate_bounds_check: true
+      depth_bounds_check: true
+      magnitude_bounds_check: true
+      time_parse_validation: true
+  - name: validate_stage1_outputs
+    description: Confirm the cleaned catalog is non-empty and ready for 
+      downstream analyses.
+    inputs:
+    - stage1_catalog
+    - file_audit_summary
+    outputs:
+    - stage1_validation_report
+    - stage1_ready_flag
+    params:
+      require_non_empty_catalog: true
+      require_quality_flags: true
+- name: 02_major_earthquake_matching
+  description: Match major earthquakes to the relocated catalog and quantify 
+    match confidence and differences.
+  script: 02_major_earthquake_matching.py
+  ancestors:
+  - 01_data_audit_cleaning
+  subtasks:
+  - name: generate_candidate_windows
+    description: Build constrained candidate windows around each reference 
+      origin time.
+    inputs:
+    - major_earthquake_table
+    - stage1_catalog
+    outputs:
+    - candidate_event_windows
+    - fallback_window_log
+    params:
+      primary_time_window_strategy: data_driven
+      allow_window_expansion: true
+      require_spatial_consistency: true
+  - name: rank_and_match_events
+    description: Rank candidates by time, space, depth, and magnitude agreement 
+      and select best matches.
+    inputs:
+    - candidate_event_windows
+    outputs:
+    - major_match_table
+    - candidate_ranking_table
+    - ambiguous_match_report
+    params:
+      composite_ranking_order:
+      - time_difference
+      - spatial_distance_km
+      - depth_difference_km
+      - magnitude_difference
+      flag_near_ties: true
+      retain_top_candidates: 5
+  - name: classify_match_confidence
+    description: Assign confidence tiers based on uniqueness and multi-metric 
+      agreement.
+    inputs:
+    - major_match_table
+    - candidate_ranking_table
+    outputs:
+    - match_confidence_summary
+    - unmatched_or_ambiguous_summary
+    params:
+      confidence_tiers:
+      - high
+      - moderate
+      - low
+      - ambiguous
+- name: 03_regional_background_characterization
+  description: Characterize regional seismicity background, station coverage, 
+    and mechanism availability from the cleaned catalog.
+  script: 03_regional_background_characterization.py
+  ancestors:
+  - 01_data_audit_cleaning
+  subtasks:
+  - name: summarize_spatiotemporal_background
+    description: Compute spatial density, temporal rate, magnitude distribution,
+      and depth distribution summaries.
+    inputs:
+    - stage1_catalog
+    outputs:
+    - spatial_background_summary
+    - temporal_rate_summary
+    - magnitude_distribution_summary
+    - depth_distribution_summary
+    - magnitude_depth_summary
+    params:
+      regional_extent_strategy: consistent_catalog_extent
+      temporal_binning_strategy: data_driven
+      depth_segmentation_strategy: empirical_distribution
+  - name: estimate_completeness_and_bvalue
+    description: Estimate preliminary Mc and Gutenberg-Richter b-value from the 
+      cleaned catalog.
+    inputs:
+    - stage1_catalog
+    outputs:
+    - completeness_summary
+    - b_value_summary
+    - magnitude_frequency_table
+    params:
+      magnitude_binning_strategy: documented_data_driven
+      fitting_range_strategy: tail_above_mc
+      report_preliminary_estimates: true
+  - name: summarize_station_and_mechanism_background
+    description: Assess station coverage and focal-mechanism availability and 
+      distribution.
+    inputs:
+    - station_inventory
+    - focal_mechanism_table
+    - stage1_catalog
+    outputs:
+    - station_coverage_summary
+    - station_distribution_summary
+    - mechanism_availability_summary
+    - mechanism_distribution_summary
+    params:
+      separate_availability_from_properties: true
+      coverage_metrics: true
+- name: 04_mainshock_regional_context
+  description: Summarize local catalog, station, and mechanism context around 
+    each major earthquake.
+  script: 04_mainshock_regional_context.py
+  ancestors:
+  - 01_data_audit_cleaning
+  - 02_major_earthquake_matching
+  - 03_regional_background_characterization
+  subtasks:
+  - name: derive_local_neighborhoods
+    description: Define reusable local neighborhoods around each matched 
+      mainshock.
+    inputs:
+    - major_match_table
+    - stage1_catalog
+    - station_inventory
+    outputs:
+    - mainshock_neighborhood_definitions
+    - neighborhood_search_log
+    params:
+      radius_strategy: data_driven
+      depth_window_strategy: data_driven
+      use_single_distance_method: true
+  - name: compute_local_context_metrics
+    description: Compare local event, depth, station, and mechanism context to 
+      the regional background.
+    inputs:
+    - mainshock_neighborhood_definitions
+    - stage1_catalog
+    - station_inventory
+    - focal_mechanism_table
+    - spatial_background_summary
+    - temporal_rate_summary
+    outputs:
+    - mainshock_context_table
+    - local_vs_regional_contrast_table
+    - edge_effect_summary
+    params:
+      compare_against_regional_background: true
+      note_sparse_mechanism_coverage: true
+  - name: derive_sequence_threshold_notes
+    description: Produce candidate radius, depth, and magnitude screening notes 
+      for later sequence analysis.
+    inputs:
+    - mainshock_context_table
+    - local_vs_regional_contrast_table
+    outputs:
+    - threshold_recommendation_table
+    - context_notes_summary
+    params:
+      keep_observational_and_falsifiable: true
+- name: 05_diagnostic_figures
+  description: Generate Nature-style high-resolution diagnostic figures for 
+    audit, background, and context analysis.
+  script: 05_diagnostic_figures.py
+  ancestors:
+  - 01_data_audit_cleaning
+  - 02_major_earthquake_matching
+  - 03_regional_background_characterization
+  - 04_mainshock_regional_context
+  subtasks:
+  - name: create_spatial_figures
+    description: Plot regional earthquake, major earthquake, station, and 
+      focal-mechanism maps.
+    inputs:
+    - stage1_catalog
+    - major_match_table
+    - station_inventory
+    - focal_mechanism_table
+    outputs:
+    - regional_map_png
+    - spatial_density_png
+    - cross_section_png
+    params:
+      figure_style: nature
+      output_format: png
+      resolution_dpi: 600
+  - name: create_temporal_and_size_figures
+    description: Plot time-magnitude, depth-time, and magnitude-depth 
+      diagnostics.
+    inputs:
+    - stage1_catalog
+    outputs:
+    - time_magnitude_png
+    - depth_time_png
+    - magnitude_depth_png
+    params:
+      figure_style: nature
+      output_format: png
+      resolution_dpi: 600
+  - name: create_frequency_station_mechanism_figures
+    description: Plot Mc, b-value, station coverage, and mechanism availability 
+      diagnostics.
+    inputs:
+    - stage1_catalog
+    - station_inventory
+    - focal_mechanism_table
+    - completeness_summary
+    - b_value_summary
+    outputs:
+    - magnitude_frequency_png
+    - station_coverage_png
+    - mechanism_availability_png
+    params:
+      figure_style: nature
+      output_format: png
+      resolution_dpi: 600
+- name: 06_candidate_patterns_estimation
+  description: Convert background and context results into ranked candidate 
+    patterns and follow-up analysis suggestions.
+  script: 06_candidate_patterns_estimation.py
+  ancestors:
+  - 01_data_audit_cleaning
+  - 02_major_earthquake_matching
+  - 03_regional_background_characterization
+  - 04_mainshock_regional_context
+  subtasks:
+  - name: detect_catalog_wide_patterns
+    description: Identify spatial, temporal, depth, and magnitude-related 
+      candidate patterns across the region.
+    inputs:
+    - stage1_catalog
+    - spatial_background_summary
+    - temporal_rate_summary
+    - magnitude_depth_summary
+    - depth_distribution_summary
+    outputs:
+    - catalog_pattern_candidates
+    - ranked_pattern_list
+    params:
+      identify_clusters: true
+      identify_bursts_and_quiet_periods: true
+      identify_depth_segmentation: true
+  - name: detect_mainshock_specific_patterns
+    description: Compare each mainshock neighborhood with the regional 
+      background for event-specific hypotheses.
+    inputs:
+    - mainshock_context_table
+    - local_vs_regional_contrast_table
+    - threshold_recommendation_table
+    outputs:
+    - mainshock_pattern_candidates
+    - followup_threshold_table
+    - machine_readable_summary
+    params:
+      separate_regional_and_event_specific_patterns: true
+      keep_hypothesis_testable: true

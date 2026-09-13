@@ -1,0 +1,14 @@
+{
+  "path": "<CASE_ROOT>/data/catalog/main_earthquake.csv",
+  "n_rows": 3,
+  "columns": [
+    "index",
+    "datetime",
+    "lat",
+    "lon",
+    "dep",
+    "mag"
+  ],
+  "required_fields_present": true,
+  "missing_required_fields": []
+}

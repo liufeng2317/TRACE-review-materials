@@ -1,0 +1,9 @@
+name,kind,min_lat,max_lat,min_lon,max_lon,center_lat,center_lon,inner_radius_km,outer_radius_km,exclude_other_main_circles,notes
+common_region,bbox,38.353003,42.532633,140.851921,144.64847,,,,,False,Bounding box derived from relocated active-period catalog with 0.15 degree buffer.
+m1_local,circle,38.353003,42.532633,140.851921,144.64847,39.402,143.507,,35.0,False,"M1 local circle, 35 km radius."
+m2_local,circle,38.353003,42.532633,140.851921,144.64847,40.968,142.288,,35.0,False,"M2 local circle, 35 km radius."
+m3_local,circle,38.353003,42.532633,140.851921,144.64847,39.842,143.157,,35.0,False,"M3 local circle, 35 km radius."
+m1_m3_local_union,bbox,38.353003,42.532633,140.851921,144.64847,,,,,False,"Union of M1 and M3 local circles, implemented separately in mask helper."
+m2_near_field,circle,38.353003,42.532633,140.851921,144.64847,40.968,142.288,,55.0,False,"M2 near-field circle, 55 km radius."
+m2_outer_band,ring,38.353003,42.532633,140.851921,144.64847,40.968,142.288,55.0,140.0,True,"M2 outer band ring, 55-140 km, excluding M1/M3 local circles."
+control_region,bbox,38.353003,42.532633,140.851921,144.64847,,,,,False,Common region excluding all three 35 km mainshock local circles and the M2 outer band.

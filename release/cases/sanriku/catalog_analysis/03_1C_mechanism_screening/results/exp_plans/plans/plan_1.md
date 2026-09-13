@@ -1,0 +1,331 @@
+# Goal
+Screen whether the M1-M3 local earthquake catalog behavior is more consistent with independent ruptures, phase-separated activation, compact/swarm-like compound activation, repeated shallow local activation, or background/window effects, using catalog-level statistics only: sliding-window b-value/Mc evolution, magnitude hierarchy, and magnitude-based moment-release patterns within neutral M1-M3 geometric subsets.
+
+## Planning Assumptions
+- Observation data are available and sufficient; no model data are needed.
+- The authoritative temporal anchors for all phase boundaries are in `catalog/main_earthquake.csv`.
+- The primary catalog input is `data/Snet_catalog_relocate_250601_260501.csv`, a relocated catalog with an explicit header; its named columns must be verified before analysis.
+- The requested primary b-value workflow should use `seismostats`, with magnitude binning (`delta_m`) explicitly determined from catalog metadata/observed discretization and then held fixed across comparable analyses.
+- SeismoStats package contract relevant here:
+  - Mc methods available: `estimate_mc_maxc`, `estimate_mc_ks`, `estimate_mc_b_stability`.
+  - b-value estimation can use the default classical estimator (`ClassicBValueEstimator`) through `estimate_b` / estimator interface.
+  - Mc estimates overwrite catalog `mc`; per-window computations should therefore store explicit Mc values rather than relying on mutable catalog state.
+- Sliding-window b-value is the primary product; phase-aggregate b-values are secondary summaries only.
+- Reliability must be graded per window/subset using combined evidence from Mc agreement/stability, count above Mc, fitting range, and subset sample size; no single threshold should be treated as universally sufficient.
+- `source_mechanism/Snet_mecha.csv` is incomplete and likely biased toward larger events; mechanism interpretation must begin with a coverage audit and may remain unavailable/exploratory.
+- `stations/station.sta` is context only unless needed to document network coverage; it is not a primary analysis input.
+- Output should be organized as one primary task script for data loading, subset construction, sliding-window/phase/burst statistics, and figure-ready tables, plus one optional secondary task script only if mechanism-coverage auditing is kept separate for reuse.
+
+## Analysis Plan
+
+### Task 1. Build validated analysis tables and neutral M1-M3 subset definitions
+- Task description:
+  - Load the relocated catalog and mainshock table, verify schema, construct event times and geometry fields, and produce the master event table used by all downstream statistics.
+  - Define all temporal phases and neutral spatial subsets requested by the user.
+- Required data sources:
+  - `data/Snet_catalog_relocate_250601_260501.csv`
+  - `catalog/main_earthquake.csv`
+  - Optional context: `stations/station.sta`
+- Parameter selection strategy:
+  - Inspect the headered catalog to confirm the five columns and map them to time, latitude, longitude, depth, and magnitude before calculations.
+  - Parse M1, M2, M3 origin times from `main_earthquake.csv` and derive phase boundaries:
+    - baseline primary: catalog start to M1-14d
+    - baseline sensitivity: catalog start to M1-7d
+    - M1-related primary: M1-14d to M1+21d
+    - M1 sensitivities: M1-7d to M1+14d; M1-14d to M1+28d
+    - middle phase: M1+21d to M3-35d
+    - pre-M3 primary: M3-35d to M3
+    - pre-M3 sensitivities: M3-42d to M3; M3-28d to M3
+    - post-M3 kept separate if needed
+    - full interval: M1 to M3
+  - Compute epicentral/hypocentral geometry relative to M1 and M3:
+    - distance to M1 and M3
+    - combined local zone: within 60 km of either M1 or M3
+    - M1 core/extended: within 30/60 km of M1
+    - M3 core/extended: within 30/60 km of M3
+    - along-axis subsets: projection onto M1-M3 segment and perpendicular distance thresholds of 20 km and 30 km
+    - off-axis subsets: combined local zone minus corresponding along-axis subset
+    - M2-related flag: distance/time flag relative to M2, retained by default
+  - Preserve both raw local subsets and M2-aware variants for robustness checks.
+- Constraints:
+  - Do not interpret geometry as migration or physical corridor behavior; use it only as bookkeeping.
+  - Do not remove M2-related events by default.
+  - If the catalog time span or subset boundaries create empty or tiny subsets, record them explicitly rather than forcing analysis.
+- Key outputs:
+  - `master_catalog_table.csv` with validated fields
+  - `subset_membership_table.csv` with temporal phase and spatial flags
+  - `phase_boundary_table.csv`
+  - `subset_count_summary.csv`
+  - Optional quick-look map and timeline used only for QA of subset definitions
+
+### Task 2. Determine magnitude discretization, Mc workflow, and sliding-window b-value products
+- Task description:
+  - Estimate Mc and b-value through time in statistically stable domains, centered on the M1-M3 combined local zone, then extend to secondary subsets where supported.
+- Required data sources:
+  - Outputs from Task 1
+  - `data/Snet_catalog_relocate_250601_260501.csv`
+- Parameter selection strategy:
+  - Determine `delta_m` from documented catalog magnitude discretization or from the dominant observed magnitude spacing after inspection; use the same `delta_m` for all comparable analyses.
+  - Primary domain: M1-M3 combined local zone.
+  - Primary sliding windows:
+    - fixed-count windows of 500 events
+    - step of 100 events
+    - sensitivity step of 200 events
+    - assign each window to median event time
+  - Secondary spatial domains if counts allow:
+    - M1 extended 60 km
+    - M3 extended 60 km
+  - Exploratory domains if counts allow and only with explicit reliability grading:
+    - M1 core 30 km
+    - M3 core 30 km
+    - along-axis 20 km / 30 km
+    - off-axis relative to each corridor width
+    - short pre-M3 and burst subsets
+  - For each window:
+    - estimate Mc using MAXC as the fast baseline
+    - cross-check with KS and/or b-stability where event counts above candidate Mc are adequate
+    - estimate classical b-value at chosen Mc
+    - compute uncertainty from estimator output or standard catalog-statistics uncertainty formula consistent across windows
+    - record fitting range: minimum fitted magnitude (=Mc), maximum magnitude, number of bins above Mc, and count above Mc
+    - derive reliability class:
+      - robust
+      - usable with caution
+      - exploratory
+      - not interpretable
+    - reliability should depend jointly on Mc-method agreement, count above Mc, fitted magnitude span, and subset/window sample size
+  - If short-term incompleteness appears to bias immediate post-large-event windows, flag this in reliability and optionally compare classical versus positive-method sensitivity on the same windows, but keep the classical sliding product as the main reported curve unless the sensitivity check shows systematic breakdown.
+- Constraints:
+  - Sliding-window analysis is primary; do not substitute a few manually defined phase b-values for the requested time-evolution curve.
+  - Windows with unstable Mc or too few events above Mc must be flagged or excluded from interpretation, not silently plotted as equivalent.
+  - Use the fewest cohesive scripts; this whole workflow stays in the main script.
+- Key outputs:
+  - `sliding_bvalue_combined_local.csv`
+  - `sliding_bvalue_M1_extended.csv`
+  - `sliding_bvalue_M3_extended.csv`
+  - optional exploratory subset files for core/axis/off-axis domains
+  - `window_reliability_rules_applied.csv`
+  - figure-ready tables for b-value and Mc timelines
+
+### Task 3. Phase-aware interpretation and secondary phase-level summaries
+- Task description:
+  - Compare the sliding-window b-value evolution against predefined phase boundaries and compute secondary phase-aggregate descriptors without replacing the primary time-evolution evidence.
+- Required data sources:
+  - Sliding-window outputs from Task 2
+  - Phase definitions from Task 1
+- Parameter selection strategy:
+  - Overlay phase boundaries for:
+    - baseline
+    - M1-related phase
+    - middle phase
+    - pre-M3 phase
+    - optional post-M3 context
+  - Summarize, for each major phase:
+    - median and interquartile range of reliable sliding-window b-values
+    - proportion of windows in each reliability class
+    - direction of b-value trend within phase if enough windows exist
+    - whether phase transitions coincide with step-like or gradual changes
+  - Compute secondary aggregate phase-window Mc and b-values for:
+    - baseline primary and sensitivity
+    - M1-related primary and sensitivity windows
+    - middle phase
+    - pre-M3 primary and sensitivities
+    - full M1-to-M3 interval
+  - Compare aggregate phase values against the sliding curve to identify when aggregation is representative versus misleading.
+- Constraints:
+  - Do not over-interpret isolated windows near phase boundaries.
+  - If phase windows are shorter than the stable Mc/b requirements, report them as exploratory summaries only.
+- Key outputs:
+  - `phase_vs_sliding_bvalue_summary.csv`
+  - `phase_aggregate_bvalue_summary.csv`
+  - `phase_transition_notes_table.csv`
+
+### Task 4. Spatial b-value comparison across M1-centered, M3-centered, axis, and off-axis subsets
+- Task description:
+  - Quantify whether spatially distinct local subsets show different b-value behavior, while explicitly marking low-sample subsets as exploratory or uninterpretable.
+- Required data sources:
+  - Task 1 subset memberships
+  - Task 2 b-value products
+- Parameter selection strategy:
+  - Compare at minimum:
+    - combined local zone
+    - M1 extended
+    - M3 extended
+    - along-axis 30 km
+    - along-axis 20 km
+    - off-axis relative to each corridor width
+  - For smaller subsets, choose the largest fixed-count window that still yields a usable number of windows across the target interval; report the actual chosen window size per subset.
+  - Use the same `delta_m` and Mc workflow as the primary analysis.
+  - Summaries should include:
+    - number of analyzable windows
+    - reliability-class distribution
+    - median b-value of reliable/usable windows
+    - temporal overlap with key phases
+    - whether differences persist under 100-event versus 200-event step choices
+- Constraints:
+  - Do not claim robust spatial contrasts if windows do not overlap in time or if one subset is mostly exploratory.
+  - Along-axis/corridor subsets are geometric comparisons only, not preferred mechanisms.
+- Key outputs:
+  - `spatial_bvalue_comparison_summary.csv`
+  - `subset_window_size_selection.csv`
+  - `spatial_reliability_audit.csv`
+
+### Task 5. Magnitude hierarchy and event-ranking diagnostics by phase, subset, and burst
+- Task description:
+  - Quantify whether catalog behavior is dominated by one event, a few large companions, or many moderate events across the requested phases and spatial classes.
+- Required data sources:
+  - Task 1 master table and subset flags
+- Parameter selection strategy:
+  - For each key phase/subset/burst where counts allow, compute:
+    - largest, second-largest, third-largest magnitudes
+    - gaps: M1st-M2nd and M2nd-M3rd
+    - counts of M4+, M5+, M6+
+    - counts within 0.5 and 1.0 magnitude units of the largest event
+    - proportion of cumulative event count contributed by top 1/top 3 magnitudes above selected thresholds
+  - Apply to:
+    - baseline
+    - M1-related phase
+    - middle phase
+    - pre-M3 phase
+    - post-M3 context if used
+    - full M1-to-M3 interval
+    - combined local, M1-centered, M3-centered, along-axis, off-axis
+    - major rate-defined bursts
+  - Burst definitions should be taken from current catalog burst tables if available in the folder; if not, define a simple reproducible burst segmentation from rate peaks and document the rule.
+- Constraints:
+  - Keep burst-level analysis secondary if burst detection is ambiguous.
+  - Do not label dominance patterns as triggering or causality.
+- Key outputs:
+  - `magnitude_hierarchy_by_phase_subset.csv`
+  - `magnitude_hierarchy_by_burst.csv`
+  - `top_event_companion_summary.csv`
+
+### Task 6. Magnitude-based moment-release proxy and dominance structure
+- Task description:
+  - Use a consistent magnitude-to-moment proxy to compare cumulative release through time, phase contributions, spatial contributions, and burst dominance.
+- Required data sources:
+  - Task 1 master table and subset flags
+- Parameter selection strategy:
+  - Convert magnitude to scalar-moment proxy using a standard log-linear relation consistently across the catalog; because the goal is comparative screening, absolute calibration is less important than internal consistency.
+  - Compute:
+    - cumulative moment proxy through time for the combined local zone
+    - separate cumulative curves for M1-centered, M3-centered, along-axis, and off-axis categories
+    - phase totals and percentages
+    - burst totals and percentages
+    - top-event contribution fraction for each phase/subset/burst
+    - concentration metrics such as fraction released by top 1, top 3, and top 10 events
+  - Compare whether release is:
+    - single-event dominated
+    - few-event dominated
+    - burst-distributed
+    - broadly distributed among many moderate events
+- Constraints:
+  - Keep post-M3 separate from pre-M3 interpretation.
+  - Treat moment proxy as comparative only; do not infer rupture physics from proxy patterns alone.
+- Key outputs:
+  - `moment_proxy_event_table.csv`
+  - `cumulative_moment_proxy_by_category.csv`
+  - `phase_moment_proxy_summary.csv`
+  - `burst_moment_proxy_summary.csv`
+  - `moment_dominance_metrics.csv`
+
+### Task 7. Robustness checks targeted to the main conclusions
+- Task description:
+  - Test only the user-prioritized perturbations that could alter interpretation of b-value reliability, temporal variation, and spatial/moment conclusions.
+- Required data sources:
+  - Outputs from Tasks 2–6
+- Parameter selection strategy:
+  - Run targeted comparisons for:
+    - raw versus M2-aware event sets
+    - 500-event primary windows versus alternative feasible fixed-count windows in secondary subsets
+    - 100-event versus 200-event sliding steps
+    - 30 km core versus 60 km extended M1/M3 zones
+    - corridor widths 20 km versus 30 km
+    - baseline and pre-M3 sensitivity windows
+    - reasonable alternative Mc choices when Mc methods disagree
+    - M3+/M4+/M5+ filtered summaries for hierarchy/moment dominance
+    - alternative burst definitions only if current burst segmentation is ambiguous
+  - Evaluate whether each perturbation changes:
+    - reliability class distributions
+    - existence/sign of temporal b-value shifts
+    - spatial contrast conclusions
+    - moment-dominance classification
+- Constraints:
+  - Do not exhaustively cross every parameter combination.
+  - Mark unchanged conclusions as robust and changed conclusions as sensitivity-dependent.
+- Key outputs:
+  - `robustness_change_log.csv`
+  - `conclusion_stability_matrix.csv`
+
+### Task 8. Mechanism-coverage audit and catalog mechanism-evidence matrix
+- Task description:
+  - Audit focal-mechanism coverage and synthesize catalog-level support/limitations for the requested hypothesis set using only statistical evidence plus mechanism availability status.
+- Required data sources:
+  - `source_mechanism/Snet_mecha.csv`
+  - Outputs from Tasks 1–7
+- Parameter selection strategy:
+  - First audit mechanism coverage by:
+    - phase
+    - magnitude class
+    - spatial class (M1-centered, M3-centered, along-axis, off-axis)
+    - depth class where relevant
+  - Quantify:
+    - matched catalog fraction
+    - matched fraction among larger events
+    - missingness patterns
+    - whether any phase/spatial comparison is too sparse or biased
+  - Build a hypothesis matrix for:
+    - independent local ruptures
+    - phase-separated activation
+    - compact/swarm-like compound activation
+    - M1/M3-centered repeated shallow activation
+    - stepwise or along-axis activation candidate
+    - stress-interaction candidate
+    - fluid/diffusion-like candidate
+    - slow-slip-related candidate
+    - background/window artifact
+  - For each hypothesis report:
+    - supporting catalog evidence
+    - contradicting catalog evidence
+    - missing evidence
+    - confidence level
+    - required physical follow-up
+  - Enforce conservative interpretation:
+    - stress/fluid/slow-slip remain low-confidence candidates without independent physical data
+    - sparse or biased mechanism coverage should be labeled unavailable or exploratory
+- Constraints:
+  - No physical causality claims from catalog statistics alone.
+  - Mechanism fields with high missingness must not be used to force source-style conclusions.
+- Key outputs:
+  - `mechanism_coverage_audit.csv`
+  - `catalog_hypothesis_evidence_matrix.csv`
+
+### Task 9. Diagnostic figure set and final report assembly
+- Task description:
+  - Produce a compact figure suite tied directly to the main scientific questions and assemble concise answer tables for the final report.
+- Required data sources:
+  - Outputs from Tasks 2–8
+- Parameter selection strategy:
+  - Required figures:
+    - magnitude-frequency distributions with Mc and b annotations for primary phase/subset summaries
+    - spatial b-value comparison figure with reliability coding
+    - sliding-window b-value temporal evolution with phase boundaries overlaid
+    - sliding-window Mc and reliability timeline
+    - cumulative moment-release proxy curve by category
+    - burst-level moment-release and magnitude-hierarchy summary
+    - catalog mechanism-evidence matrix heatmap/table
+  - For all figures, encode reliability clearly so exploratory windows/subsets are visually distinct from robust results.
+  - Final report should explicitly answer:
+    - reliability of sliding-window b-value estimates
+    - whether b-value varies through time and whether variation aligns with phases
+    - whether aggregate phase b-values agree with or distort the sliding-window story
+    - whether moment release is single-event, compound/swarm-like, phase-distributed, or burst-distributed
+    - whether M1/M3-centered subsets differ from along-axis subsets or whether axis samples are too small
+    - which hypotheses are supported, weakened, or unresolved
+    - which next analyses should be prioritized
+- Constraints:
+  - Keep the figure set compact; no exhaustive plot grids.
+  - Do not include conclusions that exceed catalog-statistical support.
+- Key outputs:
+  - figure-ready CSV tables for each plot
+  - `final_answer_table.csv`
+  - concise narrative report structured around the user’s required questions

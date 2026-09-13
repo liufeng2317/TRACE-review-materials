@@ -1,0 +1,18 @@
+{
+  "path": "<CASE_ROOT>/data/catalog/Snet_catalog_relocate.csv",
+  "n_rows": 25646,
+  "columns": [
+    "datetime",
+    "lat",
+    "lon",
+    "dep",
+    "mag"
+  ],
+  "required_fields_present": true,
+  "missing_required_fields": [],
+  "time_parse_missing": 0,
+  "lat_missing": 0,
+  "lon_missing": 0,
+  "dep_missing": 0,
+  "mag_missing": 0
+}

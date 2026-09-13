@@ -1,0 +1,12 @@
+metric,value
+catalog_event_count,25646
+catalog_time_start,2025-06-01 00:13:38.900000+00:00
+catalog_time_end,2026-05-01 14:44:22.450000+00:00
+delta_m,0.1
+station_count,371
+combined_local_count,9109
+M1_extended_count,7402
+M3_extended_count,7268
+along_axis_30km_count,5148
+off_axis_30km_count,3961
+m2_related_count,3077

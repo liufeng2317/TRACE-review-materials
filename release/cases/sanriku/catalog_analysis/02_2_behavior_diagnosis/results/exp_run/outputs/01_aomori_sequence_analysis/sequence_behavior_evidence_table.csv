@@ -1,0 +1,4 @@
+mainshock_id,aftershock_response,single_mainshock_dominance,compact_cascade_compound_structure,swarm_like_organization,foreshock_pre_mainshock_activation,broader_regional_activation,radial_migration_expansion,slow_slip_related_candidate,headline_metrics
+M1,moderate,low,moderate,moderate,strong,low,low,low,post/pre=3.174; gap=0.300; pre M4+=21; post M4+=55; outer post frac=0.210
+M2,moderate,possible,low,possible,low,strong,low,low,post/pre=86.625; gap=0.600; pre M4+=0; post M4+=45; outer post frac=0.820
+M3,moderate,strong,low,possible,moderate,moderate,low,low,post/pre=14.649; gap=2.100; pre M4+=1; post M4+=43; outer post frac=0.463

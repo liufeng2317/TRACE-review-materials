@@ -1,0 +1,11 @@
+spatial_class,spatial_flag_column,catalog_event_count,matched_event_count,coverage_fraction,complete_mechanism_count,partial_mechanism_count,metadata_only_count,complete_mechanism_fraction_of_matched,median_match_time_diff_sec,median_match_horizontal_diff_km,median_match_depth_diff_km,median_catalog_mag_of_matched
+combined_local,within_60km_either_m1_m3,9109,8,0.000878252277966846,1,0,7,0.125,0.01,0.08988697264559667,0.08999999999999986,3.7
+M1_extended,within_60km_m1,7402,0,0.0,0,0,0,,,,,
+M3_extended,within_60km_m3,7268,8,0.001100715465052284,1,0,7,0.125,0.01,0.08988697264559667,0.08999999999999986,3.7
+M1_core,within_30km_m1,4460,0,0.0,0,0,0,,,,,
+M3_core,within_30km_m3,2851,4,0.0014030164854437039,0,0,4,0.0,0.01,0.08335761423613805,0.09999999999999964,3.6500000000000004
+along_axis_20km,along_axis_20km,4886,0,0.0,0,0,0,,,,,
+along_axis_30km,along_axis_30km,5148,0,0.0,0,0,0,,,,,
+off_axis_20km,off_axis_20km,4223,8,0.001894387875917594,1,0,7,0.125,0.01,0.08988697264559667,0.08999999999999986,3.7
+off_axis_30km,off_axis_30km,3961,8,0.002019691996970462,1,0,7,0.125,0.01,0.08988697264559667,0.08999999999999986,3.7
+overlap_60km,within_both_60km,5561,0,0.0,0,0,0,,,,,

@@ -1,0 +1,6 @@
+stage,start_date,end_date,n_total,rate_total_events_per_day,n_m3_plus,rate_m3_plus_per_day,n_m4_plus,rate_m4_plus_per_day,n_m5_plus,rate_m5_plus_per_day,n_m6_plus,rate_m6_plus_per_day,scope,source
+pre_m69_background,2025-06-01,2025-11-09,731,4.54,66,0.41,17,0.11,6,0.04,0,0.00,focused_shallow_interface_region,final_manuscript_and_supplementary_note_E3
+m69_activation_sequence,2025-11-09,2025-11-23,2273,162.36,262,18.71,61,4.36,23,1.64,4,0.29,focused_shallow_interface_region,final_manuscript_and_supplementary_note_E3
+post_m69_continued_activation,2025-11-23,2026-02-20,1169,13.13,53,0.60,15,0.17,2,0.02,1,0.01,focused_shallow_interface_region,final_manuscript_and_supplementary_note_E3
+pre_m77_reactivation,2026-02-20,2026-04-20,962,16.31,67,1.14,18,0.31,5,0.08,2,0.03,focused_shallow_interface_region,final_manuscript_and_supplementary_note_E3
+early_m77_response,2026-04-20,2026-05-01,2710,246.36,226,20.55,39,3.55,12,1.09,1,0.09,focused_shallow_interface_region,final_manuscript_and_supplementary_note_E3

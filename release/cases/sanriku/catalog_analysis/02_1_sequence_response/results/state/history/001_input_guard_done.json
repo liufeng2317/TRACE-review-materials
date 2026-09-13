@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "02_1_sequence_response",
+  "run_name": "02_1_sequence_response",
+  "root": "<CASE_ROOT>/run/02_1_sequence_response",
+  "status": "running",
+  "next_stage": "data_desc",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-05-23T02:50:13.358681+00:00",
+  "updated_at": "2026-05-23T02:50:34.302035+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are an earthquake scientist and data-analysis agent.\n\nCurrent task:\nPerform event-centered sequence analysis for the three matched major earthquakes in the Aomori regional catalog.\n\nGoal:\nCompare the pre- and post-event seismicity evolution around M1, M2, and M3, and test whether the observed sequence patterns are robust under different spatial, temporal, depth, and magnitude definitions.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nBackground guidance from the previous data-foundation analysis:\n- The regional catalog is large and internally consistent enough for sequence analysis.\n- The three major earthquakes can be matched to the relocated catalog with high confidence.\n- Regional seismicity is clustered and spatially segmented.\n- Temporal activity is burst-like, so time-window sensitivity is important.\n- Preliminary Mc is around 1.2 for the full catalog; use it as a screening value and test higher thresholds.\n- M1 and M3 show strong local seismicity enrichment and should be compared carefully.\n- M2 may be depth-distinct and should be analyzed with depth stratification.\n- Station coverage and focal-mechanism availability are uneven and should be treated as contextual limitations.\n\nTasks:\n\n1. Minimal data verification\nRead the original files and verify the fields needed for sequence analysis:\ntime, latitude, longitude, depth, magnitude, event ID if available, major-earthquake records, station locations, and focal-mechanism availability.\nRe-match the three major earthquakes with the regional catalog before sequence extraction, allowing for small time or location shifts caused by relocation.\n\n2. Sequence extraction\nFor each major earthquake, extract surrounding events using multiple definitions:\n- radii: 30, 44, 50, 80, and 100 km\n- time windows: pre-90d, pre-60d, pre-30d, pre-7d, post-7d, post-30d, post-60d, and post-90d\n- depth windows: all depths, local mainshock-centered depth windows, and depth-stratified windows\n- magnitude thresholds: all events, M >= 1.2, M >= 1.5, M >= 2.0, and M >= 2.5 where feasible\n\n3. Sequence diagnostics\nFor each sequence and parameter setting, calculate:\n- event counts\n- cumulative event counts\n- moving-window seismicity rates\n- pre/post rate ratios\n- magnitude distributions\n- depth distributions\n- post-event rate decay diagnostics, including simple Omori-style fitting if feasible\n- time-distance and radial-distance patterns relative to each mainshock\n- spatial concentration or expansion indicators if visible\n- focal-mechanism availability within the sequence window, and simple mechanism summaries if feasible\n\n4. Robustness analysis\nIdentify which sequence features are stable across radius, time window, depth window, and magnitude threshold.\nSeparate robust patterns from parameter-dependent patterns.\n\n5. Three-sequence comparison\nCompare M1, M2, and M3 in terms of:\n- background activity level\n- pre-event activity\n- post-event activity\n- temporal burstiness\n- aftershock decay behavior\n- spatial concentration or expansion\n- depth structure\n- magnitude distribution\n- sensitivity to sequence definitions\n\n6. Simple control comparison\nInclude at least one feasible control:\n- background windows away from the mainshock times\n- randomized mainshock times\n- comparison using higher magnitude thresholds\n- or simple background-rate comparison before and after each mainshock\n\n7. Diagnostic figures\nGenerate high-quality sequence-analysis figures (**Nature-style** publication-quality figures):\n- event-centered maps for M1, M2, and M3\n- pre/post spatial comparison maps\n- cumulative count curves\n- moving-window rate curves\n- post-event rate decay plots\n- time-distance or radial-distance plots relative to each mainshock\n- radius and time-window sensitivity heatmaps\n- magnitude-threshold sensitivity plots\n- depth-stratified sequence plots\n- three-sequence comparison summary figure\n\nUse consistent axes, colors, labels, legends, and mainshock markers across M1/M2/M3.\nThe agent may design additional standard earthquake-sequence analysis plots when they help test robustness, compare the three sequences, or prepare for later M1-M3 focused analysis.\n\nThe final response can include a concise summary, but prioritize reusable sequence-analysis tables, robustness results, and publication-quality figures.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "02_1_sequence_response",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are an earthquake scientist and data-analysis agent.\n\nCurrent task:\nPerform event-centered sequence analysis for the three matched major earthquakes in the Aomori regional catalog.\n\nGoal:\nCompare the pre- and post-event seismicity evolution around M1, M2, and M3, and test whether the observed sequence patterns are robust under different spatial, temporal, depth, and magnitude definitions.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nBackground guidance from the previous data-foundation analysis:\n- The regional catalog is large and internally consistent enough for sequence analysis.\n- The three major earthquakes can be matched to the relocated catalog with high confidence.\n- Regional seismicity is clustered and spatially segmented.\n- Temporal activity is burst-like, so time-window sensitivity is important.\n- Preliminary Mc is around 1.2 for the full catalog; use it as a screening value and test higher thresholds.\n- M1 and M3 show strong local seismicity enrichment and should be compared carefully.\n- M2 may be depth-distinct and should be analyzed with depth stratification.\n- Station coverage and focal-mechanism availability are uneven and should be treated as contextual limitations.\n\nTasks:\n\n1. Minimal data verification\nRead the original files and verify the fields needed for sequence analysis:\ntime, latitude, longitude, depth, magnitude, event ID if available, major-earthquake records, station locations, and focal-mechanism availability.\nRe-match the three major earthquakes with the regional catalog before sequence extraction, allowing for small time or location shifts caused by relocation.\n\n2. Sequence extraction\nFor each major earthquake, extract surrounding events using multiple definitions:\n- radii: 30, 44, 50, 80, and 100 km\n- time windows: pre-90d, pre-60d, pre-30d, pre-7d, post-7d, post-30d, post-60d, and post-90d\n- depth windows: all depths, local mainshock-centered depth windows, and depth-stratified windows\n- magnitude thresholds: all events, M >= 1.2, M >= 1.5, M >= 2.0, and M >= 2.5 where feasible\n\n3. Sequence diagnostics\nFor each sequence and parameter setting, calculate:\n- event counts\n- cumulative event counts\n- moving-window seismicity rates\n- pre/post rate ratios\n- magnitude distributions\n- depth distributions\n- post-event rate decay diagnostics, including simple Omori-style fitting if feasible\n- time-distance and radial-distance patterns relative to each mainshock\n- spatial concentration or expansion indicators if visible\n- focal-mechanism availability within the sequence window, and simple mechanism summaries if feasible\n\n4. Robustness analysis\nIdentify which sequence features are stable across radius, time window, depth window, and magnitude threshold.\nSeparate robust patterns from parameter-dependent patterns.\n\n5. Three-sequence comparison\nCompare M1, M2, and M3 in terms of:\n- background activity level\n- pre-event activity\n- post-event activity\n- temporal burstiness\n- aftershock decay behavior\n- spatial concentration or expansion\n- depth structure\n- magnitude distribution\n- sensitivity to sequence definitions\n\n6. Simple control comparison\nInclude at least one feasible control:\n- background windows away from the mainshock times\n- randomized mainshock times\n- comparison using higher magnitude thresholds\n- or simple background-rate comparison before and after each mainshock\n\n7. Diagnostic figures\nGenerate high-quality sequence-analysis figures (**Nature-style** publication-quality figures):\n- event-centered maps for M1, M2, and M3\n- pre/post spatial comparison maps\n- cumulative count curves\n- moving-window rate curves\n- post-event rate decay plots\n- time-distance or radial-distance plots relative to each mainshock\n- radius and time-window sensitivity heatmaps\n- magnitude-threshold sensitivity plots\n- depth-stratified sequence plots\n- three-sequence comparison summary figure\n\nUse consistent axes, colors, labels, legends, and mainshock markers across M1/M2/M3.\nThe agent may design additional standard earthquake-sequence analysis plots when they help test robustness, compare the three sequences, or prepare for later M1-M3 focused analysis.\n\nThe final response can include a concise summary, but prioritize reusable sequence-analysis tables, robustness results, and publication-quality figures.\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": "English",
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [
+      "input_guard"
+    ],
+    "active_round": 0,
+    "rounds": [
+      {
+        "round_index": 0,
+        "plan_path": null,
+        "tasks": [],
+        "evaluation_path": null,
+        "evaluation_satisfactory": null
+      }
+    ]
+  },
+  "artifacts": {
+    "request_txt": "<CASE_ROOT>/run/02_1_sequence_response/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/02_1_sequence_response/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/02_1_sequence_response/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/02_1_sequence_response/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {
+      "Input Guard": {
+        "input_tokens": 2559,
+        "output_tokens": 15
+      }
+    },
+    "total_input_tokens": 2559,
+    "total_output_tokens": 15,
+    "total_tokens": 2574
+  },
+  "failure": null
+}

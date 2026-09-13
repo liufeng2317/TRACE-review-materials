@@ -1,0 +1,274 @@
+tasks:
+- name: 01_hypodd_catalog_only_relocation
+  description: Execute a self-contained hypodd_runner catalog-only relocation 
+    workflow for the full Aomori JMA catalog with validation, bounded parameter 
+    screening, production windowed relocation, merged accounting, and 
+    real-output figures.
+  script: 01_hypodd_catalog_only_relocation.py
+  ancestors: []
+  subtasks:
+  - name: validate_inputs_and_preserve_identities
+    description: Validate regional inputs, preserve event and station 
+      identities, and decide whether direct phase usage or a documented fallback
+      rebuild is required.
+    inputs:
+    - regional_events_catalog
+    - regional_pick_table
+    - primary_phase_file
+    - station_file
+    - catalog_summary
+    outputs:
+    - input_validation_manifest
+    - phase_station_consistency_table
+    - station_identity_mapping
+    - event_identity_manifest
+    - validated_phase_input
+    - validated_station_input
+    params:
+      data_dir: 
+        <CASE_ROOT>/data/regional
+      preferred_phase_source: phase.dat
+      fallback_phase_source: picks.csv
+      preserve_original_station_ids: true
+      synthetic_network_prefix: J.
+      preserve_event_ids: true
+      preserve_iso_origin_times: true
+      phase_format_selection: auto
+      fallback_rebuild_only_if_validation_fails: true
+  - name: assess_native_limits_and_choose_execution_mode
+    description: Compare catalog scale against native HypoDD limits and select 
+      the package-supported production execution mode and initial time-window 
+      strategy.
+    inputs:
+    - input_validation_manifest
+    - event_identity_manifest
+    - validated_phase_input
+    outputs:
+    - native_limit_assessment
+    - candidate_window_plan
+    - production_execution_mode
+    params:
+      native_ph2dt_limits:
+        MEV: 16000
+        MSTA: 2400
+        MOBS: 500
+      native_hypodd_limits:
+        MAXEVE: 10800
+        MAXDATA: 3100000
+        MAXSTA: 1300
+        MAXCL: 100
+      preferred_large_catalog_entrypoint: run_catalog_only_auto_time_windows
+      bounded_diagnostic_entrypoint: run_catalog_only_relocation
+      initial_time_window_base: month
+      min_events_per_window_strategy: data_diagnostic_driven
+      continue_on_error_for_production: false
+      verbose_window_logging: false
+  - name: derive_catalog_diagnostics_for_parameterization
+    description: Compute catalog diagnostics needed to choose ph2dt link 
+      controls and explicit HypoDD iteration rows from actual Aomori data 
+      coverage.
+    inputs:
+    - regional_events_catalog
+    - regional_pick_table
+    - validated_phase_input
+    - validated_station_input
+    - candidate_window_plan
+    outputs:
+    - catalog_diagnostic_summary
+    - pairability_diagnostic_table
+    - parameter_candidate_ranges
+    params:
+      diagnostic_metrics:
+      - event_count_distribution
+      - pick_count_distribution
+      - station_participation_counts
+      - stations_per_event_distribution
+      - phase_type_availability
+      - representative_window_link_density
+      use_summary_file_for_cross_check: true
+      do_not_claim_relocation_success_from_diagnostics: true
+  - name: perform_bounded_parameter_screening
+    description: Run a small number of real diagnostic relocations on 
+      representative windows to choose production ph2dt settings and explicit 
+      iter_rows.
+    inputs:
+    - validated_phase_input
+    - validated_station_input
+    - catalog_diagnostic_summary
+    - pairability_diagnostic_table
+    - parameter_candidate_ranges
+    - event_identity_manifest
+    outputs:
+    - diagnostic_run_status_table
+    - selected_ph2dt_params
+    - selected_hypodd_params
+    - screening_failure_evidence
+    params:
+      package: hypodd_runner
+      grouped_parameter_objects:
+      - HypoDDInputs
+      - EventSelection
+      - Ph2dtParams
+      - HypoDDParams
+      - RuntimeOptions
+      hypo_root: 
+        <LOCAL_PATH>
+      screening_window_strategy:
+        dense_window_count: 1
+        sparse_window_count: 1
+        use_full_catalog_for_screening: false
+      relocation_entrypoint: run_catalog_only_relocation
+      phase_format: auto
+      dep_corr: 0.0
+      velocity_model:
+        mod_top:
+        - 0.0
+        - 5.0
+        - 10.0
+        - 20.0
+        - 35.0
+        - 50.0
+        - 90.0
+        mod_vel:
+        - 5.4
+        - 5.8
+        - 6.2
+        - 6.6
+        - 7.2
+        - 7.6
+        - 8.05
+        mod_ratio_default: 1.73
+      catalog_only_cc_weights_zero: true
+      iter_rows_require_explicit_values: true
+      damping_candidates:
+      - 80
+      - 100
+      - 120
+      compare_runtime_convergence_and_output_nonemptiness: true
+  - name: execute_production_full_catalog_relocation
+    description: Run the production full-catalog catalog-only relocation with 
+      grouped hypodd_runner objects and package-supported automatic time 
+      windows.
+    inputs:
+    - validated_phase_input
+    - validated_station_input
+    - event_identity_manifest
+    - selected_ph2dt_params
+    - selected_hypodd_params
+    - production_execution_mode
+    outputs:
+    - production_run_registry
+    - per_window_status_manifest
+    - successful_window_native_outputs
+    - production_failure_evidence
+    - parameter_manifest
+    params:
+      relocation_entrypoint: run_catalog_only_auto_time_windows
+      grouped_parameter_objects:
+      - HypoDDInputs
+      - EventSelection
+      - Ph2dtParams
+      - HypoDDParams
+      - RuntimeOptions
+      hypo_root: 
+        <LOCAL_PATH>
+      catalog_code: aomori_jma_catalog_only
+      phase_format: auto
+      dep_corr: 0.0
+      velocity_model_source: selected_hypodd_params
+      time_window_base: month
+      min_events_per_window_strategy: data_diagnostic_driven
+      max_events_per_window_strategy: active_MAXEVE_limit
+      num_window_workers: 1
+      continue_on_error: false
+      verbose: false
+      require_nonempty_native_outputs:
+      - dt_ct_files
+      - loc_file
+      - reloc_file
+      - res_file
+  - name: merge_outputs_and_account_for_all_events
+    description: Merge real native relocation outputs back to preserved event 
+      identities and classify every input event as relocated, unrelocated, 
+      failed, or explicitly excluded.
+    inputs:
+    - regional_events_catalog
+    - event_identity_manifest
+    - per_window_status_manifest
+    - successful_window_native_outputs
+    - production_failure_evidence
+    outputs:
+    - merged_relocated_catalog
+    - unrelocated_event_table
+    - failed_event_window_table
+    - final_event_accounting_summary
+    params:
+      preserve_original_event_ids: true
+      verified_identity_mapping_required: true
+      allowed_event_statuses:
+      - relocated
+      - attempted_unrelocated
+      - failed_window
+      - excluded_with_reason
+      do_not_count_unrelocated_as_relocated: true
+      require_real_native_reloc_rows: true
+  - name: compute_statistics_and_generate_figures
+    description: Compute relocation quality statistics and generate required 
+      nature-style figures from real relocation outputs only.
+    inputs:
+    - merged_relocated_catalog
+    - regional_events_catalog
+    - validated_station_input
+    - production_run_registry
+    - successful_window_native_outputs
+    - final_event_accounting_summary
+    - main_earthquake_table
+    outputs:
+    - residual_summary_table
+    - relocation_shift_summary_table
+    - window_quality_summary_table
+    - plot_ready_catalog_comparison_table
+    - relocation_map_figure
+    - residual_distribution_figure
+    - relocation_shift_figure
+    - statistic_figure
+    - optional_additional_figures
+    params:
+      residual_source: native_res_files
+      residual_unit: milliseconds
+      sections:
+      - lon_lat
+      - lon_depth
+      - lat_depth
+      figure_layers:
+        initial_events: gray
+        relocated_events: black
+        main_earthquakes: red
+        stations: contextual
+      success_requires_real_relocated_events: true
+      no_relocation_figure_mode: diagnostic_failure_evidence_only
+      derive_statistics_only_from_successful_native_outputs: true
+  - name: rebuild_phase_input_if_direct_validation_fails
+    description: Rebuild a package-ready phase input from tabular files only 
+      when the provided phase.dat is proven invalid for the validated public API
+      path.
+    inputs:
+    - regional_events_catalog
+    - regional_pick_table
+    - validated_station_input
+    - input_validation_manifest
+    outputs:
+    - rebuilt_phase_input
+    - fallback_station_mapping
+    - fallback_validation_manifest
+    params:
+      conditional_execution: direct_phase_validation_failed
+      rebuild_helper_strategy: 
+        package_supported_input_builder_or_equivalent_preparation
+      preserve_original_event_ids: true
+      preserve_iso_origin_times: true
+      preserve_original_station_ids_when_possible: true
+      synthetic_network_prefix: J.
+      apply_consistent_mapping_if_required: true
+      rerun_validation_after_rebuild: true
+      fallback_not_success_by_itself: true

@@ -1,0 +1,12 @@
+subset,window_size,step_values,window_count,interpretable_window_count,robust_windows,usable_with_caution_windows,exploratory_windows,not_interpretable_windows,median_b_value,median_mc,interpretation_class
+M1_core,500,100,40,40,10,3,27,0,0.6478374036398387,1.5,robust
+M1_extended,500,100,70,70,18,3,49,0,0.7073203207239861,1.5,robust
+M3_core,500,100,24,24,8,3,13,0,0.7298317780910558,1.45,robust
+M3_extended,500,100,68,68,14,1,53,0,0.6903300990115714,1.5,robust
+along_axis_20km,500,100,44,44,8,1,35,0,0.6768631517244788,1.5,robust
+along_axis_30km,500,100,47,47,13,2,32,0,0.6833784238697793,1.5,robust
+combined_local,500,100,87,87,23,3,61,0,0.7137417808037374,1.5,robust
+combined_local_m2aware,500,100,87,87,22,5,60,0,0.7086779531791874,1.5,robust
+off_axis_20km,500,100,38,38,15,3,20,0,0.7464354039317875,1.45,robust
+off_axis_30km,500,100,35,35,10,2,23,0,0.7413125331098323,1.4,robust
+overlap_60km,500,100,51,51,13,1,37,0,0.6766660694974412,1.5,robust

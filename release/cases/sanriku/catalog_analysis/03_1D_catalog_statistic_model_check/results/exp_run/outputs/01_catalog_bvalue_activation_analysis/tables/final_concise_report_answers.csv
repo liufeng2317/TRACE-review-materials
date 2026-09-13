@@ -1,0 +1,14 @@
+question,answer
+coverage_area_used,"Rotated rectangle centered at (39.622, 143.332), azimuth 328.3°, length 148.6 km, width 120.0 km; 23291 events inside."
+why_this_area,Chosen to follow the M1-M3 corridor with about 60 km end margins while limiting unrelated dense activity outside the main corridor.
+oriented_region_vs_broad_rectangle,Yes. The rotated region captured 0 southwestern-cluster events (fraction 0.00) versus 0 in the broad baseline.
+main_temporal_pattern,"Whole-area reliable-window median b-value changed from 0.828 before M1 to 0.798 during the earlier M1-to-M3 interval, with final pre-M3 at 0.560 and post-M3 context at 0.753."
+before_after_M1,"Relative to the pre-M1 reference, the M1-to-M3 state shows lower b-values, while rate changed from 5.78 to 15.62 events/day in matched windows."
+overall_M1_to_M3_vs_pre_M1,The broad M1-to-M3 interval is lower-b / more activated than the pre-M1 background at catalog level.
+final_pre_M3_vs_earlier_interval,"Final pre-M3 median b-value (0.560) is lower than the earlier middle-phase median (0.798), with matched-window rate 27.24 vs 15.62 events/day."
+catalog_level_activation_state_change,"If the b-value decrease coincides with sustained or renewed rate elevation under stable Mc, the simplest interpretation is a catalog-level shift toward relatively stronger activation or lower apparent background-like state. This is descriptive only, not mechanistic proof."
+mc_and_rate_evolution,Mc is tracked for every window and should be checked alongside b-value; interpret only the windows flagged reliable. Event rate is reported from matched fixed-count windows and 7-day counts.
+m1_vs_m3_subregions,"In the 80 km subregions, middle-phase median b-values are M1-centered=0.725 and M3-centered=0.766; use these only where reliability fractions are adequate."
+grid_cell_meaningfulness,Grid-cell results are interpretable enough for secondary context only.
+most_justified_follow_up,"The best follow-up is a targeted completeness-aware spatial-temporal comparison with waveform/focal-mechanism or geodetic context, rather than claiming stress transfer, fluids, slow slip, or triggering from catalog statistics alone."
+robustness_overview,Window-size tests (3 cases) and radius tests (4 cases) were kept limited to whether the sign of the main pre-M1 versus M1-to-M3 contrast changes.

@@ -1,0 +1,58 @@
+[
+  {
+    "window": "foreshock_final2d",
+    "radius_km": 60.0,
+    "status": "ok",
+    "total_points": 395,
+    "retained_points": 355,
+    "trim_distance_km": 12.045500196635546,
+    "pca_angle_deg": 2.574551016388434,
+    "pca_var_ratio_1": 0.6911864039081318,
+    "along_span_km": 23.4584996255992,
+    "across_span_km": 16.266385329886134,
+    "hull_area_km2": 306.6844561886744,
+    "equivalent_radius_km": 9.880318534528868
+  },
+  {
+    "window": "aftershock_0_0p5d",
+    "radius_km": 60.0,
+    "status": "ok",
+    "total_points": 414,
+    "retained_points": 372,
+    "trim_distance_km": 28.912213593081738,
+    "pca_angle_deg": -42.9729077900063,
+    "pca_var_ratio_1": 0.6383406939351352,
+    "along_span_km": 56.506429420286,
+    "across_span_km": 51.173870378414975,
+    "hull_area_km2": 2100.0116905220993,
+    "equivalent_radius_km": 25.85448669370017
+  },
+  {
+    "window": "foreshock_final2d",
+    "radius_km": 80.0,
+    "status": "ok",
+    "total_points": 396,
+    "retained_points": 356,
+    "trim_distance_km": 12.05501945234318,
+    "pca_angle_deg": 2.6965559425194563,
+    "pca_var_ratio_1": 0.6927989910005942,
+    "along_span_km": 23.592603224816067,
+    "across_span_km": 16.267473626704074,
+    "hull_area_km2": 307.0342436232306,
+    "equivalent_radius_km": 9.885951402987818
+  },
+  {
+    "window": "aftershock_0_0p5d",
+    "radius_km": 80.0,
+    "status": "ok",
+    "total_points": 415,
+    "retained_points": 373,
+    "trim_distance_km": 29.039817278921095,
+    "pca_angle_deg": -42.82889225253952,
+    "pca_var_ratio_1": 0.6420260778165254,
+    "along_span_km": 57.547073002773224,
+    "across_span_km": 51.174781640898935,
+    "hull_area_km2": 2118.3354783992895,
+    "equivalent_radius_km": 25.96703920412113
+  }
+]

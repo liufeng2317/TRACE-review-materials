@@ -1,0 +1,4 @@
+mainshock_id,matched_event_id,matched_origin_time,mainshock_time,time_residual_seconds,abs_time_residual_seconds,epicentral_distance_km,depth_residual_km,abs_depth_residual_km,matched_magnitude,mainshock_magnitude,magnitude_residual,tolerance_stage,candidate_count_in_stage,ambiguity_flag
+M1,EVT_001427,2025-11-09 08:03:39.230000+00:00,2025-11-09 08:03:39.240000+00:00,-0.01,0.01,0.16560596965586397,0.08999999999999986,0.08999999999999986,6.9,6.9,0.0,1,1,False
+M2,EVT_004910,2025-12-08 14:15:10.180000+00:00,2025-12-08 14:15:10.180000+00:00,0.0,0.0,0.2965489747799138,-0.03999999999999915,0.03999999999999915,7.5,7.5,0.0,1,1,False
+M3,EVT_018070,2026-04-20 07:52:58.050000+00:00,2026-04-20 07:52:58.060000+00:00,-0.01,0.01,0.1579404846486562,-0.08999999999999986,0.08999999999999986,7.7,7.7,0.0,1,1,False

@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "01_relocation_HypoDD-v5",
+  "run_name": "01_relocation_HypoDD-v5",
+  "root": "<CASE_ROOT>/run/01_relocation_HypoDD-v5",
+  "status": "running",
+  "next_stage": "input_guard",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-05-27T14:30:13.388909+00:00",
+  "updated_at": "2026-05-27T14:30:13.443957+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are a senior seismologist and seismic workflow engineer.\n\nYou are given a task to relocate events in the Japan Aomori regional JMA catalog with `hypodd_runner`.\n\n## 1. Input data\n\nUse the regional data directory:\n\n<data_dir>: `<CASE_ROOT>/data/regional`\n\nThe available input files are:\n- `<data_dir>/events.csv`: catalog of events\n- `<data_dir>/picks.csv`: picks of events\n- `<data_dir>/phase.dat`: phase data\n- `<data_dir>/station.sta`: station data\n- `<data_dir>/summary.txt`: statistics of the catalog\n- `<data_dir>/main_earthquake.csv`: main earthquake information (just for plotting)\n\nStation codes must remain internally consistent between station and phase files. For this catalog-only task, prefer preserving the original station IDs when they already match between `phase.dat` and `station.sta`. Add a synthetic network prefix such as `J.` only if the selected `hypodd_runner` API path explicitly requires `NET.STA`, and apply the same mapping consistently to all generated inputs. Preserve event IDs and UTC-compatible ISO time strings throughout the workflow.\n\nUse the provided `phase.dat` as the primary phase input when it validates successfully. Do not rebuild it from `picks.csv` by default.\n\n## 2. Velocity model\nUse this 1-D velocity model for the relocation:\n- layer tops in km: `[0.0, 5.0, 10.0, 20.0, 35.0, 50.0, 90.0]`\n- Vp in km/s: `[5.4, 5.8, 6.2, 6.6, 7.2, 7.6, 8.05]`\n- Use a documented Vp/Vs ratio suitable for HypoDD, with `1.73` as the default if no better value is estimated.\n\n## 3. Experiment design requirements\nUse the Python package `hypodd_runner` as the relocation package.\n\nThis is a full-catalog catalog-only relocation task.\n\nRequired execution strategy:\n- Write a self-contained Python script for the `hypodd_runner` workflow.\n- Use the documented `hypodd_runner` Python API with grouped parameter objects such as `HypoDDInputs`, `EventSelection`, `Ph2dtParams`, `HypoDDParams`, and `RuntimeOptions`.\n- Use the public `hypodd_runner` catalog-only relocation entry point and package-provided helpers when the catalog scale requires them.\n- Set the `hypodd_runner` parameters from the research region and the actual data diagnostics, not only from API defaults. In particular, explicitly choose and record `Ph2dtParams` and `HypoDDParams(iter_rows=...)` for this catalog.\n- For `HypoDDParams.iter_rows`, remember that each row is `NITER WTCCP WTCCS WRCC WDCC WTCTP WTCTS WRCT WDCT DAMP`. Treat `DAMP`, `WRCT`, `WDCT`, phase weights, and iteration endpoints as scientific/numerical controls that must be justified from station-event geometry, pick coverage, event-link density, residual behavior, convergence, and relocation stability.\n- Do not use `iter_rows=None` as the scientific default for the full regional catalog. For this regional catalog, the package fallback with very small damping may be inefficient or unstable; test a documented larger LSQR damping choice when appropriate, for example values in the tens to hundreds such as `80-120`, and compare runtime, convergence, residuals, relocated-event counts, and failure evidence before accepting it.\n- Check the event count and data volume against documented HypoDD/runtime limits before execution, and choose a package-supported execution strategy that preserves all input events in the final accounting.\n- Do not replace `hypodd_runner` with hand-written relocation formulas, synthetic coordinate shifts, placeholder outputs, or a custom imitation of HypoDD.\n\n## 4. Success criteria and outputs\n\nFull-run success means a real full-catalog relocation product:\n- all input events are accounted for as relocated, unrelocated, or failed with explicit reasons;\n- every attempted package run has a status, input counts, key parameter summary, output folder, native log paths, and failure evidence if applicable;\n- successful package runs have real non-empty native outputs;\n- the final merged relocated catalog is built from real native outputs and preserves event IDs or a verified event identity mapping;\n- failed or unrelocated events are recorded separately and are not counted as relocated results.\n\nDo not treat fallback, mock, skipped, no-op, unchanged original catalog, empty files, plotting-only output, or schema-only checks as success.\n\n## 5. Required figures (nature-style)\nGenerate figures from real relocation outputs only. If no real relocated events exist, any figure must be clearly marked as diagnostic/failure evidence and must not satisfy the success criteria.\n\n- relocation map: showing the relocation results, including the stations, initial locations (gray), relocated events (black), and main earthquakes (red);\n    - lon-lat map\n    - lon-depth map\n    - lat-depth map\n- residual distribution figure: showing the residual distribution of the relocated events;\n- relocation shift figure: showing the relocation shift of the relocated events relative to the initial locations;\n- statistic figure: showing the statistics of the events (including the initial and relocated events)\n- other meaningful figures (optional)\n\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_relocation_HypoDD-v5",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are a senior seismologist and seismic workflow engineer.\n\nYou are given a task to relocate events in the Japan Aomori regional JMA catalog with `hypodd_runner`.\n\n## 1. Input data\n\nUse the regional data directory:\n\n<data_dir>: `<CASE_ROOT>/data/regional`\n\nThe available input files are:\n- `<data_dir>/events.csv`: catalog of events\n- `<data_dir>/picks.csv`: picks of events\n- `<data_dir>/phase.dat`: phase data\n- `<data_dir>/station.sta`: station data\n- `<data_dir>/summary.txt`: statistics of the catalog\n- `<data_dir>/main_earthquake.csv`: main earthquake information (just for plotting)\n\nStation codes must remain internally consistent between station and phase files. For this catalog-only task, prefer preserving the original station IDs when they already match between `phase.dat` and `station.sta`. Add a synthetic network prefix such as `J.` only if the selected `hypodd_runner` API path explicitly requires `NET.STA`, and apply the same mapping consistently to all generated inputs. Preserve event IDs and UTC-compatible ISO time strings throughout the workflow.\n\nUse the provided `phase.dat` as the primary phase input when it validates successfully. Do not rebuild it from `picks.csv` by default.\n\n## 2. Velocity model\nUse this 1-D velocity model for the relocation:\n- layer tops in km: `[0.0, 5.0, 10.0, 20.0, 35.0, 50.0, 90.0]`\n- Vp in km/s: `[5.4, 5.8, 6.2, 6.6, 7.2, 7.6, 8.05]`\n- Use a documented Vp/Vs ratio suitable for HypoDD, with `1.73` as the default if no better value is estimated.\n\n## 3. Experiment design requirements\nUse the Python package `hypodd_runner` as the relocation package.\n\nThis is a full-catalog catalog-only relocation task.\n\nRequired execution strategy:\n- Write a self-contained Python script for the `hypodd_runner` workflow.\n- Use the documented `hypodd_runner` Python API with grouped parameter objects such as `HypoDDInputs`, `EventSelection`, `Ph2dtParams`, `HypoDDParams`, and `RuntimeOptions`.\n- Use the public `hypodd_runner` catalog-only relocation entry point and package-provided helpers when the catalog scale requires them.\n- Set the `hypodd_runner` parameters from the research region and the actual data diagnostics, not only from API defaults. In particular, explicitly choose and record `Ph2dtParams` and `HypoDDParams(iter_rows=...)` for this catalog.\n- For `HypoDDParams.iter_rows`, remember that each row is `NITER WTCCP WTCCS WRCC WDCC WTCTP WTCTS WRCT WDCT DAMP`. Treat `DAMP`, `WRCT`, `WDCT`, phase weights, and iteration endpoints as scientific/numerical controls that must be justified from station-event geometry, pick coverage, event-link density, residual behavior, convergence, and relocation stability.\n- Do not use `iter_rows=None` as the scientific default for the full regional catalog. For this regional catalog, the package fallback with very small damping may be inefficient or unstable; test a documented larger LSQR damping choice when appropriate, for example values in the tens to hundreds such as `80-120`, and compare runtime, convergence, residuals, relocated-event counts, and failure evidence before accepting it.\n- Check the event count and data volume against documented HypoDD/runtime limits before execution, and choose a package-supported execution strategy that preserves all input events in the final accounting.\n- Do not replace `hypodd_runner` with hand-written relocation formulas, synthetic coordinate shifts, placeholder outputs, or a custom imitation of HypoDD.\n\n## 4. Success criteria and outputs\n\nFull-run success means a real full-catalog relocation product:\n- all input events are accounted for as relocated, unrelocated, or failed with explicit reasons;\n- every attempted package run has a status, input counts, key parameter summary, output folder, native log paths, and failure evidence if applicable;\n- successful package runs have real non-empty native outputs;\n- the final merged relocated catalog is built from real native outputs and preserves event IDs or a verified event identity mapping;\n- failed or unrelocated events are recorded separately and are not counted as relocated results.\n\nDo not treat fallback, mock, skipped, no-op, unchanged original catalog, empty files, plotting-only output, or schema-only checks as success.\n\n## 5. Required figures (nature-style)\nGenerate figures from real relocation outputs only. If no real relocated events exist, any figure must be clearly marked as diagnostic/failure evidence and must not satisfy the success criteria.\n\n- relocation map: showing the relocation results, including the stations, initial locations (gray), relocated events (black), and main earthquakes (red);\n    - lon-lat map\n    - lon-depth map\n    - lat-depth map\n- residual distribution figure: showing the residual distribution of the relocated events;\n- relocation shift figure: showing the relocation shift of the relocated events relative to the initial locations;\n- statistic figure: showing the statistics of the events (including the initial and relocated events)\n- other meaningful figures (optional)\n\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": []
+  },
+  "artifacts": {
+    "request_txt": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": null
+}

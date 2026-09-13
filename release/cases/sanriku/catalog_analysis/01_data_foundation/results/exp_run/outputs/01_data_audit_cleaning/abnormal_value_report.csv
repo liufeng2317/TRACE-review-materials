@@ -1,0 +1,1 @@
+event_id,raw_time,origin_time,latitude,longitude,depth_km,magnitude,quality_status,flag_lat_out_of_bounds,flag_lon_out_of_bounds,flag_depth_out_of_bounds,flag_mag_out_of_bounds,flag_time_parse_failed

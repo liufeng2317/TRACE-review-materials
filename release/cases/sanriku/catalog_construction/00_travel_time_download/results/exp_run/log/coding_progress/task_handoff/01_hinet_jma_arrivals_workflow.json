@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_hinet_jma_arrivals_workflow",
+    "generated_at": "2026-09-12T04:04:29.073895+00:00"
+  },
+  "status": {
+    "state": "running",
+    "stage": "script_execution",
+    "elapsed_sec": 9763.595,
+    "timing": {
+      "code_review_sec": 135.966,
+      "coding_agent_sec": 649.116,
+      "preflight_sec": 2.428,
+      "script_execution_current_sec": 300.443,
+      "script_execution_sec": 134.315,
+      "total_sec": 9763.595
+    },
+    "quality_flags": [
+      "task_status:running"
+    ]
+  },
+  "paths": {
+    "root": "<CASE_ROOT>/run/00_travel_time_download",
+    "script": "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py",
+    "output_dir": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow",
+    "analysis": "<CASE_ROOT>/run/00_travel_time_download/exp_run/analysis/01_hinet_jma_arrivals_workflow.md",
+    "log": "<CASE_ROOT>/run/00_travel_time_download/exp_run/log/task/01_hinet_jma_arrivals_workflow/log_3.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "chunk_schedule.csv",
+        "absolute_path": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/chunk_schedule.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "measure_20250601_5.txt.part",
+        "absolute_path": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/measure_20250601_5.txt.part",
+        "kind": "other"
+      }
+    ],
+    "all": [
+      "chunk_schedule.csv",
+      "measure_20250601_5.txt.part"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Download Hi-net JMA arrival-time measure files, parse fixed-width records, subset the Sanriku region, export compatibility products, and validate all required outputs.",
+    "result": "Download Hi-net JMA arrival-time measure files, parse fixed-width records, subset the Sanriku region, export compatibility products, and validate all required outputs. Status=running; outputs=2 discovered; primary=2.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

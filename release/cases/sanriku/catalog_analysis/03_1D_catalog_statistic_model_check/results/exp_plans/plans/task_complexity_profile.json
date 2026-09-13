@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single-catalog observational analysis with simple but multi-level spatial filtering, sliding Mc/b-value/rate estimation, limited robustness checks, and compact figure set; no complex forward modeling is required, but careful completeness handling and interpretability constraints are central.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate",
+  "expected_script_count": 2
+}

@@ -1,0 +1,20 @@
+[2026-09-12T00:57:08.051887+00:00] Output directory: <CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow
+[2026-09-12T00:57:08.069130+00:00] Loaded 1 Hi-net account(s); credential values are redacted.
+[2026-09-12T00:57:08.401322+00:00] Downloading 2025-06-01 span=5 days using account_1, attempt 1/3
+[2026-09-12T00:59:45.618831+00:00] Parsing fixed-width JMA measure file <CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/measure_20250601_5.txt
+[2026-09-12T00:59:49.401616+00:00] Smoke test passed.
+[2026-09-12T00:59:49.424453+00:00] Downloading 2025-06-06 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:04:40.637293+00:00] Downloading 2025-06-11 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:08:18.434406+00:00] Downloading 2025-06-16 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:12:13.605160+00:00] Downloading 2025-06-21 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:14:19.448856+00:00] Downloading 2025-06-26 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:19:46.768363+00:00] Downloading 2025-07-01 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:33:29.596964+00:00] Downloading 2025-07-06 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:44:44.381150+00:00] Downloading 2025-07-11 span=5 days using account_1, attempt 1/3
+[2026-09-12T01:55:44.271834+00:00] Downloading 2025-07-16 span=5 days using account_1, attempt 1/3
+[2026-09-12T02:04:58.457391+00:00] Downloading 2025-07-21 span=5 days using account_1, attempt 1/3
+[2026-09-12T02:12:33.620154+00:00] Downloading 2025-07-26 span=5 days using account_1, attempt 1/3
+[2026-09-12T02:23:44.918811+00:00] Downloading 2025-07-31 span=5 days using account_1, attempt 1/3
+[2026-09-12T02:44:15.793867+00:00] Downloading 2025-08-05 span=5 days using account_1, attempt 1/3
+[2026-09-12T02:54:51.332556+00:00] Downloading 2025-08-10 span=5 days using account_1, attempt 1/3
+[2026-09-12T03:03:15.011378+00:00] Downloading 2025-08-15 span=5 days using account_1, attempt 1/3

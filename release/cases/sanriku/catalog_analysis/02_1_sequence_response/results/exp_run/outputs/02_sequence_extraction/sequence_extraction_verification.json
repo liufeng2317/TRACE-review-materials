@@ -1,0 +1,117 @@
+{
+  "inputs": {
+    "catalog": {
+      "required": [
+        "datetime",
+        "lat",
+        "lon",
+        "dep",
+        "mag"
+      ],
+      "missing": []
+    },
+    "main_earthquake": {
+      "required": [
+        "index",
+        "datetime",
+        "lat",
+        "lon",
+        "dep",
+        "mag"
+      ],
+      "missing": []
+    },
+    "mechanism": {
+      "required": [
+        "origin_time",
+        "lat_deg",
+        "lon_deg",
+        "depth_km"
+      ],
+      "missing": []
+    },
+    "stations": {
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "missing": []
+    },
+    "matched_mainshocks": {
+      "required": [
+        "label",
+        "matched_datetime",
+        "matched_lat",
+        "matched_lon",
+        "matched_dep",
+        "matched_mag"
+      ],
+      "missing": []
+    }
+  },
+  "n_mainshocks": 3,
+  "n_sequences": 1606311,
+  "n_sequence_rows": 900,
+  "count_grid_size": 900,
+  "control_rows": 3,
+  "mainshocks": [
+    {
+      "mainshock": "M1",
+      "matched_index": 5006,
+      "matched_datetime": "2025-11-09 08:03:39.240000+00:00",
+      "matched_lat": 39.403072,
+      "matched_lon": 143.50568,
+      "matched_dep": 15.96,
+      "matched_mag": 6.9,
+      "n_catalog_events_total": 25646
+    },
+    {
+      "mainshock": "M2",
+      "matched_index": 8482,
+      "matched_datetime": "2025-12-08 14:15:10.180000+00:00",
+      "matched_lat": 40.966239,
+      "matched_lon": 142.290218,
+      "matched_dep": 53.46,
+      "matched_mag": 7.5,
+      "n_catalog_events_total": 25646
+    },
+    {
+      "mainshock": "M3",
+      "matched_index": 21629,
+      "matched_datetime": "2026-04-20 07:52:58.050000+00:00",
+      "matched_lat": 39.843477,
+      "matched_lon": 143.15651,
+      "matched_dep": 19.31,
+      "matched_mag": 7.7,
+      "n_catalog_events_total": 25646
+    }
+  ],
+  "parameter_grid": {
+    "radii_km": [
+      30,
+      44,
+      50,
+      80,
+      100
+    ],
+    "time_windows_days": [
+      7,
+      30,
+      60,
+      90
+    ],
+    "depth_strategies": [
+      "all",
+      "mainshock_window",
+      "stratified"
+    ],
+    "mag_thresholds": [
+      null,
+      1.2,
+      1.5,
+      2.0,
+      2.5
+    ],
+    "moving_window_days": 7.0
+  }
+}

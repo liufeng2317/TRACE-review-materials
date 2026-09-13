@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "Authenticated external Hi-net/JMA downloads over a long fixed interval, chunked retry logic, fixed-width byte-level parsing, smoke-test gating, local spatial subsetting, and validation against existing project phase/station conventions are required.",
+  "data_source_count": 3,
+  "workflow_risk": "medium-high: remote service availability/authentication, undocumented fixed-width edge cases, and station metadata matching can affect execution.",
+  "expected_script_count": 1
+}

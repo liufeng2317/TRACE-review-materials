@@ -1,0 +1,77 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 4150,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 388215,
+      "output_tokens": 36207
+    },
+    "Planing": {
+      "input_tokens": 37214,
+      "output_tokens": 10049
+    },
+    "Plan Merging": {
+      "input_tokens": 21782,
+      "output_tokens": 3428
+    },
+    "Workflow Agent": {
+      "input_tokens": 33465,
+      "output_tokens": 5822
+    },
+    "Coding Agent (01_m1_m3_event_chain_analysis)": {
+      "input_tokens": 255855,
+      "output_tokens": 16218
+    },
+    "Result Check Agent (01_m1_m3_event_chain_analysis)": {
+      "input_tokens": 95308,
+      "output_tokens": 1626
+    },
+    "Task Analysis Agent (01_m1_m3_event_chain_analysis)": {
+      "input_tokens": 120226,
+      "output_tokens": 8666
+    },
+    "Coding Agent (02_m1_m3_diagnostic_figures)": {
+      "input_tokens": 1111797,
+      "output_tokens": 21381
+    },
+    "Result Check Agent (02_m1_m3_diagnostic_figures)": {
+      "input_tokens": 91182,
+      "output_tokens": 2683
+    },
+    "Task Analysis Agent (02_m1_m3_diagnostic_figures)": {
+      "input_tokens": 45162,
+      "output_tokens": 7816
+    },
+    "Coding Agent (03_m1_m3_screening_classification)": {
+      "input_tokens": 284302,
+      "output_tokens": 11020
+    },
+    "Result Check Agent (03_m1_m3_screening_classification)": {
+      "input_tokens": 27197,
+      "output_tokens": 1149
+    },
+    "Task Analysis Agent (03_m1_m3_screening_classification)": {
+      "input_tokens": 35140,
+      "output_tokens": 5299
+    },
+    "Evaluation": {
+      "input_tokens": 30264,
+      "output_tokens": 889
+    },
+    "Report Synthesis": {
+      "input_tokens": 187978,
+      "output_tokens": 11166
+    }
+  },
+  "total": {
+    "input_tokens": 2769237,
+    "output_tokens": 143434,
+    "total_tokens": 2912671
+  }
+}

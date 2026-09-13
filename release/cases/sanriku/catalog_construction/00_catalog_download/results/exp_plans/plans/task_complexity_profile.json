@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Authenticated multi-chunk catalog download with fixed-width parsing, retry/backoff, debug raw capture, strict cleaning, spatial filtering, validation, and plotting; one cohesive workflow script is sufficient but network/authentication and HTML-format parsing add risk.",
+  "data_source_count": 3,
+  "workflow_risk": "medium",
+  "expected_script_count": 1
+}

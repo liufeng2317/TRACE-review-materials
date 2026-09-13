@@ -1,0 +1,279 @@
+tasks:
+- name: 01_catalog_bvalue_activation_analysis
+  description: Build the Aomori analysis catalog, define the M1-M3 study 
+    regions, estimate Mc b-value and rate evolution, run limited robustness 
+    checks, and generate the final figures and machine-readable outputs.
+  script: 01_catalog_bvalue_activation_analysis.py
+  ancestors: []
+  subtasks:
+  - name: catalog_ingestion_and_phase_setup
+    description: Load the filtered catalog and mainshock table, standardize 
+      fields, sort by origin time, and define the interpretive phase markers.
+    inputs:
+    - filtered_catalog
+    - mainshock_table
+    outputs:
+    - analysis_catalog
+    - mainshock_metadata
+    - phase_definition_table
+    - catalog_summary
+    params:
+      catalog_time_span: 2020-01-01 to 2026-05-22
+      required_fields:
+      - event_id
+      - origin_time
+      - latitude
+      - longitude
+      - depth
+      - magnitude
+      phase_markers:
+        pre_m1_reference: 2020-01-01 to M1-14d
+        pre_m1_reference_sensitivity: 2020-01-01 to M1-7d
+        m1_related_phase: M1-14d to M1+21d
+        middle_phase: M1+21d to M3-35d
+        final_pre_m3_phase: M3-35d to M3
+        post_m3_context: M3 to catalog end
+  - name: magnitude_discretization_verification
+    description: Verify the catalog magnitude discretization and select a 
+      consistent delta_m for Mc and b-value estimation.
+    inputs:
+    - analysis_catalog
+    outputs:
+    - magnitude_spacing_summary
+    - selected_delta_m
+    - discretization_qc_flag
+    params:
+      verification_strategy:
+      - spacing_histogram
+      - unique_increment_check
+      - metadata_consistency_check
+      consistency_requirement: stable catalog-wide spacing before adopting 
+        delta_m
+  - name: study_area_geometry_selection
+    description: Construct simple M1-M3-oriented candidate regions, compare them
+      with a broad baseline, and choose the final whole study area based on 
+      spatial coverage and exclusion of unrelated clustering.
+    inputs:
+    - analysis_catalog
+    - mainshock_metadata
+    - optional_station_context
+    outputs:
+    - study_area_candidates
+    - selected_whole_area_definition
+    - geometry_comparison_table
+    - whole_area_event_subset
+    - study_area_selection_map
+    - optional_geometry_diagnostic
+    params:
+      candidate_geometries:
+      - rotated_rectangle
+      - aligned_ellipse
+      baseline_geometry: broad_axis_aligned_rectangle
+      alignment_reference: M1_M3_epicentral_axis
+      along_axis_margin_km_min: 60
+      selection_priority:
+      - includes_M1_and_M3
+      - captures_M1_M3_activity_corridor
+      - excludes_southwestern_dense_cluster
+      - interpretability
+  - name: subregion_definition_and_support_check
+    description: Define M1-centered and M3-centered circular subregions and 
+      quantify whether they have enough events for the requested sliding 
+      analysis.
+    inputs:
+    - analysis_catalog
+    - mainshock_metadata
+    - selected_whole_area_definition
+    outputs:
+    - subregion_definition_table
+    - subregion_event_subsets
+    - region_phase_count_table
+    - study_region_overlay_map
+    - subregion_support_flags
+    params:
+      subregion_centers:
+      - M1
+      - M3
+      primary_radius_km: 80
+      sensitivity_radius_km: 60
+      distance_metric: geodesic_epicentral_distance
+      target_window_support:
+        window_events: 500
+        step_events: 100
+  - name: phase_level_summary_estimation
+    description: Compute simple phase-by-region summaries of Mc b-value 
+      uncertainty completeness support and average event rate.
+    inputs:
+    - whole_area_event_subset
+    - subregion_event_subsets
+    - selected_delta_m
+    - phase_definition_table
+    outputs:
+    - phase_region_summary_table
+    - phase_reliability_table
+    params:
+      primary_regions:
+      - whole_oriented_area
+      - M1_80km
+      - M3_80km
+      sensitivity_regions:
+      - M1_60km
+      - M3_60km
+      mc_method: estimate_mc_maxc
+      mc_params:
+        fmd_bin: selected_delta_m
+      b_method: estimate_b_classical
+      minimum_complete_event_strategy: flag insufficient phases instead of 
+        forcing estimates
+  - name: sliding_mc_bvalue_estimation
+    description: Estimate windowed Mc and b-value series for the whole area and 
+      main subregions using fixed-count windows assigned to median event time.
+    inputs:
+    - whole_area_event_subset
+    - subregion_event_subsets
+    - selected_delta_m
+    - phase_definition_table
+    outputs:
+    - whole_area_sliding_table
+    - M1_80km_sliding_table
+    - M3_80km_sliding_table
+    - sliding_bvalue_figure
+    - sliding_mc_reliability_figure
+    - smoothed_bvalue_trend_table
+    params:
+      primary_window:
+        window_events: 500
+        step_events: 100
+        time_assignment: median_event_time
+      mc_method: estimate_mc_maxc
+      mc_params:
+        fmd_bin: selected_delta_m
+      b_method: estimate_b_classical
+      smoothing_strategy:
+      - rolling_median_across_neighboring_windows
+      - rolling_mean_across_neighboring_windows
+      reliability_fields:
+      - total_events
+      - complete_events
+      - mc_stability_flag
+      - finite_b_uncertainty_flag
+  - name: rate_evolution_and_joint_interpretation_metrics
+    description: Compute matched-window and simple calendar-bin event-rate 
+      measures and pair them with the sliding b-value results.
+    inputs:
+    - whole_area_event_subset
+    - subregion_event_subsets
+    - whole_area_sliding_table
+    - M1_80km_sliding_table
+    - M3_80km_sliding_table
+    - phase_definition_table
+    outputs:
+    - matched_window_rate_table
+    - calendar_rate_table
+    - phase_rate_summary_table
+    - bvalue_rate_comparison_figure
+    params:
+      matched_window_rate:
+        numerator: window_event_count
+        denominator: elapsed_days_between_first_and_last_event
+        time_assignment: median_event_time
+      calendar_rate:
+        bin_days: 7
+        optional_smoother: light_rolling_mean
+      interpretive_states:
+      - background_like
+      - sustained_elevated_activation
+      - relaxation
+      - renewed_pre_M3_activation
+      - mixed_spatial_behavior
+  - name: regional_comparison_and_conditional_spatial_mapping
+    description: Compare whole-area M1-centered and M3-centered evolution and 
+      optionally compute spatial b-value maps only if support and Mc stability 
+      are adequate.
+    inputs:
+    - phase_region_summary_table
+    - whole_area_sliding_table
+    - M1_80km_sliding_table
+    - M3_80km_sliding_table
+    - subregion_event_subsets
+    - whole_area_event_subset
+    - selected_delta_m
+    - optional_mechanism_context
+    - optional_station_context
+    outputs:
+    - region_phase_comparison_table
+    - whole_vs_subregion_comparison_figure
+    - spatial_mapping_feasibility_summary
+    - optional_spatial_bvalue_map
+    - optional_spatial_mc_or_support_map
+    - optional_spatial_phase_map
+    params:
+      comparison_regions:
+      - whole_oriented_area
+      - M1_80km
+      - M3_80km
+      sensitivity_regions:
+      - M1_60km
+      - M3_60km
+      regional_summary_metrics:
+      - median_b_value
+      - b_value_spread
+      - median_mc
+      - reliable_window_fraction
+      - median_matched_window_rate
+      spatial_mapping_policy: conditional_only
+      spatial_feasibility_requirements:
+      - adequate_total_event_count_per_cell
+      - adequate_complete_event_count_per_cell
+      - stable_mc_per_cell
+      - finite_b_uncertainty_per_cell
+  - name: limited_robustness_checks_and_final_packaging
+    description: Run only the targeted sensitivity tests that could change the 
+      broad interpretation and assemble the compact final deliverables.
+    inputs:
+    - selected_whole_area_definition
+    - study_area_candidates
+    - whole_area_sliding_table
+    - M1_80km_sliding_table
+    - M3_80km_sliding_table
+    - subregion_event_subsets
+    - whole_area_event_subset
+    - selected_delta_m
+    - region_phase_comparison_table
+    - spatial_mapping_feasibility_summary
+    outputs:
+    - robustness_summary_table
+    - sensitivity_window_tables
+    - sensitivity_geometry_summary
+    - sensitivity_mc_method_summary
+    - final_figure_manifest
+    - final_machine_readable_summary
+    - concise_answer_sheet
+    params:
+      geometry_sensitivity:
+      - rotated_rectangle
+      - aligned_ellipse
+      local_scale_sensitivity_km:
+      - 60
+      - 80
+      window_size_sensitivity_events:
+      - 300
+      - 500
+      - 750
+      mc_method_sensitivity:
+        primary: estimate_mc_maxc
+        comparison: estimate_mc_ks
+      qualitative_decision_tests:
+      - pre_M1_vs_M1_to_M3_bvalue_contrast
+      - final_pre_M3_vs_earlier_middle_phase_contrast
+      - M1_vs_M3_subregion_difference_persistence
+      - dependence_on_mc_instability
+      final_required_outputs:
+      - study_area_selection_map
+      - sliding_bvalue_time_series
+      - sliding_mc_reliability_timeline
+      - bvalue_rate_comparison_plot
+      - whole_area_vs_subregion_comparison
+      - optional_spatial_maps_if_interpretable
+      - concise_user_question_answers
+      - machine_readable_tables

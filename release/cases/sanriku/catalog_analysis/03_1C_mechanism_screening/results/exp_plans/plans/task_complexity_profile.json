@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single catalog-analysis workflow using one primary observational catalog plus reference/context tables, but requiring multiple linked diagnostics: sliding-window Mc/b-value estimation, spatial/temporal subset screening, magnitude hierarchy, moment-release proxy, robustness checks, and a hypothesis evidence matrix with reliability grading.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate",
+  "expected_script_count": 2
+}

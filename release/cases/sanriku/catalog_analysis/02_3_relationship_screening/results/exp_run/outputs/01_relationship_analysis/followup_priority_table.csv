@@ -1,0 +1,28 @@
+pair_name,hypothesis,followup_priority,recommended_followup
+M1_M2,independent_local_clusters,medium,Low priority; only revisit after improved relocations and background-rate modeling
+M1_M2,overlapping_activation_zones,low,No immediate escalation beyond catalog checks
+M1_M2,delayed_activation_between_clusters,low,No immediate escalation beyond catalog checks
+M1_M2,linked_local_fault_system_activation,medium,"High-precision relocation, focal mechanisms, and stress modeling"
+M1_M2,corridor_like_migration_or_expansion,low,No immediate escalation beyond catalog checks
+M1_M2,broader_regional_activation,high,"Regional rate modeling, geodesy, OBP, and stress-field comparison"
+M1_M2,compound_swarm_like_multi_event_clustering,low,No immediate escalation beyond catalog checks
+M1_M2,apparent_relationship_from_background_or_window_choices,low,No immediate escalation beyond catalog checks
+M1_M2,common_regional_rate_pulse_without_pair_specific_linkage,high,Regional background-rate modeling and broad geodetic/stress context
+M1_M3,independent_local_clusters,medium,Low priority; only revisit after improved relocations and background-rate modeling
+M1_M3,overlapping_activation_zones,high,"Relocation refinement, waveform cross-correlation, and focal-mechanism comparison"
+M1_M3,delayed_activation_between_clusters,medium,"Waveform similarity, lagged rate-change tests, and stress-change screening"
+M1_M3,linked_local_fault_system_activation,high,"High-precision relocation, focal mechanisms, and stress modeling"
+M1_M3,corridor_like_migration_or_expansion,high,"Waveform migration tests, relocation, and along-strike stress or fluid indicators"
+M1_M3,broader_regional_activation,high,"Regional rate modeling, geodesy, OBP, and stress-field comparison"
+M1_M3,compound_swarm_like_multi_event_clustering,medium,"Waveform family analysis, relocation, and fluid-sensitive geodetic or OBP review"
+M1_M3,apparent_relationship_from_background_or_window_choices,medium,Expand control suite and compare alternative windows before physical interpretation
+M1_M3,common_regional_rate_pulse_without_pair_specific_linkage,medium,Regional background-rate modeling and broad geodetic/stress context
+M2_M3,independent_local_clusters,high,Low priority; only revisit after improved relocations and background-rate modeling
+M2_M3,overlapping_activation_zones,low,No immediate escalation beyond catalog checks
+M2_M3,delayed_activation_between_clusters,low,No immediate escalation beyond catalog checks
+M2_M3,linked_local_fault_system_activation,low,No immediate escalation beyond catalog checks
+M2_M3,corridor_like_migration_or_expansion,medium,"Waveform migration tests, relocation, and along-strike stress or fluid indicators"
+M2_M3,broader_regional_activation,high,"Regional rate modeling, geodesy, OBP, and stress-field comparison"
+M2_M3,compound_swarm_like_multi_event_clustering,low,No immediate escalation beyond catalog checks
+M2_M3,apparent_relationship_from_background_or_window_choices,high,Expand control suite and compare alternative windows before physical interpretation
+M2_M3,common_regional_rate_pulse_without_pair_specific_linkage,high,Regional background-rate modeling and broad geodetic/stress context

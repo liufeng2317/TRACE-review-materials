@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_download_validate_sanriku_jma_catalog",
+    "generated_at": "2026-09-11T19:15:14.845228+00:00"
+  },
+  "status": {
+    "state": "success",
+    "stage": "analysis_done",
+    "elapsed_sec": 7755.908,
+    "timing": {
+      "total_sec": 7755.908,
+      "coding_agent_sec": 480.241,
+      "code_review_sec": 63.781,
+      "preflight_sec": 1.971,
+      "script_execution_sec": 6969.691,
+      "result_check_sec": 104.143,
+      "task_analysis_sec": 130.457
+    },
+    "quality_flags": [
+      "task_status:success"
+    ]
+  },
+  "paths": {
+    "root": "<CASE_ROOT>/run/00_catalog_download",
+    "script": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+    "analysis": "<CASE_ROOT>/run/00_catalog_download/exp_run/analysis/01_download_validate_sanriku_jma_catalog.md",
+    "log": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "Snet_catalog_20250601_20260502.csv",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "Snet_catalog_20250601_20260502_validation.json",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "Snet_catalog_20250601_20260502_distribution.png",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png",
+        "kind": "figure"
+      },
+      {
+        "path": "debug/raw/login_page.html",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/debug/raw/login_page.html",
+        "kind": "document"
+      },
+      {
+        "path": "debug/raw/login_response.html",
+        "absolute_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/debug/raw/login_response.html",
+        "kind": "document"
+      }
+    ],
+    "all": [
+      "Snet_catalog_20250601_20260502.csv",
+      "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+      "Snet_catalog_20250601_20260502_distribution.png",
+      "Snet_catalog_20250601_20260502_validation.json",
+      "debug/raw/login_page.html",
+      "debug/raw/login_response.html"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Download, parse, clean, validate, and visualize the authenticated Hi-net JMA unified hypocenter catalog for the Sanriku study region.",
+    "result": "Download, parse, clean, validate, and visualize the authenticated Hi-net JMA unified hypocenter catalog for the Sanriku study region. Status=success; outputs=6 discovered; primary=6.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

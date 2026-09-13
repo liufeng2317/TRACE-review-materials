@@ -1,0 +1,53 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 3610,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 242308,
+      "output_tokens": 34910
+    },
+    "Planing": {
+      "input_tokens": 34892,
+      "output_tokens": 10202
+    },
+    "Plan Merging": {
+      "input_tokens": 21282,
+      "output_tokens": 4035
+    },
+    "Workflow Agent": {
+      "input_tokens": 67862,
+      "output_tokens": 12235
+    },
+    "Evaluation": {
+      "input_tokens": 28868,
+      "output_tokens": 2168
+    },
+    "Coding Agent (01_aomori_sequence_analysis)": {
+      "input_tokens": 344111,
+      "output_tokens": 25416
+    },
+    "Result Check Agent (01_aomori_sequence_analysis)": {
+      "input_tokens": 30941,
+      "output_tokens": 1521
+    },
+    "Task Analysis Agent (01_aomori_sequence_analysis)": {
+      "input_tokens": 146536,
+      "output_tokens": 12375
+    },
+    "Report Synthesis": {
+      "input_tokens": 188205,
+      "output_tokens": 9028
+    }
+  },
+  "total": {
+    "input_tokens": 1108615,
+    "output_tokens": 111905,
+    "total_tokens": 1220520
+  }
+}

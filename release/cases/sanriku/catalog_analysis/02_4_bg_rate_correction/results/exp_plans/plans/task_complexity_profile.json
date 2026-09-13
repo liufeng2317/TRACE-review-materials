@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "Requires cross-catalog harmonization, spatial masking, completeness assessment, multi-region/multi-threshold rate modeling, anomaly testing with controls/bootstrap, and a compact multi-figure synthesis using several contextual datasets while keeping long-term raw and active relocated catalogs analytically separated.",
+  "data_source_count": 5,
+  "workflow_risk": "moderate-high due to catalog inhomogeneity, missing verbatim active-period filename requiring crosswalk to relocated substitute, and sensitivity of anomaly claims to region, completeness, and window definitions.",
+  "expected_script_count": 3
+}

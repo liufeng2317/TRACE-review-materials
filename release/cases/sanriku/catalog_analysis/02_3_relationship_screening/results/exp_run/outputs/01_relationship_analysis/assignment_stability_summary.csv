@@ -1,0 +1,4 @@
+pair_name,width_narrow_km,width_base_km,width_broad_km,stable_fraction,n_events,count_outer_cluster,count_unique_M1,count_corridor_like,count_regional_background,count_unique_M2,count_endpoint_centered_corridor_adjacent,count_shared_overlap,count_unique_M3,count_unresolved
+M1_M2,24.310775612242256,36.46616341836339,50.64744919217137,0.779507603186097,22096,7838,4379.0,3832.0,3560,1817.0,670.0,,,
+M1_M3,12.0,12.0,14.344784329329617,1.0,22096,3238,1689.0,,11086,,,5404.0,679.0,
+M2_M3,17.426853108653344,26.140279662980017,36.305943976361135,0.9656046343229544,22096,14100,,680.0,2959,1817.0,,,2395.0,145.0

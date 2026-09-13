@@ -1,0 +1,13 @@
+catalog,region,threshold,count
+long_term_raw,common_region_overlap,1.2,20665
+long_term_raw,common_region_overlap,2.0,6254
+long_term_raw,common_region_overlap,3.0,1389
+long_term_raw,common_region_overlap,4.0,280
+long_term_raw,common_region_overlap,5.0,69
+long_term_raw,common_region_overlap,6.0,13
+active_relocated,common_region_overlap,1.2,17198
+active_relocated,common_region_overlap,2.0,5515
+active_relocated,common_region_overlap,3.0,1267
+active_relocated,common_region_overlap,4.0,259
+active_relocated,common_region_overlap,5.0,68
+active_relocated,common_region_overlap,6.0,13

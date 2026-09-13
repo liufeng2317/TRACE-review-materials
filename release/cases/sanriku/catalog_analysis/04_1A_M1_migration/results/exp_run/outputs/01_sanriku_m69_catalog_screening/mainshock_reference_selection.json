@@ -1,0 +1,14 @@
+{
+  "reference_source": "relocated_catalog_rematch",
+  "candidate_count_within_30s_15km": 1,
+  "fallback_used": false,
+  "selected_catalog_event_id": "cat_005006",
+  "selected_catalog_time": "2025-11-09T08:03:39.240000+00:00",
+  "time_diff_seconds": 0.0,
+  "distance_km": 0.16453562980491596,
+  "reference_lat": 39.403072,
+  "reference_lon": 143.50568,
+  "reference_dep_km": 15.96,
+  "reference_mag": 6.9,
+  "reference_time": "2025-11-09T08:03:39.240000+00:00"
+}

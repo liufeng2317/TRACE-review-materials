@@ -1,0 +1,481 @@
+tasks:
+- name: 01_catalog_screening_analysis
+  description: Build the validated Aomori master catalog and run the full 
+    catalog-level screening workflow for sliding-window completeness and 
+    b-value, spatial comparisons, magnitude hierarchy, moment proxy, robustness 
+    checks, figures, and machine-readable summaries.
+  script: 01_catalog_screening_analysis.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_validate_inputs
+    description: Load the relocated catalog and reference tables, inspect 
+      schema, standardize core fields, and log validation results.
+    inputs:
+    - relocated_filtered_catalog
+    - mainshock_table
+    - mechanism_table
+    - station_metadata
+    outputs:
+    - validated_catalog
+    - catalog_validation_summary
+    - standardized_mainshock_table
+    - station_context_summary
+    params:
+      required_fields:
+      - event_id_if_available
+      - origin_time
+      - latitude
+      - longitude
+      - depth
+      - magnitude
+      mainshock_labels:
+      - M1
+      - M2
+      - M3
+      sort_by: origin_time
+  - name: define_phases_and_spatial_domains
+    description: Construct phase boundaries, distance metrics, neutral geometric
+      subsets, and M2-related flags for downstream analysis.
+    inputs:
+    - validated_catalog
+    - standardized_mainshock_table
+    outputs:
+    - phase_boundaries
+    - spatial_membership
+    - subset_count_summary
+    - analysis_catalog
+    params:
+      phase_windows:
+        baseline_primary: catalog_start_to_M1_minus_14d
+        baseline_sensitivity: catalog_start_to_M1_minus_7d
+        M1_related_primary: M1_minus_14d_to_M1_plus_21d
+        M1_related_sensitivity:
+        - M1_minus_7d_to_M1_plus_14d
+        - M1_minus_14d_to_M1_plus_28d
+        middle_phase: M1_plus_21d_to_M3_minus_35d
+        pre_M3_primary: M3_minus_35d_to_M3
+        pre_M3_sensitivity:
+        - M3_minus_42d_to_M3
+        - M3_minus_28d_to_M3
+        full_interval: M1_to_M3
+        post_M3_context: separate_if_used
+      spatial_domains:
+        combined_local_km: 60
+        core_km: 30
+        extended_km: 60
+        along_axis_widths_km:
+        - 20
+        - 30
+      M2_flagging:
+        remove_by_default: false
+        output_raw_and_M2_aware_masks: true
+  - name: audit_mechanism_join_and_coverage_inputs
+    description: Match focal-mechanism records to the catalog, quantify join 
+      success, and record potential coverage bias before interpretation.
+    inputs:
+    - analysis_catalog
+    - mechanism_table
+    outputs:
+    - mechanism_join_audit
+    - mechanism_ready_catalog
+    params:
+      join_priority:
+      - direct_event_id_match
+      - time_and_hypocenter_proximity_match
+      log_unmatched_fraction: true
+      require_coverage_audit_before_use: true
+  - name: select_magnitude_discretization
+    description: determine an operational magnitude bin width from metadata or 
+      observed quantization and store the choice for reproducible Mc and b-value
+      estimation.
+    inputs:
+    - validated_catalog
+    - catalog_validation_summary
+    outputs:
+    - magnitude_binning_choice
+    params:
+      prefer_documented_metadata: true
+      fallback_strategy: observed_magnitude_quantization_audit
+      do_not_infer_precision_from_display_only: true
+  - name: compute_sliding_mc_and_bvalue
+    description: Estimate Mc and classical b-value in fixed-count sliding 
+      windows for the combined local zone and feasible secondary spatial 
+      subsets.
+    inputs:
+    - analysis_catalog
+    - phase_boundaries
+    - magnitude_binning_choice
+    outputs:
+    - sliding_bvalue_combined_local
+    - sliding_bvalue_M1_extended
+    - sliding_bvalue_M3_extended
+    - sliding_bvalue_exploratory_subsets
+    - window_reliability_summary
+    - window_size_selection
+    params:
+      primary_domain: combined_local_zone
+      primary_window:
+        size_events: 500
+        step_events: 100
+        sensitivity_step_events: 200
+        time_assignment: median_event_time
+      secondary_domains:
+      - M1_extended_60km
+      - M3_extended_60km
+      exploratory_domains:
+      - M1_core_30km
+      - M3_core_30km
+      - along_axis_20km
+      - along_axis_30km
+      - off_axis_20km
+      - off_axis_30km
+      mc_methods:
+      - maxc
+      - ks
+      - b_stability
+      maxc_parameter_source: fmd_bin_equals_delta_m
+      ks_parameter_strategy: 
+        use_catalog_delta_m_and_default_p_value_pass_unless_sensitivity_needed
+      bvalue_method: ClassicBValueEstimator
+      store_per_window_fields:
+      - window_start_time
+      - window_end_time
+      - window_median_time
+      - total_event_count
+      - count_above_mc
+      - mc_maxc
+      - mc_ks
+      - mc_b_stability
+      - adopted_mc
+      - b_value
+      - b_uncertainty
+      - fit_min_magnitude
+      - fit_max_magnitude
+      - fit_magnitude_span
+      - reliability_class
+      - flag_reasons
+  - name: grade_window_reliability
+    description: Classify each sliding-window result as robust, usable with 
+      caution, exploratory, or not interpretable using completeness and fit 
+      diagnostics.
+    inputs:
+    - sliding_bvalue_combined_local
+    - sliding_bvalue_M1_extended
+    - sliding_bvalue_M3_extended
+    - sliding_bvalue_exploratory_subsets
+    outputs:
+    - graded_window_reliability
+    params:
+      reliability_classes:
+      - robust
+      - usable_with_caution
+      - exploratory
+      - not_interpretable
+      criteria:
+      - mc_method_agreement
+      - count_above_mc_adequacy
+      - fitted_magnitude_span
+      - stability_under_reasonable_mc_alternatives
+      - estimator_success
+  - name: summarize_phase_aware_bvalue_behavior
+    description: Overlay phase boundaries on the sliding-window b-value curves 
+      and compare temporal evolution against secondary aggregate phase 
+      summaries.
+    inputs:
+    - sliding_bvalue_combined_local
+    - sliding_bvalue_M1_extended
+    - sliding_bvalue_M3_extended
+    - graded_window_reliability
+    - phase_boundaries
+    - analysis_catalog
+    - magnitude_binning_choice
+    outputs:
+    - phase_sliding_bvalue_summary
+    - phase_aggregate_bvalue_summary
+    - phase_transition_assessment
+    params:
+      primary_phases:
+      - baseline_primary
+      - M1_related_primary
+      - middle_phase
+      - pre_M3_primary
+      sensitivity_phases:
+      - baseline_sensitivity
+      - M1_related_sensitivity
+      - pre_M3_sensitivity
+      - full_interval
+      aggregate_role: secondary_summary_only
+      transition_labels:
+      - step_like
+      - gradual
+      - unresolved
+  - name: compare_spatial_bvalue_patterns
+    description: Compare b-value behavior across M1-centered, M3-centered, 
+      along-axis, and off-axis subsets only where sample size and reliability 
+      are adequate.
+    inputs:
+    - sliding_bvalue_combined_local
+    - sliding_bvalue_M1_extended
+    - sliding_bvalue_M3_extended
+    - sliding_bvalue_exploratory_subsets
+    - graded_window_reliability
+    - analysis_catalog
+    outputs:
+    - spatial_bvalue_comparison
+    - spatial_reliability_audit
+    - spatial_phase_overlap_summary
+    params:
+      priority_subsets:
+      - combined_local_zone
+      - M1_extended_60km
+      - M3_extended_60km
+      - along_axis_30km
+      - along_axis_20km
+      - off_axis_30km
+      - off_axis_20km
+      secondary_subsets:
+      - M1_core_30km
+      - M3_core_30km
+      - overlap_class
+      require_time_overlap_for_strong_contrast: true
+      include_raw_vs_M2_aware_check: true
+  - name: compute_magnitude_hierarchy
+    description: Quantify largest-event structure, magnitude gaps, threshold 
+      counts, and burst-level hierarchy across phases and spatial subsets.
+    inputs:
+    - analysis_catalog
+    - phase_boundaries
+    - spatial_membership
+    outputs:
+    - magnitude_hierarchy_phase_subset
+    - magnitude_hierarchy_bursts
+    - burst_classification_summary
+    params:
+      key_summaries:
+      - largest_magnitude
+      - second_largest_magnitude
+      - third_largest_magnitude
+      - first_second_gap
+      - second_third_gap
+      - count_M4_plus
+      - count_M5_plus
+      - count_M6_plus
+      - count_within_0_5_of_largest
+      - count_within_1_0_of_largest
+      burst_strategy: 
+        reproducible_rate_defined_bursts_if_no_validated_burst_table
+      burst_labels:
+      - M1_centered
+      - M3_centered
+      - mixed
+      - off_corridor
+  - name: compute_moment_release_proxy
+    description: Convert magnitudes to a consistent scalar moment proxy and 
+      summarize cumulative release, burst shares, and dominance metrics by phase
+      and spatial class.
+    inputs:
+    - analysis_catalog
+    - phase_boundaries
+    - spatial_membership
+    - magnitude_hierarchy_bursts
+    outputs:
+    - moment_proxy_event_table
+    - cumulative_moment_proxy_by_subset
+    - phase_moment_proxy_summary
+    - burst_moment_proxy_summary
+    - moment_dominance_metrics
+    params:
+      magnitude_to_moment_relation: 
+        standard_log_linear_relation_applied_consistently
+      comparative_use_only: true
+      subset_curves:
+      - combined_local_zone
+      - M1_extended_60km
+      - M3_extended_60km
+      - along_axis_20km
+      - along_axis_30km
+      - off_axis_20km
+      - off_axis_30km
+      dominance_metrics:
+      - top_1_fraction
+      - top_3_fraction
+      - top_decile_fraction
+  - name: build_catalog_evidence_matrix
+    description: Synthesize catalog-level statistical evidence and mechanism 
+      coverage limits into the requested hypothesis screening matrix.
+    inputs:
+    - phase_transition_assessment
+    - spatial_bvalue_comparison
+    - magnitude_hierarchy_phase_subset
+    - magnitude_hierarchy_bursts
+    - phase_moment_proxy_summary
+    - burst_moment_proxy_summary
+    - moment_dominance_metrics
+    - mechanism_join_audit
+    - subset_count_summary
+    outputs:
+    - mechanism_coverage_audit
+    - catalog_mechanism_evidence_matrix
+    - final_answer_table
+    params:
+      hypotheses:
+      - independent_local_ruptures
+      - phase_separated_activation_between_M1_and_M3
+      - compact_swarm_like_compound_activation
+      - repeated_shallow_local_activation
+      - stepwise_or_along_axis_activation_candidate
+      - stress_interaction_candidate
+      - fluid_diffusion_like_candidate
+      - slow_slip_related_candidate
+      - background_window_artifact
+      required_fields:
+      - supporting_evidence
+      - contradicting_evidence
+      - missing_evidence
+      - confidence_level
+      - required_physical_follow_up
+      keep_physical_causality_low_confidence_without_independent_data: true
+  - name: run_targeted_robustness_checks
+    description: Evaluate whether the main screening conclusions change under 
+      the user-prioritized sensitivity tests.
+    inputs:
+    - analysis_catalog
+    - sliding_bvalue_combined_local
+    - sliding_bvalue_M1_extended
+    - sliding_bvalue_M3_extended
+    - sliding_bvalue_exploratory_subsets
+    - phase_sliding_bvalue_summary
+    - spatial_bvalue_comparison
+    - magnitude_hierarchy_phase_subset
+    - phase_moment_proxy_summary
+    - catalog_mechanism_evidence_matrix
+    outputs:
+    - robustness_change_log
+    - conclusion_stability_matrix
+    params:
+      sensitivity_checks:
+      - raw_vs_M2_aware
+      - primary_vs_alternative_feasible_window_sizes
+      - step_100_vs_200_events
+      - M1_M3_core_30km_vs_extended_60km
+      - along_axis_20km_vs_30km
+      - baseline_end_M1_minus_14d_vs_M1_minus_7d
+      - pre_M3_start_M3_minus_35d_vs_M3_minus_42d_vs_M3_minus_28d
+      - reasonable_alternative_adopted_mc_choices
+      - M3_plus_M4_plus_M5_plus_descriptive_checks
+      - alternative_burst_definitions_if_ambiguous
+      summarize_effects_on:
+      - sliding_window_interpretability
+      - phase_aligned_bvalue_variation
+      - spatial_contrast_interpretation
+      - magnitude_hierarchy_classification
+      - moment_dominance_classification
+      - hypothesis_matrix_ranking
+  - name: generate_compact_diagnostic_figures
+    description: Produce the requested compact figure set and figure-ready 
+      tables tied directly to the main catalog-screening questions.
+    inputs:
+    - sliding_bvalue_combined_local
+    - graded_window_reliability
+    - phase_sliding_bvalue_summary
+    - phase_aggregate_bvalue_summary
+    - spatial_bvalue_comparison
+    - cumulative_moment_proxy_by_subset
+    - burst_moment_proxy_summary
+    - magnitude_hierarchy_bursts
+    - catalog_mechanism_evidence_matrix
+    outputs:
+    - magnitude_frequency_figure_data
+    - spatial_bvalue_figure_data
+    - sliding_bvalue_time_series_figure_data
+    - sliding_mc_reliability_figure_data
+    - cumulative_moment_figure_data
+    - burst_summary_figure_data
+    - mechanism_matrix_figure_data
+    params:
+      required_figures:
+      - magnitude_frequency_distributions_with_mc_and_b_annotations
+      - bvalue_spatial_comparison
+      - sliding_bvalue_temporal_evolution_with_phase_boundaries
+      - sliding_mc_and_reliability_timeline
+      - cumulative_moment_release_proxy_curve
+      - burst_level_moment_release_and_magnitude_hierarchy_summary
+      - catalog_mechanism_evidence_matrix
+      reliability_visual_encoding: distinct_by_class
+      keep_plot_set_compact: true
+  - name: validate_outputs_and_record_failures
+    description: Verify that required scientific outputs are non-empty and log 
+      failure evidence for any incomplete analysis branch.
+    inputs:
+    - sliding_bvalue_combined_local
+    - phase_sliding_bvalue_summary
+    - spatial_bvalue_comparison
+    - magnitude_hierarchy_phase_subset
+    - phase_moment_proxy_summary
+    - catalog_mechanism_evidence_matrix
+    - final_answer_table
+    outputs:
+    - output_validation_report
+    - failure_evidence_log
+    - analysis_manifest
+    params:
+      required_non_empty_outputs:
+      - sliding_bvalue_combined_local
+      - phase_sliding_bvalue_summary
+      - magnitude_hierarchy_phase_subset
+      - phase_moment_proxy_summary
+      - catalog_mechanism_evidence_matrix
+      - final_answer_table
+      treat_schema_only_outputs_as_success: false
+- name: 02_mechanism_coverage_audit
+  description: Perform a reusable standalone audit of focal-mechanism matching 
+    and representativeness by phase, magnitude level, and spatial class.
+  script: 02_mechanism_coverage_audit.py
+  ancestors:
+  - 01_catalog_screening_analysis
+  subtasks:
+  - name: reload_analysis_catalog_and_mechanisms
+    description: Load the validated analysis catalog and matched mechanism 
+      information for focused coverage assessment.
+    inputs:
+    - mechanism_ready_catalog
+    - phase_boundaries
+    - spatial_membership
+    outputs:
+    - mechanism_audit_catalog
+    params:
+      preserve_existing_matches: true
+  - name: quantify_mechanism_coverage_patterns
+    description: Summarize mechanism availability and missingness across phases,
+      magnitude thresholds, and spatial classes.
+    inputs:
+    - mechanism_audit_catalog
+    outputs:
+    - mechanism_coverage_by_phase
+    - mechanism_coverage_by_magnitude
+    - mechanism_coverage_by_spatial_class
+    params:
+      audit_dimensions:
+      - phase
+      - magnitude_threshold
+      - spatial_class
+      - optional_depth_class_if_supported
+      larger_event_thresholds:
+      - M3_plus
+      - M4_plus
+      - M5_plus
+  - name: assess_representativeness_and_bias
+    description: Flag whether available focal mechanisms are representative 
+      enough for exploratory consistency checks.
+    inputs:
+    - mechanism_coverage_by_phase
+    - mechanism_coverage_by_magnitude
+    - mechanism_coverage_by_spatial_class
+    outputs:
+    - mechanism_representativeness_assessment
+    - reusable_mechanism_coverage_summary
+    params:
+      decision_labels:
+      - adequate_for_exploratory_use
+      - sparse_or_biased
+      - unavailable_for_interpretation

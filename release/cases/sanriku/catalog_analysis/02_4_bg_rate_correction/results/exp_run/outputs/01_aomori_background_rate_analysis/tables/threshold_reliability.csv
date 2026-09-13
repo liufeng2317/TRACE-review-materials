@@ -1,0 +1,7 @@
+threshold,reliable_for_long_term_comparison,note
+1.2,False,Active-period only unless completeness justified
+2.0,True,Descriptive only if sparse
+3.0,True,Preferred for cross-catalog comparison
+4.0,True,Preferred for cross-catalog comparison
+5.0,True,Preferred for cross-catalog comparison
+6.0,True,Descriptive only if sparse

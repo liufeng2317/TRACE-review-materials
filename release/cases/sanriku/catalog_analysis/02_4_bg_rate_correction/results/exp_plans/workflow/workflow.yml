@@ -1,0 +1,258 @@
+tasks:
+- name: 01_aomori_background_rate_analysis
+  description: Audit the two catalogs, define the common analysis region, 
+    estimate long-term background rates, decompose active-period rates, and 
+    generate anomaly tables and figures.
+  script: 01_aomori_background_rate_analysis.py
+  ancestors: []
+  subtasks:
+  - name: ingest_and_standardize_catalogs
+    description: Load the long-term and active-period catalogs, normalize schema
+      and data types, and document any file substitution.
+    inputs:
+    - long_term_raw_catalog
+    - active_period_catalog
+    - mainshock_catalog
+    - station_metadata
+    - source_mechanism_catalog
+    outputs:
+    - standardized_long_term_catalog
+    - standardized_active_catalog
+    - catalog_ingest_log
+    - schema_audit_table
+    params:
+      required_fields:
+      - datetime
+      - lat
+      - lon
+      - dep
+      - mag
+      fallback_active_catalog_strategy: 
+        documented_substitution_if_primary_missing
+      invalid_row_handling: coerce_numeric_and_record_exclusions
+      duplicate_handling: detect_and_summarize
+  - name: define_common_region_and_subregions
+    description: Derive the common spatial mask from the active-period catalog, 
+      add a small documented buffer if needed, and freeze named analysis 
+      subregions.
+    inputs:
+    - standardized_long_term_catalog
+    - standardized_active_catalog
+    - mainshock_catalog
+    - station_metadata
+    outputs:
+    - common_region_definition
+    - named_subregion_definitions
+    - filtered_long_term_common_region_catalog
+    - filtered_active_common_region_catalog
+    - footprint_comparison_table
+    params:
+      region_basis: active_period_catalog_footprint
+      geometry_strategy: polygon_if_irregular_else_bounding_box
+      buffer_strategy: minimal_documented_buffer
+      required_subregions:
+      - m1_m3_local_region
+      - m2_near_field_region
+      - m2_outer_band_region
+      - broader_control_regions
+      region_freezing_rule: no_post_hoc_tuning_after_anomaly_testing
+  - name: crosswalk_overlap_and_completeness
+    description: Compare the catalogs over the overlap period within the common 
+      region, match larger events where feasible, and assess threshold 
+      reliability.
+    inputs:
+    - filtered_long_term_common_region_catalog
+    - filtered_active_common_region_catalog
+    - common_region_definition
+    - named_subregion_definitions
+    outputs:
+    - overlap_crosswalk_table
+    - matched_event_residual_summary
+    - retention_rate_table
+    - completeness_summary_table
+    - threshold_reliability_table
+    params:
+      overlap_time_range: shared_active_period
+      count_thresholds:
+      - M>=1.2
+      - M>=2
+      - M>=3
+      - M>=4
+      - M>=5
+      - M>=6
+      matching_priority:
+      - nearest_time
+      - spatial_distance
+      - magnitude_depth_consistency
+      matching_focus_thresholds:
+      - M>=4
+      - M>=5
+      mc_estimation_scope:
+      - long_term_common_region
+      - active_common_region
+      - overlap_subset_if_feasible
+      - key_subregions_if_counts_adequate
+  - name: estimate_long_term_background_rates
+    description: Compute baseline rates and empirical window distributions from 
+      the filtered long-term catalog for the common region and fixed subregions.
+    inputs:
+    - filtered_long_term_common_region_catalog
+    - named_subregion_definitions
+    - threshold_reliability_table
+    - mainshock_catalog
+    outputs:
+    - long_term_rate_table
+    - expected_observed_window_table
+    - percentile_exceedance_table
+    - supplementary_full_region_context_table
+    params:
+      primary_regions:
+      - common_analysis_region
+      - m1_m3_local_region
+      - m2_near_field_region
+      - m2_outer_band_region
+      - broader_control_regions
+      supplementary_regions:
+      - full_raw_catalog_region
+      primary_thresholds:
+      - M>=3
+      - M>=4
+      - M>=5
+      additional_thresholds:
+      - M>=6
+      - M>=Mc_if_reliable
+      window_lengths:
+      - monthly
+      - 7_day
+      - 14_day
+      - 30_day
+      - active_period_duration
+      nonstationarity_control: 
+        same_calendar_month_or_year_stratified_comparison_if_needed
+  - name: decompose_active_period_rates
+    description: Resolve active-period rate evolution by region, threshold, 
+      depth bin, and timescale using the relocated catalog only.
+    inputs:
+    - filtered_active_common_region_catalog
+    - named_subregion_definitions
+    - mainshock_catalog
+    - source_mechanism_catalog
+    outputs:
+    - active_period_rate_table
+    - active_period_cumulative_count_table
+    - burst_chronology_table
+    - regional_depth_decomposition_table
+    params:
+      timescales:
+      - daily
+      - weekly
+      - 14_day
+      - monthly
+      thresholds:
+      - M>=1.2
+      - M>=2
+      - M>=3
+      - M>=4
+      - M>=5
+      depth_bins:
+      - 0_30_km
+      - 30_60_km
+      - over_60_km
+      normalized_comparisons:
+      - local_to_common_region_ratio
+      - local_to_control_ratio
+      mark_events:
+      - M1
+      - M2
+      - M3
+  - name: test_background_corrected_anomalies_and_generate_outputs
+    description: Compare active-period observations against long-term 
+      expectations, apply controls, and write the compact evidence products and 
+      diagnostic figures.
+    inputs:
+    - long_term_rate_table
+    - expected_observed_window_table
+    - percentile_exceedance_table
+    - active_period_rate_table
+    - active_period_cumulative_count_table
+    - regional_depth_decomposition_table
+    - threshold_reliability_table
+    - named_subregion_definitions
+    - common_region_definition
+    - mainshock_catalog
+    outputs:
+    - background_corrected_anomaly_table
+    - robustness_control_summary
+    - spatial_anomaly_table
+    - evidence_matrix
+    - figure_manifest
+    - machine_readable_summary
+    - execution_validation_log
+    params:
+      controls:
+      - random_long_term_windows
+      - same_duration_windows_outside_mainshock_intervals
+      - shifted_windows_within_active_period
+      - spatial_control_regions
+      - bootstrap_confidence_intervals
+      anomaly_metrics:
+      - observed_count
+      - expected_count
+      - excess_count
+      - observed_expected_ratio
+      - empirical_percentile
+      - empirical_exceedance_fraction
+      - local_regional_normalized_anomaly_index
+      sparse_count_rule: downgrade_to_descriptive_rarity_reporting
+      figure_set:
+      - long_term_regional_rate_time_series
+      - active_period_rate_time_series_with_M1_M2_M3
+      - regional_rate_comparison_panel
+      - spatial_rate_anomaly_map
+      - depth_stratified_rate_evolution
+      - long_term_percentile_comparison
+      - background_rate_evidence_matrix
+- name: 02_aomori_bootstrap_controls
+  description: Run heavy bootstrap and random-window control resampling from 
+    validated intermediate outputs and merge the results into the anomaly 
+    summary.
+  script: 02_aomori_bootstrap_controls.py
+  ancestors:
+  - 01_aomori_background_rate_analysis
+  subtasks:
+  - name: resample_control_windows
+    description: Generate bootstrap and random-window null distributions for 
+      predefined region-threshold-depth combinations.
+    inputs:
+    - filtered_long_term_common_region_catalog
+    - active_period_rate_table
+    - named_subregion_definitions
+    - threshold_reliability_table
+    outputs:
+    - bootstrap_window_distribution_table
+    - control_resampling_log
+    params:
+      controls:
+      - random_long_term_windows
+      - same_duration_windows_outside_mainshock_intervals
+      - shifted_windows_within_active_period
+      resampling_strategy: 
+        empirical_window_resampling_with_fixed_regions_and_thresholds
+      interval_estimates:
+      - count_excess_confidence_interval
+      - rate_ratio_confidence_interval
+      - percentile_confidence_interval
+  - name: merge_resampling_results
+    description: Integrate resampling outputs with the anomaly summary without 
+      changing predefined regions or threshold decisions.
+    inputs:
+    - bootstrap_window_distribution_table
+    - background_corrected_anomaly_table
+    - evidence_matrix
+    outputs:
+    - bootstrap_enhanced_anomaly_table
+    - bootstrap_enhanced_evidence_matrix
+    - bootstrap_validation_log
+    params:
+      merge_rule: preserve_primary_region_and_threshold_definitions
+      output_policy: augment_existing_anomaly_summary_only

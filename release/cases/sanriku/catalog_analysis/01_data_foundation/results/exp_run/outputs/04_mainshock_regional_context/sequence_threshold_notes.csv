@@ -1,0 +1,4 @@
+reference_id,matched_event_id,depth_domain_flag,spatial_domain_flag,station_coverage_note,mechanism_coverage_note,sequence_threshold_note
+M1,CAT_005006,typical,distinct,sparse,sparse,use radius near 41 km for sequence work; apply depth window near ±30 km; consider higher magnitude threshold for coda/aftershock screening
+M2,CAT_008482,distinct,distinct,sparse,good,use radius near 41 km for sequence work; apply depth window near ±30 km; consider higher magnitude threshold for coda/aftershock screening
+M3,CAT_021629,typical,distinct,sparse,moderate,use radius near 41 km for sequence work; apply depth window near ±30 km; consider higher magnitude threshold for coda/aftershock screening

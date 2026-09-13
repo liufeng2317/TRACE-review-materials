@@ -1,0 +1,14 @@
+{
+  "both_missing_rows": 0,
+  "both_p_s_rows": 30089,
+  "event_count": 4053,
+  "label": "smoke",
+  "p_only_rows": 14865,
+  "p_pick_count": 44954,
+  "passed": true,
+  "pick_count": 59895,
+  "raw_file": "<CASE_ROOT>/data_downloading/travel_time/data/raw/measure_20250601_5.txt",
+  "raw_size_bytes": 6841119,
+  "s_only_rows": 14941,
+  "s_pick_count": 45030
+}

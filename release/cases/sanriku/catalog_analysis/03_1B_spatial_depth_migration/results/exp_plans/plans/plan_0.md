@@ -1,0 +1,125 @@
+# Goal
+Determine whether the M1-M3 local earthquake system is best described by endpoint switching, separated local bursts, corridor-like stepwise activation, spatial-depth coherent activation, diffuse local occupancy, or no organized migration, using the relocated Aomori catalog with explicit phase separation, burst-level recomputation, depth-domain analysis, and robustness checks, while avoiding causal interpretation.
+
+## Planning Assumptions
+- Use observation/catalog data only; no model data are needed for this screening task.
+- The canonical spatial-temporal anchors are the three events in `catalog/main_earthquake.csv`; all phase windows and the M1-M3 axis must be recomputed from this file rather than copied from prior context.
+- The primary event catalog is `data/Snet_catalog_relocate_250601_260501.csv`, read as a 5-column CSV without a header row, containing origin time, latitude, longitude, depth, and magnitude.
+- `source_mechanism/Snet_mecha.csv` is follow-up context only; use it only to flag future mechanism-comparison targets after the spatial-depth screening, not to define the main results.
+- `stations/station.sta` is map-context metadata only; it is optional for station-coverage overlays and should not control event selection.
+- Prior screening findings are working context for test design only; all spatial-depth, centroid, and migration diagnostics in this task must be recomputed from the catalog, and any contradiction with prior context must be explicitly recorded.
+- M2-related events are flagged by distance to M2 <= 100 km and retained by default; raw and M2-aware comparisons must both be produced for key diagnostics.
+- Corridor tests must be run with perpendicular half-widths of 20 km and 30 km; endpoint core radius is 30 km and endpoint extended radius is 60 km.
+- Do not treat full-interval centroid drift as migration unless the same directional behavior persists after phase separation and survives threshold/sensitivity checks.
+- A successful workflow requires non-empty phase and burst summary tables, valid spatial metrics for all analyzed subsets where counts permit, and compact merged figures that directly support classification of the spatial-depth pattern.
+
+## Analysis Plan
+### Task 1: Recompute the M1-M3 spatial framework, temporal phases, and burst catalog
+- Task description: Build the event-level analysis table, derive the M1-M3 axis and spatial categories, define required temporal phases and sensitivity windows, identify major bursts/rate peaks, and produce the standardized per-event inputs for all downstream diagnostics.
+- Required data sources:
+  - `data/Snet_catalog_relocate_250601_260501.csv`
+  - `catalog/main_earthquake.csv`
+  - `stations/station.sta` for optional map context only
+- Parameter selection strategy:
+  - Parse `main_earthquake.csv` to extract M1, M2, M3 origin time, latitude, longitude, depth, and magnitude.
+  - Define primary windows exactly as requested:
+    - pre-M1 conservative baseline: catalog start to M1-14 d
+    - pre-M1 sensitivity baseline: catalog start to M1-7 d
+    - M1-related dominated phase: M1-14 d to M1+21 d
+    - M1-related sensitivity windows: M1-7 d to M1+14 d and M1-14 d to M1+28 d
+    - middle phase: M1+21 d to M3-35 d
+    - pre-M3 phase: M3-35 d to M3
+    - pre-M3 sensitivity windows: M3-42 d to M3 and M3-28 d to M3
+    - post-M3 context: M3 to M3+7 d and M3 to M3+14 d
+  - Restrict the local system to events within 60 km of either M1 or M3.
+  - Compute for each event:
+    - great-circle or local Cartesian distances to M1, M2, M3
+    - projected distance along the M1-M3 axis, with axis origin fixed at M1 and positive toward M3
+    - perpendicular distance to the finite M1-M3 corridor segment including endpoint buffers
+    - flags for M1 core <=30 km, M3 core <=30 km, endpoint-extended union <=60 km, corridor membership for 20 km and 30 km widths, off-corridor, and M2-related <=100 km
+  - Burst definition:
+    - Detect candidate bursts within each primary phase using short time-bin event-rate peaks on the local-system catalog, then merge adjacent peaks separated by short quiet gaps.
+    - Keep only bursts with enough events to support stable centroid/depth summaries; if counts are too low, retain only scientifically meaningful peaks and label others as insufficient.
+    - Store both phase-assigned and burst-assigned event tables so downstream scripts do not redefine bursts independently.
+- Constraints:
+  - Do not import any precomputed burst labels as final answers; prior screening context may only guide initial search ranges or sanity checks.
+  - If burst boundaries are ambiguous, preserve a primary choice plus a compact ambiguity flag rather than forcing over-precise segmentation.
+  - Keep M2-aware filtering as a flaggable view, not a hard exclusion.
+- Key outputs:
+  - Clean event analysis table with time, location, depth, magnitude, distances, projections, spatial-category flags, phase labels, and burst labels
+  - Phase-window definition table
+  - Burst definition table with start/end time, phase membership, event counts, and ambiguity notes
+  - Quick validation products: event counts per phase, local-system retention counts, and category sanity checks
+
+### Task 2: Compute phase/burst spatial-depth summaries, migration diagnostics, robustness comparisons, figures, and screening conclusions
+- Task description: Using the standardized event table from Task 1, quantify phase-level and burst-level geometry, centroid evolution, migration diagnostics, depth structure, threshold dependence, M2-aware effects, and produce the compact diagnostic figure set and final classification-ready tables.
+- Required data sources:
+  - Task 1 event analysis table and burst definition table
+  - `source_mechanism/Snet_mecha.csv` only to list candidate events/phases for later mechanism follow-up
+  - `stations/station.sta` only if a station overlay improves map context
+- Parameter selection strategy:
+  - For each primary phase, each sensitivity window where needed, and each retained burst, compute separately for M3+, M4+, and M5+ subsets:
+    - event count
+    - largest magnitude
+    - centroid latitude/longitude
+    - centroid projected position and perpendicular-position summary
+    - median depth and depth range
+    - median projected distance along axis
+    - median perpendicular distance
+    - median distance to M1 and to M3
+    - fractions in M1 core, M3 core, corridor, off-corridor, and M2-related region
+    - dominant spatial category classified as M1 endpoint, M3 endpoint, corridor, off-corridor, mixed, or ambiguous using fraction thresholds and centroid location together
+  - Burst-centroid evolution:
+    - Order phase centroids and burst centroids in time
+    - Compute step-to-step centroid movement distance, azimuth relative to M1-M3 axis, projected-axis change, perpendicular change, and whether movement is endpoint-to-endpoint, endpoint-to-corridor, corridor-to-endpoint, or diffuse
+    - Compare full-interval centroid drift against phase-separated drift and flag artifact-prone cases where only mixed phases create apparent M1-to-M3 movement
+  - Migration/projection diagnostics:
+    - For each analyzed subset with sufficient events, fit projected distance versus time slope
+    - Compute Spearman or Kendall correlation between event time and projected distance
+    - Compute median projected position by uniform time bins within each phase and across full M1-M3 interval
+    - Compute time trends in distance-to-M1 and distance-to-M3
+    - If meaningful burst ordering exists, compute burst-front movement using burst centroids only
+    - Classify support level for monotonic migration, stepwise activation, radial expansion from M1, convergence toward M3, endpoint switching, diffuse occupancy, or no directional organization
+  - Depth-domain analysis:
+    - Summarize depth distributions for M1 endpoint, M3 endpoint, corridor, and off-corridor subsets
+    - Bin depth occupancy into 0-30 km, 30-60 km, and >60 km
+    - Compare depth domains across phases, bursts, and thresholds M3+/M4+/M5+
+    - Check whether M1, M3, and intervening M4+/M5+ events share the same depth band or occupy distinct structural levels
+  - Robustness checks:
+    - Repeat key centroid and migration diagnostics for raw and M2-aware views
+    - Repeat corridor classifications with 20 km and 30 km widths
+    - Repeat endpoint summaries using 30 km core and 60 km extended definitions
+    - Use primary windows for the main result and sensitivity windows only where conclusions might change
+    - Summarize robustness in a compact evidence table instead of exhaustive plot duplication
+  - Follow-up targeting:
+    - Match events/phases/bursts of interest to `Snet_mecha.csv` by time and location tolerance
+    - Create a candidate list for later relocation, waveform similarity, mechanism comparison, or stress-modeling follow-up, prioritized by spatial-depth ambiguity or apparent structural transitions
+- Constraints:
+  - Do not interpret spatial-temporal ordering as triggering, stress transfer, fluid migration, or slow slip.
+  - Do not call a corridor-like cloud “migration” unless time-ordered directional diagnostics are consistent within separated phases and robust across sensitivity tests.
+  - If endpoint-core fractions dominate corridor-noncore fractions, describe corridor occupancy as secondary even when some events lie in the corridor.
+  - For sparse M5+ subsets, report instability/low-count limits rather than forcing the same diagnostic strength as denser subsets.
+  - If results contradict the provided working context, include an explicit contradiction flag and indicate which recomputed metrics differ.
+- Key outputs:
+  - Phase summary table for all primary phases and selected sensitivity windows
+  - Burst summary table with centroid, depth, threshold counts, dominant spatial category, and M2-related fraction
+  - Centroid evolution table with movement metrics and ambiguity labels
+  - Migration diagnostics table with slopes, rank correlations, binned medians, and support classification by phase and threshold
+  - Depth-domain comparison table for endpoint/corridor/off-corridor and major bursts
+  - Robustness matrix summarizing how interpretation changes with threshold, M2-aware flagging, corridor width, endpoint definition, and window sensitivity
+  - Compact figure set:
+    - M1-M3 map with phase and burst centroids colored by time/phase, plus M1, M2, M3 anchors and corridor/core outlines
+    - projected distance versus time with event points and burst centroids overlaid
+    - depth versus projected distance colored by phase or threshold
+    - depth versus time for M3+/M4+/M5+ events
+    - phase-separated centroid trajectory figure in map and/or axis-projection view
+    - endpoint/core/corridor composition comparison across phases
+    - raw versus M2-aware migration/projection comparison only if interpretation differs materially
+    - spatial-depth evidence matrix summarizing support for endpoint dominance, corridor occupancy, coherent depth domain, monotonic migration, stepwise activation, endpoint switching, and diffuse occupancy
+  - Final concise screening report answering:
+    - preferred spatial-depth classification of the M1-M3 system
+    - whether centroid movement toward M3 remains after phase separation
+    - whether pre-M3 activity is connected to middle-phase structure or is a separate endpoint-centered activation
+    - whether M4+/M5+ events follow the same pattern as smaller events
+    - whether M2-aware filtering changes interpretation
+    - which hypotheses should proceed to next-step analyses such as b-value, moment release, relocation refinement, waveform similarity, and mechanism comparison

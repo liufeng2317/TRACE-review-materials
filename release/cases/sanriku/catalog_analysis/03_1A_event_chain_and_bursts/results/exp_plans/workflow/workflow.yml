@@ -1,0 +1,370 @@
+tasks:
+- name: 01_m1_m3_event_chain_analysis
+  description: Build the unified M1-M3 event-chain analysis table and all core 
+    catalog-level summaries for raw and M2-aware screening.
+  script: 01_m1_m3_event_chain_analysis.py
+  ancestors: []
+  subtasks:
+  - name: load_catalog_and_reference_events
+    description: Load the relocated catalog and authoritative M1, M2, and M3 
+      reference events.
+    inputs:
+    - relocated_filtered_catalog
+    - mainshock_table
+    outputs:
+    - catalog_events
+    - reference_mainshocks
+    - catalog_schema_check
+    params:
+      required_event_fields:
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      required_mainshock_fields:
+      - event_id
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+  - name: compute_relative_time_and_geometry
+    description: Compute event-level relative-time, endpoint-distance, and M1-M3
+      axis geometry metrics.
+    inputs:
+    - catalog_events
+    - reference_mainshocks
+    outputs:
+    - event_geometry_metrics
+    - m1_m3_axis_definition
+    params:
+      spatial_metric_strategy: 
+        geodetic_endpoint_distances_with_local_axis_projection
+      computed_fields:
+      - time_since_M1_days
+      - time_before_M3_days
+      - distance_to_M1_km
+      - distance_to_M2_km
+      - distance_to_M3_km
+      - along_axis_km
+      - perpendicular_distance_km
+      - nearest_endpoint
+  - name: assign_spatial_and_temporal_categories
+    description: Assign local-union, endpoint, corridor, M2-aware, and 
+      fixed-window categories to each event.
+    inputs:
+    - event_geometry_metrics
+    - reference_mainshocks
+    outputs:
+    - categorized_event_chain_table
+    - temporal_window_definitions
+    params:
+      endpoint_core_radius_km: 30
+      endpoint_extended_radius_km: 60
+      corridor_width_primary_km: 20
+      corridor_width_sensitivity_km: 30
+      m2_related_radius_km: 100
+      primary_windows:
+        pre_M1_baseline_14d: catalog_start_to_M1_minus_14d
+        pre_M1_baseline_7d: catalog_start_to_M1_minus_7d
+        M1_related_primary: M1_minus_14d_to_M1_plus_21d
+        full_M1_to_M3: M1_to_M3
+        middle_primary: M1_plus_21d_to_M3_minus_35d
+        pre_M3_primary: M3_minus_35d_to_M3
+        post_M3_7d: M3_to_M3_plus_7d
+      optional_windows:
+      - M1_minus_7d_to_M1_plus_14d
+      - M1_minus_14d_to_M1_plus_28d
+      - M3_minus_42d_to_M3
+      - M3_minus_28d_to_M3
+      spatial_category_precedence:
+      - overlap_core
+      - M1_core
+      - M3_core
+      - corridor_noncore
+      - off_corridor_local
+      - outside_local_union
+  - name: summarize_counts_rates_and_composition
+    description: Summarize magnitude-threshold counts, rates, phase 
+      contributions, and spatial composition by fixed window.
+    inputs:
+    - categorized_event_chain_table
+    - temporal_window_definitions
+    outputs:
+    - window_summary_counts_rates
+    - window_summary_composition
+    - raw_vs_m2aware_summary
+    - phase_contribution_summary
+    - control_comparison_summary
+    params:
+      magnitude_thresholds:
+      - 3.0
+      - 4.0
+      - 5.0
+      - 6.0
+      required_spatial_groups:
+      - M1_core
+      - M3_core
+      - corridor_noncore
+      - off_corridor_local
+      baseline_reference: pre_M1_baseline_14d
+      baseline_sensitivity: pre_M1_baseline_7d
+      compare_modes:
+      - raw
+      - M2_aware
+  - name: detect_bursts_and_test_continuity
+    description: Detect major bursts and quantify whether middle-phase activity 
+      is sustained, sparse, or burst-separated.
+    inputs:
+    - categorized_event_chain_table
+    - temporal_window_definitions
+    outputs:
+    - burst_table
+    - gap_continuity_metrics
+    - burst_detection_diagnostics
+    params:
+      burst_detection_strategy: 
+        daily_and_rolling_rate_peaks_with_interevent_gap_scanning
+      burst_report_fields:
+      - burst_start_time
+      - burst_end_time
+      - duration_days
+      - event_count_by_threshold
+      - largest_magnitude
+      - depth_range_km
+      - centroid_location
+      - along_axis_centroid_km
+      - dominant_spatial_category
+      - m2_related_fraction
+      - assigned_phase_class
+  - name: evaluate_axis_trends_and_endpoint_switching
+    description: Compare full-interval and window-separated along-axis behavior 
+      to distinguish migration-like patterns from endpoint switching.
+    inputs:
+    - categorized_event_chain_table
+    - temporal_window_definitions
+    - burst_table
+    outputs:
+    - migration_endpoint_switching_summary
+    - nearest_endpoint_transition_metrics
+    params:
+      analysis_windows:
+      - full_M1_to_M3
+      - M1_related_primary
+      - middle_primary
+      - pre_M3_primary
+      compare_modes:
+      - raw
+      - M2_aware
+      trend_metrics:
+      - along_axis_centroid_trend
+      - along_axis_median_trend
+      - nearest_endpoint_occupancy
+  - name: write_machine_readable_products
+    description: Write the event-chain table, reference table, summaries, and 
+      follow-up target list for downstream plotting and reporting.
+    inputs:
+    - categorized_event_chain_table
+    - reference_mainshocks
+    - window_summary_counts_rates
+    - window_summary_composition
+    - raw_vs_m2aware_summary
+    - phase_contribution_summary
+    - burst_table
+    - gap_continuity_metrics
+    - migration_endpoint_switching_summary
+    - control_comparison_summary
+    outputs:
+    - m1_m3_event_chain_table
+    - m1_m3_reference_table
+    - m1_m3_window_summary_counts_rates
+    - m1_m3_window_summary_composition
+    - m1_m3_raw_vs_m2aware_summary
+    - m1_m3_phase_contribution_summary
+    - m1_m3_burst_table
+    - m1_m3_gap_continuity_metrics
+    - m1_m3_migration_endpoint_switching_summary
+    - m1_m3_control_comparison
+    - m1_m3_followup_targets
+    params:
+      include_machine_readable_manifest: true
+      followup_target_labels:
+      - spatial_depth_screening
+      - b_value_completeness_screening
+      - burstwise_migration_screening
+      - mechanism_screening
+
+- name: 02_m1_m3_diagnostic_figures
+  description: Generate the compact diagnostic figure suite for fixed-window 
+    behavior, burst structure, spatial organization, and raw versus M2-aware 
+    comparisons.
+  script: 02_m1_m3_diagnostic_figures.py
+  ancestors:
+  - 01_m1_m3_event_chain_analysis
+  subtasks:
+  - name: prepare_plotting_datasets
+    description: Prepare filtered plotting tables and annotations from the 
+      event-chain outputs.
+    inputs:
+    - m1_m3_event_chain_table
+    - m1_m3_reference_table
+    - m1_m3_window_summary_composition
+    - m1_m3_burst_table
+    - m1_m3_raw_vs_m2aware_summary
+    outputs:
+    - plotting_event_sets
+    - plotting_annotations
+    params:
+      map_magnitude_thresholds:
+      - 3.0
+      - 4.0
+      - 5.0
+      compare_modes:
+      - raw
+      - M2_aware
+  - name: make_spatial_and_time_series_figures
+    description: Create the map and time-series figures used to assess endpoint,
+      corridor, and temporal structure.
+    inputs:
+    - plotting_event_sets
+    - plotting_annotations
+    - m1_m3_reference_table
+    outputs:
+    - fig_m1_m3_map_time_category
+    - fig_magnitude_time_windows
+    - fig_projected_distance_time
+    - fig_distance_to_M1_M3_time
+    params:
+      include_spatial_overlays:
+      - endpoint_core_30km
+      - endpoint_extended_60km
+      - m1_m3_axis
+      - corridor_primary
+      mark_reference_events:
+      - M1
+      - M2
+      - M3
+  - name: make_comparison_and_burst_figures
+    description: Create cumulative-count, burst-timeline, pre-M3 comparison, and
+      window-composition figures.
+    inputs:
+    - plotting_event_sets
+    - plotting_annotations
+    - m1_m3_window_summary_counts_rates
+    - m1_m3_window_summary_composition
+    - m1_m3_burst_table
+    - m1_m3_raw_vs_m2aware_summary
+    outputs:
+    - fig_cumulative_counts_raw_vs_M2aware
+    - fig_burst_timeline_summary
+    - fig_preM3_activation_raw_vs_M2aware
+    - fig_window_composition_raw_vs_M2aware
+    params:
+      cumulative_thresholds:
+      - 4.0
+      - 5.0
+      fixed_windows:
+      - pre_M1_baseline_14d
+      - M1_related_primary
+      - middle_primary
+      - pre_M3_primary
+      - post_M3_7d
+      composition_groups:
+      - M1_core
+      - M3_core
+      - corridor_noncore
+      - off_corridor_local
+  - name: export_figure_manifest
+    description: Save figure metadata and output references for report 
+      synthesis.
+    inputs:
+    - fig_m1_m3_map_time_category
+    - fig_magnitude_time_windows
+    - fig_projected_distance_time
+    - fig_distance_to_M1_M3_time
+    - fig_cumulative_counts_raw_vs_M2aware
+    - fig_burst_timeline_summary
+    - fig_preM3_activation_raw_vs_M2aware
+    - fig_window_composition_raw_vs_M2aware
+    outputs:
+    - figure_manifest
+    params:
+      include_optional_sensitivity_slots: true
+
+- name: 03_m1_m3_screening_classification
+  description: Convert the catalog summaries into a final non-causal screening 
+    classification and follow-up priority tables.
+  script: 03_m1_m3_screening_classification.py
+  ancestors:
+  - 01_m1_m3_event_chain_analysis
+  - 02_m1_m3_diagnostic_figures
+  subtasks:
+  - name: evaluate_interpretation_labels
+    description: Assign evidence for the requested event-chain interpretation 
+      labels from the fixed-window and sensitivity results.
+    inputs:
+    - m1_m3_window_summary_counts_rates
+    - m1_m3_window_summary_composition
+    - m1_m3_phase_contribution_summary
+    - m1_m3_burst_table
+    - m1_m3_gap_continuity_metrics
+    - m1_m3_migration_endpoint_switching_summary
+    - m1_m3_control_comparison
+    - m1_m3_raw_vs_m2aware_summary
+    outputs:
+    - interpretation_label_scores
+    - classification_decision_table
+    params:
+      interpretation_labels:
+      - pre_existing_local_activity_before_M1
+      - M1_related_swarm_aftershock_dominated_activity
+      - quiet_intermediate_M1_M3_activity
+      - sustained_intermediate_M1_M3_activity
+      - continuous_activation_chain
+      - separated_bursts
+      - endpoint_centered_activity
+      - pre_M3_local_activation
+      - corridor_like_activity
+      - apparent_migration
+      - endpoint_switching_or_mixed_endpoint_sequences
+      - broader_regional_background_activity
+      - M2_affected_or_ambiguous_mixed_behavior
+      inference_constraint: non_causal_catalog_level_only
+  - name: prioritize_followup_analyses
+    description: Identify which deeper screening analyses are justified by the 
+      catalog-level evidence.
+    inputs:
+    - classification_decision_table
+    - m1_m3_followup_targets
+    - interpretation_label_scores
+    outputs:
+    - followup_priority_table
+    params:
+      candidate_followups:
+      - spatial_depth_screening
+      - b_value_completeness_screening
+      - burstwise_migration_screening
+      - mechanism_screening
+      priority_levels:
+      - high
+      - medium
+      - low
+  - name: write_classification_products
+    description: Save the final classification summary and follow-up priority 
+      outputs for reporting.
+    inputs:
+    - classification_decision_table
+    - followup_priority_table
+    - figure_manifest
+    outputs:
+    - m1_m3_classification_summary
+    - m1_m3_followup_priority_table
+    - classification_report_data
+    params:
+      report_sections:
+      - fixed_window_summary
+      - burst_and_gap_summary
+      - spatial_organization_summary
+      - raw_vs_M2aware_summary
+      - recommended_followups

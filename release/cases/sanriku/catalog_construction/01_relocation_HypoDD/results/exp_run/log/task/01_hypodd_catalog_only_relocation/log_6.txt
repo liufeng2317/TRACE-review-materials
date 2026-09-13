@@ -1,0 +1,165 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Computing catalog diagnostics
+Running screening case dense_damp120 for (datetime.datetime(2025, 12, 1, 0, 19, 25, 30000), datetime.datetime(2025, 12, 31, 23, 59, 28, 410000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Running screening case alt_damp80 for (datetime.datetime(2026, 4, 1, 0, 16, 22, 930000), datetime.datetime(2026, 4, 30, 23, 59, 40, 750000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Selecting production parameters from screening evidence
+Running production catalog-only auto-time-window relocation
+Catalog-only auto time-window plan: windows=71, min_events_per_window=300, max_events_per_window=10800, base=day. Per-window details are recorded in time_window_manifest.json.
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=214, relocated_rows=184
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=1076 P50=0.026ms P90=11.939ms P95=14.886ms RMS=8.997ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=209, relocated_rows=195
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=2616 P50=-0.249ms P90=16.211ms P95=19.812ms RMS=12.047ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=185, relocated_rows=174
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=859 P50=0.003ms P90=23.940ms P95=30.983ms RMS=17.768ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=217, relocated_rows=205
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=1436 P50=-0.224ms P90=27.926ms P95=34.727ms RMS=20.512ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=251, relocated_rows=245
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=4192 P50=0.001ms P90=22.164ms P95=27.856ms RMS=17.007ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=454, relocated_rows=452
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=125043 P50=-0.223ms P90=22.957ms P95=29.006ms RMS=17.180ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=811, relocated_rows=805
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=308503 P50=0.039ms P90=33.731ms P95=40.085ms RMS=25.335ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=582, relocated_rows=580
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=78268 P50=-0.168ms P90=34.910ms P95=41.693ms RMS=26.218ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=332, relocated_rows=329
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=20526 P50=-0.146ms P90=30.286ms P95=36.715ms RMS=22.589ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=375, relocated_rows=372
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=33849 P50=-0.452ms P90=31.075ms P95=38.427ms RMS=22.991ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=364, relocated_rows=363
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=25414 P50=-0.116ms P90=25.400ms P95=31.020ms RMS=19.271ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=279, relocated_rows=276
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=13088 P50=0.029ms P90=33.910ms P95=42.454ms RMS=26.130ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=297, relocated_rows=297
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=24746 P50=-0.248ms P90=24.513ms P95=30.323ms RMS=18.005ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=411, relocated_rows=409
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=31922 P50=0.012ms P90=30.297ms P95=37.021ms RMS=22.349ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=285, relocated_rows=283
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=9144 P50=-0.279ms P90=21.464ms P95=26.037ms RMS=15.773ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=256, relocated_rows=253
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=7627 P50=0.011ms P90=35.547ms P95=44.685ms RMS=27.251ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=221, relocated_rows=211
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=3135 P50=0.014ms P90=24.031ms P95=29.881ms RMS=18.077ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=240, relocated_rows=231
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=6181 P50=-0.090ms P90=26.449ms P95=32.636ms RMS=19.712ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=582, relocated_rows=578
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=80915 P50=-0.080ms P90=31.457ms P95=37.526ms RMS=23.305ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=656, relocated_rows=653
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=64845 P50=0.211ms P90=24.365ms P95=29.173ms RMS=18.214ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+hypodd_runner: merged catalogs original_rows=374, relocated_rows=370
+hypodd_runner: wrote aomori_jma_regional_hypodd_maps.png and aomori_jma_regional_residuals.png
+hypodd_runner: residual summary (aomori_jma_regional.res): n=21524 P50=-0.324ms P90=31.560ms P95=38.929ms RMS=23.551ms
+hypodd_runner: wrote aomori_jma_regional_eval_*.png (key metrics panels)
+run hypoDD: grid 0-0
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Merging real native outputs and accounting for all events
+Generating figures from real outputs
+Workflow completed

@@ -1,0 +1,6 @@
+analysis_axis,suggested_threshold_or_mask,why
+space,Use spatial clusters and mainshock-centered windows; test compact radii for dense regions.,The catalog shows nonuniform spatial density and mainshock-specific local context differences.
+time,Use 90-day windows for rate diagnostics; flag burst/quiet intervals.,Event rate changes are better resolved with adaptive bin widths tied to catalog density.
+depth,Split analyses by empirical depth bins and mainshock depth domains.,Depth segmentation is visible in the background catalog and in mainshock contexts.
+magnitude,Use Mc-informed thresholds for background screening; test event-specific magnitude cuts around mainshocks.,Preliminary completeness and b-value diagnostics imply a data-driven magnitude cutoff is preferable.
+coverage,Downweight or mask areas with sparse station or focal-mechanism coverage.,"Sampling biases can affect detectability, magnitude estimates, and mechanism availability."

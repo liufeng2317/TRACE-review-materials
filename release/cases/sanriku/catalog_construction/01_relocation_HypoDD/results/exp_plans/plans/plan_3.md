@@ -1,0 +1,335 @@
+# Goal
+
+Relocate the full Japan Aomori regional JMA catalog with `hypodd_runner` using the provided regional observation catalog and the supplied 1-D velocity model, producing a real merged relocated catalog, explicit accounting for all input events, native run evidence, and relocation figures derived only from successful native outputs.
+
+## Planning Assumptions
+
+- Observation data are sufficient and must be used directly; no model-generated seismic observations are needed.
+- `phase.dat` is the preferred primary phase input if validation confirms it is a valid event-block phase file and remains internally consistent with `station.sta`.
+- Station identifiers must remain unchanged because `phase.dat` and `station.sta` are already consistent. Add a synthetic `J.` prefix only if the selected public `hypodd_runner` API path explicitly requires `NET.STA`; if applied, the mapping must be identical across all generated inputs and manifests.
+- Preserve source `event_id` values and UTC-compatible origin times through validation, relocation, merging, and final accounting.
+- `hypodd_runner` public grouped-parameter API must be used. Relevant public objects/functions are `HypoDDInputs`, `EventSelection`, `Ph2dtParams`, `HypoDDParams`, `RuntimeOptions`, and catalog-only entry points `run_catalog_only_relocation(...)` and `run_catalog_only_auto_time_windows(...)`.
+- Package contract for this environment:
+  - `hypo_root` must be `<LOCAL_PATH>
+  - `phase_format="auto"` is the safest default unless validation proves a more specific format.
+  - Catalog-only success requires real non-empty native outputs including `dt_*.ct`, `{catalog_code}.loc`, `{catalog_code}.reloc`, and `{catalog_code}.res`.
+  - Native limits documented by the package: `ph2dt.inc` has `MEV=16000`, `MSTA=2400`, `MOBS=500`; `hypoDD.inc` has `MAXEVE=10800`, `MAXDATA=3100000`, `MAXSTA=1300`, `MAXCL=100`.
+  - For large catalogs exceeding native event/data limits, prefer `run_catalog_only_auto_time_windows(...)` rather than a hand-written batching loop.
+- Because the catalog contains 29,896 events, a single native HypoDD run is expected to exceed `MAXEVE=10800`; the production strategy should therefore use package-supported time-window execution with preserved full-catalog accounting.
+- `HypoDDParams.iter_rows` must be explicitly chosen for this catalog. Each row must have `NITER WTCCP WTCCS WRCC WDCC WTCTP WTCTS WRCT WDCT DAMP`, and `NITER` values are cumulative iteration endpoints.
+- For this catalog-only task, CC weights/cutoffs should be zeroed consistently because no waveform cross-correlation is being used; scientific control is through catalog weights (`WTCTP`, `WTCTS`), residual cutoffs (`WRCT`, `WDCT`), and damping.
+- The supplied velocity model must be used through `hypodd.mod_top`, `hypodd.mod_vel`, and `hypodd.mod_ratio`, with default `Vp/Vs = 1.73` unless a better documented value is estimated from the current catalog metadata.
+- Parameter screening should be limited to a small diagnostic subset or selected windows before one production full-catalog run; do not execute a broad full-catalog parameter sweep.
+
+## Analysis Plan
+
+### Task 1 — Build and run one self-contained `hypodd_runner` relocation script with integrated validation, parameter screening, production execution, accounting, and figure generation
+
+#### 1.1 Input audit and package-readiness validation
+- Task description:
+  - Validate the provided regional files before relocation and decide whether `phase.dat` can be passed directly to `hypodd_runner`.
+  - Record all input diagnostics needed to justify the relocation configuration and windowed execution strategy.
+- Required data sources:
+  - `<CASE_ROOT>/data/regional/events.csv`
+  - `<CASE_ROOT>/data/regional/picks.csv`
+  - `<CASE_ROOT>/data/regional/phase.dat`
+  - `<CASE_ROOT>/data/regional/station.sta`
+  - `<CASE_ROOT>/data/regional/summary.txt`
+- Parameter selection strategy:
+  - Use `phase.dat` as primary input if validation confirms:
+    - event-block structure is parseable,
+    - event count matches 29,896,
+    - station pick rows are non-empty and structurally valid,
+    - event IDs are preserved or recoverable,
+    - station codes match `station.sta`,
+    - event headers are time/lat/lon/depth/magnitude compatible with the package input contract.
+  - Use `events.csv` and `picks.csv` only for cross-checking counts, ID coverage, station coverage, and phase availability; do not rebuild `phase.dat` unless validation fails.
+  - Derive global `ot_range`, `lat_range`, and `lon_range` from `events.csv`, with small outer padding only if required by the package API.
+  - Set `dep_corr` from the current catalog datum. Default to `0.0` unless the input metadata show a known depth datum offset that must be corrected.
+- Constraints:
+  - Preserve original station IDs if accepted by the package.
+  - If `NET.STA` is required by the specific API call path, create and record one consistent station mapping and apply it to all relevant generated inputs and accounting tables.
+  - Preserve source `event_id` and ISO-compatible time strings in all manifests.
+- Key outputs:
+  - `input_validation_manifest.json`
+  - `phase_station_consistency.csv`
+  - `event_selection_bounds.json`
+  - `input_accounting.csv` with one row per input event and initial metadata needed for later merge/accounting
+  - explicit decision field: `use_original_phase_dat=true/false`
+
+#### 1.2 Catalog-scale diagnostics and supported execution mode selection
+- Task description:
+  - Compare current catalog scale with native HypoDD limits and choose the package-supported execution mode.
+- Required data sources:
+  - validated counts from Task 1.1
+  - `events.csv`
+  - `phase.dat`
+- Parameter selection strategy:
+  - Use the observed event count, station count, and pick-row count to estimate whether a single native run would exceed `MAXEVE` and potentially `MAXDATA`.
+  - Because 29,896 events exceed `MAXEVE=10800`, plan production with `run_catalog_only_auto_time_windows(...)`.
+  - Use the coarsest time windows that keep each native run below documented limits; start from monthly windows and only shrink if a planned window still exceeds event or data limits.
+  - Keep `continue_on_error=False` for the production run.
+  - Keep window-level execution deterministic/sequential as required by the package contract.
+- Constraints:
+  - Do not invent a custom batch loop if the package auto-window entry point can express the task.
+  - Full final accounting must include relocated, unrelocated, and failed events across all windows.
+- Key outputs:
+  - `window_planning_manifest.json`
+  - `catalog_scale_check.json`
+  - chosen execution mode recorded as `catalog_only_auto_time_windows`
+
+#### 1.3 Scientific parameterization of `Ph2dtParams`
+- Task description:
+  - Set catalog differential-time pairing controls from actual Aomori catalog characteristics rather than package defaults alone.
+- Required data sources:
+  - `events.csv`
+  - `picks.csv`
+  - `phase.dat`
+  - diagnostics from Task 1.1
+- Parameter selection strategy:
+  - Compute event-level and station-level diagnostics from observations:
+    - picks per event,
+    - P/S availability rates,
+    - stations per event,
+    - event density by time window,
+    - inter-event spacing proxies from initial hypocenters,
+    - potential link density from shared stations.
+  - Choose `Ph2dtParams` to balance link density and native data volume:
+    - set minimum shared observations high enough to avoid weak links in sparse windows,
+    - set maximum station/event neighbors from observed coverage rather than using extremes,
+    - set inter-event distance thresholds from regional event spread and expected clustered seismicity,
+    - if the package exposes separate P/S observation thresholds or residual cutoffs, use the observed P-dominant/S-sparser structure to avoid over-weighting sparse S links.
+  - Define one production `Ph2dtParams` set and, if needed, one alternate diagnostic set for a small screening subset/window only.
+- Constraints:
+  - Do not run multiple full-catalog production sweeps.
+  - Parameter choices must be documented against observed pick coverage and estimated pair counts.
+- Key outputs:
+  - `ph2dt_parameter_summary.json`
+  - `pairing_diagnostics.csv`
+  - `pairing_screening_summary.csv` for any limited diagnostic subset/window test
+
+#### 1.4 Scientific parameterization of `HypoDDParams`, especially `iter_rows`
+- Task description:
+  - Choose an explicit catalog-only inversion schedule with justified damping and catalog weights for this regional dataset.
+- Required data sources:
+  - `events.csv`
+  - `picks.csv`
+  - diagnostics from Tasks 1.1–1.3
+- Parameter selection strategy:
+  - Use the supplied velocity model exactly:
+    - `mod_top = [0.0, 5.0, 10.0, 20.0, 35.0, 50.0, 90.0]`
+    - `mod_vel = [5.4, 5.8, 6.2, 6.6, 7.2, 7.6, 8.05]`
+    - `mod_ratio = 1.73` unless a documented better value is justified from current metadata.
+  - Set catalog-only weights so CC terms are inactive:
+    - `WTCCP=0`, `WTCCS=0`, `WRCC=0`, `WDCC=0` in all iteration rows.
+  - Choose `WTCTP` and `WTCTS` from observed phase availability and reliability:
+    - keep P weight at least as large as S weight,
+    - down-weight S if S picks are substantially sparser or noisier.
+  - Choose `WRCT` and `WDCT` from residual behavior and event geometry:
+    - begin with broader acceptance in early cumulative iterations,
+    - tighten or stabilize later stages only if diagnostic windows show improvement rather than event loss.
+  - Test a larger LSQR damping on a bounded diagnostic subset/window, with at least one candidate in the tens to low hundreds, centered near the user-suggested range such as `80–120`, and compare against a smaller alternative.
+  - Select one production `iter_rows` schedule with cumulative endpoints, e.g. a 3-stage or 4-stage schedule that starts more conservative and stabilizes later iterations, based on:
+    - runtime,
+    - convergence behavior,
+    - residual reduction,
+    - relocated-event retention,
+    - absence of empty/unstable native outputs.
+- Constraints:
+  - Do not use `iter_rows=None` as the scientific production default.
+  - Do not promote a damping value to production unless it has been screened on a documented subset/window.
+  - Catalog-only inversion must not include waveform CC settings.
+- Key outputs:
+  - `hypodd_parameter_summary.json`
+  - `iter_rows_selected.json`
+  - `damping_screening_comparison.csv`
+  - `velocity_model_used.json`
+
+#### 1.5 Limited diagnostic screening before full production
+- Task description:
+  - Run a bounded, evidence-producing pretest to choose the production parameter set without incurring multiple full-catalog reruns.
+- Required data sources:
+  - same validated primary inputs
+  - one dense representative window and one sparse/problem window selected from current catalog diagnostics
+- Parameter selection strategy:
+  - Choose diagnostic windows from actual catalog time-density statistics:
+    - one high-density window likely to stress native link/data volume,
+    - one lower-density or edge-case window likely to expose instability or event loss.
+  - Compare only a small number of candidate parameter sets:
+    - one baseline scientifically reasonable catalog-only set,
+    - one larger-damping candidate near `80–120`,
+    - optionally one nearby variant if needed to resolve convergence trade-offs.
+  - Evaluate each candidate on:
+    - non-empty native outputs,
+    - relocated-event count,
+    - residual distributions from `.res`,
+    - runtime and failure evidence,
+    - amount and pattern of relocation shifts.
+- Constraints:
+  - Screening must stay limited to selected windows/subsets.
+  - Empty native outputs or unchanged catalogs are failures, not acceptable candidates.
+- Key outputs:
+  - `diagnostic_run_status.csv`
+  - `diagnostic_candidate_comparison.csv`
+  - selected production parameter set recorded in `production_run_config.json`
+
+#### 1.6 Full-catalog production relocation with `hypodd_runner`
+- Task description:
+  - Execute the real full-catalog relocation through the public grouped-parameter API and preserve native evidence for every attempted window/run.
+- Required data sources:
+  - validated original `phase.dat`
+  - validated `station.sta`
+  - `events.csv`
+  - selected production parameter files from Tasks 1.3–1.5
+- Parameter selection strategy:
+  - Build grouped objects:
+    - `HypoDDInputs` using the original input files and environment `hypo_root`
+    - `EventSelection` from full observed catalog bounds
+    - `Ph2dtParams` from Task 1.3
+    - `HypoDDParams` from Task 1.4
+    - `RuntimeOptions` consistent with package contract and local compute policy
+  - Use `run_catalog_only_auto_time_windows(...)` for the full production relocation.
+  - Keep the original station IDs unless explicit API validation requires mapped `NET.STA`.
+  - Retain native logs, per-window manifests, traceback files, and output-folder references.
+- Constraints:
+  - Production success requires non-empty native outputs for successful windows and a real merged relocated catalog.
+  - The script must not silently drop windows or events.
+  - If a window fails, capture failure evidence and explicit event accounting.
+- Key outputs:
+  - `production_run_status.csv`
+  - `time_window_manifest.json`
+  - `run_inventory.json`
+  - per-window native output folders and native logs
+  - merged relocation-ready outputs derived from native files only
+
+#### 1.7 Merge native outputs and produce full event accounting
+- Task description:
+  - Merge successful native relocation outputs into one final catalog and build explicit accounting for all 29,896 input events.
+- Required data sources:
+  - native `{catalog_code}.reloc`, `{catalog_code}.loc`, `{catalog_code}.res`, `dt_*.ct`
+  - `events.csv`
+  - per-window manifests/status files
+- Parameter selection strategy:
+  - Use preserved event IDs as the primary merge key.
+  - If any native window output relies on event order rather than explicit ID, verify mapping within that same window before merging.
+  - Classify every input event into one of:
+    - relocated,
+    - attempted but unrelocated,
+    - failed window / failed run,
+    - not selected only if justified by documented window selection logic.
+  - Build a final merged table containing:
+    - original hypocenter,
+    - relocated hypocenter,
+    - relocation deltas,
+    - window/run provenance,
+    - relocation status,
+    - failure reason where applicable.
+- Constraints:
+  - Failed or unrelocated events must not be counted as relocated.
+  - Do not use the unchanged original catalog as a surrogate relocated catalog.
+- Key outputs:
+  - `relocated_catalog.csv`
+  - `unrelocated_events.csv`
+  - `failed_events.csv`
+  - `final_event_accounting.csv`
+  - `final_run_summary.json`
+
+#### 1.8 Residual, convergence, and relocation-quality calculations
+- Task description:
+  - Compute quantitative diagnostics from real native outputs for scientific evaluation and plotting.
+- Required data sources:
+  - merged relocated catalog from Task 1.7
+  - native `.res` files
+  - native `.loc` and `.reloc` files
+  - `events.csv`
+  - `station.sta`
+- Parameter selection strategy:
+  - Parse residuals from native `.res` files using `RES [ms]` directly as milliseconds.
+  - Compute:
+    - residual histograms and summary statistics,
+    - relocated-event counts by window and globally,
+    - horizontal shift, depth shift, and 3-D shift magnitudes,
+    - pre/post spatial spread statistics,
+    - relocation success rate by magnitude, depth, time, and pick-count bins,
+    - station participation statistics if residual/station linkage is available from native outputs.
+  - Compare initial versus relocated distributions only for events with real relocated solutions.
+- Constraints:
+  - No figure or metric should be presented as relocation success if based only on failed or empty outputs.
+- Key outputs:
+  - `residual_statistics.csv`
+  - `relocation_shift_statistics.csv`
+  - `window_quality_summary.csv`
+  - `catalog_statistics_before_after.csv`
+
+#### 1.9 Figure generation from real relocation outputs
+- Task description:
+  - Generate the required nature-style scientific figures using only real relocated results; if relocation fails, generate only clearly labeled diagnostic figures.
+- Required data sources:
+  - `relocated_catalog.csv`
+  - `events.csv`
+  - `station.sta`
+  - `main_earthquake.csv`
+  - `residual_statistics.csv`
+  - `relocation_shift_statistics.csv`
+- Parameter selection strategy:
+  - Relocation map figure:
+    - lon-lat panel: stations, initial event locations in gray, relocated events in black, main earthquakes in red
+    - lon-depth panel: longitude versus depth for initial and relocated events
+    - lat-depth panel: latitude versus depth for initial and relocated events
+  - Residual distribution figure:
+    - histogram and/or density of residuals from `.res`
+    - optional split by P/S, window, or success class if available
+  - Relocation shift figure:
+    - horizontal shift distribution,
+    - depth-shift distribution,
+    - map vectors or scatter of shift magnitude versus depth/pick count
+  - Statistic figure:
+    - initial vs relocated event counts by depth/magnitude/time,
+    - success/unrelocated/failed proportions,
+    - picks-per-event or station-count distributions for relocated vs unrelocated events
+  - Optional figures:
+    - per-window success and failure summary,
+    - relocation improvement versus initial pick count,
+    - clustered mainshock-aftershock close-up panels around the 3 reference main earthquakes.
+- Constraints:
+  - If no real relocated events exist, any figure must be labeled diagnostic/failure evidence and excluded from success claims.
+  - Main earthquake annotations are for contextual plotting only, not relocation control.
+- Key outputs:
+  - `figure_relocation_map`
+  - `figure_residual_distribution`
+  - `figure_relocation_shift`
+  - `figure_statistics`
+  - optional diagnostic figures only when necessary
+
+#### 1.10 Final script deliverables and execution evidence organization
+- Task description:
+  - Ensure the single workflow script is self-contained and evidence-producing from validation through final outputs.
+- Required data sources:
+  - all inputs and outputs from Tasks 1.1–1.9
+- Parameter selection strategy:
+  - Organize the script into internal stages:
+    - validate inputs,
+    - compute diagnostics,
+    - choose supported execution mode,
+    - run limited screening,
+    - execute production relocation,
+    - merge/account for all events,
+    - compute statistics,
+    - generate figures.
+  - Record for every attempted run/window:
+    - status,
+    - input counts,
+    - chosen `Ph2dtParams`,
+    - chosen `HypoDDParams.iter_rows`,
+    - output folder,
+    - native log paths,
+    - failure evidence if applicable.
+- Constraints:
+  - Keep this as one primary cohesive task script unless a reusable independent helper output becomes necessary.
+  - No separate narrative-report script is needed.
+- Key outputs:
+  - one self-contained Python workflow script
+  - `run_registry.csv`
+  - `parameter_manifest.json`
+  - `native_log_index.csv`
+  - `failure_evidence_index.csv`

@@ -1,0 +1,5 @@
+file,n_rows,required_fields,present_fields,missing_fields
+catalog,25646,"[""time"", ""lat"", ""lon"", ""dep"", ""mag"", ""event_id""]","[""time"", ""lat"", ""lon"", ""dep"", ""mag"", ""event_id""]",[]
+main_earthquake,3,"[""mainshock"", ""time"", ""lat"", ""lon"", ""dep"", ""mag""]","[""mainshock"", ""time"", ""lat"", ""lon"", ""dep"", ""mag""]",[]
+mechanism,354,"[""origin_time"", ""lat_deg"", ""lon_deg"", ""depth_km""]","[""origin_time"", ""lat_deg"", ""lon_deg"", ""depth_km""]",[]
+stations,371,"[""station_code"", ""latitude"", ""longitude"", ""matched""]","[""station_code"", ""latitude"", ""longitude"", ""matched""]",[]

@@ -1,0 +1,192 @@
+{
+  "task": "01_sanriku_m69_catalog_screening",
+  "reference_mainshock": {
+    "reference_source": "relocated_catalog_rematch",
+    "candidate_count_within_30s_15km": 1,
+    "fallback_used": false,
+    "selected_catalog_event_id": "cat_005006",
+    "selected_catalog_time": "2025-11-09T08:03:39.240000+00:00",
+    "time_diff_seconds": 0.0,
+    "distance_km": 0.16453562980491596,
+    "reference_lat": 39.403072,
+    "reference_lon": 143.50568,
+    "reference_dep_km": 15.96,
+    "reference_mag": 6.9,
+    "reference_time": "2025-11-09T08:03:39.240000+00:00"
+  },
+  "largest_early_aftershock": {
+    "found": true,
+    "event_id": "cat_005049",
+    "datetime": "2025-11-09T08:54:38.490000+00:00",
+    "mag": 6.6,
+    "relative_days": 0.03540798611111111,
+    "distance_km": 10.519969081269206,
+    "lat": 39.452779,
+    "lon": 143.401465,
+    "dep_km": 13.86
+  },
+  "method_settings": {
+    "primary_radius_km": 80.0,
+    "radius_sensitivity_km": [
+      60.0,
+      80.0,
+      100.0,
+      150.0
+    ],
+    "context_window_days": [
+      -10.0,
+      -2.0
+    ],
+    "foreshock_window_days": [
+      -2.0,
+      0.0
+    ],
+    "aftershock_window_days": [
+      0.0,
+      0.5
+    ],
+    "front_percentile": 90.0,
+    "foreshock_bin_days": 0.2,
+    "aftershock_bin_days": 0.025,
+    "front_min_count": 5,
+    "activated_area_trim_fraction": 0.9,
+    "mc_bin_width": 0.1,
+    "seismostats_available": true
+  },
+  "primary_radius_window_metrics": {
+    "foreshock_final2d": {
+      "radius_km": 80.0,
+      "start_day": -2.0,
+      "end_day": 0.0,
+      "duration_days": 2.0,
+      "duration_hours": 48.0,
+      "event_count": 396,
+      "rate_per_day": 198.0,
+      "rate_per_hour": 8.25,
+      "max_mag": 5.9,
+      "median_mag": 1.8,
+      "count_M3plus": 52,
+      "count_M4plus": 16,
+      "count_M5plus": 6
+    },
+    "aftershock_0_0p5d": {
+      "radius_km": 80.0,
+      "start_day": 0.0,
+      "end_day": 0.5,
+      "duration_days": 0.5,
+      "duration_hours": 12.0,
+      "event_count": 415,
+      "rate_per_day": 830.0,
+      "rate_per_hour": 34.583333333333336,
+      "max_mag": 6.6,
+      "median_mag": 2.4,
+      "count_M3plus": 127,
+      "count_M4plus": 35,
+      "count_M5plus": 11
+    }
+  },
+  "migration_front_fits": [
+    {
+      "status": "ok",
+      "slope_km_per_day": 4.3312516227929825,
+      "slope_km_per_hour": 0.18046881761637426,
+      "intercept_km": 14.015602430390446,
+      "r_squared": 0.8216785657994978,
+      "total_bins": 10,
+      "retained_bins": 9,
+      "excluded_bins": 1,
+      "time_min_days": -1.7000000000000002,
+      "time_max_days": -0.10000000000000042,
+      "phase": "foreshock_final2d",
+      "bin_width_days": 0.2,
+      "front_percentile": 90.0,
+      "front_min_count": 5
+    },
+    {
+      "status": "ok",
+      "slope_km_per_day": 16.1586054461115,
+      "slope_km_per_hour": 0.6732752269213126,
+      "intercept_km": 24.167371810375432,
+      "r_squared": 0.29078322553846603,
+      "total_bins": 20,
+      "retained_bins": 20,
+      "excluded_bins": 0,
+      "time_min_days": 0.0125,
+      "time_max_days": 0.48750000000000004,
+      "phase": "aftershock_0_0p5d",
+      "bin_width_days": 0.025,
+      "front_percentile": 90.0,
+      "front_min_count": 5
+    }
+  ],
+  "activated_area_primary": [
+    {
+      "window": "foreshock_final2d",
+      "radius_km": 80.0,
+      "status": "ok",
+      "total_points": 396,
+      "retained_points": 356,
+      "trim_distance_km": 12.05501945234318,
+      "pca_angle_deg": 2.6965559425194563,
+      "pca_var_ratio_1": 0.6927989910005942,
+      "along_span_km": 23.592603224816067,
+      "across_span_km": 16.267473626704074,
+      "hull_area_km2": 307.0342436232306,
+      "equivalent_radius_km": 9.885951402987818
+    },
+    {
+      "window": "aftershock_0_0p5d",
+      "radius_km": 80.0,
+      "status": "ok",
+      "total_points": 415,
+      "retained_points": 373,
+      "trim_distance_km": 29.039817278921095,
+      "pca_angle_deg": -42.82889225253952,
+      "pca_var_ratio_1": 0.6420260778165254,
+      "along_span_km": 57.547073002773224,
+      "across_span_km": 51.174781640898935,
+      "hull_area_km2": 2118.3354783992895,
+      "equivalent_radius_km": 25.96703920412113
+    }
+  ],
+  "mc_bvalue": [
+    {
+      "window": "foreshock_final2d",
+      "radius_km": 80.0,
+      "status": "ok",
+      "method_mc_primary": "estimate_mc_maxc",
+      "method_mc_secondary": "estimate_mc_ks",
+      "method_mc_tertiary": "estimate_mc_b_stability",
+      "method_b": "ClassicBValueEstimator",
+      "bin_width": 0.1,
+      "event_count_total": 396,
+      "event_count_ge_mc": 201,
+      "mc_maxc": 1.8,
+      "mc_ks": 1.4,
+      "mc_b_stability": 1.4,
+      "mc_primary": 1.8,
+      "b_value": 0.5142404135707136,
+      "b_uncertainty": 0.037036375288727934,
+      "exploratory_only": false
+    },
+    {
+      "window": "aftershock_0_0p5d",
+      "radius_km": 80.0,
+      "status": "ok",
+      "method_mc_primary": "estimate_mc_maxc",
+      "method_mc_secondary": "estimate_mc_ks",
+      "method_mc_tertiary": "estimate_mc_b_stability",
+      "method_b": "ClassicBValueEstimator",
+      "bin_width": 0.1,
+      "event_count_total": 415,
+      "event_count_ge_mc": 308,
+      "mc_maxc": 2.0,
+      "mc_ks": 2.2,
+      "mc_b_stability": 2.1,
+      "mc_primary": 2.0,
+      "b_value": 0.4328270255338892,
+      "b_uncertainty": 0.020415851010438968,
+      "exploratory_only": true
+    }
+  ]
+}

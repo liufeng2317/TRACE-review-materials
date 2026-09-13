@@ -1,0 +1,65 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 3918,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 315629,
+      "output_tokens": 41946
+    },
+    "Planing": {
+      "input_tokens": 88388,
+      "output_tokens": 11711
+    },
+    "Plan Merging": {
+      "input_tokens": 53802,
+      "output_tokens": 4819
+    },
+    "Workflow Agent": {
+      "input_tokens": 60444,
+      "output_tokens": 7565
+    },
+    "Coding Agent (01_catalog_screening_analysis)": {
+      "input_tokens": 565963,
+      "output_tokens": 26534
+    },
+    "Result Check Agent (01_catalog_screening_analysis)": {
+      "input_tokens": 130034,
+      "output_tokens": 2476
+    },
+    "Task Analysis Agent (01_catalog_screening_analysis)": {
+      "input_tokens": 366794,
+      "output_tokens": 13535
+    },
+    "Coding Agent (02_mechanism_coverage_audit)": {
+      "input_tokens": 452162,
+      "output_tokens": 16699
+    },
+    "Result Check Agent (02_mechanism_coverage_audit)": {
+      "input_tokens": 111303,
+      "output_tokens": 2015
+    },
+    "Task Analysis Agent (02_mechanism_coverage_audit)": {
+      "input_tokens": 54534,
+      "output_tokens": 8617
+    },
+    "Evaluation": {
+      "input_tokens": 27601,
+      "output_tokens": 922
+    },
+    "Report Synthesis": {
+      "input_tokens": 80050,
+      "output_tokens": 8657
+    }
+  },
+  "total": {
+    "input_tokens": 2310622,
+    "output_tokens": 145511,
+    "total_tokens": 2456133
+  }
+}

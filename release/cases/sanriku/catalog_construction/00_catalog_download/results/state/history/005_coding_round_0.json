@@ -1,0 +1,2181 @@
+{
+    "01_download_validate_sanriku_jma_catalog": {
+        "analysis_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/analysis/01_download_validate_sanriku_jma_catalog.md",
+        "ancestors": [],
+        "code_change_history": [
+            {
+                "changed": true,
+                "changed_lines": 770,
+                "coding_response_summary": "Implemented the workflow script at:\n\n`<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py`\n\nKey features included:\n\n- Fixed manuscript interval: `2025-06-01 <= datetime < 2026-05-02`\n- Inclusive Sanriku bounds:\n  - latitude `38.50–42.50`\n  - longitude `141.00–144.50`\n- Authenticated `requests.Session` workflow using the specified Hi-net login and JMA catalog endpoints\n- Credential loading from the required `.env` file, with optional programmatic overrides\n- Retry/backoff for login, verification, and catalog requests\n- Half-open chunking into exactly 48 chunks, each no more than 7 days\n- JMA fixed-width table parsing, avoiding comma splitting\n- Raw response saving for parse failures, with saved debug paths included in raised errors\n- Optional raw response saving via `main(raw_dir=...)`\n- Cleaning pipeline:\n  - datetime parsing\n  - numeric conversion\n  - missing-value removal\n  - half-open time filtering\n  - inclusive Sanriku spatial filtering\n  - physical sanity filtering\n  - sorting\n  - duplicate removal\n- Outputs:\n  - `Snet_catalog_20250601_20260502.csv`\n  - `Snet_catalog_20250601_20260502_distribution.png`\n  - `Snet_catalog_20250601_20260502_chunk_manifest.csv`\n  - `Snet_catalog_20250601_20260502_validation.json`\n- In-script validation of chunk coverage, CSV schema/content, sorting, duplicates, bounds, and figure creation\n- Top-level exception handling prints `traceback.format_exc()` once and exits nonzero on failure\n\nI also performed a bounded syntax validation with `py_compile`; the script compiles successfully.\n----------\nCode Review:\nReviewed the script against the checklist and made one correctness fix:\n\n- Tightened zero-row catalog detection so a generic JMA/form page is not misclassified as a valid empty catalog. Now only explicit no-data markers are accepted as valid zero-row responses; otherwise the raw response is saved and raised as a parse failure.\n\nAlso re-checked syntax with `py_compile`; the script compiles successfully.",
+                "diff_summary": "--- before/01_download_validate_sanriku_jma_catalog.py\n+++ after/01_download_validate_sanriku_jma_catalog.py\n@@ -0,0 +1,770 @@\n+#!/usr/bin/env python3\n+\"\"\"Download, clean, validate, and plot a Sanriku JMA/Hi-net catalog.\n+\n+The workflow is intentionally fixed to the manuscript-aligned half-open\n+interval 2025-06-01 <= origin time < 2026-05-02 and the Sanriku bounds\n+38.50-42.50 N, 141.00-144.50 E.  The Hi-net web form accepts a start date\n+and a list span (maximum seven days), so each submitted request is a half-open\n+chunk [chunk_start, chunk_end_exclusive) represented by list_span days.\n+\n+No credentials are printed or written to output files.  Programmatic callers may\n+pass username/password/raw_dir to main(); default execution reads credentials\n+from the project .env file, with environment variables as non-CLI overrides.\n+\"\"\"\n+from __future__ import annotations\n+\n+import json\n+import os\n+import re\n+import sys\n+import time\n+import traceback\n+from dataclasses import dataclass, asdict\n+from datetime import date, datetime, timedelta\n+from html import unescape\n+from pathlib import Path\n+from typing import Dict, List, Optional, Sequence, Tuple\n+\n+import matplotlib\n+matplotlib.use(\"Agg\")\n+import matplotlib.dates as mdates\n+import matplotlib.pyplot as plt\n+import pandas as pd\n+import requests\n+from requests.adapters import HTTPAdapter\n+from urllib3.util.retry import Retry\n+\n+SCRIPT_PATH = Path(__file__).resolve()\n+OUTPUT_DIR = Path(\"<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\").resolve()\n+ENV_PATH = Path(\"<CASE_ROOT>/data/hinet_account/.env\").resolve()\n+\n+LOGIN_URL = \"https://hinetwww11.bosai.go.jp/auth/?LANG=en\"\n+CATALOG_URL = \"https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php\"\n+\n+START_DATE = date(2025, 6, 1)\n+END_DATE_EXCLUSIVE = date(2026, 5, 2)\n+MAX_CHUNK_DAYS = 7\n+LAT_MIN, LAT_MAX = 38.50, 42.50\n+LON_MIN, LON_MAX = 141.00, 144.50\n+TIMEOUT_SECONDS = 60\n+MAX_ATTEMPTS = 5\n+BACKOFF_BASE_SECONDS = 2.0\n+USER_AGENT = \"TRACE-Sanriku-JMA-catalog-workflow/1.0 (+requests)\"\n+ASPECT_COLUMNS = [\"datetime\", \"lat\", \"lon\", \"dep\", \"mag\"]\n+\n+OUTPUT_STEM = f\"Snet_catalog_{START_DATE:%Y%m%d}_{END_DATE_EXCLUSIVE:%Y%m%d}\"\n+CSV_PATH = OUTPUT_DIR / f\"{OUTPUT_STEM}.csv\"\n+FIGURE_PATH = OUTPUT_DIR / f\"{OUTPUT_STEM}_distribution.png\"\n+MANIFEST_PATH = OUTPUT_DIR / f\"{OUTPUT_STEM}_chunk_manifest.csv\"\n+VALIDATION_PATH = OUTPUT_DIR / f\"{OUTPUT_STEM}_validation.json\"\n+\n+\n+@dataclass\n+class ChunkRecord:\n+    chunk_index: int\n+    chunk_start_inclusive: str\n+    chunk_end_exclusive: str\n+    submitted_list_year: str\n+    submitted_list_month: str\n+    submitted_list_day: str\n+    submitted_list_span_days: int\n+    submitted_end_inclusive: str\n+    status: str\n+    parse_status: str\n+    attempts: int\n+    http_status: int\n+    response_bytes: int\n+    parsed_rows: int\n+    actual_returned_datetime_min: str\n+    actual_returned_datetime_max: str\n+    retained_sanriku_rows: int\n+    retained_sanriku_datetime_min: str\n+    retained_sanriku_datetime_max: str\n+    raw_file_path: str\n+    debug_file_path: str\n+    message: str\n+\n+\n+def log(message: str) -> None:\n+    print(f\"[{datetime.utcnow().isoformat(timespec='seconds')}Z] {message}\", flush=True)\n+\n+\n+def ensure_output_dirs() -> Dict[str, Path]:\n+    debug_raw = OUTPUT_DIR / \"debug\" / \"raw\"\n+    debug = OUTPUT_DIR / \"debug\"\n+    for path in (OUTPUT_DIR, debug, debug_raw):\n+        path.mkdir(parents=True, exist_ok=True)\n+    return {\"debug\": debug, \"debug_raw\": debug_raw}\n+\n+\n+def clear_stale_outputs() -> None:\n+    patterns = [\n+        f\"{OUTPUT_STEM}.csv\",\n+        f\"{OUTPUT_STEM}_distribution.png\",\n+        f\"{OUTPUT_STEM}_chunk_manifest.csv\",\n+        f\"{OUTPUT_STEM}_validation.json\",\n+        \"debug/raw/*.html\",\n+        \"debug/raw/*.txt\",\n+    ]\n+    for pattern in patterns:\n+        for path in OUTPUT_DIR.glob(pattern):\n+            if path.is_file():\n+                path.unlink()\n+\n+\n+def save_text(path: Path, text: str) -> Path:\n+    path.parent.mkdir(parents=True, exist_ok=True)\n+    path.write_text(text, encoding=\"utf-8\", errors=\"ignore\")\n+    return path\n+\n+\n+def load_dotenv_credentials(env_path: Path) -> Dict[str, str]:\n+    creds: Dict[str, str] = {}\n+    if not env_path.exists():\n+        return creds\n+    for raw_line in env_path.read_text(encoding=\"utf-8\", errors=\"ignore\").splitlines():\n+        line = raw_line.strip()\n+        if not line or line.startswith(\"#\") or \"=\" not in line:\n+            continue\n+        key, value = line.split(\"=\", 1)\n+        creds[key.strip()] = value.strip().strip('\"').strip(\"'\")\n+    return creds\n+\n+\n+def resolve_credentials(username: Optional[str] = None, password: Optional[str] = None) -> Tuple[str, str, str]:\n+    env_file_creds = load_dotenv_credentials(ENV_PATH)\n+    env_user = os.environ.get(\"HINET_USERNAME\")\n+    env_pass = os.environ.get(\"HINET_PASSWORD\")\n+    resolved_user = username or env_user or env_file_creds.get(\"HINET_USERNAME\")\n+    resolved_pass = password or env_pass or env_file_creds.get(\"HINET_PASSWORD\")\n+    if username or password:\n+        source = \"programmatic_override\"\n+    elif env_user or env_pass:\n+        source = \"environment\"\n+    else:\n+        source = \".env\"\n+    if not resolved_user or not resolved_pass:\n+        raise RuntimeError(f\"Missing Hi-net credentials. Checked programmatic overrides, environment variables, and {ENV_PATH}\")\n+    return resolved_user, resolved_pass, source\n+\n+\n+def build_chunks(start: date, end_exclusive: date, max_days: int) -> List[Tuple[date, date]]:\n+    if end_exclusive <= start:\n+        raise ValueError(f\"Invalid half-open interval: {start} to {end_exclusive}\")\n+    chunks: List[Tuple[date, date]] = []\n+    current = start\n+    while current < end_exclusive:\n+        nxt = min(current + timedelta(days=max_days), end_exclusive)\n+        chunks.append((current, nxt))\n+        current = nxt\n+    return chunks\n+\n+\n+def build_session() -> requests.Session:\n+    session = requests.Session()\n+    retry = Retry(\n+        total=MAX_ATTEMPTS,\n+        connect=MAX_ATTEMPTS,\n+        read=MAX_ATTEMPTS,\n+        status=MAX_ATTEMPTS,\n+        backoff_factor=BACKOFF_BASE_SECONDS,\n+        status_forcelist=(429, 500, 502, 503, 504),\n+        allowed_methods=frozenset([\"GET\", \"POST\"]),\n+        raise_on_status=False,\n+        respect_retry_after_header=True,\n+    )\n+    adapter = HTTPAdapter(max_retries=retry, pool_connections=4, pool_maxsize=4)\n+    session.mount(\"https://\", adapter)\n+    session.mount(\"http://\", adapter)\n+    session.headers.update({\"User-Agent\": USER_AGENT})\n+    return session\n+\n+\n+def request_with_backoff(session: requests.Session, method: str, url: str, *, data: Optional[Dict[str, str]] = None) -> Tuple[requests.Response, int]:\n+    last_exc: Optional[BaseException] = None\n+    for attempt in range(1, MAX_ATTEMPTS + 1):\n+        try:\n+            response = session.request(method, url, data=data, timeout=TIMEOUT_SECONDS, allow_redirects=True)\n+            if response.status_code < 500 and response.status_code not in (429,):\n+                return response, attempt\n+            last_exc = RuntimeError(f\"HTTP {response.status_code}\")\n+        except Exception as exc:  # requests exceptions plus unexpected transport failures\n+            last_exc = exc\n+        if attempt < MAX_ATTEMPTS:\n+            sleep_seconds = min(60.0, BACKOFF_BASE_SECONDS * (2 ** (attempt - 1)))\n+            log(f\"{method} {url} attempt {attempt} failed ({last_exc}); retrying in {sleep_seconds:.1f}s\")\n+            time.sleep(sleep_seconds)\n+    raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\n+\n+\n+def response_text(response: requests.Response) -> str:\n+    if not response.encoding:\n+        response.encoding = response.apparent_encoding or \"utf-8\"\n+    return response.text\n+\n+\n+def response_looks_like_login_page(text: str) -> bool:\n+    lowered = text.lower()\n+    markers = [\"login page for registered users\", \"user name\", \"password\", \"auth_un\", \"auth_pw\"]\n+    return \"welcome\" not in lowered and sum(marker in lowered for marker in markers) >= 2\n+\n+\n+def extract_form_inputs(html_text: str) -> Dict[str, str]:\n+    inputs: Dict[str, str] = {}\n+    for match in re.finditer(r\"<input\\b[^>]*>\", html_text, flags=re.I):\n+        tag = match.group(0)\n+        name_match = re.search(r\"name=[\\\"']([^\\\"']+)[\\\"']\", tag, flags=re.I)\n+        if not name_match:\n+            continue\n+        value_match = re.search(r\"value=[\\\"']([^\\\"']*)[\\\"']\", tag, flags=re.I)\n+        inputs[name_match.group(1)] = unescape(value_match.group(1)) if value_match else \"\"\n+    return inputs\n+\n+\n+def infer_auth_form_action(html_text: str) -> str:\n+    form_match = re.search(r\"<form[^>]*name=[\\\"']auth[\\\"'][^>]*action=[\\\"']([^\\\"']+)[\\\"']\", html_text, flags=re.I)\n+    if not form_match:\n+        form_match = re.search(r\"<form[^>]*action=[\\\"']([^\\\"']+)[\\\"']\", html_text, flags=re.I)\n+    return form_match.group(1) if form_match else \"./?LANG=en\"\n+\n+\n+def login(session: requests.Session, username: str, password: str, debug_raw_dir: Path) -> None:\n+    log(\"Fetching Hi-net login page\")\n+    get_resp, _ = request_with_backoff(session, \"GET\", LOGIN_URL)\n+    login_page = response_text(get_resp)\n+    login_page_path = save_text(debug_raw_dir / \"login_page.html\", login_page)\n+    if get_resp.status_code >= 400:\n+        raise RuntimeError(f\"Login page request returned HTTP {get_resp.status_code}; saved response to {login_page_path}\")\n+\n+    payload = extract_form_inputs(login_page)\n+    payload[\"auth_un\"] = username\n+    payload[\"auth_pw\"] = password\n+    payload.setdefault(\"LANG\", \"en\")\n+    action = infer_auth_form_action(login_page)\n+    login_post_url = requests.compat.urljoin(LOGIN_URL, action)\n+\n+    log(\"Posting Hi-net login form (credential values suppressed)\")\n+    post_resp, _ = request_with_backoff(session, \"POST\", login_post_url, data=payload)\n+    login_response = response_text(post_resp)\n+    login_response_path = save_text(debug_raw_dir / \"login_response.html\", login_response)\n+    if post_resp.status_code >= 400:\n+        raise RuntimeError(f\"Login POST returned HTTP {post_resp.status_code}; saved response to {login_response_path}\")\n+    if response_looks_like_login_page(login_response):\n+        raise RuntimeError(f\"Hi-net login appears to have failed; saved response to {login_response_path}\")\n+    auth_markers = (\"welcome\", \"logout\", \"/auth/jma/\", \"jma unified hypocenter\")\n+    if not any(marker in login_response.lower() for marker in auth_markers):\n+        raise RuntimeError(f\"Login response did not contain an authenticated marker; saved response to {login_response_path}\")\n+\n+    verify_resp, _ = request_with_backoff(session, \"GET\", CATALOG_URL)\n+    verify_text = response_text(verify_resp)\n+    verify_path = save_text(debug_raw_dir / \"catalog_verify.html\", verify_text)\n+    if verify_resp.status_code >= 400:\n+        raise RuntimeError(f\"Catalog verification returned HTTP {verify_resp.status_code}; saved response to {verify_path}\")\n+    if response_looks_like_login_page(verify_text):\n+        raise RuntimeError(f\"Catalog verification redirected to login page; saved response to {verify_path}\")\n+    if \"jma unified hypocenter\" not in verify_text.lower() and \"origin time\" not in verify_text.lower():\n+        raise RuntimeError(f\"Catalog verification page was not recognized; saved response to {verify_path}\")\n+    log(\"Hi-net authentication and catalog verification succeeded\")\n+\n+\n+def build_catalog_payload(chunk_start: date, chunk_end_exclusive: date) -> Dict[str, str]:\n+    span_days = (chunk_end_exclusive - chunk_start).days\n+    if span_days <= 0 or span_days > MAX_CHUNK_DAYS:\n+        raise ValueError(f\"Invalid JMA chunk span {span_days} days for {chunk_start} to {chunk_end_exclusive}\")\n+    return {\n+        \"LANG\": \"en\",\n+        \"list_span\": str(span_days),\n+        \"list_year\": f\"{chunk_start.year:04d}\",\n+        \"list_month\": f\"{chunk_start.month:02d}\",\n+        \"list_day\": f\"{chunk_start.day:02d}\",\n+    }\n+\n+\n+def html_to_text(html_text: str) -> str:\n+    text = re.sub(r\"(?is)<script.*?>.*?</script>\", \" \", html_text)\n+    text = re.sub(r\"(?is)<style.*?>.*?</style>\", \" \", text)\n+    text = re.sub(r\"(?is)<br\\s*/?>\", \"\\n\", text)\n+    text = re.sub(r\"(?is)</tr>\", \"\\n\", text)\n+    text = re.sub(r\"(?is)</p>\", \"\\n\", text)\n+    text = re.sub(r\"(?is)<[^>]+>\", \" \", text)\n+    text = unescape(text).replace(\"\\r\", \"\\n\")\n+    return re.sub(r\"\\n{2,}\", \"\\n\", text)\n+\n+\n+def extract_pre_blocks(html_text: str) -> List[str]:\n+    blocks = re.findall(r\"(?is)<pre[^>]*>(.*?)</pre>\", html_text)\n+    return [unescape(block).replace(\"\\r\", \"\\n\") for block in blocks if block.strip()]\n+\n+\n+def parse_mag_field(field: str) -> Optional[str]:\n+    match = re.search(r\"[-+]?\\d+(?:\\.\\d+)?\", field)\n+    return match.group(0) if match else None\n+\n+\n+def parse_fixed_width_event_line(line: str) -> Optional[Dict[str, str]]:\n+    \"\"\"Parse one JMA table event row using fixed column locations.\n+\n+    Table header in the Hi-net response is:\n+    -----Origin Time--------OTerr---Lat---LatErr---Long--LonErr---Dep--DepErr-Mag...\n+    Required fields occupy stable positions in the monospaced table.  A regex\n+    fallback is retained only for rows with small spacing variations; no comma\n+    splitting is used.\n+    \"\"\"\n+    if not re.match(r\"^\\s*20\\d{2}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\", line):\n+        return None\n+    padded = line.rstrip(\"\\n\") + \" \" * 100\n+    fixed = {\n+        \"datetime\": padded[0:22].strip(),\n+        \"lat\": padded[30:38].strip(),\n+        \"lon\": padded[45:53].strip(),\n+        \"dep\": padded[61:68].strip(),\n+        \"mag\": parse_mag_field(padded[74:86]),\n+    }\n+    try:\n+        pd.to_datetime(fixed[\"datetime\"], errors=\"raise\")\n+        float(fixed[\"lat\"])\n+        float(fixed[\"lon\"])\n+        float(fixed[\"dep\"])\n+        if fixed[\"mag\"] is None:\n+            raise ValueError(\"missing magnitude\")\n+        float(fixed[\"mag\"])\n+        return fixed  # type: ignore[return-value]\n+    except Exception:\n+        pattern = re.compile(\n+            r\"^\\s*(20\\d{2}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?)\"\n+            r\"\\s+[-+]?\\d+(?:\\.\\d+)?\"\n+            r\"\\s+([-+]?\\d+(?:\\.\\d+)?)\"\n+            r\"\\s+[-+]?\\d+(?:\\.\\d+)?\"\n+            r\"\\s+([-+]?\\d+(?:\\.\\d+)?)\"\n+            r\"\\s+[-+]?\\d+(?:\\.\\d+)?\"\n+            r\"\\s+([-+]?\\d+(?:\\.\\d+)?)\"\n+            r\"\\s+[-+]?\\d+(?:\\.\\d+)?\"\n+            r\"\\s+([-+]?\\d+(?:\\.\\d+)?)[A-Za-z]?\\b\"\n+        )\n+        match = pattern.match(line)\n+        if not match:\n+            return None\n+        return {\n+            \"datetime\": match.group(1),\n+            \"lat\": match.group(2),\n+            \"lon\": match.group(3),\n+            \"dep\": match.group(4),\n+            \"mag\": match.group(5),\n+        }\n+\n+\n+def page_is_recognizable_catalog(text: str) -> bool:\n+    lowered = text.lower()\n+    plain = html_to_text(text).lower()\n+    # Treat a response as a valid zero-row catalog only when it contains an\n+    # explicit no-data marker.  Generic JMA/form pages are not sufficient: if\n+    # the fixed-width table structure changes or the request is rejected, the\n+    # original response must be saved and surfaced as a parse failure.\n+    return \"no data\" in plain or \"not found\" in plain or \"no hypocenter\" in plain\n+\n+\n+def parse_catalog_response(text: str, debug_failure_path: Path) -> Tuple[pd.DataFrame, str, str]:\n+    candidate_blocks = extract_pre_blocks(text)\n+    candidate_blocks.append(html_to_text(text))\n+    records: List[Dict[str, str]] = []\n+    saw_header = False\n+    for block in candidate_blocks:\n+        if \"Origin Time\" in block or \"Origin Time\" in html_to_text(block):\n+            saw_header = True\n+        for line in block.splitlines():\n+            rec = parse_fixed_width_event_line(line)\n+            if rec is not None:\n+                records.append(rec)\n+    if records:\n+        df = pd.DataFrame.from_records(records, columns=ASPECT_COLUMNS).drop_duplicates().reset_index(drop=True)\n+        return df, \"parsed\", \"ok\"\n+    if saw_header or page_is_recognizable_catalog(text):\n+        empty = pd.DataFrame(columns=ASPECT_COLUMNS)\n+        return empty, \"valid_zero_rows\", \"recognized catalog response with no event rows\"\n+    saved = save_text(debug_failure_path, text)\n+    raise RuntimeError(f\"Unable to parse HTML/text catalog response; saved original response to {saved}\")\n+\n+\n+def request_chunk(\n+    session: requests.Session,\n+    chunk_index: int,\n+    chunk_start: date,\n+    chunk_end_exclusive: date,\n+    raw_dir: Optional[Path],\n+    debug_raw_dir: Path,\n+) -> Tuple[pd.DataFrame, ChunkRecord]:\n+    payload = build_catalog_payload(chunk_start, chunk_end_exclusive)\n+    submitted_end = chunk_end_exclusive - timedelta(days=1)\n+    raw_path = \"\"\n+    debug_path = \"\"\n+    log(f\"Requesting chunk {chunk_index:03d}: [{chunk_start}, {chunk_end_exclusive}) span={payload['list_span']} days\")\n+    resp, attempts = request_with_backoff(session, \"POST\", CATALOG_URL, data=payload)\n+    text = response_text(resp)\n+    response_bytes = len(text.encode(\"utf-8\", errors=\"ignore\"))\n+    if raw_dir is not None:\n+        raw_dir.mkdir(parents=True, exist_ok=True)\n+        raw_file = raw_dir / f\"chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n+        raw_path = str(save_text(raw_file, text))\n+    if resp.status_code >= 400:\n+        fail_file = debug_raw_dir / f\"http_error_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n+        debug_path = str(save_text(fail_file, text))\n+        raise RuntimeError(f\"JMA chunk {chunk_index:03d} returned HTTP {resp.status_code}; saved response to {debug_path}\")\n+    if not text.strip():\n+        fail_file = debug_raw_dir / f\"empty_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.txt\"\n+        debug_path = str(save_text(fail_file, text))\n+        raise RuntimeError(f\"JMA chunk {chunk_index:03d} returned an empty response; saved response to {debug_path}\")\n+    if response_looks_like_login_page(text):\n+        fail_file = debug_raw_dir / f\"auth_lost_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n+        debug_path = str(save_text(fail_file, text))\n+        raise RuntimeError(f\"Authenticated session was lost for chunk {chunk_index:03d}; saved response to {debug_path}\")\n+\n+    fail_parse_file = debug_raw_dir / f\"parse_failure_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n+    df, parse_status, parse_message = parse_catalog_response(text, fail_parse_file)\n+\n+    dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\") if not df.empty else pd.Series(dtype=\"datetime64[ns]\")\n+    actual_min = \"\" if dt.dropna().empty else str(dt.min())\n+    actual_max = \"\" if dt.dropna().empty else str(dt.max())\n+    start_ts = pd.Timestamp(datetime.combine(chunk_start, datetime.min.time()))\n+    end_ts = pd.Timestamp(datetime.combine(chunk_end_exclusive, datetime.min.time()))\n+    if not dt.dropna().empty and ((dt.dropna() < start_ts).any() or (dt.dropna() >= end_ts).any()):\n+        fail_file = debug_raw_dir / f\"date_mismatch_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n+        debug_path = str(save_text(fail_file, text))\n+        raise RuntimeError(\n+            f\"JMA chunk {chunk_index:03d} returned dates outside requested half-open interval \"\n+            f\"[{chunk_start}, {chunk_end_exclusive}); actual range {actual_min} to {actual_max}; saved response to {debug_path}\"\n+        )\n+\n+    chunk_record = ChunkRecord(\n+        chunk_index=chunk_index,\n+        chunk_start_inclusive=chunk_start.isoformat(),\n+        chunk_end_exclusive=chunk_end_exclusive.isoformat(),\n+        submitted_list_year=payload[\"list_year\"],\n+        submitted_list_month=payload[\"list_month\"],\n+        submitted_list_day=payload[\"list_day\"],\n+        submitted_list_span_days=int(payload[\"list_span\"]),\n+        submitted_end_inclusive=submitted_end.isoformat(),\n+        status=\"success\",\n+        parse_status=parse_status,\n+        attempts=attempts,\n+        http_status=int(resp.status_code),\n+        response_bytes=response_bytes,\n+        parsed_rows=int(len(df)),\n+        actual_returned_datetime_min=actual_min,\n+        actual_returned_datetime_max=actual_max,\n+        retained_sanriku_rows=0,\n+        retained_sanriku_datetime_min=\"\",\n+        retained_sanriku_datetime_max=\"\",\n+        raw_file_path=raw_path,\n+        debug_file_path=debug_path,\n+        message=parse_message,\n+    )\n+    return df, chunk_record\n+\n+\n+def basic_numeric_time_clean(df: pd.DataFrame) -> pd.DataFrame:\n+    work = df.copy()\n+    for col in ASPECT_COLUMNS:\n+        if col not in work.columns:\n+            raise RuntimeError(f\"Parsed table is missing required column: {col}\")\n+    work = work[ASPECT_COLUMNS].copy()\n+    work[\"datetime\"] = pd.to_datetime(work[\"datetime\"], errors=\"coerce\")\n+    for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n+        work[col] = pd.to_numeric(work[col], errors=\"coerce\")\n+    return work\n+\n+\n+def clean_catalog(parsed_all: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, int]]:\n+    initial_rows = int(len(parsed_all))\n+    work = basic_numeric_time_clean(parsed_all)\n+    valid = work.dropna(subset=ASPECT_COLUMNS).copy()\n+    after_dropna = int(len(valid))\n+    time_start = pd.Timestamp(datetime.combine(START_DATE, datetime.min.time()))\n+    time_end = pd.Timestamp(datetime.combine(END_DATE_EXCLUSIVE, datetime.min.time()))\n+    valid = valid[(valid[\"datetime\"] >= time_start) & (valid[\"datetime\"] < time_end)].copy()\n+    after_time = int(len(valid))\n+    valid = valid[\n+        (valid[\"lat\"] >= LAT_MIN) & (valid[\"lat\"] <= LAT_MAX)\n+        & (valid[\"lon\"] >= LON_MIN) & (valid[\"lon\"] <= LON_MAX)\n+    ].copy()\n+    after_space = int(len(valid))\n+    valid = valid[(valid[\"dep\"] >= 0.0) & (valid[\"dep\"] <= 800.0) & (valid[\"mag\"] >= -5.0) & (valid[\"mag\"] <= 10.0)].copy()\n+    after_physical = int(len(valid))\n+    valid = valid.sort_values(\"datetime\").drop_duplicates(subset=ASPECT_COLUMNS).reset_index(drop=True)\n+    final_rows = int(len(valid))\n+    output = valid[ASPECT_COLUMNS].copy()\n+    output[\"datetime\"] = output[\"datetime\"].dt.strftime(\"%Y-%m-%d %H:%M:%S.%f\").str.rstrip(\"0\").str.rstrip(\".\")\n+    stats = {\n+        \"initial_parsed_rows\": initial_rows,\n+        \"rows_after_datetime_numeric_dropna\": after_dropna,\n+        \"rows_removed_invalid_datetime_or_numeric\": initial_rows - after_dropna,\n+        \"rows_after_time_filter\": after_time,\n+        \"rows_removed_outside_requested_time\": after_dropna - after_time,\n+        \"rows_after_sanriku_spatial_filter\": after_space,\n+        \"rows_removed_outside_sanriku_bounds\": after_time - after_space,\n+        \"rows_after_physical_sanity_filter\": after_physical,\n+        \"rows_removed_failed_physical_sanity\": after_space - after_physical,\n+        \"duplicates_removed\": after_physical - final_rows,\n+        \"final_rows\": final_rows,\n+    }\n+    return output, stats\n+\n+\n+def update_manifest_retained_ranges(manifest: List[ChunkRecord], parsed_all: pd.DataFrame) -> None:\n+    if parsed_all.empty or \"chunk_index\" not in parsed_all.columns:\n+        return\n+    work = basic_numeric_time_clean(parsed_all)\n+    work[\"chunk_index\"] = parsed_all[\"chunk_index\"].values\n+    time_start = pd.Timestamp(datetime.combine(START_DATE, datetime.min.time()))\n+    time_end = pd.Timestamp(datetime.combine(END_DATE_EXCLUSIVE, datetime.min.time()))\n+    retained = work.dropna(subset=ASPECT_COLUMNS).copy()\n+    retained = retained[\n+        (retained[\"datetime\"] >= time_start) & (retained[\"datetime\"] < time_end)\n+        & (retained[\"lat\"] >= LAT_MIN) & (retained[\"lat\"] <= LAT_MAX)\n+        & (retained[\"lon\"] >= LON_MIN) & (retained[\"lon\"] <= LON_MAX)\n+    ].copy()\n+    for rec in manifest:\n+        sub = retained[retained[\"chunk_index\"] == rec.chunk_index]\n+        rec.retained_sanriku_rows = int(len(sub))\n+        if not sub.empty:\n+            rec.retained_sanriku_datetime_min = str(sub[\"datetime\"].min())\n+            rec.retained_sanriku_datetime_max = str(sub[\"datetime\"].max())\n+\n+\n+def write_manifest(records: Sequence[ChunkRecord]) -> None:\n+    pd.DataFrame([asdict(r) for r in records]).to_csv(MANIFEST_PATH, index=False)\n+\n+\n+def validate_chunks(chunks: Sequence[Tuple[date, date]], manifest_df: pd.DataFrame) -> None:\n+    if len(chunks) != 48:\n+        raise RuntimeError(f\"Expected exactly 48 chunks for the fixed interval; got {len(chunks)}\")\n+    if chunks[0][0] != START_DATE or chunks[-1][1] != END_DATE_EXCLUSIVE:\n+        raise RuntimeError(f\"Chunk coverage mismatch: first={chunks[0]}, last={chunks[-1]}\")\n+    for i, (start, end) in enumerate(chunks):\n+        if (end - start).days > MAX_CHUNK_DAYS:\n+            raise RuntimeError(f\"Chunk {i+1} exceeds {MAX_CHUNK_DAYS} days: {start} to {end}\")\n+        if i > 0 and chunks[i - 1][1] != start:\n+            raise RuntimeError(f\"Chunks are not continuous at index {i+1}: previous end {chunks[i-1][1]}, current start {start}\")\n+    if len(manifest_df) != len(chunks):\n+        raise RuntimeError(f\"Manifest row count {len(manifest_df)} does not match chunk count {len(chunks)}\")\n+    if not (manifest_df[\"status\"] == \"success\").all():\n+        failed = manifest_df.loc[manifest_df[\"status\"] != \"success\", [\"chunk_index\", \"message\"]].to_dict(\"records\")\n+        raise RuntimeError(f\"One or more chunks failed: {failed}\")\n+\n+\n+def validate_cleaned_csv(csv_path: Path) -> Tuple[pd.DataFrame, Dict[str, object]]:\n+    if not csv_path.exists():\n+        raise RuntimeError(f\"Cleaned catalog CSV was not written: {csv_path}\")\n+    df = pd.read_csv(csv_path)\n+    if list(df.columns) != ASPECT_COLUMNS:\n+        raise RuntimeError(f\"CSV schema mismatch: expected {ASPECT_COLUMNS}, got {list(df.columns)}\")\n+    parsed_dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\")\n+    numeric = df[[\"lat\", \"lon\", \"dep\", \"mag\"]].apply(pd.to_numeric, errors=\"coerce\")\n+    if parsed_dt.isna().any() or numeric.isna().any().any():\n+        raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")\n+    check = pd.concat([parsed_dt.rename(\"datetime\"), numeric], axis=1)\n+    if check.isna().any().any():\n+        raise RuntimeError(\"Cleaned CSV contains missing values\")\n+    time_start = pd.Timestamp(datetime.combine(START_DATE, datetime.min.time()))\n+    time_end = pd.Timestamp(datetime.combine(END_DATE_EXCLUSIVE, datetime.min.time()))\n+    if not ((check[\"datetime\"] >= time_start) & (check[\"datetime\"] < time_end)).all():\n+        raise RuntimeError(\"Cleaned CSV contains rows outside the requested half-open time interval\")\n+    if not (check[\"lat\"].between(LAT_MIN, LAT_MAX, inclusive=\"both\") & check[\"lon\"].between(LON_MIN, LON_MAX, inclusive=\"both\")).all():\n+        raise RuntimeError(\"Cleaned CSV contains rows outside Sanriku inclusive spatial bounds\")\n+    if not check[\"datetime\"].is_monotonic_increasing:\n+        raise RuntimeError(\"Cleaned CSV is not sorted by datetime\")\n+    if df.duplicated(subset=ASPECT_COLUMNS).any():\n+        raise RuntimeError(\"Cleaned CSV contains duplicate ASPECT rows\")\n+    stats: Dict[str, object] = {\n+        \"csv_rows\": int(len(df)),\n+        \"datetime_min\": \"\" if df.empty else str(check[\"datetime\"].min()),\n+        \"datetime_max\": \"\" if df.empty else str(check[\"datetime\"].max()),\n+        \"lat_min\": None if df.empty else float(check[\"lat\"].min()),\n+        \"lat_max\": None if df.empty else float(check[\"lat\"].max()),\n+        \"lon_min\": None if df.empty else float(check[\"lon\"].min()),\n+        \"lon_max\": None if df.empty else float(check[\"lon\"].max()),\n+        \"dep_min\": None if df.empty else float(check[\"dep\"].min()),\n+        \"dep_max\": None if df.empty else float(check[\"dep\"].max()),\n+        \"mag_min\": None if df.empty else float(check[\"mag\"].min()),\n+        \"mag_max\": None if df.empty else float(check[\"mag\"].max()),\n+    }\n+    return df, stats\n+\n+\n+def save_distribution_figure(cleaned_df: pd.DataFrame, figure_path: Path) -> None:\n+    if list(cleaned_df.columns) != ASPECT_COLUMNS:\n+        raise RuntimeError(\"Distribution figure input does not have the exact ASPECT schema\")\n+    plot_df = cleaned_df.copy()\n+    plot_df[\"datetime\"] = pd.to_datetime(plot_df[\"datetime\"], errors=\"raise\")\n+    for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n+        plot_df[col] = pd.to_numeric(plot_df[col], errors=\"raise\")\n+\n+    fig, axes = plt.subplots(1, 2, figsize=(12, 5.2), dpi=160)\n+    ax_map, ax_time = axes\n+    if plot_df.empty:\n+        ax_map.text(0.5, 0.5, \"No retained Sanriku events\\nafter valid parsing and filtering\", ha=\"center\", va=\"center\", transform=ax_map.transAxes)\n+        ax_map.set_xlim(LON_MIN - 0.2, LON_MAX + 0.2)\n+        ax_map.set_ylim(LAT_MIN - 0.2, LAT_MAX + 0.2)\n+        ax_time.text(0.5, 0.5, \"N = 0\", ha=\"center\", va=\"center\", transform=ax_time.transAxes)\n+    else:\n+        mag = plot_df[\"mag\"]\n+        if float(mag.max()) == float(mag.min()):\n+            sizes = pd.Series(25.0, index=plot_df.index)\n+        else:\n+            sizes = 12.0 + 50.0 * (mag - mag.min()) / (mag.max() - mag.min())\n+        sc = ax_map.scatter(\n+            plot_df[\"lon\"], plot_df[\"lat\"], c=plot_df[\"dep\"], s=sizes,\n+            cmap=\"viridis_r\", alpha=0.78, edgecolors=\"black\", linewidths=0.15,\n+        )\n+        cbar = fig.colorbar(sc, ax=ax_map, pad=0.015)\n+        cbar.set_label(\"Depth (km)\")\n+        daily_counts = plot_df.set_index(\"datetime\").resample(\"7D\").size()\n+        ax_time.bar(daily_counts.index, daily_counts.values, width=5.5, color=\"tab:blue\", alpha=0.75)\n+        ax_time.xaxis.set_major_locator(mdates.MonthLocator(interval=2))\n+        ax_time.xaxis.set_major_formatter(mdates.DateFormatter(\"%Y-%m\"))\n+        ax_time.tick_params(axis=\"x\", rotation=30)\n+        ax_time.set_ylabel(\"Events per 7 days\")\n+        ax_time.set_title(f\"Temporal distribution, N={len(plot_df)}\")\n+        annotation = (\n+            f\"Mag: {plot_df['mag'].min():.1f} to {plot_df['mag'].max():.1f}\\n\"\n+            f\"Depth: {plot_df['dep'].min():.1f} to {plot_df['dep'].max():.1f} km\"\n+        )\n+        ax_map.text(0.02, 0.02, annotation, transform=ax_map.transAxes, va=\"bottom\", ha=\"left\", fontsize=8,\n+                    bbox={\"facecolor\": \"white\", \"alpha\": 0.75, \"edgecolor\": \"none\"})\n+\n+    rect_lon = [LON_MIN, LON_MAX, LON_MAX, LON_MIN, LON_MIN]\n+    rect_lat = [LAT_MIN, LAT_MIN, LAT_MAX, LAT_MAX, LAT_MIN]\n+    ax_map.plot(rect_lon, rect_lat, color=\"red\", lw=1.3, label=\"Sanriku bounds\")\n+    ax_map.set_xlim(LON_MIN - 0.2, LON_MAX + 0.2)\n+    ax_map.set_ylim(LAT_MIN - 0.2, LAT_MAX + 0.2)\n+    ax_map.set_xlabel(\"Longitude (°E)\")\n+    ax_map.set_ylabel(\"Latitude (°N)\")\n+    ax_map.set_title(\"Sanriku JMA unified hypocenter catalog\")\n+    ax_map.grid(True, alpha=0.3)\n+    ax_map.legend(loc=\"upper right\", fontsize=8)\n+    ax_time.set_xlabel(\"Origin date\")\n+    ax_time.grid(True, alpha=0.3)\n+    fig.suptitle(f\"Hi-net/JMA catalog: {START_DATE} <= t < {END_DATE_EXCLUSIVE}\", fontsize=11)\n+    fig.tight_layout()\n+    figure_path.parent.mkdir(parents=True, exist_ok=True)\n+    fig.savefig(figure_path, bbox_inches=\"tight\")\n+    plt.close(fig)\n+\n+\n+def main(username: Optional[str] = None, password: Optional[str] = None, raw_dir: Optional[str] = None) -> None:\n+    dirs = ensure_output_dirs()\n+    clear_stale_outputs()\n+    user, passwd, credential_source = resolve_credentials(username=username, password=password)\n+    chunks = build_chunks(START_DATE, END_DATE_EXCLUSIVE, MAX_CHUNK_DAYS)\n+    log(\n+        f\"Starting Sanriku JMA workflow: interval=[{START_DATE}, {END_DATE_EXCLUSIVE}), \"\n+        f\"chunks={len(chunks)}, bounds=lat[{LAT_MIN}, {LAT_MAX}], lon[{LON_MIN}, {LON_MAX}], output={OUTPUT_DIR}\"\n+    )\n+    if len(chunks) != 48:\n+        raise RuntimeError(f\"Internal chunking error: expected 48 chunks, got {len(chunks)}\")\n+    raw_save_dir = Path(raw_dir).resolve() if raw_dir else None\n+    if raw_save_dir is not None:\n+        raw_save_dir.mkdir(parents=True, exist_ok=True)\n+        log(f\"Raw chunk responses will be saved to {raw_save_dir}\")\n+\n+    session = build_session()\n+    login(session, user, passwd, dirs[\"debug_raw\"])\n+\n+    manifest: List[ChunkRecord] = []\n+    parsed_frames: List[pd.DataFrame] = []\n+    try:\n+        for idx, (chunk_start, chunk_end) in enumerate(chunks, start=1):\n+            try:\n+                chunk_df, record = request_chunk(session, idx, chunk_start, chunk_end, raw_save_dir, dirs[\"debug_raw\"])\n+                chunk_df = chunk_df.copy()\n+                chunk_df[\"chunk_index\"] = idx\n+                parsed_frames.append(chunk_df)\n+                manifest.append(record)\n+                write_manifest(manifest)\n+                log(f\"Chunk {idx:03d} complete: parsed_rows={record.parsed_rows}, actual_range={record.actual_returned_datetime_min} to {record.actual_returned_datetime_max}\")\n+            except Exception as exc:\n+                payload = build_catalog_payload(chunk_start, chunk_end)\n+                failed = ChunkRecord(\n+                    chunk_index=idx,\n+                    chunk_start_inclusive=chunk_start.isoformat(),\n+                    chunk_end_exclusive=chunk_end.isoformat(),\n+                    submitted_list_year=payload[\"list_year\"],\n+                    submitted_list_month=payload[\"list_month\"],\n+                    submitted_list_day=payload[\"list_day\"],\n+                    submitted_list_span_days=int(payload[\"list_span\"]),\n+                    submitted_end_inclusive=(chunk_end - timedelta(days=1)).isoformat(),\n+                    status=\"failed\",\n+                    parse_status=\"failed\",\n+                    attempts=MAX_ATTEMPTS,\n+                    http_status=0,\n+                    response_bytes=0,\n+                    parsed_rows=0,\n+                    actual_returned_datetime_min=\"\",\n+                    actual_returned_datetime_max=\"\",\n+                    retained_sanriku_rows=0,\n+                    retained_sanriku_datetime_min=\"\",\n+                    retained_sanriku_datetime_max=\"\",\n+                    raw_file_path=\"\",\n+                    debug_file_path=\"\",\n+                    message=str(exc),\n+                )\n+                manifest.append(failed)\n+                write_manifest(manifest)\n+                raise\n+    finally:\n+        if manifest:\n+            write_manifest(manifest)\n+\n+    parsed_all = pd.concat(parsed_frames, ignore_index=True) if parsed_frames else pd.DataFrame(columns=ASPECT_COLUMNS + [\"chunk_index\"])\n+    update_manifest_retained_ranges(manifest, parsed_all)\n+    write_manifest(manifest)\n+    manifest_df = pd.read_csv(MANIFEST_PATH)\n+    validate_chunks(chunks, manifest_df)\n+\n+    cleaned, cleaning_stats = clean_catalog(parsed_all)\n+    cleaned.to_csv(CSV_PATH, index=False)\n+    cleaned_for_plot, csv_stats = validate_cleaned_csv(CSV_PATH)\n+    save_distribution_figure(cleaned_for_plot, FIGURE_PATH)\n+    if not FIGURE_PATH.exists() or FIGURE_PATH.stat().st_size <= 0:\n+        raise RuntimeError(f\"Distribution figure was not generated correctly: {FIGURE_PATH}\")\n+\n+    validation = {\n+        \"status\": \"pass\",\n+        \"script_path\": str(SCRIPT_PATH),\n+        \"output_dir\": str(OUTPUT_DIR),\n+        \"credential_source\": credential_source,\n+        \"login_url\": LOGIN_URL,\n+        \"catalog_url\": CATALOG_URL,\n+        \"start_date_inclusive\": START_DATE.isoformat(),\n+        \"end_date_exclusive\": END_DATE_EXCLUSIVE.isoformat(),\n+        \"requested_record_coverage_note\": \"Requests cover 2025-06-01 through 2026-05-01 using half-open chunks.\",\n+        \"lat_bounds_inclusive\": [LAT_MIN, LAT_MAX],\n+        \"lon_bounds_inclusive\": [LON_MIN, LON_MAX],\n+        \"max_chunk_days\": MAX_CHUNK_DAYS,\n+        \"total_chunks_requested\": len(chunks),\n+        \"chunk_boundaries\": [{\"start_inclusive\": s.isoformat(), \"end_exclusive\": e.isoformat(), \"span_days\": (e - s).days} for s, e in chunks],\n+        \"chunk_manifest_path\": str(MANIFEST_PATH),\n+        \"all_chunk_status_counts\": manifest_df[\"status\"].value_counts(dropna=False).to_dict(),\n+        \"parse_status_counts\": manifest_df[\"parse_status\"].value_counts(dropna=False).to_dict(),\n+        \"total_parsed_rows\": int(len(parsed_all)),\n+        \"cleaning_stats\": cleaning_stats,\n+        \"csv_path\": str(CSV_PATH),\n+        \"csv_validation\": csv_stats,\n+        \"figure_path\": str(FIGURE_PATH),\n+        \"figure_exists\": True,\n+        \"figure_source_csv\": str(CSV_PATH),\n+        \"figure_plotted_event_count\": int(len(cleaned_for_plot)),\n+        \"empty_catalog_note\": \"\" if len(cleaned_for_plot) else \"Final catalog has zero rows after valid parsing/cleaning; see cleaning_stats and per-chunk manifest.\",\n+    }\n+    save_text(VALIDATION_PATH, json.dumps(validation, indent=2, ensure_ascii=False))\n+    log(f\"Workflow passed. CSV: {CSV_PATH}\")\n+    log(f\"Figure: {FIGURE_PATH}\")\n+    log(f\"Manifest: {MANIFEST_PATH}\")\n+    log(f\"Validation summary: {VALIDATION_PATH}\")\n+\n+\n+if __name__ == \"__main__\":\n+    try:\n+        main()\n+    except Exception:\n+        print(traceback.format_exc(), flush=True)\n+        sys.exit(1)",
+                "diff_truncated": false,
+                "metadata": {
+                    "after_exists": true,
+                    "after_size_bytes": 36406,
+                    "after_truncated": false,
+                    "before_exists": false,
+                    "before_size_bytes": null,
+                    "before_truncated": false
+                },
+                "outcome": "script_execution_failed",
+                "round_index": 1,
+                "runtime_action_after": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "runtime_action_before": null,
+                "runtime_observation_after": {
+                    "debug_context": {
+                        "artifact_validations": [
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_page.html",
+                                "readable": true,
+                                "size_bytes": 6663,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_response.html",
+                                "readable": true,
+                                "size_bytes": 7208,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            }
+                        ],
+                        "artifact_validations_truncated": false,
+                        "core_error": "RuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError...[truncated]",
+                        "error_lines": [
+                            "[2026-09-11T17:23:59Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErr...[truncated]",
+                            "[2026-09-11T17:31:03Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErr...[truncated]",
+                            "[2026-09-11T17:38:12Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 4 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErr...[truncated]",
+                            "Traceback (most recent call last):",
+                            "raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")",
+                            "RuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError...[truncated]"
+                        ],
+                        "external_log_signals": [],
+                        "external_log_signals_truncated": false,
+                        "failure_type": "timeout",
+                        "last_observed_line": "RuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError...[truncated]",
+                        "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_0.txt",
+                        "log_size_bytes": 3432,
+                        "missing_outputs": [],
+                        "optional_outputs": [],
+                        "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                        "output_inventory": [
+                            {
+                                "path": "debug",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "debug/raw",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "debug/raw/login_page.html",
+                                "size_bytes": 6663,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw/login_response.html",
+                                "size_bytes": 7208,
+                                "type": "file"
+                            }
+                        ],
+                        "output_inventory_truncated": false,
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "recommended_outputs": [],
+                        "required_outputs": [],
+                        "returncode": 1,
+                        "stage": "script_execution",
+                        "task_name": "01_download_validate_sanriku_jma_catalog",
+                        "traceback_tail": "Traceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 767, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 670, in main\n    login(session, user, passwd, dirs[\"debug_raw\"])\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 258, in login\n    verify_resp, _ = request_with_backoff(session, \"GET\", CATALOG_URL)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 197, in request_with_backo...[truncated]\n    raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\nRuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError...[truncated]\n",
+                        "warning_lines": []
+                    },
+                    "diagnosis": {
+                        "evidence": [
+                            "Timeout"
+                        ],
+                        "failed": true,
+                        "failure_type": "timeout",
+                        "metadata": {
+                            "retry_decision": {
+                                "max_additional_attempts": 1,
+                                "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                                "retry_allowed": true,
+                                "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                            },
+                            "returncode": 1
+                        },
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "retry_allowed": true,
+                        "severity": "fatal",
+                        "source_files": [
+                            "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_0.txt"
+                        ],
+                        "stage": "script_execution"
+                    },
+                    "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_0.txt",
+                    "message": "Script exited with a non-zero return code.",
+                    "metadata": {
+                        "failure_evidence": {
+                            "items": [],
+                            "omitted_candidates": 0,
+                            "searched_roots": [
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog"
+                            ],
+                            "truncated": false
+                        },
+                        "raw_bug": "[2026-09-11T17:12:23Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:12:23Z] Fetching Hi-net login page\n[2026-09-11T17:14:22Z] Posting Hi-net login form (credential values suppressed)\n[2026-09-11T17:16:57Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out.); retrying in 2.0s\n[2026-09-11T17:23:59Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a097e80>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 4.0s\n[2026-09-11T17:31:03Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0a6580>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 8.0s\n[2026-09-11T17:38:12Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 4 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe09fd61f0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 16.0s\nTraceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 767, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 670, in main\n    login(session, user, passwd, dirs[\"debug_raw\"])\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 258, in login\n    verify_resp, _ = request_with_backoff(session, \"GET\", CATALOG_URL)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 197, in request_with_backoff\n    raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\nRuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0a60d0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))\n\n"
+                    },
+                    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "preflight": {
+                        "checks": [
+                            {
+                                "evidence": [],
+                                "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                                "name": "script_exists",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Executable is available: /usr/bin/env python3",
+                                "name": "runtime_command_startable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Target runtime py_compile passed.",
+                                "name": "py_compile",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                                "name": "subprocess_timeout_contract",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "name": "output_dir_writable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime Python version: 3.9",
+                                "name": "runtime_python_version",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime annotation compatibility check passed.",
+                                "name": "runtime_annotation_compatibility",
+                                "passed": true
+                            }
+                        ],
+                        "diagnosis": null,
+                        "passed": true,
+                        "recommended_action": ""
+                    },
+                    "result_check_diagnosis": null,
+                    "returncode": 1,
+                    "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "task_name": "01_download_validate_sanriku_jma_catalog",
+                    "timestamp": "2026-09-11T17:45:30.624451+00:00"
+                },
+                "script_hash_after": "cc196598ecac7da1064a62669d98503fadde843facf12fee67b392835c3960a7",
+                "script_hash_before": null,
+                "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "timestamp": "2026-09-11T17:12:01.438004+00:00"
+            },
+            {
+                "changed": true,
+                "changed_lines": 33,
+                "coding_response_summary": "Fixed the blocking timeout issue identified in the failure log.\n\nChanges made:\n\n- Removed the separate post-login `GET` verification request to `jmalist.php`, which was the concrete failing step.\n- The first required bounded catalog `POST` chunk request now serves as catalog-access verification instead.\n- Removed layered `urllib3.Retry` from the session adapter because it multiplied each explicit retry attempt into additional hidden retries, causing very long stalls.\n- Kept the explicit retry/backoff logic in `request_with_backoff()`.\n- Rechecked the script with `py_compile`; syntax validation passed.",
+                "diff_summary": "--- before/01_download_validate_sanriku_jma_catalog.py\n+++ after/01_download_validate_sanriku_jma_catalog.py\n@@ -32,7 +32,6 @@\n import pandas as pd\n import requests\n from requests.adapters import HTTPAdapter\n-from urllib3.util.retry import Retry\n \n SCRIPT_PATH = Path(__file__).resolve()\n OUTPUT_DIR = Path(\"<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\").resolve()\n@@ -162,18 +161,10 @@\n \n def build_session() -> requests.Session:\n     session = requests.Session()\n-    retry = Retry(\n-        total=MAX_ATTEMPTS,\n-        connect=MAX_ATTEMPTS,\n-        read=MAX_ATTEMPTS,\n-        status=MAX_ATTEMPTS,\n-        backoff_factor=BACKOFF_BASE_SECONDS,\n-        status_forcelist=(429, 500, 502, 503, 504),\n-        allowed_methods=frozenset([\"GET\", \"POST\"]),\n-        raise_on_status=False,\n-        respect_retry_after_header=True,\n-    )\n-    adapter = HTTPAdapter(max_retries=retry, pool_connections=4, pool_maxsize=4)\n+    # Keep retry control in request_with_backoff().  Layering urllib3 retries\n+    # under the explicit retry loop multiplied each apparent attempt into several\n+    # connection attempts, causing long stalls when the catalog endpoint was slow.\n+    adapter = HTTPAdapter(max_retries=0, pool_connections=4, pool_maxsize=4)\n     session.mount(\"https://\", adapter)\n     session.mount(\"http://\", adapter)\n     session.headers.update({\"User-Agent\": USER_AGENT})\n@@ -255,16 +246,12 @@\n     if not any(marker in login_response.lower() for marker in auth_markers):\n         raise RuntimeError(f\"Login response did not contain an authenticated marker; saved response to {login_response_path}\")\n \n-    verify_resp, _ = request_with_backoff(session, \"GET\", CATALOG_URL)\n-    verify_text = response_text(verify_resp)\n-    verify_path = save_text(debug_raw_dir / \"catalog_verify.html\", verify_text)\n-    if verify_resp.status_code >= 400:\n-        raise RuntimeError(f\"Catalog verification returned HTTP {verify_resp.status_code}; saved response to {verify_path}\")\n-    if response_looks_like_login_page(verify_text):\n-        raise RuntimeError(f\"Catalog verification redirected to login page; saved response to {verify_path}\")\n-    if \"jma unified hypocenter\" not in verify_text.lower() and \"origin time\" not in verify_text.lower():\n-        raise RuntimeError(f\"Catalog verification page was not recognized; saved response to {verify_path}\")\n-    log(\"Hi-net authentication and catalog verification succeeded\")\n+    # Do not perform a separate catalog-page GET here.  In recent runs that GET\n+    # repeatedly timed out even after successful authentication, while the actual\n+    # required catalog access is the bounded POST request for each <=7-day chunk.\n+    # The first chunk POST below therefore serves as the catalog-session\n+    # verification and yields chunk-specific debug evidence if it fails.\n+    log(\"Hi-net authentication succeeded; catalog access will be verified by the first bounded chunk POST\")\n \n \n def build_catalog_payload(chunk_start: date, chunk_end_exclusive: date) -> Dict[str, str]:",
+                "diff_truncated": false,
+                "metadata": {
+                    "after_exists": true,
+                    "after_size_bytes": 35942,
+                    "after_truncated": false,
+                    "before_exists": true,
+                    "before_size_bytes": 36406,
+                    "before_truncated": false
+                },
+                "outcome": "script_execution_failed",
+                "round_index": 2,
+                "runtime_action_after": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "runtime_action_before": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "runtime_observation_after": {
+                    "debug_context": {
+                        "artifact_validations": [
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "csv",
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "readable": true,
+                                "size_bytes": 997,
+                                "summary": {
+                                    "max_columns": 22,
+                                    "rows_sampled": 3
+                                },
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_page.html",
+                                "readable": true,
+                                "size_bytes": 6663,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_response.html",
+                                "readable": true,
+                                "size_bytes": 7208,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            }
+                        ],
+                        "artifact_validations_truncated": false,
+                        "core_error": "RuntimeError: POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErro...[truncated]",
+                        "error_lines": [
+                            "[2026-09-11T17:50:40Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutEr...[truncated]",
+                            "[2026-09-11T17:53:39Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 4 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutEr...[truncated]",
+                            "Traceback (most recent call last):",
+                            "raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")",
+                            "RuntimeError: POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErro...[truncated]"
+                        ],
+                        "external_log_signals": [],
+                        "external_log_signals_truncated": false,
+                        "failure_type": "timeout",
+                        "last_observed_line": "RuntimeError: POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErro...[truncated]",
+                        "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_1.txt",
+                        "log_size_bytes": 3745,
+                        "missing_outputs": [],
+                        "optional_outputs": [],
+                        "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                        "output_inventory": [
+                            {
+                                "path": "debug",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "size_bytes": 997,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "debug/raw/login_page.html",
+                                "size_bytes": 6663,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw/login_response.html",
+                                "size_bytes": 7208,
+                                "type": "file"
+                            }
+                        ],
+                        "output_inventory_truncated": false,
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "recommended_outputs": [],
+                        "required_outputs": [],
+                        "returncode": 1,
+                        "stage": "script_execution",
+                        "task_name": "01_download_validate_sanriku_jma_catalog",
+                        "traceback_tail": "Traceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 754, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 664, in main\n    chunk_df, record = request_chunk(session, idx, chunk_start, chunk_end, raw_save_dir, dirs[\"debug_raw\"])\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 388, in request_chunk\n    resp, attempts = request_with_backoff(session, \"POST\", CATALOG_URL, data=payload)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 188, in request_with_backo...[truncated]\n    raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\nRuntimeError: POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutErro...[truncated]\n",
+                        "warning_lines": []
+                    },
+                    "diagnosis": {
+                        "evidence": [
+                            "timeout"
+                        ],
+                        "failed": true,
+                        "failure_type": "timeout",
+                        "metadata": {
+                            "retry_decision": {
+                                "max_additional_attempts": 1,
+                                "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                                "retry_allowed": true,
+                                "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                            },
+                            "returncode": 1
+                        },
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "retry_allowed": true,
+                        "severity": "fatal",
+                        "source_files": [
+                            "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_1.txt"
+                        ],
+                        "stage": "script_execution"
+                    },
+                    "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_1.txt",
+                    "message": "Script exited with a non-zero return code.",
+                    "metadata": {
+                        "failure_evidence": {
+                            "items": [],
+                            "omitted_candidates": 0,
+                            "searched_roots": [
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog"
+                            ],
+                            "truncated": false
+                        },
+                        "raw_bug": "[2026-09-11T17:46:45Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:46:45Z] Fetching Hi-net login page\n[2026-09-11T17:46:58Z] Posting Hi-net login form (credential values suppressed)\n[2026-09-11T17:46:59Z] Hi-net authentication succeeded; catalog access will be verified by the first bounded chunk POST\n[2026-09-11T17:46:59Z] Requesting chunk 001: [2025-06-01, 2025-06-08) span=7 days\n[2026-09-11T17:47:32Z] Chunk 001 complete: parsed_rows=5359, actual_range=2025-06-01 00:03:37.790000 to 2025-06-07 23:58:37.320000\n[2026-09-11T17:47:32Z] Requesting chunk 002: [2025-06-08, 2025-06-15) span=7 days\n[2026-09-11T17:49:38Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out. (read timeout=60)); retrying in 2.0s\n[2026-09-11T17:50:40Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0f1070>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 4.0s\n[2026-09-11T17:52:31Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out.); retrying in 8.0s\n[2026-09-11T17:53:39Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 4 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0f1430>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 16.0s\nTraceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 754, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 664, in main\n    chunk_df, record = request_chunk(session, idx, chunk_start, chunk_end, raw_save_dir, dirs[\"debug_raw\"])\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 388, in request_chunk\n    resp, attempts = request_with_backoff(session, \"POST\", CATALOG_URL, data=payload)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 188, in request_with_backoff\n    raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\nRuntimeError: POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0f1340>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))\n\n"
+                    },
+                    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "preflight": {
+                        "checks": [
+                            {
+                                "evidence": [],
+                                "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                                "name": "script_exists",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Executable is available: /usr/bin/env python3",
+                                "name": "runtime_command_startable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Target runtime py_compile passed.",
+                                "name": "py_compile",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                                "name": "subprocess_timeout_contract",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "name": "output_dir_writable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime Python version: 3.9 (cached)",
+                                "name": "runtime_python_version",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime annotation compatibility check passed.",
+                                "name": "runtime_annotation_compatibility",
+                                "passed": true
+                            }
+                        ],
+                        "diagnosis": null,
+                        "passed": true,
+                        "recommended_action": ""
+                    },
+                    "result_check_diagnosis": null,
+                    "returncode": 1,
+                    "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "task_name": "01_download_validate_sanriku_jma_catalog",
+                    "timestamp": "2026-09-11T17:54:58.315391+00:00"
+                },
+                "script_hash_after": "5354a36b213e08e34c8fb3d1d705b4f04be4097f63a320b0694fb07c8e49a79c",
+                "script_hash_before": "cc196598ecac7da1064a62669d98503fadde843facf12fee67b392835c3960a7",
+                "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "timestamp": "2026-09-11T17:46:21.423953+00:00"
+            },
+            {
+                "changed": true,
+                "changed_lines": 24,
+                "coding_response_summary": "Fixed the blocking chunk-download timeout failure.\n\nChanges made:\n\n- Increased request robustness for slow Hi-net/JMA chunk responses:\n  - connect timeout: `30s`\n  - read timeout: `240s`\n  - retry attempts: `8`\n  - backoff base: `3s`\n- Added `Connection: close` to avoid reusing stale HTTPS connections after slow responses/timeouts.\n- Added a short pause between successful chunk requests to reduce service pressure.\n- Retry logs now include the active connect/read timeout settings for clearer evidence.\n- Revalidated syntax with `py_compile`; the script compiles successfully.",
+                "diff_summary": "--- before/01_download_validate_sanriku_jma_catalog.py\n+++ after/01_download_validate_sanriku_jma_catalog.py\n@@ -45,9 +45,12 @@\n MAX_CHUNK_DAYS = 7\n LAT_MIN, LAT_MAX = 38.50, 42.50\n LON_MIN, LON_MAX = 141.00, 144.50\n-TIMEOUT_SECONDS = 60\n-MAX_ATTEMPTS = 5\n-BACKOFF_BASE_SECONDS = 2.0\n+CONNECT_TIMEOUT_SECONDS = 30\n+READ_TIMEOUT_SECONDS = 240\n+REQUEST_TIMEOUT = (CONNECT_TIMEOUT_SECONDS, READ_TIMEOUT_SECONDS)\n+MAX_ATTEMPTS = 8\n+BACKOFF_BASE_SECONDS = 3.0\n+CHUNK_REQUEST_PAUSE_SECONDS = 3.0\n USER_AGENT = \"TRACE-Sanriku-JMA-catalog-workflow/1.0 (+requests)\"\n ASPECT_COLUMNS = [\"datetime\", \"lat\", \"lon\", \"dep\", \"mag\"]\n \n@@ -167,7 +170,9 @@\n     adapter = HTTPAdapter(max_retries=0, pool_connections=4, pool_maxsize=4)\n     session.mount(\"https://\", adapter)\n     session.mount(\"http://\", adapter)\n-    session.headers.update({\"User-Agent\": USER_AGENT})\n+    # The Hi-net endpoint is more reliable when requests do not try to reuse a\n+    # stale HTTPS connection after a slow response or timeout.\n+    session.headers.update({\"User-Agent\": USER_AGENT, \"Connection\": \"close\"})\n     return session\n \n \n@@ -175,15 +180,18 @@\n     last_exc: Optional[BaseException] = None\n     for attempt in range(1, MAX_ATTEMPTS + 1):\n         try:\n-            response = session.request(method, url, data=data, timeout=TIMEOUT_SECONDS, allow_redirects=True)\n+            response = session.request(method, url, data=data, timeout=REQUEST_TIMEOUT, allow_redirects=True)\n             if response.status_code < 500 and response.status_code not in (429,):\n                 return response, attempt\n             last_exc = RuntimeError(f\"HTTP {response.status_code}\")\n         except Exception as exc:  # requests exceptions plus unexpected transport failures\n             last_exc = exc\n         if attempt < MAX_ATTEMPTS:\n-            sleep_seconds = min(60.0, BACKOFF_BASE_SECONDS * (2 ** (attempt - 1)))\n-            log(f\"{method} {url} attempt {attempt} failed ({last_exc}); retrying in {sleep_seconds:.1f}s\")\n+            sleep_seconds = min(90.0, BACKOFF_BASE_SECONDS * (2 ** (attempt - 1)))\n+            log(\n+                f\"{method} {url} attempt {attempt} failed ({last_exc}); \"\n+                f\"retrying in {sleep_seconds:.1f}s with timeout=(connect {CONNECT_TIMEOUT_SECONDS}s, read {READ_TIMEOUT_SECONDS}s)\"\n+            )\n             time.sleep(sleep_seconds)\n     raise RuntimeError(f\"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}\")\n \n@@ -668,6 +676,8 @@\n                 manifest.append(record)\n                 write_manifest(manifest)\n                 log(f\"Chunk {idx:03d} complete: parsed_rows={record.parsed_rows}, actual_range={record.actual_returned_datetime_min} to {record.actual_returned_datetime_max}\")\n+                if idx < len(chunks) and CHUNK_REQUEST_PAUSE_SECONDS > 0:\n+                    time.sleep(CHUNK_REQUEST_PAUSE_SECONDS)\n             except Exception as exc:\n                 payload = build_catalog_payload(chunk_start, chunk_end)\n                 failed = ChunkRecord(",
+                "diff_truncated": false,
+                "metadata": {
+                    "after_exists": true,
+                    "after_size_bytes": 36506,
+                    "after_truncated": false,
+                    "before_exists": true,
+                    "before_size_bytes": 35942,
+                    "before_truncated": false
+                },
+                "outcome": "script_execution_failed",
+                "round_index": 3,
+                "runtime_action_after": {
+                    "action_type": "repeated_failure",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Use the debug chain memory before editing again.",
+                        "Make a different targeted fix for the current raw evidence."
+                    ],
+                    "reason": "The same failed stage has appeared 3 times in diagnosis history.",
+                    "recommended_action": "use_debug_chain_memory_for_repeated_stage_failure",
+                    "retry_allowed": false
+                },
+                "runtime_action_before": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "runtime_observation_after": {
+                    "debug_context": {
+                        "artifact_validations": [
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "csv",
+                                "path": "Snet_catalog_20250601_20260502.csv",
+                                "readable": true,
+                                "size_bytes": 1427513,
+                                "summary": {
+                                    "max_columns": 5,
+                                    "rows_sampled": 10000
+                                },
+                                "valid": true,
+                                "warnings": [
+                                    "row_count_sampled"
+                                ]
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "csv",
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "readable": true,
+                                "size_bytes": 9938,
+                                "summary": {
+                                    "max_columns": 22,
+                                    "rows_sampled": 49
+                                },
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_page.html",
+                                "readable": true,
+                                "size_bytes": 6663,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_response.html",
+                                "readable": true,
+                                "size_bytes": 7208,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            }
+                        ],
+                        "artifact_validations_truncated": false,
+                        "core_error": "RuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values",
+                        "error_lines": [
+                            "[2026-09-11T17:57:13Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5afbf40>, 'Connect...[truncated]",
+                            "[2026-09-11T17:58:41Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae7df0>, 'Connect...[truncated]",
+                            "[2026-09-11T18:09:03Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae...[truncated]",
+                            "[2026-09-11T18:09:40Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ab...[truncated]",
+                            "[2026-09-11T18:47:02Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed ((\"Connection broken: ConnectionResetError(104, 'Connection reset by peer')\", ConnectionResetError(104, 'Connection reset by peer'))); retrying in 3.0s with timeout=(connect 30s, read 240s)",
+                            "Traceback (most recent call last):",
+                            "raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")",
+                            "RuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values"
+                        ],
+                        "external_log_signals": [],
+                        "external_log_signals_truncated": false,
+                        "failure_type": "timeout",
+                        "last_observed_line": "RuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values",
+                        "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_2.txt",
+                        "log_size_bytes": 14283,
+                        "missing_outputs": [],
+                        "optional_outputs": [],
+                        "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                        "output_inventory": [
+                            {
+                                "path": "debug",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502.csv",
+                                "size_bytes": 1427513,
+                                "type": "file"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "size_bytes": 9938,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "debug/raw/login_page.html",
+                                "size_bytes": 6663,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw/login_response.html",
+                                "size_bytes": 7208,
+                                "type": "file"
+                            }
+                        ],
+                        "output_inventory_truncated": false,
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "recommended_outputs": [],
+                        "required_outputs": [],
+                        "returncode": 1,
+                        "stage": "script_execution",
+                        "task_name": "01_download_validate_sanriku_jma_catalog",
+                        "traceback_tail": "Traceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 764, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 722, in main\n    cleaned_for_plot, csv_stats = validate_cleaned_csv(CSV_PATH)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 558, in validate_cleaned_csv\n    raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")\nRuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values\n",
+                        "warning_lines": []
+                    },
+                    "diagnosis": {
+                        "evidence": [
+                            "Timeout"
+                        ],
+                        "failed": true,
+                        "failure_type": "timeout",
+                        "metadata": {
+                            "retry_decision": {
+                                "max_additional_attempts": 1,
+                                "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                                "retry_allowed": true,
+                                "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                            },
+                            "returncode": 1
+                        },
+                        "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                        "retry_allowed": true,
+                        "severity": "fatal",
+                        "source_files": [
+                            "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_2.txt"
+                        ],
+                        "stage": "script_execution"
+                    },
+                    "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_2.txt",
+                    "message": "Script exited with a non-zero return code.",
+                    "metadata": {
+                        "failure_evidence": {
+                            "items": [],
+                            "omitted_candidates": 0,
+                            "searched_roots": [
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog"
+                            ],
+                            "truncated": false
+                        },
+                        "raw_bug": "[2026-09-11T17:56:43Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:56:43Z] Fetching Hi-net login page\n[2026-09-11T17:57:13Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5afbf40>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 3.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T17:58:05Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out. (read timeout=30)); retrying in 6.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T17:58:41Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae7df0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 12.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T17:59:05Z] Posting Hi-net login form (credential values suppressed)\n[2026-09-11T17:59:44Z] Hi-net authentication succeeded; catalog access will be verified by the first bounded chunk POST\n[2026-09-11T17:59:44Z] Requesting chunk 001: [2025-06-01, 2025-06-08) span=7 days\n[2026-09-11T18:08:30Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out.); retrying in 3.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T18:09:03Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae7880>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 6.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T18:09:40Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5aba610>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 12.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T18:16:35Z] Chunk 001 complete: parsed_rows=2317, actual_range=2025-06-01 00:03:37.790000 to 2025-06-03 23:55:51.510000\n[2026-09-11T18:16:38Z] Requesting chunk 002: [2025-06-08, 2025-06-15) span=7 days\n[2026-09-11T18:18:08Z] Chunk 002 complete: parsed_rows=5530, actual_range=2025-06-08 00:01:06.020000 to 2025-06-11 23:59:12.200000\n[2026-09-11T18:18:11Z] Requesting chunk 003: [2025-06-15, 2025-06-22) span=7 days\n[2026-09-11T18:19:39Z] Chunk 003 complete: parsed_rows=5706, actual_range=2025-06-15 00:02:13.200000 to 2025-06-21 23:59:31.300000\n[2026-09-11T18:19:42Z] Requesting chunk 004: [2025-06-22, 2025-06-29) span=7 days\n[2026-09-11T18:20:00Z] Chunk 004 complete: parsed_rows=7191, actual_range=2025-06-22 00:05:23.110000 to 2025-06-28 23:59:31.400000\n[2026-09-11T18:20:03Z] Requesting chunk 005: [2025-06-29, 2025-07-06) span=7 days\n[2026-09-11T18:20:20Z] Chunk 005 complete: parsed_rows=8596, actual_range=2025-06-29 00:00:47.140000 to 2025-07-05 23:59:38.680000\n[2026-09-11T18:20:23Z] Requesting chunk 006: [2025-07-06, 2025-07-13) span=7 days\n[2026-09-11T18:20:53Z] Chunk 006 complete: parsed_rows=7189, actual_range=2025-07-06 00:02:22.470000 to 2025-07-12 23:54:31.350000\n[2026-09-11T18:20:56Z] Requesting chunk 007: [2025-07-13, 2025-07-20) span=7 days\n[2026-09-11T18:21:39Z] Chunk 007 complete: parsed_rows=5074, actual_range=2025-07-13 00:00:16.450000 to 2025-07-19 23:57:56.800000\n[2026-09-11T18:21:42Z] Requesting chunk 008: [2025-07-20, 2025-07-27) span=7 days\n[2026-09-11T18:21:52Z] Chunk 008 complete: parsed_rows=5250, actual_range=2025-07-20 00:01:44.930000 to 2025-07-26 23:58:09.750000\n[2026-09-11T18:21:55Z] Requesting chunk 009: [2025-07-27, 2025-08-03) span=7 days\n[2026-09-11T18:22:07Z] Chunk 009 complete: parsed_rows=4486, actual_range=2025-07-27 00:00:05.450000 to 2025-08-02 23:59:59.710000\n[2026-09-11T18:22:10Z] Requesting chunk 010: [2025-08-03, 2025-08-10) span=7 days\n[2026-09-11T18:23:24Z] Chunk 010 complete: parsed_rows=5812, actual_range=2025-08-03 00:00:16.970000 to 2025-08-09 23:59:10.750000\n[2026-09-11T18:23:27Z] Requesting chunk 011: [2025-08-10, 2025-08-17) span=7 days\n[2026-09-11T18:24:07Z] Chunk 011 complete: parsed_rows=5104, actual_range=2025-08-10 00:01:05.710000 to 2025-08-16 23:59:20.920000\n[2026-09-11T18:24:10Z] Requesting chunk 012: [2025-08-17, 2025-08-24) span=7 days\n[2026-09-11T18:24:32Z] Chunk 012 complete: parsed_rows=5852, actual_range=2025-08-17 00:00:10.210000 to 2025-08-23 23:59:33.520000\n[2026-09-11T18:24:35Z] Requesting chunk 013: [2025-08-24, 2025-08-31) span=7 days\n[2026-09-11T18:25:02Z] Chunk 013 complete: parsed_rows=5469, actual_range=2025-08-24 00:01:36.700000 to 2025-08-30 23:59:33.350000\n[2026-09-11T18:25:05Z] Requesting chunk 014: [2025-08-31, 2025-09-07) span=7 days\n[2026-09-11T18:25:47Z] Chunk 014 complete: parsed_rows=4458, actual_range=2025-08-31 00:01:55.380000 to 2025-09-06 23:58:37.120000\n[2026-09-11T18:25:50Z] Requesting chunk 015: [2025-09-07, 2025-09-14) span=7 days\n[2026-09-11T18:26:20Z] Chunk 015 complete: parsed_rows=6106, actual_range=2025-09-07 00:01:04.580000 to 2025-09-13 23:51:55.360000\n[2026-09-11T18:26:23Z] Requesting chunk 016: [2025-09-14, 2025-09-21) span=7 days\n[2026-09-11T18:26:44Z] Chunk 016 complete: parsed_rows=5095, actual_range=2025-09-14 00:01:20.570000 to 2025-09-20 23:58:39.170000\n[2026-09-11T18:26:47Z] Requesting chunk 017: [2025-09-21, 2025-09-28) span=7 days\n[2026-09-11T18:29:25Z] Chunk 017 complete: parsed_rows=4260, actual_range=2025-09-21 00:03:02.690000 to 2025-09-27 23:59:11.860000\n[2026-09-11T18:29:28Z] Requesting chunk 018: [2025-09-28, 2025-10-05) span=7 days\n[2026-09-11T18:30:01Z] Chunk 018 complete: parsed_rows=5421, actual_range=2025-09-28 00:00:53.210000 to 2025-10-04 23:59:01.500000\n[2026-09-11T18:30:04Z] Requesting chunk 019: [2025-10-05, 2025-10-12) span=7 days\n[2026-09-11T18:30:24Z] Chunk 019 complete: parsed_rows=4758, actual_range=2025-10-05 00:01:12.490000 to 2025-10-11 23:58:40.900000\n[2026-09-11T18:30:27Z] Requesting chunk 020: [2025-10-12, 2025-10-19) span=7 days\n[2026-09-11T18:30:38Z] Chunk 020 complete: parsed_rows=3995, actual_range=2025-10-12 00:02:33.630000 to 2025-10-18 23:50:21.330000\n[2026-09-11T18:30:41Z] Requesting chunk 021: [2025-10-19, 2025-10-26) span=7 days\n[2026-09-11T18:30:54Z] Chunk 021 complete: parsed_rows=3877, actual_range=2025-10-19 00:00:51.060000 to 2025-10-25 23:54:22.730000\n[2026-09-11T18:30:57Z] Requesting chunk 022: [2025-10-26, 2025-11-02) span=7 days\n[2026-09-11T18:31:13Z] Chunk 022 complete: parsed_rows=3930, actual_range=2025-10-26 00:05:46.940000 to 2025-11-01 23:53:14.260000\n[2026-09-11T18:31:16Z] Requesting chunk 023: [2025-11-02, 2025-11-09) span=7 days\n[2026-09-11T18:31:37Z] Chunk 023 complete: parsed_rows=5854, actual_range=2025-11-02 00:11:52.260000 to 2025-11-08 23:59:57.370000\n[2026-09-11T18:31:40Z] Requesting chunk 024: [2025-11-09, 2025-11-16) span=7 days\n[2026-09-11T18:32:45Z] Chunk 024 complete: parsed_rows=5849, actual_range=2025-11-09 00:00:34.310000 to 2025-11-15 23:58:50.520000\n[2026-09-11T18:32:48Z] Requesting chunk 025: [2025-11-16, 2025-11-23) span=7 days\n[2026-09-11T18:33:04Z] Chunk 025 complete: parsed_rows=4717, actual_range=2025-11-16 00:05:43.570000 to 2025-11-22 23:58:25.360000\n[2026-09-11T18:33:07Z] Requesting chunk 026: [2025-11-23, 2025-11-30) span=7 days\n[2026-09-11T18:33:34Z] Chunk 026 complete: parsed_rows=6338, actual_range=2025-11-23 00:02:56.740000 to 2025-11-29 23:59:50.580000\n[2026-09-11T18:33:37Z] Requesting chunk 027: [2025-11-30, 2025-12-07) span=7 days\n[2026-09-11T18:35:30Z] Chunk 027 complete: parsed_rows=6184, actual_range=2025-11-30 00:00:02.450000 to 2025-12-06 23:58:59.960000\n[2026-09-11T18:35:33Z] Requesting chunk 028: [2025-12-07, 2025-12-14) span=7 days\n[2026-09-11T18:36:47Z] Chunk 028 complete: parsed_rows=8139, actual_range=2025-12-07 00:03:35.250000 to 2025-12-12 23:59:28.070000\n[2026-09-11T18:36:50Z] Requesting chunk 029: [2025-12-14, 2025-12-21) span=7 days\n[2026-09-11T18:37:34Z] Chunk 029 complete: parsed_rows=5693, actual_range=2025-12-14 00:04:28.800000 to 2025-12-20 23:56:03.970000\n[2026-09-11T18:37:37Z] Requesting chunk 030: [2025-12-21, 2025-12-28) span=7 days\n[2026-09-11T18:39:15Z] Chunk 030 complete: parsed_rows=4387, actual_range=2025-12-21 00:02:24.780000 to 2025-12-27 23:59:39.480000\n[2026-09-11T18:39:18Z] Requesting chunk 031: [2025-12-28, 2026-01-04) span=7 days\n[2026-09-11T18:40:19Z] Chunk 031 complete: parsed_rows=5201, actual_range=2025-12-28 00:05:54.690000 to 2026-01-02 23:57:59.530000\n[2026-09-11T18:40:22Z] Requesting chunk 032: [2026-01-04, 2026-01-11) span=7 days\n[2026-09-11T18:47:02Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed ((\"Connection broken: ConnectionResetError(104, 'Connection reset by peer')\", ConnectionResetError(104, 'Connection reset by peer'))); retrying in 3.0s with timeout=(connect 30s, read 240s)\n[2026-09-11T18:47:58Z] Chunk 032 complete: parsed_rows=6979, actual_range=2026-01-04 00:00:41.150000 to 2026-01-09 23:58:34.850000\n[2026-09-11T18:48:01Z] Requesting chunk 033: [2026-01-11, 2026-01-18) span=7 days\n[2026-09-11T18:48:34Z] Chunk 033 complete: parsed_rows=5840, actual_range=2026-01-11 00:03:15.560000 to 2026-01-17 23:59:34.980000\n[2026-09-11T18:48:37Z] Requesting chunk 034: [2026-01-18, 2026-01-25) span=7 days\n[2026-09-11T18:48:54Z] Chunk 034 complete: parsed_rows=5531, actual_range=2026-01-18 00:00:10.030000 to 2026-01-24 23:59:42.900000\n[2026-09-11T18:48:57Z] Requesting chunk 035: [2026-01-25, 2026-02-01) span=7 days\n[2026-09-11T18:49:07Z] Chunk 035 complete: parsed_rows=5303, actual_range=2026-01-25 00:00:10.930000 to 2026-01-31 23:59:35.470000\n[2026-09-11T18:49:10Z] Requesting chunk 036: [2026-02-01, 2026-02-08) span=7 days\n[2026-09-11T18:49:20Z] Chunk 036 complete: parsed_rows=4179, actual_range=2026-02-01 00:01:06.350000 to 2026-02-07 23:58:37.870000\n[2026-09-11T18:49:23Z] Requesting chunk 037: [2026-02-08, 2026-02-15) span=7 days\n[2026-09-11T18:49:40Z] Chunk 037 complete: parsed_rows=4879, actual_range=2026-02-08 00:01:44 to 2026-02-14 23:59:44.300000\n[2026-09-11T18:49:43Z] Requesting chunk 038: [2026-02-15, 2026-02-22) span=7 days\n[2026-09-11T18:49:54Z] Chunk 038 complete: parsed_rows=5309, actual_range=2026-02-15 00:01:46.040000 to 2026-02-21 23:59:58.820000\n[2026-09-11T18:49:57Z] Requesting chunk 039: [2026-02-22, 2026-03-01) span=7 days\n[2026-09-11T18:50:09Z] Chunk 039 complete: parsed_rows=5548, actual_range=2026-02-22 00:00:06.830000 to 2026-02-28 23:58:56.550000\n[2026-09-11T18:50:12Z] Requesting chunk 040: [2026-03-01, 2026-03-08) span=7 days\n[2026-09-11T18:50:28Z] Chunk 040 complete: parsed_rows=5406, actual_range=2026-03-01 00:00:46.980000 to 2026-03-07 23:59:42.590000\n[2026-09-11T18:50:31Z] Requesting chunk 041: [2026-03-08, 2026-03-15) span=7 days\n[2026-09-11T18:50:50Z] Chunk 041 complete: parsed_rows=4181, actual_range=2026-03-08 00:01:06.560000 to 2026-03-14 23:59:59.780000\n[2026-09-11T18:50:53Z] Requesting chunk 042: [2026-03-15, 2026-03-22) span=7 days\n[2026-09-11T18:51:09Z] Chunk 042 complete: parsed_rows=6047, actual_range=2026-03-15 00:01:27.310000 to 2026-03-21 23:51:45.170000\n[2026-09-11T18:51:12Z] Requesting chunk 043: [2026-03-22, 2026-03-29) span=7 days\n[2026-09-11T18:51:24Z] Chunk 043 complete: parsed_rows=5587, actual_range=2026-03-22 00:00:23.240000 to 2026-03-28 23:59:53.720000\n[2026-09-11T18:51:27Z] Requesting chunk 044: [2026-03-29, 2026-04-05) span=7 days\n[2026-09-11T18:51:37Z] Chunk 044 complete: parsed_rows=4920, actual_range=2026-03-29 00:01:06.250000 to 2026-04-04 23:58:32.380000\n[2026-09-11T18:51:40Z] Requesting chunk 045: [2026-04-05, 2026-04-12) span=7 days\n[2026-09-11T18:51:58Z] Chunk 045 complete: parsed_rows=4537, actual_range=2026-04-05 00:01:42.760000 to 2026-04-11 23:56:55.390000\n[2026-09-11T18:52:01Z] Requesting chunk 046: [2026-04-12, 2026-04-19) span=7 days\n[2026-09-11T18:52:22Z] Chunk 046 complete: parsed_rows=5216, actual_range=2026-04-12 00:00:35.320000 to 2026-04-18 23:58:32.170000\n[2026-09-11T18:52:25Z] Requesting chunk 047: [2026-04-19, 2026-04-26) span=7 days\n[2026-09-11T18:54:02Z] Chunk 047 complete: parsed_rows=4162, actual_range=2026-04-19 00:00:02.600000 to 2026-04-21 23:59:57.820000\n[2026-09-11T18:54:05Z] Requesting chunk 048: [2026-04-26, 2026-05-02) span=6 days\n[2026-09-11T18:54:14Z] Chunk 048 complete: parsed_rows=5328, actual_range=2026-04-26 00:00:03.220000 to 2026-05-01 23:58:44.740000\nTraceback (most recent call last):\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 764, in <module>\n    main()\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 722, in main\n    cleaned_for_plot, csv_stats = validate_cleaned_csv(CSV_PATH)\n  File \"<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py\", line 558, in validate_cleaned_csv\n    raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")\nRuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values\n\n"
+                    },
+                    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "preflight": {
+                        "checks": [
+                            {
+                                "evidence": [],
+                                "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                                "name": "script_exists",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Executable is available: /usr/bin/env python3",
+                                "name": "runtime_command_startable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Target runtime py_compile passed.",
+                                "name": "py_compile",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                                "name": "subprocess_timeout_contract",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "name": "output_dir_writable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime Python version: 3.9 (cached)",
+                                "name": "runtime_python_version",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime annotation compatibility check passed.",
+                                "name": "runtime_annotation_compatibility",
+                                "passed": true
+                            }
+                        ],
+                        "diagnosis": null,
+                        "passed": true,
+                        "recommended_action": ""
+                    },
+                    "result_check_diagnosis": null,
+                    "returncode": 1,
+                    "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "task_name": "01_download_validate_sanriku_jma_catalog",
+                    "timestamp": "2026-09-11T18:54:19.369281+00:00"
+                },
+                "script_hash_after": "b3b24503bc551f7038f3becd054fcb9e960e03320d7c338569199456deb2e5e5",
+                "script_hash_before": "5354a36b213e08e34c8fb3d1d705b4f04be4097f63a320b0694fb07c8e49a79c",
+                "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "timestamp": "2026-09-11T17:56:22.665074+00:00"
+            },
+            {
+                "changed": true,
+                "changed_lines": 11,
+                "coding_response_summary": "Fixed the blocking CSV validation failure.\n\nRoot cause:\n- The cleaned CSV contains a valid mix of JMA origin-time strings with and without fractional seconds.\n- `pd.to_datetime()` was inferring one strict Series-wide format, so valid whole-second timestamps such as `2025-06-01 10:46:29` were incorrectly coerced to `NaT`.\n\nChanges made:\n- Added `format=\"mixed\"` to all relevant pandas datetime parsing calls:\n  - chunk actual-date range parsing\n  - cleaning datetime conversion\n  - cleaned CSV validation\n  - plotting datetime conversion\n- Added a short explanatory comment in the cleaning function.\n- Rechecked syntax with `py_compile`; the script compiles successfully.",
+                "diff_summary": "--- before/01_download_validate_sanriku_jma_catalog.py\n+++ after/01_download_validate_sanriku_jma_catalog.py\n@@ -416,7 +416,7 @@\n     fail_parse_file = debug_raw_dir / f\"parse_failure_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n     df, parse_status, parse_message = parse_catalog_response(text, fail_parse_file)\n \n-    dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\") if not df.empty else pd.Series(dtype=\"datetime64[ns]\")\n+    dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\", format=\"mixed\") if not df.empty else pd.Series(dtype=\"datetime64[ns]\")\n     actual_min = \"\" if dt.dropna().empty else str(dt.min())\n     actual_max = \"\" if dt.dropna().empty else str(dt.max())\n     start_ts = pd.Timestamp(datetime.combine(chunk_start, datetime.min.time()))\n@@ -462,7 +462,10 @@\n         if col not in work.columns:\n             raise RuntimeError(f\"Parsed table is missing required column: {col}\")\n     work = work[ASPECT_COLUMNS].copy()\n-    work[\"datetime\"] = pd.to_datetime(work[\"datetime\"], errors=\"coerce\")\n+    # JMA origin times mix whole-second and fractional-second strings.  Pandas 2\n+    # infers one strict format for a Series unless format=\"mixed\" is specified,\n+    # which caused valid whole-second rows to become NaT during validation.\n+    work[\"datetime\"] = pd.to_datetime(work[\"datetime\"], errors=\"coerce\", format=\"mixed\")\n     for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n         work[col] = pd.to_numeric(work[col], errors=\"coerce\")\n     return work\n@@ -552,7 +555,7 @@\n     df = pd.read_csv(csv_path)\n     if list(df.columns) != ASPECT_COLUMNS:\n         raise RuntimeError(f\"CSV schema mismatch: expected {ASPECT_COLUMNS}, got {list(df.columns)}\")\n-    parsed_dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\")\n+    parsed_dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\", format=\"mixed\")\n     numeric = df[[\"lat\", \"lon\", \"dep\", \"mag\"]].apply(pd.to_numeric, errors=\"coerce\")\n     if parsed_dt.isna().any() or numeric.isna().any().any():\n         raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")\n@@ -589,7 +592,7 @@\n     if list(cleaned_df.columns) != ASPECT_COLUMNS:\n         raise RuntimeError(\"Distribution figure input does not have the exact ASPECT schema\")\n     plot_df = cleaned_df.copy()\n-    plot_df[\"datetime\"] = pd.to_datetime(plot_df[\"datetime\"], errors=\"raise\")\n+    plot_df[\"datetime\"] = pd.to_datetime(plot_df[\"datetime\"], errors=\"raise\", format=\"mixed\")\n     for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n         plot_df[col] = pd.to_numeric(plot_df[col], errors=\"raise\")\n ",
+                "diff_truncated": false,
+                "metadata": {
+                    "after_exists": true,
+                    "after_size_bytes": 36807,
+                    "after_truncated": false,
+                    "before_exists": true,
+                    "before_size_bytes": 36506,
+                    "before_truncated": false
+                },
+                "outcome": "success",
+                "round_index": 4,
+                "runtime_action_after": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "runtime_action_before": {
+                    "action_type": "repeated_failure",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Use the debug chain memory before editing again.",
+                        "Make a different targeted fix for the current raw evidence."
+                    ],
+                    "reason": "The same failed stage has appeared 3 times in diagnosis history.",
+                    "recommended_action": "use_debug_chain_memory_for_repeated_stage_failure",
+                    "retry_allowed": false
+                },
+                "runtime_observation_after": {
+                    "debug_context": {
+                        "artifact_validations": [
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "csv",
+                                "path": "Snet_catalog_20250601_20260502.csv",
+                                "readable": true,
+                                "size_bytes": 1568553,
+                                "summary": {
+                                    "max_columns": 5,
+                                    "rows_sampled": 10000
+                                },
+                                "valid": true,
+                                "warnings": [
+                                    "row_count_sampled"
+                                ]
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "csv",
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "readable": true,
+                                "size_bytes": 9941,
+                                "summary": {
+                                    "max_columns": 22,
+                                    "rows_sampled": 49
+                                },
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "image",
+                                "path": "Snet_catalog_20250601_20260502_distribution.png",
+                                "readable": true,
+                                "size_bytes": 767505,
+                                "summary": {
+                                    "height": 823,
+                                    "width": 1898
+                                },
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "json",
+                                "path": "Snet_catalog_20250601_20260502_validation.json",
+                                "readable": true,
+                                "size_bytes": 8356,
+                                "summary": {
+                                    "keys": 26,
+                                    "root_type": "dict"
+                                },
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_page.html",
+                                "readable": true,
+                                "size_bytes": 6663,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            },
+                            {
+                                "empty": false,
+                                "error": null,
+                                "kind": "binary",
+                                "path": "debug/raw/login_response.html",
+                                "readable": true,
+                                "size_bytes": 7208,
+                                "summary": {},
+                                "valid": true,
+                                "warnings": []
+                            }
+                        ],
+                        "artifact_validations_truncated": false,
+                        "core_error": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                        "error_lines": [],
+                        "external_log_signals": [],
+                        "external_log_signals_truncated": false,
+                        "failure_type": null,
+                        "last_observed_line": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                        "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+                        "log_size_bytes": 11929,
+                        "missing_outputs": [],
+                        "optional_outputs": [],
+                        "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                        "output_inventory": [
+                            {
+                                "path": "debug",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502.csv",
+                                "size_bytes": 1568553,
+                                "type": "file"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                                "size_bytes": 9941,
+                                "type": "file"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502_distribution.png",
+                                "size_bytes": 767505,
+                                "type": "file"
+                            },
+                            {
+                                "path": "Snet_catalog_20250601_20260502_validation.json",
+                                "size_bytes": 8356,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw",
+                                "type": "dir"
+                            },
+                            {
+                                "path": "debug/raw/login_page.html",
+                                "size_bytes": 6663,
+                                "type": "file"
+                            },
+                            {
+                                "path": "debug/raw/login_response.html",
+                                "size_bytes": 7208,
+                                "type": "file"
+                            }
+                        ],
+                        "output_inventory_truncated": false,
+                        "recommended_action": null,
+                        "recommended_outputs": [],
+                        "required_outputs": [],
+                        "returncode": 0,
+                        "stage": "result_check_input",
+                        "task_name": "01_download_validate_sanriku_jma_catalog",
+                        "traceback_tail": "",
+                        "warning_lines": []
+                    },
+                    "diagnosis": null,
+                    "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+                    "message": "Results meet the task requirements. The workflow successfully authenticated/downloaded the JMA catalog in 48 bounded chunks, parsed and cleaned the records, spatially/time-filtered them to the Sanriku study region, validated the final catalog, and produced a clear distribution figure.",
+                    "metadata": {},
+                    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "preflight": {
+                        "checks": [
+                            {
+                                "evidence": [],
+                                "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                                "name": "script_exists",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Executable is available: /usr/bin/env python3",
+                                "name": "runtime_command_startable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Target runtime py_compile passed.",
+                                "name": "py_compile",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                                "name": "subprocess_timeout_contract",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                                "name": "output_dir_writable",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime Python version: 3.9 (cached)",
+                                "name": "runtime_python_version",
+                                "passed": true
+                            },
+                            {
+                                "evidence": [],
+                                "message": "Runtime annotation compatibility check passed.",
+                                "name": "runtime_annotation_compatibility",
+                                "passed": true
+                            }
+                        ],
+                        "diagnosis": null,
+                        "passed": true,
+                        "recommended_action": ""
+                    },
+                    "result_check_diagnosis": null,
+                    "returncode": 0,
+                    "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                    "stage": "task_success",
+                    "status": "success",
+                    "task_name": "01_download_validate_sanriku_jma_catalog",
+                    "timestamp": "2026-09-11T19:13:04.103501+00:00"
+                },
+                "script_hash_after": "1989049a32593bfb61b1e3aca2161bb8a476d500697c67149f89d82281829817",
+                "script_hash_before": "b3b24503bc551f7038f3becd054fcb9e960e03320d7c338569199456deb2e5e5",
+                "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "timestamp": "2026-09-11T18:55:07.601459+00:00"
+            }
+        ],
+        "coding_plan_context": {
+            "compact_chars": 12437,
+            "mode": "full_experiment_plan",
+            "original_chars": 12437,
+            "task_name": "01_download_validate_sanriku_jma_catalog"
+        },
+        "coding_tool_usage": {
+            "analysis_calls": {},
+            "executor_calls": {
+                "bash_executor": 5,
+                "python_executor": 12
+            },
+            "file_reads": {
+                "<CASE_ROOT>/00_catalog_download.py": {
+                    "count": 1,
+                    "tools": {
+                        "read_file": 1
+                    }
+                },
+                "<CASE_ROOT>/backup-v1/v1/run/00_catalog_download/exp_run/outputs/01_hinet_jma_catalog_pipeline/debug/raw/catalog_verify.html": {
+                    "count": 2,
+                    "tools": {
+                        "read_file": 2
+                    }
+                },
+                "<CASE_ROOT>/backup-v1/v1/run/00_catalog_download/exp_run/scripts/01_hinet_jma_catalog_pipeline.py": {
+                    "count": 2,
+                    "tools": {
+                        "read_file": 2
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/config.yaml": {
+                    "count": 1,
+                    "tools": {
+                        "read_file": 1
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py": {
+                    "count": 6,
+                    "tools": {
+                        "read_file": 6
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/request.txt": {
+                    "count": 1,
+                    "tools": {
+                        "read_file": 1
+                    }
+                }
+            },
+            "read_file_call_count": 13,
+            "retrieve_calls": {},
+            "tools": {
+                "apply_diff": 4,
+                "bash_executor": 5,
+                "python_executor": 12,
+                "read_file": 13,
+                "write_file": 1
+            },
+            "total_tool_calls": 35,
+            "unique_file_read_count": 6,
+            "used_retrieve": false
+        },
+        "consecutive_no_code_change_rounds": 0,
+        "debug_round": 4,
+        "debug_trace": {
+            "attempts": [
+                {
+                    "action_type": "inspect_runtime_evidence",
+                    "failure_signature": "3a5d8092aee8",
+                    "feedback": "[2026-09-11T17:12:23Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:12:23Z] Fetching Hi-net login page\n[2026-09-11T17:14:22Z] Posting Hi-net login form (credential values suppressed)\n[2026-09-11T17:16:57Z] G...[truncated]",
+                    "outcome": "failed",
+                    "repeated_count": 1,
+                    "resolved": false,
+                    "result_check_round": 0,
+                    "root_failure_signature": "3a5d8092aee8",
+                    "round_index": 1,
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "timestamp": "2026-09-11T17:45:30.624697+00:00"
+                },
+                {
+                    "action_type": "inspect_runtime_evidence",
+                    "failure_signature": "147ed2c5fed8",
+                    "feedback": "[2026-09-11T17:46:45Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:46:45Z] Fetching Hi-net login page\n[2026-09-11T17:46:58Z] Posting Hi-net login form (credential values suppressed)\n[2026-09-11T17:46:59Z] H...[truncated]",
+                    "outcome": "failed",
+                    "repeated_count": 1,
+                    "resolved": false,
+                    "result_check_round": 0,
+                    "root_failure_signature": "147ed2c5fed8",
+                    "round_index": 2,
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "timestamp": "2026-09-11T17:54:58.315745+00:00"
+                },
+                {
+                    "action_type": "repeated_failure",
+                    "failure_signature": "e659aac207cb",
+                    "feedback": "[2026-09-11T17:56:43Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog\n[2026-09-11T17:56:43Z] Fetching Hi-net login page\n[2026-09-11T17:57:13Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 1 failed (HTTPSConnectio...[truncated]",
+                    "outcome": "failed",
+                    "repeated_count": 1,
+                    "resolved": false,
+                    "result_check_round": 0,
+                    "root_failure_signature": "e659aac207cb",
+                    "round_index": 3,
+                    "stage": "script_execution",
+                    "status": "failed",
+                    "timestamp": "2026-09-11T18:54:19.369651+00:00"
+                },
+                {
+                    "action_type": "pass",
+                    "failure_signature": "a74e9959b8c2",
+                    "feedback": "Results meet the task requirements. The workflow successfully authenticated/downloaded the JMA catalog in 48 bounded chunks, parsed and cleaned the records, spatially/time-filtered them to the Sanriku study region, validated the final catalog, and produced a clear distribution figure.",
+                    "outcome": "success",
+                    "repeated_count": 1,
+                    "resolved": true,
+                    "result_check_round": 1,
+                    "root_failure_signature": "a74e9959b8c2",
+                    "round_index": 4,
+                    "stage": "task_success",
+                    "status": "success",
+                    "timestamp": "2026-09-11T19:13:04.104216+00:00"
+                }
+            ],
+            "current_hypothesis": "Latest failure evidence: The latest runtime observation passed.",
+            "lessons": [],
+            "task_name": "01_download_validate_sanriku_jma_catalog"
+        },
+        "diagnosis_history": [
+            {
+                "debug_round": 1,
+                "diagnosis": {
+                    "evidence": [
+                        "Timeout"
+                    ],
+                    "failed": true,
+                    "failure_type": "timeout",
+                    "metadata": {
+                        "retry_decision": {
+                            "max_additional_attempts": 1,
+                            "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                            "retry_allowed": true,
+                            "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                        },
+                        "returncode": 1
+                    },
+                    "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                    "retry_allowed": true,
+                    "severity": "fatal",
+                    "source_files": [
+                        "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_0.txt"
+                    ],
+                    "stage": "script_execution"
+                },
+                "resolved": false,
+                "result_check_round": 0,
+                "stage": "script_execution",
+                "timestamp": "2026-09-11T17:45:30.624328+00:00"
+            },
+            {
+                "debug_round": 2,
+                "diagnosis": {
+                    "evidence": [
+                        "timeout"
+                    ],
+                    "failed": true,
+                    "failure_type": "timeout",
+                    "metadata": {
+                        "retry_decision": {
+                            "max_additional_attempts": 1,
+                            "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                            "retry_allowed": true,
+                            "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                        },
+                        "returncode": 1
+                    },
+                    "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                    "retry_allowed": true,
+                    "severity": "fatal",
+                    "source_files": [
+                        "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_1.txt"
+                    ],
+                    "stage": "script_execution"
+                },
+                "resolved": false,
+                "result_check_round": 0,
+                "stage": "script_execution",
+                "timestamp": "2026-09-11T17:54:58.315263+00:00"
+            },
+            {
+                "debug_round": 3,
+                "diagnosis": {
+                    "evidence": [
+                        "Timeout"
+                    ],
+                    "failed": true,
+                    "failure_type": "timeout",
+                    "metadata": {
+                        "retry_decision": {
+                            "max_additional_attempts": 1,
+                            "reason": "Timeouts may be solved by reducing workload or adding progress checkpoints.",
+                            "retry_allowed": true,
+                            "strategy": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry"
+                        },
+                        "returncode": 1
+                    },
+                    "recommended_action": "reduce_workload_add_checkpoint_or_increase_timeout_then_retry",
+                    "retry_allowed": true,
+                    "severity": "fatal",
+                    "source_files": [
+                        "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_2.txt"
+                    ],
+                    "stage": "script_execution"
+                },
+                "resolved": false,
+                "result_check_round": 0,
+                "stage": "script_execution",
+                "timestamp": "2026-09-11T18:54:19.369123+00:00"
+            }
+        ],
+        "elapsed_sec": 7755.908,
+        "execution_stage": "analysis_done",
+        "failed_reason": "",
+        "failure_signature_history": [
+            {
+                "signature": "RuntimeError: GET https:<path> failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: <path> (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0a60d0>, 'Connection to hinetwww11.bosai.go.jp timed out. (",
+                "stage": "script_execution",
+                "time": 1789148730.6240873
+            },
+            {
+                "signature": "RuntimeError: POST https:<path> failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: <path> (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0f1340>, 'Connection to hinetwww11.bosai.go.jp timed out. ",
+                "stage": "script_execution",
+                "time": 1789149298.3150208
+            },
+            {
+                "signature": "RuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values",
+                "stage": "script_execution",
+                "time": 1789152859.3687966
+            }
+        ],
+        "finished_at": "2026-09-11T19:15:14.703524+00:00",
+        "last_activity_at": "2026-09-11T19:15:14.703426+00:00",
+        "last_code_change": {
+            "changed": true,
+            "changed_lines": 11,
+            "coding_response_summary": "Fixed the blocking CSV validation failure.\n\nRoot cause:\n- The cleaned CSV contains a valid mix of JMA origin-time strings with and without fractional seconds.\n- `pd.to_datetime()` was inferring one strict Series-wide format, so valid whole-second timestamps such as `2025-06-01 10:46:29` were incorrectly coerced to `NaT`.\n\nChanges made:\n- Added `format=\"mixed\"` to all relevant pandas datetime parsing calls:\n  - chunk actual-date range parsing\n  - cleaning datetime conversion\n  - cleaned CSV validation\n  - plotting datetime conversion\n- Added a short explanatory comment in the cleaning function.\n- Rechecked syntax with `py_compile`; the script compiles successfully.",
+            "diff_summary": "--- before/01_download_validate_sanriku_jma_catalog.py\n+++ after/01_download_validate_sanriku_jma_catalog.py\n@@ -416,7 +416,7 @@\n     fail_parse_file = debug_raw_dir / f\"parse_failure_chunk_{chunk_index:03d}_{chunk_start:%Y%m%d}_{chunk_end_exclusive:%Y%m%d}.html\"\n     df, parse_status, parse_message = parse_catalog_response(text, fail_parse_file)\n \n-    dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\") if not df.empty else pd.Series(dtype=\"datetime64[ns]\")\n+    dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\", format=\"mixed\") if not df.empty else pd.Series(dtype=\"datetime64[ns]\")\n     actual_min = \"\" if dt.dropna().empty else str(dt.min())\n     actual_max = \"\" if dt.dropna().empty else str(dt.max())\n     start_ts = pd.Timestamp(datetime.combine(chunk_start, datetime.min.time()))\n@@ -462,7 +462,10 @@\n         if col not in work.columns:\n             raise RuntimeError(f\"Parsed table is missing required column: {col}\")\n     work = work[ASPECT_COLUMNS].copy()\n-    work[\"datetime\"] = pd.to_datetime(work[\"datetime\"], errors=\"coerce\")\n+    # JMA origin times mix whole-second and fractional-second strings.  Pandas 2\n+    # infers one strict format for a Series unless format=\"mixed\" is specified,\n+    # which caused valid whole-second rows to become NaT during validation.\n+    work[\"datetime\"] = pd.to_datetime(work[\"datetime\"], errors=\"coerce\", format=\"mixed\")\n     for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n         work[col] = pd.to_numeric(work[col], errors=\"coerce\")\n     return work\n@@ -552,7 +555,7 @@\n     df = pd.read_csv(csv_path)\n     if list(df.columns) != ASPECT_COLUMNS:\n         raise RuntimeError(f\"CSV schema mismatch: expected {ASPECT_COLUMNS}, got {list(df.columns)}\")\n-    parsed_dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\")\n+    parsed_dt = pd.to_datetime(df[\"datetime\"], errors=\"coerce\", format=\"mixed\")\n     numeric = df[[\"lat\", \"lon\", \"dep\", \"mag\"]].apply(pd.to_numeric, errors=\"coerce\")\n     if parsed_dt.isna().any() or numeric.isna().any().any():\n         raise RuntimeError(\"Cleaned CSV still contains non-parsable datetime or numeric values\")\n@@ -589,7 +592,7 @@\n     if list(cleaned_df.columns) != ASPECT_COLUMNS:\n         raise RuntimeError(\"Distribution figure input does not have the exact ASPECT schema\")\n     plot_df = cleaned_df.copy()\n-    plot_df[\"datetime\"] = pd.to_datetime(plot_df[\"datetime\"], errors=\"raise\")\n+    plot_df[\"datetime\"] = pd.to_datetime(plot_df[\"datetime\"], errors=\"raise\", format=\"mixed\")\n     for col in (\"lat\", \"lon\", \"dep\", \"mag\"):\n         plot_df[col] = pd.to_numeric(plot_df[col], errors=\"raise\")\n ",
+            "diff_truncated": false,
+            "metadata": {
+                "after_exists": true,
+                "after_size_bytes": 36807,
+                "after_truncated": false,
+                "before_exists": true,
+                "before_size_bytes": 36506,
+                "before_truncated": false
+            },
+            "outcome": "success",
+            "round_index": 4,
+            "runtime_action_after": {
+                "action_type": "pass",
+                "priority": "low",
+                "prompt_focus": [
+                    "Proceed to the next workflow step."
+                ],
+                "reason": "The latest runtime observation passed.",
+                "recommended_action": "no_retry_needed",
+                "retry_allowed": false
+            },
+            "runtime_action_before": {
+                "action_type": "repeated_failure",
+                "priority": "high",
+                "prompt_focus": [
+                    "Use the debug chain memory before editing again.",
+                    "Make a different targeted fix for the current raw evidence."
+                ],
+                "reason": "The same failed stage has appeared 3 times in diagnosis history.",
+                "recommended_action": "use_debug_chain_memory_for_repeated_stage_failure",
+                "retry_allowed": false
+            },
+            "runtime_observation_after": {
+                "debug_context": {
+                    "artifact_validations": [
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "csv",
+                            "path": "Snet_catalog_20250601_20260502.csv",
+                            "readable": true,
+                            "size_bytes": 1568553,
+                            "summary": {
+                                "max_columns": 5,
+                                "rows_sampled": 10000
+                            },
+                            "valid": true,
+                            "warnings": [
+                                "row_count_sampled"
+                            ]
+                        },
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "csv",
+                            "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                            "readable": true,
+                            "size_bytes": 9941,
+                            "summary": {
+                                "max_columns": 22,
+                                "rows_sampled": 49
+                            },
+                            "valid": true,
+                            "warnings": []
+                        },
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "image",
+                            "path": "Snet_catalog_20250601_20260502_distribution.png",
+                            "readable": true,
+                            "size_bytes": 767505,
+                            "summary": {
+                                "height": 823,
+                                "width": 1898
+                            },
+                            "valid": true,
+                            "warnings": []
+                        },
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "json",
+                            "path": "Snet_catalog_20250601_20260502_validation.json",
+                            "readable": true,
+                            "size_bytes": 8356,
+                            "summary": {
+                                "keys": 26,
+                                "root_type": "dict"
+                            },
+                            "valid": true,
+                            "warnings": []
+                        },
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "binary",
+                            "path": "debug/raw/login_page.html",
+                            "readable": true,
+                            "size_bytes": 6663,
+                            "summary": {},
+                            "valid": true,
+                            "warnings": []
+                        },
+                        {
+                            "empty": false,
+                            "error": null,
+                            "kind": "binary",
+                            "path": "debug/raw/login_response.html",
+                            "readable": true,
+                            "size_bytes": 7208,
+                            "summary": {},
+                            "valid": true,
+                            "warnings": []
+                        }
+                    ],
+                    "artifact_validations_truncated": false,
+                    "core_error": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                    "error_lines": [],
+                    "external_log_signals": [],
+                    "external_log_signals_truncated": false,
+                    "failure_type": null,
+                    "last_observed_line": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                    "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+                    "log_size_bytes": 11929,
+                    "missing_outputs": [],
+                    "optional_outputs": [],
+                    "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "output_inventory": [
+                        {
+                            "path": "debug",
+                            "type": "dir"
+                        },
+                        {
+                            "path": "Snet_catalog_20250601_20260502.csv",
+                            "size_bytes": 1568553,
+                            "type": "file"
+                        },
+                        {
+                            "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                            "size_bytes": 9941,
+                            "type": "file"
+                        },
+                        {
+                            "path": "Snet_catalog_20250601_20260502_distribution.png",
+                            "size_bytes": 767505,
+                            "type": "file"
+                        },
+                        {
+                            "path": "Snet_catalog_20250601_20260502_validation.json",
+                            "size_bytes": 8356,
+                            "type": "file"
+                        },
+                        {
+                            "path": "debug/raw",
+                            "type": "dir"
+                        },
+                        {
+                            "path": "debug/raw/login_page.html",
+                            "size_bytes": 6663,
+                            "type": "file"
+                        },
+                        {
+                            "path": "debug/raw/login_response.html",
+                            "size_bytes": 7208,
+                            "type": "file"
+                        }
+                    ],
+                    "output_inventory_truncated": false,
+                    "recommended_action": null,
+                    "recommended_outputs": [],
+                    "required_outputs": [],
+                    "returncode": 0,
+                    "stage": "result_check_input",
+                    "task_name": "01_download_validate_sanriku_jma_catalog",
+                    "traceback_tail": "",
+                    "warning_lines": []
+                },
+                "diagnosis": null,
+                "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+                "message": "Results meet the task requirements. The workflow successfully authenticated/downloaded the JMA catalog in 48 bounded chunks, parsed and cleaned the records, spatially/time-filtered them to the Sanriku study region, validated the final catalog, and produced a clear distribution figure.",
+                "metadata": {},
+                "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                "preflight": {
+                    "checks": [
+                        {
+                            "evidence": [],
+                            "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                            "name": "script_exists",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Executable is available: /usr/bin/env python3",
+                            "name": "runtime_command_startable",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Target runtime py_compile passed.",
+                            "name": "py_compile",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                            "name": "subprocess_timeout_contract",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                            "name": "output_dir_writable",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Runtime Python version: 3.9 (cached)",
+                            "name": "runtime_python_version",
+                            "passed": true
+                        },
+                        {
+                            "evidence": [],
+                            "message": "Runtime annotation compatibility check passed.",
+                            "name": "runtime_annotation_compatibility",
+                            "passed": true
+                        }
+                    ],
+                    "diagnosis": null,
+                    "passed": true,
+                    "recommended_action": ""
+                },
+                "result_check_diagnosis": null,
+                "returncode": 0,
+                "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                "stage": "task_success",
+                "status": "success",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "timestamp": "2026-09-11T19:13:04.103501+00:00"
+            },
+            "script_hash_after": "1989049a32593bfb61b1e3aca2161bb8a476d500697c67149f89d82281829817",
+            "script_hash_before": "b3b24503bc551f7038f3becd054fcb9e960e03320d7c338569199456deb2e5e5",
+            "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+            "task_name": "01_download_validate_sanriku_jma_catalog",
+            "timestamp": "2026-09-11T18:55:07.601459+00:00"
+        },
+        "last_debug_context": {
+            "artifact_validations": [
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "csv",
+                    "path": "Snet_catalog_20250601_20260502.csv",
+                    "readable": true,
+                    "size_bytes": 1568553,
+                    "summary": {
+                        "max_columns": 5,
+                        "rows_sampled": 10000
+                    },
+                    "valid": true,
+                    "warnings": [
+                        "row_count_sampled"
+                    ]
+                },
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "csv",
+                    "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                    "readable": true,
+                    "size_bytes": 9941,
+                    "summary": {
+                        "max_columns": 22,
+                        "rows_sampled": 49
+                    },
+                    "valid": true,
+                    "warnings": []
+                },
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "image",
+                    "path": "Snet_catalog_20250601_20260502_distribution.png",
+                    "readable": true,
+                    "size_bytes": 767505,
+                    "summary": {
+                        "height": 823,
+                        "width": 1898
+                    },
+                    "valid": true,
+                    "warnings": []
+                },
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "json",
+                    "path": "Snet_catalog_20250601_20260502_validation.json",
+                    "readable": true,
+                    "size_bytes": 8356,
+                    "summary": {
+                        "keys": 26,
+                        "root_type": "dict"
+                    },
+                    "valid": true,
+                    "warnings": []
+                },
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "binary",
+                    "path": "debug/raw/login_page.html",
+                    "readable": true,
+                    "size_bytes": 6663,
+                    "summary": {},
+                    "valid": true,
+                    "warnings": []
+                },
+                {
+                    "empty": false,
+                    "error": null,
+                    "kind": "binary",
+                    "path": "debug/raw/login_response.html",
+                    "readable": true,
+                    "size_bytes": 7208,
+                    "summary": {},
+                    "valid": true,
+                    "warnings": []
+                }
+            ],
+            "artifact_validations_truncated": false,
+            "core_error": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+            "error_lines": [],
+            "external_log_signals": [],
+            "external_log_signals_truncated": false,
+            "failure_type": null,
+            "last_observed_line": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+            "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+            "log_size_bytes": 11929,
+            "missing_outputs": [],
+            "optional_outputs": [],
+            "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+            "output_inventory": [
+                {
+                    "path": "debug",
+                    "type": "dir"
+                },
+                {
+                    "path": "Snet_catalog_20250601_20260502.csv",
+                    "size_bytes": 1568553,
+                    "type": "file"
+                },
+                {
+                    "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                    "size_bytes": 9941,
+                    "type": "file"
+                },
+                {
+                    "path": "Snet_catalog_20250601_20260502_distribution.png",
+                    "size_bytes": 767505,
+                    "type": "file"
+                },
+                {
+                    "path": "Snet_catalog_20250601_20260502_validation.json",
+                    "size_bytes": 8356,
+                    "type": "file"
+                },
+                {
+                    "path": "debug/raw",
+                    "type": "dir"
+                },
+                {
+                    "path": "debug/raw/login_page.html",
+                    "size_bytes": 6663,
+                    "type": "file"
+                },
+                {
+                    "path": "debug/raw/login_response.html",
+                    "size_bytes": 7208,
+                    "type": "file"
+                }
+            ],
+            "output_inventory_truncated": false,
+            "recommended_action": null,
+            "recommended_outputs": [],
+            "required_outputs": [],
+            "returncode": 0,
+            "stage": "result_check_input",
+            "task_name": "01_download_validate_sanriku_jma_catalog",
+            "traceback_tail": "",
+            "warning_lines": []
+        },
+        "last_debug_memory": "task_name: 01_download_validate_sanriku_jma_catalog\nattempts_recorded: 4\nrecent_attempts:\n- round=1, stage=script_execution, status=failed, signature=3a5d8092aee8, root_signature=3a5d8092aee8, repeated=1, outcome=failed, feedback=[2026-09-11T17:12:23Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<LOCAL_PATH>\n- round=2, stage=script_execution, status=failed, signature=147ed2c5fed8, root_signature=147ed2c5fed8, repeated=1, outcome=failed, feedback=[2026-09-11T17:46:45Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<LOCAL_PATH>\n- round=3, stage=script_execution, status=failed, signature=e659aac207cb, root_signature=e659aac207cb, repeated=1, outcome=failed, feedback=[2026-09-11T17:56:43Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<LOCAL_PATH>\n- round=4, stage=task_success, status=success, signature=a74e9959b8c2, root_signature=a74e9959b8c2, repeated=1, outcome=success, feedback=Results meet the task requirements. The workflow successfully authenticated/downloaded the JMA catalog in 48 bounded chunks, parsed and cleaned the records, spatially/time-filtered...[truncated]\ncurrent_hypothesis: Latest failure evidence: The latest runtime observation passed.",
+        "last_diagnosis": null,
+        "last_feedback": "",
+        "last_heartbeat_at": "2026-09-11T19:11:10.866619+00:00",
+        "last_log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+        "last_log_size_bytes": 10682,
+        "last_no_progress_heartbeats": 0,
+        "last_no_progress_sec": 0.0,
+        "last_observed_line": "[2026-09-11T19:11:01Z] Requesting chunk 048: [2026-04-26, 2026-05-02) span=6 days",
+        "last_output_cleanup": {
+            "enabled": true,
+            "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+            "removed_count": 3,
+            "timestamp": "2026-09-11T18:55:08.674656+00:00"
+        },
+        "last_preflight": {
+            "checks": [
+                {
+                    "evidence": [],
+                    "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                    "name": "script_exists",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Executable is available: /usr/bin/env python3",
+                    "name": "runtime_command_startable",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Target runtime py_compile passed.",
+                    "name": "py_compile",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                    "name": "subprocess_timeout_contract",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                    "name": "output_dir_writable",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Runtime Python version: 3.9 (cached)",
+                    "name": "runtime_python_version",
+                    "passed": true
+                },
+                {
+                    "evidence": [],
+                    "message": "Runtime annotation compatibility check passed.",
+                    "name": "runtime_annotation_compatibility",
+                    "passed": true
+                }
+            ],
+            "diagnosis": null,
+            "passed": true,
+            "recommended_action": ""
+        },
+        "last_progress_event": "task_analysis_done",
+        "last_result_check_diagnosis": null,
+        "last_runtime_action": {
+            "action_type": "pass",
+            "priority": "low",
+            "prompt_focus": [
+                "Proceed to the next workflow step."
+            ],
+            "reason": "The latest runtime observation passed.",
+            "recommended_action": "no_retry_needed",
+            "retry_allowed": false
+        },
+        "last_runtime_observation": {
+            "debug_context": {
+                "artifact_validations": [
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "csv",
+                        "path": "Snet_catalog_20250601_20260502.csv",
+                        "readable": true,
+                        "size_bytes": 1568553,
+                        "summary": {
+                            "max_columns": 5,
+                            "rows_sampled": 10000
+                        },
+                        "valid": true,
+                        "warnings": [
+                            "row_count_sampled"
+                        ]
+                    },
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "csv",
+                        "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                        "readable": true,
+                        "size_bytes": 9941,
+                        "summary": {
+                            "max_columns": 22,
+                            "rows_sampled": 49
+                        },
+                        "valid": true,
+                        "warnings": []
+                    },
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "image",
+                        "path": "Snet_catalog_20250601_20260502_distribution.png",
+                        "readable": true,
+                        "size_bytes": 767505,
+                        "summary": {
+                            "height": 823,
+                            "width": 1898
+                        },
+                        "valid": true,
+                        "warnings": []
+                    },
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "json",
+                        "path": "Snet_catalog_20250601_20260502_validation.json",
+                        "readable": true,
+                        "size_bytes": 8356,
+                        "summary": {
+                            "keys": 26,
+                            "root_type": "dict"
+                        },
+                        "valid": true,
+                        "warnings": []
+                    },
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "binary",
+                        "path": "debug/raw/login_page.html",
+                        "readable": true,
+                        "size_bytes": 6663,
+                        "summary": {},
+                        "valid": true,
+                        "warnings": []
+                    },
+                    {
+                        "empty": false,
+                        "error": null,
+                        "kind": "binary",
+                        "path": "debug/raw/login_response.html",
+                        "readable": true,
+                        "size_bytes": 7208,
+                        "summary": {},
+                        "valid": true,
+                        "warnings": []
+                    }
+                ],
+                "artifact_validations_truncated": false,
+                "core_error": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                "error_lines": [],
+                "external_log_signals": [],
+                "external_log_signals_truncated": false,
+                "failure_type": null,
+                "last_observed_line": "[2026-09-11T19:11:15Z] Validation summary: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json",
+                "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+                "log_size_bytes": 11929,
+                "missing_outputs": [],
+                "optional_outputs": [],
+                "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                "output_inventory": [
+                    {
+                        "path": "debug",
+                        "type": "dir"
+                    },
+                    {
+                        "path": "Snet_catalog_20250601_20260502.csv",
+                        "size_bytes": 1568553,
+                        "type": "file"
+                    },
+                    {
+                        "path": "Snet_catalog_20250601_20260502_chunk_manifest.csv",
+                        "size_bytes": 9941,
+                        "type": "file"
+                    },
+                    {
+                        "path": "Snet_catalog_20250601_20260502_distribution.png",
+                        "size_bytes": 767505,
+                        "type": "file"
+                    },
+                    {
+                        "path": "Snet_catalog_20250601_20260502_validation.json",
+                        "size_bytes": 8356,
+                        "type": "file"
+                    },
+                    {
+                        "path": "debug/raw",
+                        "type": "dir"
+                    },
+                    {
+                        "path": "debug/raw/login_page.html",
+                        "size_bytes": 6663,
+                        "type": "file"
+                    },
+                    {
+                        "path": "debug/raw/login_response.html",
+                        "size_bytes": 7208,
+                        "type": "file"
+                    }
+                ],
+                "output_inventory_truncated": false,
+                "recommended_action": null,
+                "recommended_outputs": [],
+                "required_outputs": [],
+                "returncode": 0,
+                "stage": "result_check_input",
+                "task_name": "01_download_validate_sanriku_jma_catalog",
+                "traceback_tail": "",
+                "warning_lines": []
+            },
+            "diagnosis": null,
+            "log_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/log/task/01_download_validate_sanriku_jma_catalog/log_3.txt",
+            "message": "Results meet the task requirements. The workflow successfully authenticated/downloaded the JMA catalog in 48 bounded chunks, parsed and cleaned the records, spatially/time-filtered them to the Sanriku study region, validated the final catalog, and produced a clear distribution figure.",
+            "metadata": {},
+            "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+            "preflight": {
+                "checks": [
+                    {
+                        "evidence": [],
+                        "message": "Script file exists: <CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+                        "name": "script_exists",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Executable is available: /usr/bin/env python3",
+                        "name": "runtime_command_startable",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Target runtime py_compile passed.",
+                        "name": "py_compile",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Blocking subprocess calls have bounded timeouts or are absent.",
+                        "name": "subprocess_timeout_contract",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Output directory is writable: <CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+                        "name": "output_dir_writable",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Runtime Python version: 3.9 (cached)",
+                        "name": "runtime_python_version",
+                        "passed": true
+                    },
+                    {
+                        "evidence": [],
+                        "message": "Runtime annotation compatibility check passed.",
+                        "name": "runtime_annotation_compatibility",
+                        "passed": true
+                    }
+                ],
+                "diagnosis": null,
+                "passed": true,
+                "recommended_action": ""
+            },
+            "result_check_diagnosis": null,
+            "returncode": 0,
+            "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+            "stage": "task_success",
+            "status": "success",
+            "task_name": "01_download_validate_sanriku_jma_catalog",
+            "timestamp": "2026-09-11T19:13:04.103501+00:00"
+        },
+        "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+        "progress_message": "Task-level analysis file was generated.",
+        "result_check_round": 1,
+        "result_check_tool_usage": {
+            "analysis_calls": {
+                "analyze_image_file": 1
+            },
+            "executor_calls": {
+                "bash_executor": 1,
+                "python_executor": 3
+            },
+            "file_reads": {
+                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv": {
+                    "count": 1,
+                    "tools": {
+                        "read_file": 1
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv": {
+                    "count": 1,
+                    "tools": {
+                        "read_file": 1
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png": {
+                    "count": 1,
+                    "tools": {
+                        "analyze_image_file": 1
+                    }
+                },
+                "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json": {
+                    "count": 2,
+                    "tools": {
+                        "read_file": 2
+                    }
+                }
+            },
+            "read_file_call_count": 4,
+            "retrieve_calls": {},
+            "tools": {
+                "analyze_image_file": 1,
+                "bash_executor": 1,
+                "python_executor": 3,
+                "read_file": 4
+            },
+            "total_tool_calls": 9,
+            "unique_file_read_count": 4,
+            "used_retrieve": false
+        },
+        "runtime_action_history": [
+            {
+                "action": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "stage": "preflight",
+                "status": "passed",
+                "timestamp": "2026-09-11T17:12:02.459964+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "stage": "script_execution",
+                "status": "failed",
+                "timestamp": "2026-09-11T17:45:30.624451+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "stage": "preflight",
+                "status": "passed",
+                "timestamp": "2026-09-11T17:46:22.372707+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "inspect_runtime_evidence",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Traceback, stdout/stderr, child logs, and last observed progress.",
+                        "Generated inputs, outputs, cwd, command arguments, local files, and retrieved docs/examples when relevant."
+                    ],
+                    "reason": "The generated script failed during execution; inspect raw logs and outputs before deciding the cause.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "stage": "script_execution",
+                "status": "failed",
+                "timestamp": "2026-09-11T17:54:58.315391+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "stage": "preflight",
+                "status": "passed",
+                "timestamp": "2026-09-11T17:56:23.249365+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "repeated_failure",
+                    "priority": "high",
+                    "prompt_focus": [
+                        "Use the debug chain memory before editing again.",
+                        "Make a different targeted fix for the current raw evidence."
+                    ],
+                    "reason": "The same failed stage has appeared 3 times in diagnosis history.",
+                    "recommended_action": "use_debug_chain_memory_for_repeated_stage_failure",
+                    "retry_allowed": false
+                },
+                "stage": "script_execution",
+                "status": "failed",
+                "timestamp": "2026-09-11T18:54:19.369281+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "stage": "preflight",
+                "status": "passed",
+                "timestamp": "2026-09-11T18:55:08.401397+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "inspect_observation",
+                    "priority": "medium",
+                    "prompt_focus": [
+                        "Runtime observation, logs, outputs, handoffs, and retrieved/local evidence."
+                    ],
+                    "reason": "Inspect the unified runtime observation before deciding the next change.",
+                    "recommended_action": null,
+                    "retry_allowed": false
+                },
+                "stage": "result_check_input",
+                "status": "ready",
+                "timestamp": "2026-09-11T19:11:19.383192+00:00"
+            },
+            {
+                "action": {
+                    "action_type": "pass",
+                    "priority": "low",
+                    "prompt_focus": [
+                        "Proceed to the next workflow step."
+                    ],
+                    "reason": "The latest runtime observation passed.",
+                    "recommended_action": "no_retry_needed",
+                    "retry_allowed": false
+                },
+                "stage": "task_success",
+                "status": "success",
+                "timestamp": "2026-09-11T19:13:04.103501+00:00"
+            }
+        ],
+        "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+        "started_at": "2026-09-11T17:05:58.795204+00:00",
+        "status": "success",
+        "task_description": "Download, parse, clean, validate, and visualize the authenticated Hi-net JMA unified hypocenter catalog for the Sanriku study region.",
+        "timing": {
+            "code_review_sec": 63.781,
+            "coding_agent_sec": 480.241,
+            "preflight_sec": 1.971,
+            "result_check_sec": 104.143,
+            "script_execution_sec": 6969.691,
+            "task_analysis_sec": 130.457,
+            "total_sec": 7755.908
+        },
+        "tool_usage_summary": {
+            "coding_agent": {
+                "analysis_calls": {},
+                "executor_calls": {
+                    "bash_executor": 5,
+                    "python_executor": 12
+                },
+                "file_reads": {
+                    "<CASE_ROOT>/00_catalog_download.py": {
+                        "count": 1,
+                        "tools": {
+                            "read_file": 1
+                        }
+                    },
+                    "<CASE_ROOT>/backup-v1/v1/run/00_catalog_download/exp_run/outputs/01_hinet_jma_catalog_pipeline/debug/raw/catalog_verify.html": {
+                        "count": 2,
+                        "tools": {
+                            "read_file": 2
+                        }
+                    },
+                    "<CASE_ROOT>/backup-v1/v1/run/00_catalog_download/exp_run/scripts/01_hinet_jma_catalog_pipeline.py": {
+                        "count": 2,
+                        "tools": {
+                            "read_file": 2
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/config.yaml": {
+                        "count": 1,
+                        "tools": {
+                            "read_file": 1
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py": {
+                        "count": 6,
+                        "tools": {
+                            "read_file": 6
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/request.txt": {
+                        "count": 1,
+                        "tools": {
+                            "read_file": 1
+                        }
+                    }
+                },
+                "read_file_call_count": 13,
+                "retrieve_calls": {},
+                "tools": {
+                    "apply_diff": 4,
+                    "bash_executor": 5,
+                    "python_executor": 12,
+                    "read_file": 13,
+                    "write_file": 1
+                },
+                "total_tool_calls": 35,
+                "unique_file_read_count": 6,
+                "used_retrieve": false
+            },
+            "result_check_agent": {
+                "analysis_calls": {
+                    "analyze_image_file": 1
+                },
+                "executor_calls": {
+                    "bash_executor": 1,
+                    "python_executor": 3
+                },
+                "file_reads": {
+                    "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv": {
+                        "count": 1,
+                        "tools": {
+                            "read_file": 1
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv": {
+                        "count": 1,
+                        "tools": {
+                            "read_file": 1
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png": {
+                        "count": 1,
+                        "tools": {
+                            "analyze_image_file": 1
+                        }
+                    },
+                    "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_validation.json": {
+                        "count": 2,
+                        "tools": {
+                            "read_file": 2
+                        }
+                    }
+                },
+                "read_file_call_count": 4,
+                "retrieve_calls": {},
+                "tools": {
+                    "analyze_image_file": 1,
+                    "bash_executor": 1,
+                    "python_executor": 3,
+                    "read_file": 4
+                },
+                "total_tool_calls": 9,
+                "unique_file_read_count": 4,
+                "used_retrieve": false
+            }
+        },
+        "updated_at": "2026-09-11T19:15:14.703539+00:00"
+    }
+}

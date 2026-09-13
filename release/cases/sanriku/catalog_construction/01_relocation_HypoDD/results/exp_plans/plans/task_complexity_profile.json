@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "Full-catalog HypoDD relocation with package-specific grouped API, native scale limits that exceed single-run capacity, required parameter justification/testing, per-window evidence accounting, merged real outputs, and multiple output figures from native relocation results.",
+  "data_source_count": 7,
+  "workflow_risk": "high",
+  "expected_script_count": 2
+}

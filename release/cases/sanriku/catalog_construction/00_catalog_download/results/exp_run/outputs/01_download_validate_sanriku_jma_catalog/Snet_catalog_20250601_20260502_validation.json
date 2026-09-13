@@ -1,0 +1,303 @@
+{
+  "status": "pass",
+  "script_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py",
+  "output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog",
+  "credential_source": ".env",
+  "login_url": "https://hinetwww11.bosai.go.jp/auth/?LANG=en",
+  "catalog_url": "https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php",
+  "start_date_inclusive": "2025-06-01",
+  "end_date_exclusive": "2026-05-02",
+  "requested_record_coverage_note": "Requests cover 2025-06-01 through 2026-05-01 using half-open chunks.",
+  "lat_bounds_inclusive": [
+    38.5,
+    42.5
+  ],
+  "lon_bounds_inclusive": [
+    141.0,
+    144.5
+  ],
+  "max_chunk_days": 7,
+  "total_chunks_requested": 48,
+  "chunk_boundaries": [
+    {
+      "start_inclusive": "2025-06-01",
+      "end_exclusive": "2025-06-08",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-06-08",
+      "end_exclusive": "2025-06-15",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-06-15",
+      "end_exclusive": "2025-06-22",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-06-22",
+      "end_exclusive": "2025-06-29",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-06-29",
+      "end_exclusive": "2025-07-06",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-07-06",
+      "end_exclusive": "2025-07-13",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-07-13",
+      "end_exclusive": "2025-07-20",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-07-20",
+      "end_exclusive": "2025-07-27",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-07-27",
+      "end_exclusive": "2025-08-03",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-08-03",
+      "end_exclusive": "2025-08-10",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-08-10",
+      "end_exclusive": "2025-08-17",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-08-17",
+      "end_exclusive": "2025-08-24",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-08-24",
+      "end_exclusive": "2025-08-31",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-08-31",
+      "end_exclusive": "2025-09-07",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-09-07",
+      "end_exclusive": "2025-09-14",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-09-14",
+      "end_exclusive": "2025-09-21",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-09-21",
+      "end_exclusive": "2025-09-28",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-09-28",
+      "end_exclusive": "2025-10-05",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-10-05",
+      "end_exclusive": "2025-10-12",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-10-12",
+      "end_exclusive": "2025-10-19",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-10-19",
+      "end_exclusive": "2025-10-26",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-10-26",
+      "end_exclusive": "2025-11-02",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-11-02",
+      "end_exclusive": "2025-11-09",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-11-09",
+      "end_exclusive": "2025-11-16",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-11-16",
+      "end_exclusive": "2025-11-23",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-11-23",
+      "end_exclusive": "2025-11-30",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-11-30",
+      "end_exclusive": "2025-12-07",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-12-07",
+      "end_exclusive": "2025-12-14",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-12-14",
+      "end_exclusive": "2025-12-21",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-12-21",
+      "end_exclusive": "2025-12-28",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2025-12-28",
+      "end_exclusive": "2026-01-04",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-01-04",
+      "end_exclusive": "2026-01-11",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-01-11",
+      "end_exclusive": "2026-01-18",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-01-18",
+      "end_exclusive": "2026-01-25",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-01-25",
+      "end_exclusive": "2026-02-01",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-02-01",
+      "end_exclusive": "2026-02-08",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-02-08",
+      "end_exclusive": "2026-02-15",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-02-15",
+      "end_exclusive": "2026-02-22",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-02-22",
+      "end_exclusive": "2026-03-01",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-03-01",
+      "end_exclusive": "2026-03-08",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-03-08",
+      "end_exclusive": "2026-03-15",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-03-15",
+      "end_exclusive": "2026-03-22",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-03-22",
+      "end_exclusive": "2026-03-29",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-03-29",
+      "end_exclusive": "2026-04-05",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-04-05",
+      "end_exclusive": "2026-04-12",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-04-12",
+      "end_exclusive": "2026-04-19",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-04-19",
+      "end_exclusive": "2026-04-26",
+      "span_days": 7
+    },
+    {
+      "start_inclusive": "2026-04-26",
+      "end_exclusive": "2026-05-02",
+      "span_days": 6
+    }
+  ],
+  "chunk_manifest_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_chunk_manifest.csv",
+  "all_chunk_status_counts": {
+    "success": 48
+  },
+  "parse_status_counts": {
+    "parsed": 48
+  },
+  "total_parsed_rows": 270338,
+  "cleaning_stats": {
+    "initial_parsed_rows": 270338,
+    "rows_after_datetime_numeric_dropna": 270338,
+    "rows_removed_invalid_datetime_or_numeric": 0,
+    "rows_after_time_filter": 270338,
+    "rows_removed_outside_requested_time": 0,
+    "rows_after_sanriku_spatial_filter": 33711,
+    "rows_removed_outside_sanriku_bounds": 236627,
+    "rows_after_physical_sanity_filter": 33711,
+    "rows_removed_failed_physical_sanity": 0,
+    "duplicates_removed": 0,
+    "final_rows": 33711
+  },
+  "csv_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv",
+  "csv_validation": {
+    "csv_rows": 33711,
+    "datetime_min": "2025-06-01 00:09:02.360000",
+    "datetime_max": "2026-05-01 23:58:44.740000",
+    "lat_min": 38.5,
+    "lat_max": 42.5,
+    "lon_min": 141.0,
+    "lon_max": 144.5,
+    "dep_min": 0.0,
+    "dep_max": 149.2,
+    "mag_min": 0.0,
+    "mag_max": 7.7
+  },
+  "figure_path": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502_distribution.png",
+  "figure_exists": true,
+  "figure_source_csv": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog/Snet_catalog_20250601_20260502.csv",
+  "figure_plotted_event_count": 33711,
+  "empty_catalog_note": ""
+}

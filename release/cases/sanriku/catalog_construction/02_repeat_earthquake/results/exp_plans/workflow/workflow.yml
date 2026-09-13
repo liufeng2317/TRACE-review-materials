@@ -1,0 +1,352 @@
+tasks:
+- name: 01_repeat_event_analysis
+  description: Audit metadata, prefilter candidate event pairs, run baseline 
+    phase-aligned waveform cross-correlation in parallel, aggregate pair 
+    similarity, build repeat-event families, and write machine-readable outputs.
+  script: 01_repeat_event_analysis.py
+  ancestors: []
+  subtasks:
+  - name: audit_metadata_and_paths
+    description: Check required metadata fields, time coverage, SAC path 
+      existence, pick availability, and minimal data issues within the fixed 
+      analysis window.
+    inputs:
+    - observations_table
+    - event_pair_common_observations_table
+    - optional_events_table
+    - optional_stations_table
+    - analysis_time_window
+    outputs:
+    - audited_observations
+    - audited_event_pairs
+    - metadata_audit_summary
+    - event_window_catalog
+    - threshold_scan_counts
+    params:
+      time_window_start: '2025-11-06T00:00:00'
+      time_window_end: '2025-11-13T00:00:00'
+      required_observation_fields:
+      - event_id
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      - station
+      - station_latitude
+      - station_longitude
+      - component
+      - station_component
+      - sac_file
+      - p_time_after_origin_s
+      - s_time_after_origin_s
+      required_pair_fields:
+      - event_id_1
+      - event_id_2
+      - common_station_components
+      - epicentral_distance_km
+      - depth_diff_km
+      - magnitude_diff
+      allow_minimal_field_repair: true
+      sac_path_check_scope:
+      - full_observation_table_summary
+      - candidate_related_strict_check
+  - name: prefilter_candidate_event_pairs
+    description: Select physically plausible and computationally tractable 
+      candidate event pairs using shared observations, epicentral distance, 
+      magnitude difference, and ranking rules.
+    inputs:
+    - audited_observations
+    - audited_event_pairs
+    - event_window_catalog
+    - threshold_scan_counts
+    outputs:
+    - candidate_event_pairs
+    - candidate_prefilter_summary
+    - candidate_event_subset
+    params:
+      common_station_components_thresholds:
+      - 20
+      - 40
+      - 60
+      epicentral_distance_thresholds_km:
+      - 3
+      - 5
+      - 10
+      magnitude_diff_thresholds:
+      - 0.8
+      - 1.0
+      baseline_prefilter:
+        common_station_components_min: 40
+        epicentral_distance_km_max: 5
+        magnitude_diff_max: 0.8
+        enforce_depth_diff_max_km:
+      fallback_relaxation_order:
+      - common_station_components_min_to_20
+      - magnitude_diff_max_to_1p0
+      overload_control:
+        priority_sort:
+        - epicentral_distance_km_ascending
+        - magnitude_diff_ascending
+        - common_station_components_descending
+        - time_diff_s_ascending
+        retain_top_pairs_range:
+        - 3000
+        - 5000
+  - name: run_parallel_baseline_cross_correlation
+    description: Match common station-components exactly, align by S then P 
+      picks, preprocess SAC waveforms consistently, and compute 
+      positive-peak-based cross-correlation metrics in multiprocessing batches.
+    inputs:
+    - candidate_event_pairs
+    - audited_observations
+    - sac_waveform_files
+    outputs:
+    - station_component_cc
+    - event_pair_cc_summary
+    - processing_failures
+    - runtime_parallel_summary
+    params:
+      matching_rule: exact_station_component_match
+      phase_priority:
+      - S
+      - P
+      phase_time_reference: origin_time_plus_phase_time_after_origin_seconds
+      correlation_window_relative_seconds:
+        start: -0.5
+        end: 5.5
+      preprocessing:
+        demean: true
+        detrend: linear
+        bandpass_hz:
+          low: 2.0
+          high: 15.0
+        resampling_strategy: unify_to_comparable_sampling_rate_when_needed
+        amplitude_normalization: per_window_for_correlation_only
+      lag_search_seconds:
+        min: -1.5
+        max: 1.5
+      save_component_metrics:
+      - signed_peak_cc
+      - positive_peak_cc
+      - abs_peak_cc
+      - lag_at_signed_peak_s
+      - lag_at_abs_peak_s
+      - phase_used
+      - sampling_rate_hz
+      - status
+      - failure_reason
+      event_pair_summary_metrics:
+      - median_cc
+      - mean_cc
+      - max_cc
+      - num_components_used
+      - num_stations_used
+      - num_s_components_used
+      - num_p_components_used
+      - median_abs_lag_s
+      valid_pair_requirements:
+        num_components_used_min: 8
+        num_stations_used_min: 3
+      relaxed_valid_pair_requirements_if_needed:
+        num_components_used_min: 5
+        num_stations_used_min: 2
+      parallel_execution:
+        requested_cores: 64
+        work_unit: event_pair
+        enable_batching: true
+  - name: classify_repeat_pairs_and_build_families
+    description: Assign loose and high-confidence repeat-pair labels from pair 
+      similarity results and construct repeat-event families as connected 
+      components.
+    inputs:
+    - candidate_event_pairs
+    - event_pair_cc_summary
+    - event_window_catalog
+    outputs:
+    - repeat_event_pairs
+    - repeat_event_families
+    - repeat_family_members
+    - family_threshold_summary
+    params:
+      loose_repeat_threshold:
+        median_cc_min: 0.55
+      high_confidence_threshold:
+        median_cc_min: 0.70
+      pair_validity_constraints:
+        use_final_component_and_station_requirements: true
+      graph_definition: undirected_connected_components
+      family_statistics:
+      - family_size
+      - num_edges
+      - start_time
+      - end_time
+      - duration_days
+      - median_pair_cc
+      - max_pair_cc
+      - magnitude_min
+      - magnitude_max
+      - epicentral_span_km
+  - name: write_outputs_and_analysis_summary
+    description: Validate merged outputs, enforce key field consistency, and 
+      write final CSV and JSON deliverables with audit, runtime, threshold, and 
+      failure statistics.
+    inputs:
+    - candidate_event_pairs
+    - station_component_cc
+    - repeat_event_pairs
+    - repeat_event_families
+    - repeat_family_members
+    - metadata_audit_summary
+    - candidate_prefilter_summary
+    - runtime_parallel_summary
+    - family_threshold_summary
+    - processing_failures
+    outputs:
+    - candidate_event_pairs_csv
+    - station_component_cc_csv
+    - repeat_event_pairs_csv
+    - repeat_event_families_csv
+    - repeat_family_members_csv
+    - analysis_summary_json
+    params:
+      required_output_tables:
+      - candidate_event_pairs
+      - station_component_cc
+      - repeat_event_pairs
+      - repeat_event_families
+      - repeat_family_members
+      required_summary_sections:
+      - data_root_and_time_window
+      - metadata_audit
+      - sac_path_checks
+      - pick_coverage
+      - threshold_scan_counts
+      - final_prefilter_rules
+      - waveform_processing_parameters
+      - parallel_runtime
+      - correlation_success_failure_statistics
+      - repeat_pair_thresholds
+      - family_statistics
+      - representative_selection_rules
+      - output_inventory
+      consistency_checks:
+      - pair_key_uniqueness
+      - component_to_pair_joinability
+      - pair_metrics_match_component_counts
+      - nonempty_required_outputs
+
+- name: 02_repeat_event_visualization
+  description: Generate reviewable figures from the standardized repeat-event 
+    outputs and representative SAC waveforms using the baseline processing 
+    chain.
+  script: 02_repeat_event_visualization.py
+  ancestors:
+  - 01_repeat_event_analysis
+  subtasks:
+  - name: select_representative_pairs_and_families
+    description: Choose top-scoring event pairs and major families for waveform 
+      and timeline visualization using reproducible ranking rules.
+    inputs:
+    - repeat_event_pairs
+    - repeat_event_families
+    - repeat_family_members
+    - station_component_cc
+    - candidate_event_pairs
+    outputs:
+    - representative_event_pairs
+    - representative_families
+    - visualization_selection_summary
+    params:
+      pair_selection_priority:
+      - median_cc_descending
+      - num_components_used_descending
+      - num_stations_used_descending
+      include_global_best_pair: true
+      include_one_pair_per_major_family: true
+      major_family_definition: largest_or_best_connected_components
+  - name: generate_spatial_and_statistical_figures
+    description: Create spatial maps, family timelines, and statistical 
+      diagnostic plots for repeat-event screening and family structure.
+    inputs:
+    - candidate_event_pairs
+    - repeat_event_pairs
+    - repeat_event_families
+    - repeat_family_members
+    - event_window_catalog
+    - station_component_cc
+    - optional_stations_table
+    outputs:
+    - candidate_spatial_map
+    - zoomed_family_map
+    - family_timeline_figure
+    - correlation_statistics_figure
+    - repeat_statistics_figure
+    - station_contribution_figure
+    params:
+      required_figures:
+      - candidate_repeat_event_spatial_distribution
+      - zoomed_repeat_event_distribution
+      - repeat_event_family_time_series
+      - correlation_statistical_distributions
+      - repeat_event_statistics
+      - station_component_diagnostics
+      map_edge_set: high_confidence_repeat_pairs
+      map_node_set: all_window_events_plus_repeat_candidates
+      family_color_scheme: distinct_family_colors
+  - name: generate_waveform_comparison_figures
+    description: Re-read representative SAC waveforms and plot phase-aligned 
+      waveform overlays ordered by average station distance with CC and lag 
+      annotations.
+    inputs:
+    - representative_event_pairs
+    - station_component_cc
+    - audited_observations
+    - sac_waveform_files
+    outputs:
+    - waveform_comparison_figure
+    - waveform_plot_metadata
+    params:
+      waveform_processing_must_match_baseline: true
+      phase_priority:
+      - S
+      - P
+      correlation_window_relative_seconds:
+        start: -0.5
+        end: 5.5
+      bandpass_hz:
+        low: 2.0
+        high: 15.0
+      station_component_order: average_epicentral_distance_ascending
+      annotations:
+      - station_component
+      - average_epicentral_distance_km
+      - positive_peak_cc
+      - lag_s
+      - phase_used
+  - name: validate_figure_outputs
+    description: Check that all required figures are produced and record figure 
+      completion and selection rules for reproducibility.
+    inputs:
+    - candidate_spatial_map
+    - zoomed_family_map
+    - waveform_comparison_figure
+    - family_timeline_figure
+    - correlation_statistics_figure
+    - repeat_statistics_figure
+    - station_contribution_figure
+    - visualization_selection_summary
+    - analysis_summary_json
+    outputs:
+    - figure_inventory
+    - updated_analysis_summary_json
+    params:
+      required_figure_inventory:
+      - candidate_spatial_map
+      - zoomed_family_map
+      - waveform_comparison_figure
+      - family_timeline_figure
+      - correlation_statistics_figure
+      - repeat_statistics_figure
+      - station_contribution_figure
+      require_nonempty_figures: true

@@ -1,0 +1,116 @@
+[2026-09-11T17:56:43Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog
+[2026-09-11T17:56:43Z] Fetching Hi-net login page
+[2026-09-11T17:57:13Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5afbf40>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 3.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T17:58:05Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out. (read timeout=30)); retrying in 6.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T17:58:41Z] GET https://hinetwww11.bosai.go.jp/auth/?LANG=en attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/?LANG=en (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae7df0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 12.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T17:59:05Z] Posting Hi-net login form (credential values suppressed)
+[2026-09-11T17:59:44Z] Hi-net authentication succeeded; catalog access will be verified by the first bounded chunk POST
+[2026-09-11T17:59:44Z] Requesting chunk 001: [2025-06-01, 2025-06-08) span=7 days
+[2026-09-11T18:08:30Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out.); retrying in 3.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T18:09:03Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5ae7880>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 6.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T18:09:40Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffde5aba610>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=30)'))); retrying in 12.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T18:16:35Z] Chunk 001 complete: parsed_rows=2317, actual_range=2025-06-01 00:03:37.790000 to 2025-06-03 23:55:51.510000
+[2026-09-11T18:16:38Z] Requesting chunk 002: [2025-06-08, 2025-06-15) span=7 days
+[2026-09-11T18:18:08Z] Chunk 002 complete: parsed_rows=5530, actual_range=2025-06-08 00:01:06.020000 to 2025-06-11 23:59:12.200000
+[2026-09-11T18:18:11Z] Requesting chunk 003: [2025-06-15, 2025-06-22) span=7 days
+[2026-09-11T18:19:39Z] Chunk 003 complete: parsed_rows=5706, actual_range=2025-06-15 00:02:13.200000 to 2025-06-21 23:59:31.300000
+[2026-09-11T18:19:42Z] Requesting chunk 004: [2025-06-22, 2025-06-29) span=7 days
+[2026-09-11T18:20:00Z] Chunk 004 complete: parsed_rows=7191, actual_range=2025-06-22 00:05:23.110000 to 2025-06-28 23:59:31.400000
+[2026-09-11T18:20:03Z] Requesting chunk 005: [2025-06-29, 2025-07-06) span=7 days
+[2026-09-11T18:20:20Z] Chunk 005 complete: parsed_rows=8596, actual_range=2025-06-29 00:00:47.140000 to 2025-07-05 23:59:38.680000
+[2026-09-11T18:20:23Z] Requesting chunk 006: [2025-07-06, 2025-07-13) span=7 days
+[2026-09-11T18:20:53Z] Chunk 006 complete: parsed_rows=7189, actual_range=2025-07-06 00:02:22.470000 to 2025-07-12 23:54:31.350000
+[2026-09-11T18:20:56Z] Requesting chunk 007: [2025-07-13, 2025-07-20) span=7 days
+[2026-09-11T18:21:39Z] Chunk 007 complete: parsed_rows=5074, actual_range=2025-07-13 00:00:16.450000 to 2025-07-19 23:57:56.800000
+[2026-09-11T18:21:42Z] Requesting chunk 008: [2025-07-20, 2025-07-27) span=7 days
+[2026-09-11T18:21:52Z] Chunk 008 complete: parsed_rows=5250, actual_range=2025-07-20 00:01:44.930000 to 2025-07-26 23:58:09.750000
+[2026-09-11T18:21:55Z] Requesting chunk 009: [2025-07-27, 2025-08-03) span=7 days
+[2026-09-11T18:22:07Z] Chunk 009 complete: parsed_rows=4486, actual_range=2025-07-27 00:00:05.450000 to 2025-08-02 23:59:59.710000
+[2026-09-11T18:22:10Z] Requesting chunk 010: [2025-08-03, 2025-08-10) span=7 days
+[2026-09-11T18:23:24Z] Chunk 010 complete: parsed_rows=5812, actual_range=2025-08-03 00:00:16.970000 to 2025-08-09 23:59:10.750000
+[2026-09-11T18:23:27Z] Requesting chunk 011: [2025-08-10, 2025-08-17) span=7 days
+[2026-09-11T18:24:07Z] Chunk 011 complete: parsed_rows=5104, actual_range=2025-08-10 00:01:05.710000 to 2025-08-16 23:59:20.920000
+[2026-09-11T18:24:10Z] Requesting chunk 012: [2025-08-17, 2025-08-24) span=7 days
+[2026-09-11T18:24:32Z] Chunk 012 complete: parsed_rows=5852, actual_range=2025-08-17 00:00:10.210000 to 2025-08-23 23:59:33.520000
+[2026-09-11T18:24:35Z] Requesting chunk 013: [2025-08-24, 2025-08-31) span=7 days
+[2026-09-11T18:25:02Z] Chunk 013 complete: parsed_rows=5469, actual_range=2025-08-24 00:01:36.700000 to 2025-08-30 23:59:33.350000
+[2026-09-11T18:25:05Z] Requesting chunk 014: [2025-08-31, 2025-09-07) span=7 days
+[2026-09-11T18:25:47Z] Chunk 014 complete: parsed_rows=4458, actual_range=2025-08-31 00:01:55.380000 to 2025-09-06 23:58:37.120000
+[2026-09-11T18:25:50Z] Requesting chunk 015: [2025-09-07, 2025-09-14) span=7 days
+[2026-09-11T18:26:20Z] Chunk 015 complete: parsed_rows=6106, actual_range=2025-09-07 00:01:04.580000 to 2025-09-13 23:51:55.360000
+[2026-09-11T18:26:23Z] Requesting chunk 016: [2025-09-14, 2025-09-21) span=7 days
+[2026-09-11T18:26:44Z] Chunk 016 complete: parsed_rows=5095, actual_range=2025-09-14 00:01:20.570000 to 2025-09-20 23:58:39.170000
+[2026-09-11T18:26:47Z] Requesting chunk 017: [2025-09-21, 2025-09-28) span=7 days
+[2026-09-11T18:29:25Z] Chunk 017 complete: parsed_rows=4260, actual_range=2025-09-21 00:03:02.690000 to 2025-09-27 23:59:11.860000
+[2026-09-11T18:29:28Z] Requesting chunk 018: [2025-09-28, 2025-10-05) span=7 days
+[2026-09-11T18:30:01Z] Chunk 018 complete: parsed_rows=5421, actual_range=2025-09-28 00:00:53.210000 to 2025-10-04 23:59:01.500000
+[2026-09-11T18:30:04Z] Requesting chunk 019: [2025-10-05, 2025-10-12) span=7 days
+[2026-09-11T18:30:24Z] Chunk 019 complete: parsed_rows=4758, actual_range=2025-10-05 00:01:12.490000 to 2025-10-11 23:58:40.900000
+[2026-09-11T18:30:27Z] Requesting chunk 020: [2025-10-12, 2025-10-19) span=7 days
+[2026-09-11T18:30:38Z] Chunk 020 complete: parsed_rows=3995, actual_range=2025-10-12 00:02:33.630000 to 2025-10-18 23:50:21.330000
+[2026-09-11T18:30:41Z] Requesting chunk 021: [2025-10-19, 2025-10-26) span=7 days
+[2026-09-11T18:30:54Z] Chunk 021 complete: parsed_rows=3877, actual_range=2025-10-19 00:00:51.060000 to 2025-10-25 23:54:22.730000
+[2026-09-11T18:30:57Z] Requesting chunk 022: [2025-10-26, 2025-11-02) span=7 days
+[2026-09-11T18:31:13Z] Chunk 022 complete: parsed_rows=3930, actual_range=2025-10-26 00:05:46.940000 to 2025-11-01 23:53:14.260000
+[2026-09-11T18:31:16Z] Requesting chunk 023: [2025-11-02, 2025-11-09) span=7 days
+[2026-09-11T18:31:37Z] Chunk 023 complete: parsed_rows=5854, actual_range=2025-11-02 00:11:52.260000 to 2025-11-08 23:59:57.370000
+[2026-09-11T18:31:40Z] Requesting chunk 024: [2025-11-09, 2025-11-16) span=7 days
+[2026-09-11T18:32:45Z] Chunk 024 complete: parsed_rows=5849, actual_range=2025-11-09 00:00:34.310000 to 2025-11-15 23:58:50.520000
+[2026-09-11T18:32:48Z] Requesting chunk 025: [2025-11-16, 2025-11-23) span=7 days
+[2026-09-11T18:33:04Z] Chunk 025 complete: parsed_rows=4717, actual_range=2025-11-16 00:05:43.570000 to 2025-11-22 23:58:25.360000
+[2026-09-11T18:33:07Z] Requesting chunk 026: [2025-11-23, 2025-11-30) span=7 days
+[2026-09-11T18:33:34Z] Chunk 026 complete: parsed_rows=6338, actual_range=2025-11-23 00:02:56.740000 to 2025-11-29 23:59:50.580000
+[2026-09-11T18:33:37Z] Requesting chunk 027: [2025-11-30, 2025-12-07) span=7 days
+[2026-09-11T18:35:30Z] Chunk 027 complete: parsed_rows=6184, actual_range=2025-11-30 00:00:02.450000 to 2025-12-06 23:58:59.960000
+[2026-09-11T18:35:33Z] Requesting chunk 028: [2025-12-07, 2025-12-14) span=7 days
+[2026-09-11T18:36:47Z] Chunk 028 complete: parsed_rows=8139, actual_range=2025-12-07 00:03:35.250000 to 2025-12-12 23:59:28.070000
+[2026-09-11T18:36:50Z] Requesting chunk 029: [2025-12-14, 2025-12-21) span=7 days
+[2026-09-11T18:37:34Z] Chunk 029 complete: parsed_rows=5693, actual_range=2025-12-14 00:04:28.800000 to 2025-12-20 23:56:03.970000
+[2026-09-11T18:37:37Z] Requesting chunk 030: [2025-12-21, 2025-12-28) span=7 days
+[2026-09-11T18:39:15Z] Chunk 030 complete: parsed_rows=4387, actual_range=2025-12-21 00:02:24.780000 to 2025-12-27 23:59:39.480000
+[2026-09-11T18:39:18Z] Requesting chunk 031: [2025-12-28, 2026-01-04) span=7 days
+[2026-09-11T18:40:19Z] Chunk 031 complete: parsed_rows=5201, actual_range=2025-12-28 00:05:54.690000 to 2026-01-02 23:57:59.530000
+[2026-09-11T18:40:22Z] Requesting chunk 032: [2026-01-04, 2026-01-11) span=7 days
+[2026-09-11T18:47:02Z] POST https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (("Connection broken: ConnectionResetError(104, 'Connection reset by peer')", ConnectionResetError(104, 'Connection reset by peer'))); retrying in 3.0s with timeout=(connect 30s, read 240s)
+[2026-09-11T18:47:58Z] Chunk 032 complete: parsed_rows=6979, actual_range=2026-01-04 00:00:41.150000 to 2026-01-09 23:58:34.850000
+[2026-09-11T18:48:01Z] Requesting chunk 033: [2026-01-11, 2026-01-18) span=7 days
+[2026-09-11T18:48:34Z] Chunk 033 complete: parsed_rows=5840, actual_range=2026-01-11 00:03:15.560000 to 2026-01-17 23:59:34.980000
+[2026-09-11T18:48:37Z] Requesting chunk 034: [2026-01-18, 2026-01-25) span=7 days
+[2026-09-11T18:48:54Z] Chunk 034 complete: parsed_rows=5531, actual_range=2026-01-18 00:00:10.030000 to 2026-01-24 23:59:42.900000
+[2026-09-11T18:48:57Z] Requesting chunk 035: [2026-01-25, 2026-02-01) span=7 days
+[2026-09-11T18:49:07Z] Chunk 035 complete: parsed_rows=5303, actual_range=2026-01-25 00:00:10.930000 to 2026-01-31 23:59:35.470000
+[2026-09-11T18:49:10Z] Requesting chunk 036: [2026-02-01, 2026-02-08) span=7 days
+[2026-09-11T18:49:20Z] Chunk 036 complete: parsed_rows=4179, actual_range=2026-02-01 00:01:06.350000 to 2026-02-07 23:58:37.870000
+[2026-09-11T18:49:23Z] Requesting chunk 037: [2026-02-08, 2026-02-15) span=7 days
+[2026-09-11T18:49:40Z] Chunk 037 complete: parsed_rows=4879, actual_range=2026-02-08 00:01:44 to 2026-02-14 23:59:44.300000
+[2026-09-11T18:49:43Z] Requesting chunk 038: [2026-02-15, 2026-02-22) span=7 days
+[2026-09-11T18:49:54Z] Chunk 038 complete: parsed_rows=5309, actual_range=2026-02-15 00:01:46.040000 to 2026-02-21 23:59:58.820000
+[2026-09-11T18:49:57Z] Requesting chunk 039: [2026-02-22, 2026-03-01) span=7 days
+[2026-09-11T18:50:09Z] Chunk 039 complete: parsed_rows=5548, actual_range=2026-02-22 00:00:06.830000 to 2026-02-28 23:58:56.550000
+[2026-09-11T18:50:12Z] Requesting chunk 040: [2026-03-01, 2026-03-08) span=7 days
+[2026-09-11T18:50:28Z] Chunk 040 complete: parsed_rows=5406, actual_range=2026-03-01 00:00:46.980000 to 2026-03-07 23:59:42.590000
+[2026-09-11T18:50:31Z] Requesting chunk 041: [2026-03-08, 2026-03-15) span=7 days
+[2026-09-11T18:50:50Z] Chunk 041 complete: parsed_rows=4181, actual_range=2026-03-08 00:01:06.560000 to 2026-03-14 23:59:59.780000
+[2026-09-11T18:50:53Z] Requesting chunk 042: [2026-03-15, 2026-03-22) span=7 days
+[2026-09-11T18:51:09Z] Chunk 042 complete: parsed_rows=6047, actual_range=2026-03-15 00:01:27.310000 to 2026-03-21 23:51:45.170000
+[2026-09-11T18:51:12Z] Requesting chunk 043: [2026-03-22, 2026-03-29) span=7 days
+[2026-09-11T18:51:24Z] Chunk 043 complete: parsed_rows=5587, actual_range=2026-03-22 00:00:23.240000 to 2026-03-28 23:59:53.720000
+[2026-09-11T18:51:27Z] Requesting chunk 044: [2026-03-29, 2026-04-05) span=7 days
+[2026-09-11T18:51:37Z] Chunk 044 complete: parsed_rows=4920, actual_range=2026-03-29 00:01:06.250000 to 2026-04-04 23:58:32.380000
+[2026-09-11T18:51:40Z] Requesting chunk 045: [2026-04-05, 2026-04-12) span=7 days
+[2026-09-11T18:51:58Z] Chunk 045 complete: parsed_rows=4537, actual_range=2026-04-05 00:01:42.760000 to 2026-04-11 23:56:55.390000
+[2026-09-11T18:52:01Z] Requesting chunk 046: [2026-04-12, 2026-04-19) span=7 days
+[2026-09-11T18:52:22Z] Chunk 046 complete: parsed_rows=5216, actual_range=2026-04-12 00:00:35.320000 to 2026-04-18 23:58:32.170000
+[2026-09-11T18:52:25Z] Requesting chunk 047: [2026-04-19, 2026-04-26) span=7 days
+[2026-09-11T18:54:02Z] Chunk 047 complete: parsed_rows=4162, actual_range=2026-04-19 00:00:02.600000 to 2026-04-21 23:59:57.820000
+[2026-09-11T18:54:05Z] Requesting chunk 048: [2026-04-26, 2026-05-02) span=6 days
+[2026-09-11T18:54:14Z] Chunk 048 complete: parsed_rows=5328, actual_range=2026-04-26 00:00:03.220000 to 2026-05-01 23:58:44.740000
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 764, in <module>
+    main()
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 722, in main
+    cleaned_for_plot, csv_stats = validate_cleaned_csv(CSV_PATH)
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 558, in validate_cleaned_csv
+    raise RuntimeError("Cleaned CSV still contains non-parsable datetime or numeric values")
+RuntimeError: Cleaned CSV still contains non-parsable datetime or numeric values
+

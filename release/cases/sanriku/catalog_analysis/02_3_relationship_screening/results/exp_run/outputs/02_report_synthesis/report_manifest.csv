@@ -1,0 +1,16 @@
+output_name,category,rows,source
+pairwise_scientific_summary.csv,table,3.0,
+relationship_evidence_matrix_concise.csv,table,27.0,
+followup_priorities_concise.csv,table,27.0,
+raw_corrected_distance_summary.csv,table,3.0,
+strongest_supported_signals.csv,table,16.0,
+weak_negative_unresolved_signals.csv,table,14.0,
+recommended_next_steps_ranked.csv,table,27.0,
+final_scientific_report.md,report,139.0,
+executive_summary.txt,summary,24.0,
+fig_pairwise_overview_map.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_pairwise_overview_map.png
+fig_pairwise_time_projection.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_pairwise_time_projection.png
+fig_intervening_event_chains.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_intervening_event_chains.png
+fig_corridor_vs_control.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_corridor_vs_control.png
+fig_relationship_evidence_matrix.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_relationship_evidence_matrix.png
+fig_followup_priority.png,figure,,<CASE_ROOT>/run/02_3_relationship_screening/exp_run/outputs/01_relationship_analysis/fig_followup_priority.png

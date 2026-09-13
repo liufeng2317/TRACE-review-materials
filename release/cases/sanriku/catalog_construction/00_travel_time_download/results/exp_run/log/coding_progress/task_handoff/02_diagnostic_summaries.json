@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "02_diagnostic_summaries",
+    "generated_at": "2026-09-12T04:04:29.079725+00:00"
+  },
+  "status": {
+    "state": "pending",
+    "stage": null,
+    "elapsed_sec": null,
+    "timing": {},
+    "quality_flags": [
+      "task_status:pending"
+    ]
+  },
+  "paths": {
+    "root": "<CASE_ROOT>/run/00_travel_time_download",
+    "script": "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/02_diagnostic_summaries.py",
+    "output_dir": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/02_diagnostic_summaries",
+    "analysis": "<CASE_ROOT>/run/00_travel_time_download/exp_run/analysis/02_diagnostic_summaries.md",
+    "log": null
+  },
+  "outputs": {
+    "primary": [],
+    "all": [],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Generate compact non-authoritative diagnostic summaries and optional QC figures from the validated catalog products.",
+    "result": "Generate compact non-authoritative diagnostic summaries and optional QC figures from the validated catalog products. Status=pending; outputs=0 discovered; primary=0.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

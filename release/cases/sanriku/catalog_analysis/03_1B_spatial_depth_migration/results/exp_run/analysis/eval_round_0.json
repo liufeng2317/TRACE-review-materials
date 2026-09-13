@@ -1,0 +1,35 @@
+{
+  "thought_chain": "I evaluated the result against the user request and experiment plan in four steps. First, I checked delivery completeness using both the task analysis and the handoff evidence, rather than relying on one source alone. The handoff shows successful completion of task 01 with 36 discovered outputs, including the requested machine-readable tables, final JSON summaries, and the compact figure set. The analysis report also cites the expected products for phase summaries, burst summaries, centroid evolution, migration diagnostics, depth-domain summaries, robustness tables, contradiction logging, and follow-up candidate lists. Second, I checked whether the scientific questions were actually answered. The reported outputs directly address: phase- and burst-level spatial summaries; centroid evolution through time; migration/projection tests by phase and full interval; depth-domain structure; robustness to M2-aware filtering, magnitude threshold, corridor width, and endpoint definitions; and final classification/hypothesis carry-forward. The conclusion that the system is best described as mixed endpoint-centered overlap rather than robust monotonic migration is responsive to the user’s core classification request, and it explicitly avoids causal inference as instructed. Third, I assessed scientific adequacy and internal consistency. The main interpretation is supported by multiple independent diagnostics: dominant endpoint fractions across phases, weak/non-robust full-interval trends after phase separation, coherent shallow depth occupancy across spatial classes, and modest effect of M2-aware filtering. The report also appropriately treats the small pre-M3 M4+ monotonic signal as a subset result rather than a system-wide diagnosis, which is scientifically cautious. The recomputed findings are also stated to be consistent with the provided screening context, satisfying the instruction to use prior context as guidance rather than as copied conclusions. Fourth, I looked for major omissions or issues that would prevent answering the user’s core question. I do not see a major missing artifact or unresolved contradiction. There are some limitations in confidence: the strongest monotonic signal appears in a small subset, burst segmentation details are only summarized rather than numerically demonstrated in the evaluation text, and the handoff notes outputs_truncated. However, these do not block the core catalog-level screening conclusion. Therefore, the results are delivery-complete and scientifically meaningful for the requested screening task, with moderate confidence rather than high because some classifications depend on sparse large-event subsets and centroid summaries can mask subcluster complexity.",
+  "is_satisfactory": true,
+  "delivery_status": "complete",
+  "scientific_confidence": "moderate",
+  "limitations": [
+    {
+      "type": "sample_size",
+      "severity": "medium",
+      "evidence": "The only phase-threshold subset reported as robust monotonic migration is pre_m3_primary_raw_M4+ with 14 events; pre-M3 M5+ is insufficient with 3 events.",
+      "impact": "Large-event migration inferences are limited and should not be generalized to the full M1-M3 system."
+    },
+    {
+      "type": "method_assumption",
+      "severity": "low",
+      "evidence": "Burst identification is rate-based and centroid interpretations are based on aggregated phase/burst summaries.",
+      "impact": "Centroid motion may reflect mixing of subclusters rather than literal propagation, so movement classifications are screening-level rather than definitive."
+    },
+    {
+      "type": "uncertainty",
+      "severity": "low",
+      "evidence": "The analysis is explicitly catalog-level and avoids relocation-quality or waveform-based validation of cluster linkage.",
+      "impact": "Spatial-depth organization is adequately screened, but physical or finer-structure interpretations remain uncertain."
+    },
+    {
+      "type": "runtime_partial_failure",
+      "severity": "low",
+      "evidence": "Handoff quality flag includes outputs_truncated, indicating the handoff JSON is an index rather than a full embedded report.",
+      "impact": "This does not appear to affect delivered outputs, but some verification relies on summary reporting rather than full inline output inspection."
+    }
+  ],
+  "needs_refinement": false,
+  "refinement_priority": "none",
+  "suggestions": ""
+}

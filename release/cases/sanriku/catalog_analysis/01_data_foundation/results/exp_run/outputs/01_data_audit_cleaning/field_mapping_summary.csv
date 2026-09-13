@@ -1,0 +1,5 @@
+file,usable_fields,time_column
+Snet_catalog_relocate.csv,"datetime,lat,lon,dep,mag",datetime
+main_earthquake.csv,"index,datetime,lat,lon,dep,mag",datetime
+Snet_mecha.csv,"event_code,origin_time,lat_deg,lon_deg,depth_km,mag_1,mag_1_type,mag_2,mag_2_type,region_name,n_hypo_stations,m_method,m_source,P_axis_azimuth,P_axis_dip,T_axis_azimuth,T_axis_dip,N_axis_azimuth,N_axis_dip,strike_plane1,dip_plane1,rake_plane1,strike_plane2,dip_plane2,rake_plane2,focal_mech_score,n_mech_stations,focal_mech_projection,source_file",origin_time
+station.sta,"station_code,station_number,latitude,longitude,elevation_m,matched",

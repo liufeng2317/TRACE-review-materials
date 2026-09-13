@@ -1,0 +1,4 @@
+pair_name,pair_label,raw_signal_level,control_screen,distance_plausibility_screen,m4_between_count,m4_corridor_fraction,m4_ambiguous_fraction,m4_between_count_control_pct,m4_pseudo_corridor_pct,pair_sep_km,pair_depth_diff_km,pair_time_sep_days,distance_link_score
+M1_M2,M1-M2,high,survives_controls,not_local_linkage_plausible,68,0.5128205128205128,0.1217948717948717,0.8416666666666667,0.925,202.5897967686855,37.6,29.25799699074074,0.0
+M1_M3,M1-M3,high,partly_weakened,nearby_plausible,188,0.357976653696498,0.5136186770428015,0.5916666666666667,0.975,57.37913731731847,3.4999999999999982,161.99257893518518,0.6812270149037862
+M2_M3,M2-M3,high,partly_weakened,not_local_linkage_plausible,121,0.1052631578947368,0.0647773279352226,0.375,0.5583333333333333,145.22377590544454,-34.1,132.73458194444444,0.1932012449697525

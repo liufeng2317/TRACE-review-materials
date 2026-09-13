@@ -1,0 +1,50 @@
+{
+  "preferred_description": "mixed_endpoint_centered_overlap",
+  "phase_or_burst_systematic_M1_to_M3_movement_after_separation": false,
+  "pre_m3_connection_assessment": "separate_endpoint_centered_or_mixed",
+  "m4_m5_consistency": [
+    {
+      "threshold": "M3+",
+      "event_count": 736,
+      "median_depth_km": 13.475000000000001,
+      "depth_min_km": 0.82,
+      "depth_max_km": 36.55,
+      "frac_0_30km": 0.9728260869565217,
+      "frac_30_60km": 0.02717391304347826,
+      "frac_gt_60km": 0.0
+    },
+    {
+      "threshold": "M4+",
+      "event_count": 158,
+      "median_depth_km": 13.71,
+      "depth_min_km": 3.68,
+      "depth_max_km": 35.04,
+      "frac_0_30km": 0.9620253164556962,
+      "frac_30_60km": 0.0379746835443038,
+      "frac_gt_60km": 0.0
+    },
+    {
+      "threshold": "M5+",
+      "event_count": 50,
+      "median_depth_km": 13.774999999999999,
+      "depth_min_km": 6.13,
+      "depth_max_km": 34.29,
+      "frac_0_30km": 0.94,
+      "frac_30_60km": 0.06,
+      "frac_gt_60km": 0.0
+    }
+  ],
+  "m2aware_change_summary": "different",
+  "followup_hypotheses": [
+    "relocation refinement for endpoint-centered bursts",
+    "waveform similarity within dominant bursts",
+    "mechanism comparison for M4+ follow-up candidates",
+    "stress or Coulomb modeling only after catalog-screening evidence review",
+    "b-value and moment-release comparisons by separated phases"
+  ],
+  "overall_reasons": [
+    "Primary phase dominant categories: M1-related=M1_endpoint, middle=M1_endpoint, pre-M3=M1_endpoint.",
+    "Trend classes: full=no_robust_monotonic_migration, M1-related=no_robust_monotonic_migration, middle=no_robust_monotonic_migration, pre-M3=no_robust_monotonic_migration.",
+    "Mixed evidence; defaulting to endpoint-centered separated bursts rather than continuous migration."
+  ]
+}

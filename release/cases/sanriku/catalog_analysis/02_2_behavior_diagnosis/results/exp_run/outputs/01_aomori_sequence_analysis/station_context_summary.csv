@@ -1,0 +1,4 @@
+mainshock_id,stations_within_50km,stations_within_100km,stations_within_150km,matched_true_fraction
+M1,6,22,48,1.0
+M2,7,36,93,1.0
+M3,5,26,63,1.0

@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_hinet_jma_arrivals_workflow
+Status: running
+Execution stage: script_execution
+Debug rounds: 4
+Result check rounds: 0
+Elapsed seconds: 9763.595
+Started at: 2026-09-12T00:46:59.939460+00:00
+Finished at: 
+Latest log: <CASE_ROOT>/run/00_travel_time_download/exp_run/log/task/01_hinet_jma_arrivals_workflow/log_3.txt
+Script: <CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py
+Output dir: <CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow
+Analysis: <CASE_ROOT>/run/00_travel_time_download/exp_run/analysis/01_hinet_jma_arrivals_workflow.md
+Runtime action: pass
+Code changes: 4
+Last activity: 2026-09-12T04:04:29.003753+00:00
+Last event: script_heartbeat
+Progress message: [2026-09-12T03:59:48.209457+00:00] Downloading 2025-06-01 span=5 days using account_1, attempt 1/3
+Timing: code_review_sec=135.966, coding_agent_sec=649.116, preflight_sec=2.428, script_execution_current_sec=300.443, script_execution_sec=134.315, total_sec=9763.595
+Coding plan context: mode=full_experiment_plan, original_chars=15531, compact_chars=15531
+Coding tool usage: total=23, read_file=11, unique_files=1, used_retrieve=False, tools={'read_file': 11, 'bash_executor': 5, 'python_executor': 3, 'apply_diff': 4}
+Debug summary: <CASE_ROOT>/run/00_travel_time_download/exp_run/log/coding_progress/debug_summary.json

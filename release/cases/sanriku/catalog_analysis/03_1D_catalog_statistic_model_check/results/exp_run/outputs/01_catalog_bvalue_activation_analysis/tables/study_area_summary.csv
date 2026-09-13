@@ -1,0 +1,4 @@
+region_name,shape,center_lat,center_lon,azimuth_deg,length_km,width_km,event_count,southwest_cluster_count,southwest_cluster_fraction,sw_cluster_threshold_lat,sw_cluster_threshold_lon
+whole_oriented_area,rotated_rectangle,39.622,143.332,328.330826571449,148.5813417574939,120.0,23291,0,0.0,38.788,141.946
+ellipse_sensitivity,ellipse,39.622,143.332,328.330826571449,148.5813417574939,120.0,19986,0,0.0,38.788,141.946
+broad_rectangle_baseline,axis_aligned_rectangle,,,0.0,,,71692,0,0.0,38.788,141.946

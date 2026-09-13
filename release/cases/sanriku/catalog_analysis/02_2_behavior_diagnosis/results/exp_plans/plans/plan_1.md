@@ -1,0 +1,237 @@
+# Goal
+Diagnose and compare the mainshock-centered sequence behavior around M1, M2, and M3 in the Aomori relocated earthquake catalog by building a unified reference-event table, generating short-window morphology and matched-window comparison products, adding depth/mechanism context, and assigning evidence-based behavior-dimension scores without over-interpreting catalog-only signals.
+
+## Planning Assumptions
+- Observation data are sufficient and should be used as the primary basis: `catalog/Snet_catalog_relocate_250930_260501.csv` for relocated events and `catalog/main_earthquake.csv` for the three reference mainshocks.
+- Context-only data: `source_mechanism/Snet_mecha.csv` provides partial focal mechanism coverage; `stations/station.sta` is for network/geographic context and should not be used to infer missing seismicity rates.
+- Distances should be computed as horizontal epicentral great-circle distance in km between each catalog event and each mainshock; depth difference should be event depth minus mainshock depth in km.
+- A practical “mainshock-like event” tolerance must be deterministic and documented. Preferred rule: identify the nearest catalog event to each mainshock in a joint tolerance window using origin-time difference first, then hypocentral proximity. If no exact match exists, use explicit thresholds and record residuals.
+- Sequence comparisons must use matched symmetric windows around each mainshock: ±7 d, ±14 d, ±25 d.
+- Spatial summaries must include both cumulative radii (`<=30`, `<=60`, `<=100` km) and annular distance bands (`0–30`, `30–60`, `60–100` km); regional-activation interpretation should rely on annular summaries and, where feasible, area-normalized rates.
+- Behavior dimensions are not mutually exclusive; scores must be supported by quantitative metrics from tables and event lists, not figures alone.
+- Use a single primary task script for data ingest, derived-table generation, metrics, and figures so that all outputs are produced from one consistent event-reference table and one parameter set.
+- Success evidence is the presence of non-empty derived sequence tables, metric tables for all windows/spatial definitions, and the requested figure files: `magnitude_time_distance_pm7d_100km.png`, `m4plus_sequence_views_pm7d_100km.png`, `prepost_magnitude_distance_counts_pm7d_100km.png`, `m4_m5_distance_band_contribution_pm7d_100km.png`, plus curated comparison figures for dominance/companion metrics and window-radius sensitivity.
+
+## Analysis Plan
+
+### Task 1 — Build the mainshock-referenced sequence analysis table
+- Task description
+  - Read the relocated catalog and the three-event mainshock table, standardize fields, and construct one long-format event-mainshock reference table containing every catalog event referenced to each of M1, M2, and M3.
+- Required data sources
+  - `catalog/Snet_catalog_relocate_250930_260501.csv`
+  - `catalog/main_earthquake.csv`
+- Parameter selection strategy
+  - Parse origin times into a single timezone-consistent datetime field.
+  - Standardize columns to: event_id, origin_time, latitude, longitude, depth_km, magnitude.
+  - For each event-mainshock pair compute:
+    - `dt_days` and `dt_hours` relative to mainshock origin time
+    - epicentral distance `dist_km`
+    - absolute depth difference `abs_dz_km` and signed depth difference `dz_km`
+    - cumulative-radius flags: `r_le_30`, `r_le_60`, `r_le_100`
+    - annular distance band: `0-30`, `30-60`, `60-100`, `>100`
+    - pre/post label
+    - magnitude bins, including at minimum `<4`, `4-5`, `5-6`, `>=6`
+    - threshold flags: `M4+`, `M5+`, `M6+`
+  - Mainshock-like identification:
+    - First search for catalog event within a narrow time tolerance around each mainshock time.
+    - If multiple candidates exist, choose the minimum weighted mismatch using time, epicentral distance, and depth difference.
+    - Record chosen event and residuals in a separate match table.
+- Constraints
+  - The same catalog event may be mainshock-like for only the corresponding target mainshock unless overlaps are explicitly detected and flagged.
+  - Do not discard overlapping events among M1/M2/M3 reference frames; instead preserve cross-membership for later regional-overlap diagnosis.
+  - Distances and times must be computable for all 22,096 events; missing values should be logged and excluded only from affected metrics.
+- Key outputs
+  - `mainshock_reference_event_table.csv`
+  - `mainshock_like_match_summary.csv`
+  - `mainshock_reference_event_table.parquet` if efficient storage is needed
+  - QA summary table with event counts per mainshock, per window, and per distance category
+
+### Task 2 — Generate the required ±7 day, <=100 km morphology figures
+- Task description
+  - Produce the three requested short-window figure products for direct visual comparison of M1, M2, and M3 sequence morphology.
+- Required data sources
+  - `mainshock_reference_event_table.csv` from Task 1
+  - `catalog/main_earthquake.csv` for mainshock labels and magnitudes
+- Parameter selection strategy
+  - Filter to `|dt_days| <= 7` and `dist_km <= 100`.
+  - Use annular colors for `0–30`, `30–60`, `60–100` km.
+  - Scale marker size monotonically with magnitude using one shared mapping across all panels.
+  - Mark M4+ events with black edge.
+  - Show mainshock-like event as a star marker in all relevant panels.
+  - Use shared axis ranges across rows where possible for valid visual comparison.
+- Constraints
+  - `prepost_magnitude_distance_counts_pm7d_100km.png` is a summary figure only and must not be used as the sole basis for swarm-like or triggering diagnosis.
+  - `m4_m5_distance_band_contribution_pm7d_100km.png` must include both raw counts and normalized fractions/percentages.
+  - The M4+ sequence figure should exclude the mainshock-like event from support statistics but may show it visually as a reference symbol.
+- Key outputs
+  - `magnitude_time_distance_pm7d_100km.png`
+    - 3x2 layout: rows M1/M2/M3; left magnitude vs relative time; right distance vs relative time
+  - `m4plus_sequence_views_pm7d_100km.png`
+    - 3x2 layout for M4+ only; mainshock-like event shown only as reference
+  - `prepost_magnitude_distance_counts_pm7d_100km.png`
+    - pre/post counts by magnitude bins and distance bands with M4+/M5+/M6+ annotations
+  - `m4_m5_distance_band_contribution_pm7d_100km.png`
+    - raw and normalized M4+/M5+ counts by distance band for M1/M2/M3
+
+### Task 3 — Compute matched-window quantitative metrics across time windows and spatial definitions
+- Task description
+  - Build exhaustive pre/post metrics for each mainshock under symmetric windows and multiple spatial definitions, then derive a curated set of cross-mainshock comparison products.
+- Required data sources
+  - `mainshock_reference_event_table.csv`
+- Parameter selection strategy
+  - Time windows: `±7`, `±14`, `±25` days.
+  - Spatial definitions:
+    - cumulative radii `<=30`, `<=60`, `<=100` km
+    - annular bands `0–30`, `30–60`, `60–100` km
+  - For each mainshock × time window × spatial definition compute:
+    - event counts pre and post
+    - event rates pre and post
+    - post/pre count and rate ratios with zero-count handling
+    - counts for M4+, M5+, M6+
+    - magnitude-bin counts
+    - largest pre-event, largest post-event, largest non-mainshock event
+    - top-N event list and magnitude gaps:
+      - mainshock minus largest non-mainshock
+      - top1-top2, top2-top3 among non-mainshock events
+    - companion-event counts within 0.5 and 1.0 magnitude units of the mainshock
+    - near-field versus outer-band contributions
+    - area-normalized annular rates where feasible
+    - immediate-post concentration metrics, such as fraction of post events in first 6 h, 12 h, 1 d, 3 d
+    - simple decay indicators, such as rate drop from first day to later post windows
+  - If feasible, add scalar moment proxy using standard magnitude-to-moment conversion for concentration summaries; keep this explicitly labeled as catalog-derived proxy.
+- Constraints
+  - All metrics must be computed both including and excluding the mainshock-like event where that distinction matters; tables should carry a flag or paired columns.
+  - Zero-denominator cases must be handled explicitly with NA/infinite labels, not hidden.
+  - Cumulative-radius metrics should not be the only basis for regional-activation claims; annular metrics must be included.
+- Key outputs
+  - `matched_window_metrics_all.csv`
+  - `matched_window_metrics_by_band.csv`
+  - `event_lists_topranked_prepost.csv`
+  - `companion_event_metrics.csv`
+  - `magnitude_dominance_metrics.csv`
+  - `regional_outerband_metrics.csv`
+  - Curated figures:
+    - `magnitude_dominance_companion_summary.png`
+    - `window_radius_sensitivity_heatmaps.png`
+    - one optional robustness figure if ±14 d or ±25 d reveals a qualitatively distinct pattern
+
+### Task 4 — Add temporal-structure and migration diagnostics
+- Task description
+  - Quantify whether each sequence is best described by immediate post-mainshock concentration, persistent multi-peak activity, or any monotonic radial progression.
+- Required data sources
+  - `mainshock_reference_event_table.csv`
+  - event subsets and metrics from Task 3
+- Parameter selection strategy
+  - For post-mainshock response:
+    - compute short-lag fractions in first hours/days
+    - fit simple binned decay summaries over post time
+    - compare near-field and outer-band decay behavior
+  - For multi-peak/persistent activity:
+    - calculate rolling event-rate curves in the ±7 d and ±25 d windows
+    - count distinct local peaks for all events and M4+ events
+  - For radial migration/expansion:
+    - analyze distance vs time trends separately for all events and M4+ events
+    - compute regression slope and rank correlation over pre and post segments
+    - inspect ordered activation timing by distance band
+    - if geometry suggests a preferred axis from mechanisms or epicentral alignment, optionally project distances along that axis; otherwise keep radial-only analysis
+- Constraints
+  - A scattered cloud across distance bands is not evidence of migration.
+  - If no consistent monotonic pattern appears, explicitly record “no monotonic progression supported.”
+  - Avoid fitting heavy physical models; this stage is diagnostic and catalog-based.
+- Key outputs
+  - `post_response_temporal_metrics.csv`
+  - `migration_diagnostics.csv`
+  - values for immediate-post concentration, decay indicators, peak counts, trend slopes, and rank correlations to feed the final evidence table
+
+### Task 5 — Add depth and focal-mechanism context
+- Task description
+  - Characterize vertical structure and mechanism consistency of each sequence to help distinguish compact local activation from broader structural-domain activity.
+- Required data sources
+  - `mainshock_reference_event_table.csv`
+  - `source_mechanism/Snet_mecha.csv`
+  - `stations/station.sta` for optional map context only
+- Parameter selection strategy
+  - Depth summaries by mainshock and by window:
+    - all events within ±7, ±14, ±25 d and <=100 km
+    - M4+ and M5+ subsets
+    - pre/post depth medians, IQRs, and ranges
+    - depth difference relative to mainshock
+  - Mechanism context:
+    - match mechanism records to catalog events by time and location tolerance
+    - summarize available focal mechanisms within each sequence
+    - compare nodal-plane/axis orientations and depth domain among mechanism-covered events
+    - flag whether mechanisms suggest one structural family or mixed domains
+  - Station data:
+    - use only for optional station-map context or to note broad network coverage; do not infer detection completeness quantitatively unless metadata support it.
+- Constraints
+  - Mechanism coverage is sparse relative to the full catalog, so mechanism-based interpretations must be explicitly labeled as contextual.
+  - Unmatched mechanism records and uncertain match cases should be retained in a QA table.
+- Key outputs
+  - `depth_summary_by_mainshock.csv`
+  - `depth_summary_m4_m5.csv`
+  - `mechanism_match_summary.csv`
+  - `mechanism_context_by_sequence.csv`
+  - optional contextual figure:
+    - `sequence_depth_mechanism_context.png`
+
+### Task 6 — Score non-mutually-exclusive behavior dimensions for M1, M2, and M3
+- Task description
+  - Convert the metric tables into evidence-axis scores for each mainshock: low, possible, moderate, strong.
+- Required data sources
+  - Metric tables from Tasks 3–5
+  - event lists from Tasks 1–4
+- Parameter selection strategy
+  - For each mainshock evaluate:
+    - Aftershock response
+      - use post/pre rate changes, immediate post concentration, near-field dominance, and decay indicators
+    - Magnitude hierarchy and compound-event structure
+      - report mainshock-to-largest-nonmainshock gap, top-event gaps, companion counts within 0.5 and 1.0 magnitude units, moment-release concentration
+      - assign separate scores for:
+        - single-mainshock dominance
+        - compact-cascade / compound-sequence evidence
+    - Swarm-like organization
+      - use weak dominance, repeated M4+/M5+/M6 events, small gaps, persistence/multiple peaks, and poor fit to a simple single-mainshock-decay picture
+    - Foreshock or pre-mainshock activation
+      - use M4+/M5+ pre-counts, largest pre-event, approach-to-mainshock timing, and pre-event distance concentration
+    - Broader regional activation
+      - use annular fractions and rates, M4+/M5+ outer-band contributions, and area-normalized outer-band indicators
+    - Radial migration or expansion
+      - use trend slopes, rank correlations, distance-band activation ordering, and M4+ trajectories
+    - Slow-slip-related candidate behavior
+      - use only as a screening axis when sustained distributed and migration-like activity in plausible depth domain exists
+  - Build explicit scoring rules from metric combinations before assigning labels so that scores are reproducible across M1/M2/M3.
+- Constraints
+  - Every score must list key supporting metrics and at least one caveat.
+  - Do not force one exclusive sequence type per mainshock.
+  - Do not assign moderate/strong slow-slip-related support without clear sustained migration-like catalog evidence.
+- Key outputs
+  - `behavior_dimension_scores.csv`
+  - `behavior_dimension_supporting_metrics.csv`
+  - compact evidence matrix for use in the final report
+
+### Task 7 — Produce final synthesis products and concise scientific diagnosis
+- Task description
+  - Assemble the requested report-style outputs based on the quantitative tables and figures.
+- Required data sources
+  - All outputs from Tasks 2–6
+- Parameter selection strategy
+  - Organize the final synthesis into:
+    - short visual summary of the ±7 d behavior for M1/M2/M3
+    - per-mainshock interpretation along all behavior dimensions
+    - compact evidence table with score and key metrics
+    - explicit caution statement on limits of catalog-only inference
+    - short verification-analysis list
+  - Verification-analysis list should prioritize:
+    - completeness and detection-rate assessment
+    - declustering / ETAS comparison or Omori-fit checks
+    - waveform similarity and repeater testing
+    - relative-relocation refinement for compact cascades
+    - GNSS/tremor/ocean-bottom-pressure comparison for slow-slip screening
+    - more systematic mechanism consistency tests where coverage exists
+- Constraints
+  - Interpretation must separate local sequence behavior from broader regional activation and note when sequence overlap among M1/M2/M3 may contaminate pre/post windows.
+  - Figures should be concise and publication-oriented, but no rendering settings need to be specified here.
+- Key outputs
+  - `sequence_behavior_diagnosis.md`
+  - `sequence_behavior_evidence_table.csv`
+  - complete figure set and metric tables ready for downstream review

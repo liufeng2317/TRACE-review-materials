@@ -1,0 +1,4 @@
+mainshock,control_window_days,control_time_lo_days,control_time_hi_days,control_radius_km,control_n_events,control_rate_per_day
+M1,60,-240.0,-180.0,50,0,0.0
+M2,60,-240.0,-180.0,50,10,0.16666666666666666
+M3,60,-240.0,-180.0,50,76,1.2666666666666666

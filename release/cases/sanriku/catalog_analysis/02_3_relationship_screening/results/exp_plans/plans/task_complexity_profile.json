@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single-region catalog analysis with four tabular data sources, symmetric pairwise cluster-comparison, control tests, ambiguity-aware event association, and compact reporting/figure synthesis; no external models are required, but interpretation must separate raw, corrected, and distance-aware evidence.",
+  "data_source_count": 4,
+  "workflow_risk": "Main risk is overinterpreting pair relationships from window-dependent catalog patterns; mitigation requires explicit controls, symmetric metrics, and ambiguity-preserving assignments.",
+  "expected_script_count": 2
+}

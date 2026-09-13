@@ -1,0 +1,20 @@
+{
+  "source_result_set": "outputs/01_repeat_event_analysis",
+  "time_window": {
+    "start": "2025-11-01T00:00:00",
+    "end": "2025-12-07T00:00:00"
+  },
+  "filters": {
+    "magnitude_diff_max": 0.8,
+    "epicentral_distance_km_max": 5.0,
+    "common_station_components_min": 40
+  },
+  "counts": {
+    "candidate_event_pairs": 19726,
+    "repeat_event_pairs": 19726,
+    "high_confidence_pairs": 783,
+    "families": 147,
+    "family_members": 477
+  },
+  "note": "Post-processing of the full result set for manuscript-aligned plotting."
+}

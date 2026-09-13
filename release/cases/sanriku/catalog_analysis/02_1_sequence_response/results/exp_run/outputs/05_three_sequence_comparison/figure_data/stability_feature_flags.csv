@@ -1,0 +1,9 @@
+mainshock,feature,baseline_value,robust_fraction,n_windows,sparse_reference
+M1,rate_ratio,5.408496732026144,1.0,300,False
+M1,moving_rate_max,271.0,1.0,300,False
+M1,post_omori_p,0.6383674259945586,1.0,225,False
+M2,rate_ratio,25.03296703296704,1.0,300,False
+M2,moving_rate_max,125.85714285714286,1.0,300,False
+M2,post_omori_p,0.6437024855030238,0.9644444444444444,225,False
+M3,rate_ratio,3.170091324200913,1.0,300,False
+M3,moving_rate_max,271.0,1.0,300,False

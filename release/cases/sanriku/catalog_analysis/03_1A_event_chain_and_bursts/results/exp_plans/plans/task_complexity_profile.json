@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Single catalog-centered screening workflow with fixed and sensitivity windows, several derived geometry fields, M2-aware comparison, burst diagnostics, and a compact figure suite; no heavy external modeling is required.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate risk from headerless catalog parsing, event-time alignment to M1/M2/M3, geometric classification choices for corridor/endpoint categories, and avoiding over-interpretation of mixed M1/M2/M3 activity.",
+  "expected_script_count": 2
+}

@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Uses one observational waveform package with precomputed metadata, but requires hierarchical filtering, phase-aligned multi-station SAC cross-correlation, graph-based family construction, multiprocessing, diagnostics, and multiple scientific outputs/figures.",
+  "data_source_count": 7,
+  "workflow_risk": "medium: metadata field mismatches, missing picks/files, and candidate-volume control can affect downstream correlation throughput and pair validity.",
+  "expected_script_count": 2
+}

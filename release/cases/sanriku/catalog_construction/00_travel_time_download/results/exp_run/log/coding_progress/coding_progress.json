@@ -1,0 +1,104 @@
+{
+  "active_task": {
+    "execution_stage": "script_execution",
+    "last_activity_at": "2026-09-12T04:04:29.003753+00:00",
+    "last_progress_event": "script_heartbeat",
+    "progress_message": "[2026-09-12T03:59:48.209457+00:00] Downloading 2025-06-01 span=5 days using account_1, attempt 1/3",
+    "task_name": "01_hinet_jma_arrivals_workflow"
+  },
+  "generated_at": "2026-09-12T04:04:29.050117+00:00",
+  "root": "<CASE_ROOT>/run/00_travel_time_download",
+  "round_index": 0,
+  "schema_version": 1,
+  "status_counts": {
+    "pending": 1,
+    "running": 1
+  },
+  "summary_type": "coding_run_progress",
+  "task_count": 2,
+  "tasks": [
+    {
+      "coding_plan_context": {
+        "compact_chars": 15531,
+        "mode": "full_experiment_plan",
+        "original_chars": 15531,
+        "task_name": "01_hinet_jma_arrivals_workflow"
+      },
+      "coding_tool_usage": {
+        "analysis_calls": {},
+        "executor_calls": {
+          "bash_executor": 5,
+          "python_executor": 3
+        },
+        "file_reads": {
+          "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py": {
+            "count": 11,
+            "tools": {
+              "read_file": 11
+            }
+          }
+        },
+        "read_file_call_count": 11,
+        "retrieve_calls": {},
+        "tools": {
+          "apply_diff": 4,
+          "bash_executor": 5,
+          "python_executor": 3,
+          "read_file": 11
+        },
+        "total_tool_calls": 23,
+        "unique_file_read_count": 1,
+        "used_retrieve": false
+      },
+      "debug_round": 4,
+      "elapsed_sec": 9763.595,
+      "execution_stage": "script_execution",
+      "finished_at": null,
+      "last_activity_at": "2026-09-12T04:04:29.003753+00:00",
+      "last_no_progress_sec": 240.424,
+      "last_observed_line": "[2026-09-12T03:59:48.209457+00:00] Downloading 2025-06-01 span=5 days using account_1, attempt 1/3",
+      "last_progress_event": "script_heartbeat",
+      "latest_log_path": "<CASE_ROOT>/run/00_travel_time_download/exp_run/log/task/01_hinet_jma_arrivals_workflow/log_3.txt",
+      "output_dir": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow",
+      "progress_message": "[2026-09-12T03:59:48.209457+00:00] Downloading 2025-06-01 span=5 days using account_1, attempt 1/3",
+      "result_check_round": 0,
+      "script_path": "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": "2026-09-12T00:46:59.939460+00:00",
+      "status": "running",
+      "task_name": "01_hinet_jma_arrivals_workflow",
+      "timing": {
+        "code_review_sec": 135.966,
+        "coding_agent_sec": 649.116,
+        "preflight_sec": 2.428,
+        "script_execution_current_sec": 300.443,
+        "script_execution_sec": 134.315,
+        "total_sec": 9763.595
+      }
+    },
+    {
+      "coding_plan_context": {},
+      "coding_tool_usage": {},
+      "debug_round": 0,
+      "elapsed_sec": null,
+      "execution_stage": null,
+      "finished_at": null,
+      "last_activity_at": "2026-09-12T00:46:59.488136+00:00",
+      "last_no_progress_sec": null,
+      "last_observed_line": null,
+      "last_progress_event": null,
+      "latest_log_path": null,
+      "output_dir": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/02_diagnostic_summaries",
+      "progress_message": null,
+      "result_check_round": 0,
+      "script_path": "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/02_diagnostic_summaries.py",
+      "script_stall_detected": false,
+      "script_stall_reason": null,
+      "started_at": null,
+      "status": "pending",
+      "task_name": "02_diagnostic_summaries",
+      "timing": {}
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+mainshock,parameter,n_levels,baseline_level,stable_rate_ratio_fraction,stable_post_omori_fraction,n_windows
+M1,radius_km,5,50.0,1.0,0.75,300
+M1,time_window_days,4,90.0,1.0,0.75,300
+M1,depth_strategy,3,all,1.0,0.75,300
+M1,mag_threshold,4,,1.0,0.75,300
+M2,radius_km,5,50.0,1.0,0.7233333333333334,300
+M2,time_window_days,4,90.0,1.0,0.7233333333333334,300
+M2,depth_strategy,3,all,1.0,0.7233333333333334,300
+M2,mag_threshold,4,,1.0,0.7233333333333334,300
+M3,radius_km,5,50.0,1.0,0.0,300
+M3,time_window_days,4,90.0,1.0,0.0,300
+M3,depth_strategy,3,all,1.0,0.0,300
+M3,mag_threshold,4,,1.0,0.0,300

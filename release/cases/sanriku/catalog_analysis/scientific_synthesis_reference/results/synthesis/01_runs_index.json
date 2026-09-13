@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "type": "scientific_synthesis_runs_index",
+  "generated_at": "2026-05-30T14:07:01.260544+00:00",
+  "run_count": 9,
+  "runs": [
+    {
+      "run_id": "run_234348835971",
+      "run_dir": "<CASE_ROOT>/run/01_data_foundation",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_data_audit_cleaning.md",
+          "exp_run/analysis/02_major_earthquake_matching.md",
+          "exp_run/analysis/03_regional_background_characterization.md",
+          "exp_run/analysis/04_mainshock_regional_context.md",
+          "exp_run/analysis/05_diagnostic_figures.md",
+          "exp_run/analysis/06_candidate_patterns_estimation.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_3b776a0c5260",
+      "run_dir": "<CASE_ROOT>/run/02_1_sequence_response",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_data_verification_and_rematch.md",
+          "exp_run/analysis/02_sequence_extraction.md",
+          "exp_run/analysis/03_sequence_diagnostics.md",
+          "exp_run/analysis/04_robustness_analysis.md",
+          "exp_run/analysis/05_three_sequence_comparison.md",
+          "exp_run/analysis/06_control_comparison.md",
+          "exp_run/analysis/07_figure_generation.md",
+          "exp_run/analysis/08_reusable_outputs.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_6d347d3c852e",
+      "run_dir": "<CASE_ROOT>/run/02_2_behavior_diagnosis",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_aomori_sequence_analysis.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_ce2c4039baca",
+      "run_dir": "<CASE_ROOT>/run/02_3_relationship_screening",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_relationship_analysis.md",
+          "exp_run/analysis/02_report_synthesis.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_d95fb4d736d8",
+      "run_dir": "<CASE_ROOT>/run/02_4_bg_rate_correction",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_aomori_background_rate_analysis.md",
+          "exp_run/analysis/02_aomori_bootstrap_controls.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_cc690de0b7d1",
+      "run_dir": "<CASE_ROOT>/run/03_1A_event_chain_and_bursts",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_m1_m3_event_chain_analysis.md",
+          "exp_run/analysis/02_m1_m3_diagnostic_figures.md",
+          "exp_run/analysis/03_m1_m3_screening_classification.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_49f11d094494",
+      "run_dir": "<CASE_ROOT>/run/03_1B_spatial_depth_migration",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_m1_m3_spatial_depth_screening.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_e7be047970ca",
+      "run_dir": "<CASE_ROOT>/run/03_1C_mechanism_screening",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_catalog_screening_analysis.md",
+          "exp_run/analysis/02_mechanism_coverage_audit.md"
+        ]
+      },
+      "issues": []
+    },
+    {
+      "run_id": "run_c5e4cba2292f",
+      "run_dir": "<CASE_ROOT>/run/03_1D_catalog_statistic_model_check",
+      "materials": {
+        "report": {
+          "report_markdown": "exp_run/report/report.md",
+          "report_latex": "exp_run/report/report.tex",
+          "report_basis_concise": "exp_run/report/science_report_context_compact.md",
+          "report_basis_details": "exp_run/report/science_report_context.md"
+        },
+        "analysis": [
+          "exp_run/analysis/01_catalog_bvalue_activation_analysis.md"
+        ]
+      },
+      "issues": []
+    }
+  ],
+  "task_count": 26,
+  "status_notes": []
+}

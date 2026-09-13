@@ -1,0 +1,10 @@
+item,value
+script_path,<CASE_ROOT>/run/02_4_bg_rate_correction/exp_run/scripts/02_aomori_bootstrap_controls.py
+primary_output_dir,<CASE_ROOT>/run/02_4_bg_rate_correction/exp_run/outputs/01_aomori_background_rate_analysis
+active_catalog_path,<CASE_ROOT>/data/catalog/Snet_catalog_relocate_250930_260501.csv
+selected_thresholds,"3.0,4.0,5.0"
+resample_n,4000
+max_workers,8
+task_count,180
+long_term_common_events,159087
+active_common_events,22090

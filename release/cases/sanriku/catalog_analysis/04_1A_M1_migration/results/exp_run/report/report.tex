@@ -1,0 +1,203 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\title{Comprehensive Scientific Report: Catalog Screening of the Final Foreshock Stage and Early Aftershock Expansion of the 2025 Sanriku-Oki JMA M6.9 Earthquake}
+\author{TRACE}
+\date{\today}
+
+
+% --- EarthLink enforced font settings (XeLaTeX) ---
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{unicode-math}
+\setmainfont{DejaVu Serif}
+\setCJKmainfont{Noto Serif CJK SC}
+\setmathfont{XITS Math}
+\usepackage[htt]{hyphenat}
+% --- end enforced font settings ---
+
+\begin{document}
+\maketitle
+
+\section{Objective and Scope}
+This report documents a relocated-catalog screening analysis of the 2025-11-09 Sanriku-Oki JMA M6.9 earthquake sequence. The scientific objective was to quantify how local seismicity changed immediately before and after the M6.9 event by comparing two windows within an 80 km radius centered on the mainshock reference: the final 2 days before the M6.9 event and the first 0.5 days after it. The requested diagnostics were event-rate change, magnitude occurrence, apparent migration or expansion, activated-area growth, and final-foreshock magnitude-frequency behavior. The scope is explicitly descriptive and screening-oriented. It does not test or establish physical mechanisms such as slow slip, aseismic slip, triggering, fluid migration, or stress transfer.
+
+\section{Data, Reference Event Selection, and Implemented Workflow}
+The analysis used the relocated local catalog and the supplied mainshock table from the run directory described in the evidence package. The target M6.9 event was first specified from the external mainshock table, but the implemented workflow re-matched that event to the relocated catalog before any screening metrics were computed. A relocated event, \texttt{cat\_005006}, was selected as the mainshock reference because it matched the target origin time exactly and differed from the table location by only \SI{0.165}{km}. This means the final screening products are anchored to the relocated catalog rather than to a fallback epicenter from the external table. The reference-selection result is stored in \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/mainshock_reference_selection.json}.
+
+A mainshock-centered event table was then built with origin time, relative time, epicentral distance, local Cartesian east/north coordinates, depth, magnitude, and phase label. That table is available at \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/m69_centered_event_table.csv}.
+
+The largest distinct event in the first 0.5 days after the M6.9 event was identified separately from the mainshock itself, as required by the task definition. The selected event is \texttt{cat\_005049}, magnitude 6.6, at 2025-11-09 08:54:38.490 UTC, with relative time 0.035408 days and epicentral separation \SI{10.52}{km} from the M6.9 reference, located to the northwest in local coordinates (east = \SI{-8.95}{km}, north = \SI{5.53}{km}). This result is stored in \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/largest_early_aftershock.csv}.
+
+For rate and magnitude summaries, the primary comparison radius was 80 km, with 60 km used as a compact-core sensitivity check and 100 km and 150 km used to diagnose possible contamination by more distant clusters. Apparent migration was evaluated using the 90th-percentile epicentral-distance front within 80 km. The final-2-day foreshock fit used 0.2 day bins; the first-0.5-day aftershock fit used 0.025 day bins; bins with fewer than 5 events were excluded from the fit and from the plotted front line. Activated area was estimated after converting locations to local Cartesian coordinates, rotating with window-specific PCA, retaining the closest 90\% of events by epicentral distance, and computing convex-hull area, along-axis span, across-axis span, and equivalent hull radius. Magnitude-frequency analysis used Mc and b-value estimation, with the final 2-day foreshock window treated as the primary interpretable result and the early-aftershock window treated as exploratory because of likely short-term incompleteness.
+
+\section{Primary Results}
+
+\subsection{Reference event and sequence geometry}
+The relocated re-match confirms that the chosen mainshock reference is internally consistent with the relocated catalog. The exact-time match and very small location offset support use of the relocated event as the geometric center for the screening products. The early M6.6 aftershock occurred only 0.0354 days after the M6.9 event and only \SI{10.52}{km} away, indicating that one major early aftershock remained close to the mainshock even as the broader aftershock field expanded rapidly.
+
+Figure~\ref{fig:map} shows the map view of the two analysis windows. The M6.9 and the distinct early M6.6 aftershock are explicitly marked, and the figure visually shows that the early aftershock window occupies a broader local field than the final-foreshock window.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/figure_map_m69_windows.png}
+    \caption{M6.9-centered map of the two primary analysis windows. The relocated M6.9 reference and the largest distinct early-aftershock event (M6.6) are marked. The figure supports the qualitative contrast between the compact final foreshock pattern and the broader first-0.5-day aftershock pattern.}
+    \label{fig:map}
+\end{figure}
+
+\subsection{Event rate and magnitude occurrence}
+The two primary windows contain comparable total event counts within 80 km, but they differ substantially in duration. The final 2 days before the mainshock contain 396 events, corresponding to 198.0 events/day or 8.25 events/hour. The first 0.5 days after the mainshock contain 415 events, corresponding to 830.0 events/day or 34.58 events/hour. The resulting after/before rate ratio is about 4.19. The same ratio is nearly unchanged at 60 km and only slightly lower at 100 km and 150 km, which indicates that the strong post-mainshock rate increase is robust and not strongly dependent on inclusion of more distant seismicity.
+
+Magnitude occurrence also shifted upward between the two windows. In the final foreshock window, the maximum magnitude is 5.9, the median magnitude is 1.8, and the counts of M3+, M4+, and M5+ events are 52, 16, and 6, respectively. In the first 0.5 days after the mainshock, the maximum magnitude is 6.6, the median magnitude is 2.4, and the corresponding M3+, M4+, and M5+ counts are 127, 35, and 11. Thus, the early-aftershock interval contains both a higher event rate and a larger share of moderate events.
+
+These primary comparisons are summarized in Table~\ref{tab:rate_mag}. Supporting machine-readable files include \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/window_rate_magnitude_summary.csv}, \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/window_rate_magnitude_summary.json}, and the radius-sensitivity outputs.
+
+\begin{table}[H]
+\centering
+\caption{Primary 80 km comparison of rate and magnitude occurrence between the final foreshock window and the first early-aftershock window.}
+\label{tab:rate_mag}
+\begin{tabular}{lcc}
+\toprule
+Metric & Final 2 days before M6.9 & First 0.5 days after M6.9 \\
+\midrule
+Event count & 396 & 415 \\
+Window duration (days) & 2.0 & 0.5 \\
+Rate (events/day) & 198.0 & 830.0 \\
+Rate (events/hour) & 8.25 & 34.58 \\
+Maximum magnitude & 5.9 & 6.6 \\
+Median magnitude & 1.8 & 2.4 \\
+M3+ count & 52 & 127 \\
+M4+ count & 16 & 35 \\
+M5+ count & 6 & 11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:timeline} provides the corresponding event-rate and magnitude timeline, including the earlier -10 to -2 day interval as context only. The sharp rise in density after the M6.9 event is visually consistent with the tabulated rate increase.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/figure_rate_magnitude_timeline.png}
+    \caption{Event-rate and magnitude timeline relative to the M6.9 reference event. The -10 to -2 day interval is shown only as context; the main comparison is between the final 2 foreshock days and the first 0.5 aftershock day. The M6.9 mainshock and the early M6.6 aftershock are marked.}
+    \label{fig:timeline}
+\end{figure}
+
+\subsection{Apparent migration and spatial expansion}
+The apparent migration or expansion diagnostic was based on the 90th-percentile epicentral-distance front inside the 80 km local region. In the final 2 days before the mainshock, the fitted front speed is \SI{4.33}{km/day} (\SI{0.180}{km/hour}) with $R^2 = 0.822$, using 9 retained bins out of 10 and excluding 1 sparse bin. In the first 0.5 days after the mainshock, the fitted front speed is \SI{16.16}{km/day} (\SI{0.673}{km/hour}) with $R^2 = 0.291$, using all 20 bins and excluding none. The aftershock apparent front is therefore about 3.7 times faster than the foreshock apparent front, but it is also much noisier.
+
+The stronger foreshock $R^2$ suggests a comparatively coherent but weak outward trend before the mainshock. By contrast, the lower early-aftershock $R^2$ indicates that the aftershock front estimate is scattered and should not be interpreted as a precise propagation speed. It is best treated as a screening-level descriptor of rapid post-mainshock spatial expansion.
+
+Figure~\ref{fig:fronts} shows the time-distance distribution and the fitted 90th-percentile fronts for the two windows. The pre-mainshock cloud remains mostly close to the mainshock, whereas the post-mainshock cloud extends rapidly to substantially larger distances within the first 0.5 days.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/figure_time_distance_fronts.png}
+    \caption{Time-distance plot relative to the relocated M6.9 reference event, with 90th-percentile distance fronts and linear fits for the final 2 foreshock days and the first 0.5 aftershock day. The fitted aftershock front is faster but substantially more scattered than the foreshock front.}
+    \label{fig:fronts}
+\end{figure}
+
+The fit summaries are stored in \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/migration_front_fit_summary.csv}, \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/migration_front_fit_summary.json}, and the bin-level file \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/time_distance_front_bins.csv}.
+
+\subsection{Activated-area growth}
+Activated area was compared using local Cartesian coordinates, window-specific PCA rotation, and convex-hull estimation after retaining the closest 90\% of events by epicentral distance in each window. For the final 2-day foreshock window, 396 events were available and 356 were retained after trimming. The trim distance is \SI{12.06}{km}, the PCA angle is 2.70$^{\circ}$, the along-axis span is \SI{23.59}{km}, the across-axis span is \SI{16.27}{km}, the convex-hull area is \SI{307.03}{km^2}, and the equivalent hull radius is \SI{9.89}{km}. For the first 0.5-day aftershock window, 415 events were available and 373 were retained. The trim distance is \SI{29.04}{km}, the PCA angle is -42.83$^{\circ}$, the along-axis span is \SI{57.55}{km}, the across-axis span is \SI{51.17}{km}, the convex-hull area is \SI{2118.34}{km^2}, and the equivalent hull radius is \SI{25.97}{km}.
+
+These values imply a large geometric enlargement after the mainshock: the retained-core convex-hull area increases by about 6.9 times, the equivalent hull radius by about 2.6 times, the along-axis span by about 2.4 times, and the across-axis span by about 3.1 times. This is one of the clearest contrasts in the screening analysis.
+
+Table~\ref{tab:area} summarizes the activated-area metrics, and Figure~\ref{fig:area} shows the corresponding geometry.
+
+\begin{table}[H]
+\centering
+\caption{Activated-area comparison for the two primary windows using the closest 90\% of events within the 80 km local region and window-specific PCA rotation.}
+\label{tab:area}
+\begin{tabular}{lcc}
+\toprule
+Metric & Final 2 days before M6.9 & First 0.5 days after M6.9 \\
+\midrule
+Total points & 396 & 415 \\
+Retained points & 356 & 373 \\
+Trim distance (km) & 12.06 & 29.04 \\
+PCA angle (deg) & 2.70 & -42.83 \\
+Along-axis span (km) & 23.59 & 57.55 \\
+Across-axis span (km) & 16.27 & 51.17 \\
+Convex-hull area (km$^2$) & 307.03 & 2118.34 \\
+Equivalent hull radius (km) & 9.89 & 25.97 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/figure_activated_area_comparison.png}
+    \caption{Activated-area comparison between the final foreshock window and the first early-aftershock window. Hulls are based on the closest 90\% of events within each window. The M6.9 reference and early M6.6 aftershock are marked.}
+    \label{fig:area}
+\end{figure}
+
+Supporting outputs are \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/activated_area_metrics.csv}, \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/activated_area_metrics.json}, and the associated projected-point and sensitivity files.
+
+\subsection{Magnitude-frequency behavior}
+The primary magnitude-frequency result concerns the final 2-day foreshock window. In that window, the catalog contains 396 events, of which 201 are above the adopted completeness threshold. The primary Mc estimate (MAXC) is 1.8, while secondary estimates are 1.4 by the KS method and 1.4 by b-stability. Using the adopted Mc, the b-value is $0.514 \pm 0.037$. This low b-value is the main reportable magnitude-frequency result from the screening analysis.
+
+The first-0.5-day aftershock window contains 415 events, with 308 above the adopted Mc. The primary Mc estimate is 2.0, while secondary estimates are 2.2 by KS and 2.1 by b-stability. The resulting b-value is $0.433 \pm 0.020$. However, this early-aftershock estimate is explicitly exploratory because short-term incompleteness after a large earthquake is likely severe. The higher Mc relative to the foreshock window is consistent with that concern.
+
+Figure~\ref{fig:mcb} shows the magnitude-frequency diagnostics. The figure supports the use of the foreshock Mc and b-value as the primary interpretable result, while also illustrating the relative completeness degradation in the early aftershock period.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/figure_mc_bvalue_diagnostic.png}
+    \caption{Magnitude-frequency and completeness diagnostics for the final 2-day foreshock window and the first 0.5-day aftershock window. The foreshock result is the primary b-value diagnostic; the early-aftershock result is exploratory because of likely short-term incompleteness.}
+    \label{fig:mcb}
+\end{figure}
+
+The corresponding machine-readable outputs are \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/mc_bvalue_summary.csv}, \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/mc_bvalue_summary.json}, \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/fmd_foreshock_final2d.csv}, and \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/fmd_aftershock_0_0p5d.csv}.
+
+\section{Integrated Interpretation}
+Taken together, the relocated-catalog screening demonstrates a strong contrast between the final foreshock stage and the earliest aftershock stage of the 2025 Sanriku-Oki M6.9 sequence. The final 2 days before the mainshock are characterized by a compact local cluster, weak apparent outward migration, and a low foreshock b-value above Mc. In contrast, the first 0.5 days after the mainshock show an approximately fourfold increase in event rate, a larger number of moderate events, much faster apparent outward front expansion, and a roughly sevenfold increase in retained-core activated area. The largest distinct early aftershock, M6.6, occurred very soon after the mainshock and remained spatially close to it, while the broader aftershock field expanded rapidly beyond the compact foreshock core.
+
+These conclusions remain within the intended scope of catalog screening. They quantify observational contrasts in rate, space, and magnitude behavior around the mainshock, but they do not by themselves establish the physical cause of those contrasts.
+
+\section{Limitations and Evaluation}
+Several limitations are important for interpreting the results.
+
+First, this is intentionally a screening analysis based only on the relocated local catalog. The diagnostics should not be used on their own to infer slow slip, aseismic slip, physical triggering, fluid migration, stress transfer, or any other mechanism.
+
+Second, the early-aftershock migration-front fit has low goodness of fit ($R^2 = 0.291$). The reported post-mainshock apparent speed is therefore useful as a descriptive measure of rapid expansion, but not as a precise propagation velocity.
+
+Third, the activated-area metrics depend on the deliberate choice to retain only the closest 90\% of events and to use window-specific PCA rotation before convex-hull estimation. This is suitable for comparing compact cores, but the absolute values depend on those implementation choices and intentionally downweight the farthest 10\% of events.
+
+Fourth, the early-aftershock Mc and b-value results are explicitly exploratory because short-term incompleteness after the mainshock is likely severe. The higher Mc in the early-aftershock window (2.0 versus 1.8 for the foreshock window) supports this caution. The foreshock b-value is therefore the primary interpretable magnitude-frequency result.
+
+Fifth, the handoff metadata includes the quality flag \texttt{outputs\_truncated}. The available analysis file and inspected output directory indicate that the required products were generated, so this appears to be a traceability caveat rather than a scientific failure, but it should still be disclosed.
+
+The evidence package characterizes the overall delivery status as complete and scientifically satisfactory, with moderate scientific confidence.
+
+\section{Key Output Inventory}
+The principal machine-readable summary products for downstream use include:
+\begin{itemize}[leftmargin=2em]
+    \item Mainshock reference selection: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/mainshock_reference_selection.json}
+    \item Mainshock-centered event table: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/m69_centered_event_table.csv}
+    \item Window rate and magnitude summary: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/window_rate_magnitude_summary.csv}
+    \item Migration-front fit summary: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/migration_front_fit_summary.csv}
+    \item Activated-area metrics: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/activated_area_metrics.csv}
+    \item Mc and b-value summary: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/mc_bvalue_summary.csv}
+    \item Largest early aftershock: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/largest_early_aftershock.csv}
+    \item Integrated screening summary: \url{<CASE_ROOT>/run/04_1A_M1_migration/exp_run/outputs/01_sanriku_m69_catalog_screening/sanriku_m69_screening_summary.csv}
+\end{itemize}
+
+\section{Conclusion}
+The implemented relocated-catalog screening successfully met the scientific objective of comparing the final foreshock stage with the earliest aftershock stage of the 2025 Sanriku-Oki JMA M6.9 earthquake. Relative to the final 2 days before the mainshock, the first 0.5 days after it show a much higher event rate, more numerous moderate events, faster apparent expansion of the 90th-percentile distance front, and a much larger retained-core activated area. The principal pre-mainshock magnitude-frequency result is a foreshock b-value of $0.514 \pm 0.037$ above Mc = 1.8. All of these results should be interpreted as catalog-screening diagnostics rather than as proof of any specific physical mechanism.
+
+\end{document}

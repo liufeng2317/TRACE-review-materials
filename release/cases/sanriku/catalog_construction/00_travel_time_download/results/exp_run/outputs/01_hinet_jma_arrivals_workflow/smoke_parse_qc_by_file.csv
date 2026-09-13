@@ -1,0 +1,2 @@
+source_file,size_bytes,total_lines,valid_96_byte_records,invalid_length_records,j_records,pick_records,e_records,auxiliary_records,unrecognized_records,orphan_pick_records,closed_events,skipped_events,skipped_pick_records,unterminated_events,parse_errors
+measure_20250601_5.txt,6841119,70527,70527,0,4061,59946,4061,2459,0,0,4061,8,51,0,0

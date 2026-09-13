@@ -1,0 +1,22 @@
+[2026-09-12T00:52:18.294475+00:00] Output directory: <CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow
+[2026-09-12T00:52:18.306107+00:00] Loaded 1 Hi-net account(s); credential values are redacted.
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py", line 248, in import_hinet_client
+    from HinetPy import Client  # type: ignore
+  File "<LOCAL_PATH>", line 22, in <module>
+    from .client import Client
+  File "<LOCAL_PATH>", line 22, in <module>
+    from urllib3.util import create_urllib3_context
+ImportError: cannot import name 'create_urllib3_context' from 'urllib3.util' (<LOCAL_PATH>
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py", line 865, in <module>
+    main()
+  File "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py", line 782, in main
+    hinet_client_cls = import_hinet_client()
+  File "<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py", line 250, in import_hinet_client
+    raise RuntimeError("HinetPy is required for Hi-net/JMA arrival-time download but could not be imported") from exc
+RuntimeError: HinetPy is required for Hi-net/JMA arrival-time download but could not be imported
+

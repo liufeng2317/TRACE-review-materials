@@ -1,0 +1,664 @@
+{
+  "batch_status_csv": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_window_status.csv",
+  "batches": [
+    {
+      "batch_id": "window_001_20250601_20250701",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1773,
+      "loc_rows": 1165,
+      "merged_from": [
+        "20250601-20250701"
+      ],
+      "ot_range": "20250601-20250701",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_001_20250601_20250701",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 834,
+      "residual_rows": 3636,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_002_20250701_20250801",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1770,
+      "loc_rows": 1322,
+      "merged_from": [
+        "20250701-20250801"
+      ],
+      "ot_range": "20250701-20250801",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_002_20250701_20250801",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1006,
+      "residual_rows": 8393,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_003_20250801_20250901",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1739,
+      "loc_rows": 1314,
+      "merged_from": [
+        "20250801-20250901"
+      ],
+      "ot_range": "20250801-20250901",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_003_20250801_20250901",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1028,
+      "residual_rows": 9315,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_004_20250901_20251001",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1343,
+      "loc_rows": 957,
+      "merged_from": [
+        "20250901-20251001"
+      ],
+      "ot_range": "20250901-20251001",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_004_20250901_20251001",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 716,
+      "residual_rows": 5420,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_005_20251001_20251101",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1307,
+      "loc_rows": 944,
+      "merged_from": [
+        "20251001-20251101"
+      ],
+      "ot_range": "20251001-20251101",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_005_20251001_20251101",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 705,
+      "residual_rows": 7158,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_006_20251101_20251201",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 4556,
+      "loc_rows": 4119,
+      "merged_from": [
+        "20251101-20251201"
+      ],
+      "ot_range": "20251101-20251201",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_006_20251101_20251201",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 3868,
+      "residual_rows": 52429,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_007_20251201_20260101",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 7464,
+      "loc_rows": 7081,
+      "merged_from": [
+        "20251201-20260101"
+      ],
+      "ot_range": "20251201-20260101",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_007_20251201_20260101",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 6679,
+      "residual_rows": 71497,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_008_20260101_20260201",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 3073,
+      "loc_rows": 2687,
+      "merged_from": [
+        "20260101-20260201"
+      ],
+      "ot_range": "20260101-20260201",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_008_20260101_20260201",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 2371,
+      "residual_rows": 23234,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_009_20260201_20260301",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 2036,
+      "loc_rows": 1713,
+      "merged_from": [
+        "20260201-20260301"
+      ],
+      "ot_range": "20260201-20260301",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_009_20260201_20260301",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1410,
+      "residual_rows": 12186,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_010_20260301_20260401",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 2661,
+      "loc_rows": 2248,
+      "merged_from": [
+        "20260301-20260401"
+      ],
+      "ot_range": "20260301-20260401",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_010_20260301_20260401",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1939,
+      "residual_rows": 18897,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_011_20260401_20260501",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 5808,
+      "loc_rows": 5395,
+      "merged_from": [
+        "20260401-20260501"
+      ],
+      "ot_range": "20260401-20260501",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_011_20260401_20260501",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 5026,
+      "residual_rows": 63797,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_012_20260501_20260601",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 120,
+      "loc_rows": 91,
+      "merged_from": [
+        "20260501-20260601"
+      ],
+      "ot_range": "20260501-20260601",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_012_20260501_20260601",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 66,
+      "residual_rows": 211,
+      "status": "success"
+    }
+  ],
+  "catalog_code": "japan_aomori_nocc_full",
+  "failed_batches": 0,
+  "failed_windows": 0,
+  "manifest_path": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_window_manifest.json",
+  "merged_loc_path": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/japan_aomori_nocc_full.loc",
+  "merged_reloc_path": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/japan_aomori_nocc_full.reloc",
+  "merged_residual_path": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/japan_aomori_nocc_full.res",
+  "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows",
+  "planning": {
+    "base": "month",
+    "clean_output": true,
+    "lat_range": [
+      38.5,
+      42.5
+    ],
+    "lon_range": [
+      141.0,
+      144.5
+    ],
+    "max_events_per_window": 10800,
+    "min_events_per_window": 100,
+    "mode": "auto_time_windows",
+    "num_window_workers": 1,
+    "ot_range": "20250601-20260601",
+    "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+    "planned_windows": [
+      {
+        "end": "2025-07-01",
+        "event_count": 1773,
+        "merged_from": [
+          "20250601-20250701"
+        ],
+        "ot_range": "20250601-20250701",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-06-01",
+        "window_id": "window_001_20250601_20250701"
+      },
+      {
+        "end": "2025-08-01",
+        "event_count": 1770,
+        "merged_from": [
+          "20250701-20250801"
+        ],
+        "ot_range": "20250701-20250801",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-07-01",
+        "window_id": "window_002_20250701_20250801"
+      },
+      {
+        "end": "2025-09-01",
+        "event_count": 1739,
+        "merged_from": [
+          "20250801-20250901"
+        ],
+        "ot_range": "20250801-20250901",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-08-01",
+        "window_id": "window_003_20250801_20250901"
+      },
+      {
+        "end": "2025-10-01",
+        "event_count": 1343,
+        "merged_from": [
+          "20250901-20251001"
+        ],
+        "ot_range": "20250901-20251001",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-09-01",
+        "window_id": "window_004_20250901_20251001"
+      },
+      {
+        "end": "2025-11-01",
+        "event_count": 1307,
+        "merged_from": [
+          "20251001-20251101"
+        ],
+        "ot_range": "20251001-20251101",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-10-01",
+        "window_id": "window_005_20251001_20251101"
+      },
+      {
+        "end": "2025-12-01",
+        "event_count": 4556,
+        "merged_from": [
+          "20251101-20251201"
+        ],
+        "ot_range": "20251101-20251201",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-11-01",
+        "window_id": "window_006_20251101_20251201"
+      },
+      {
+        "end": "2026-01-01",
+        "event_count": 7464,
+        "merged_from": [
+          "20251201-20260101"
+        ],
+        "ot_range": "20251201-20260101",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2025-12-01",
+        "window_id": "window_007_20251201_20260101"
+      },
+      {
+        "end": "2026-02-01",
+        "event_count": 3073,
+        "merged_from": [
+          "20260101-20260201"
+        ],
+        "ot_range": "20260101-20260201",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2026-01-01",
+        "window_id": "window_008_20260101_20260201"
+      },
+      {
+        "end": "2026-03-01",
+        "event_count": 2036,
+        "merged_from": [
+          "20260201-20260301"
+        ],
+        "ot_range": "20260201-20260301",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2026-02-01",
+        "window_id": "window_009_20260201_20260301"
+      },
+      {
+        "end": "2026-04-01",
+        "event_count": 2661,
+        "merged_from": [
+          "20260301-20260401"
+        ],
+        "ot_range": "20260301-20260401",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2026-03-01",
+        "window_id": "window_010_20260301_20260401"
+      },
+      {
+        "end": "2026-05-01",
+        "event_count": 5808,
+        "merged_from": [
+          "20260401-20260501"
+        ],
+        "ot_range": "20260401-20260501",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2026-04-01",
+        "window_id": "window_011_20260401_20260501"
+      },
+      {
+        "end": "2026-06-01",
+        "event_count": 120,
+        "merged_from": [
+          "20260501-20260601"
+        ],
+        "ot_range": "20260501-20260601",
+        "parallel_safe": true,
+        "reason": "base_window",
+        "start": "2026-05-01",
+        "window_id": "window_012_20260501_20260601"
+      }
+    ],
+    "window_days": null
+  },
+  "success": true,
+  "success_batches": 12,
+  "success_windows": 12,
+  "total_input_events": 33650,
+  "windows": [
+    {
+      "batch_id": "window_001_20250601_20250701",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1773,
+      "loc_rows": 1165,
+      "merged_from": [
+        "20250601-20250701"
+      ],
+      "ot_range": "20250601-20250701",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_001_20250601_20250701",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 834,
+      "residual_rows": 3636,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_002_20250701_20250801",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1770,
+      "loc_rows": 1322,
+      "merged_from": [
+        "20250701-20250801"
+      ],
+      "ot_range": "20250701-20250801",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_002_20250701_20250801",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1006,
+      "residual_rows": 8393,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_003_20250801_20250901",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1739,
+      "loc_rows": 1314,
+      "merged_from": [
+        "20250801-20250901"
+      ],
+      "ot_range": "20250801-20250901",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_003_20250801_20250901",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1028,
+      "residual_rows": 9315,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_004_20250901_20251001",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1343,
+      "loc_rows": 957,
+      "merged_from": [
+        "20250901-20251001"
+      ],
+      "ot_range": "20250901-20251001",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_004_20250901_20251001",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 716,
+      "residual_rows": 5420,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_005_20251001_20251101",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 1307,
+      "loc_rows": 944,
+      "merged_from": [
+        "20251001-20251101"
+      ],
+      "ot_range": "20251001-20251101",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_005_20251001_20251101",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 705,
+      "residual_rows": 7158,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_006_20251101_20251201",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 4556,
+      "loc_rows": 4119,
+      "merged_from": [
+        "20251101-20251201"
+      ],
+      "ot_range": "20251101-20251201",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_006_20251101_20251201",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 3868,
+      "residual_rows": 52429,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_007_20251201_20260101",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 7464,
+      "loc_rows": 7081,
+      "merged_from": [
+        "20251201-20260101"
+      ],
+      "ot_range": "20251201-20260101",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_007_20251201_20260101",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 6679,
+      "residual_rows": 71497,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_008_20260101_20260201",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 3073,
+      "loc_rows": 2687,
+      "merged_from": [
+        "20260101-20260201"
+      ],
+      "ot_range": "20260101-20260201",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_008_20260101_20260201",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 2371,
+      "residual_rows": 23234,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_009_20260201_20260301",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 2036,
+      "loc_rows": 1713,
+      "merged_from": [
+        "20260201-20260301"
+      ],
+      "ot_range": "20260201-20260301",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_009_20260201_20260301",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1410,
+      "residual_rows": 12186,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_010_20260301_20260401",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 2661,
+      "loc_rows": 2248,
+      "merged_from": [
+        "20260301-20260401"
+      ],
+      "ot_range": "20260301-20260401",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_010_20260301_20260401",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 1939,
+      "residual_rows": 18897,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_011_20260401_20260501",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 5808,
+      "loc_rows": 5395,
+      "merged_from": [
+        "20260401-20260501"
+      ],
+      "ot_range": "20260401-20260501",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_011_20260401_20260501",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 5026,
+      "residual_rows": 63797,
+      "status": "success"
+    },
+    {
+      "batch_id": "window_012_20260501_20260601",
+      "config_path": "",
+      "error_path": "",
+      "error_signature": "",
+      "failure_kind": "",
+      "input_events": 120,
+      "loc_rows": 91,
+      "merged_from": [
+        "20260501-20260601"
+      ],
+      "ot_range": "20260501-20260601",
+      "output_folder": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/output_full_time_windows/time_windows/window_012_20260501_20260601",
+      "parallel_safe": true,
+      "phase_file": "<REPO_ROOT>/seismoagent/library/basic_fun/HypoDD/hypodd_runner/examples/japan_nocc/input_full_time_windows/phase.dat",
+      "plan_reason": "base_window",
+      "reloc_rows": 66,
+      "residual_rows": 211,
+      "status": "success"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "source_verification": [
+    {
+      "file": "catalog",
+      "n_rows": 25646,
+      "required_fields": "[\"time\", \"lat\", \"lon\", \"dep\", \"mag\", \"event_id\"]",
+      "present_fields": "[\"time\", \"lat\", \"lon\", \"dep\", \"mag\", \"event_id\"]",
+      "missing_fields": "[]"
+    },
+    {
+      "file": "main_earthquake",
+      "n_rows": 3,
+      "required_fields": "[\"mainshock\", \"time\", \"lat\", \"lon\", \"dep\", \"mag\"]",
+      "present_fields": "[\"mainshock\", \"time\", \"lat\", \"lon\", \"dep\", \"mag\"]",
+      "missing_fields": "[]"
+    },
+    {
+      "file": "mechanism",
+      "n_rows": 354,
+      "required_fields": "[\"origin_time\", \"lat_deg\", \"lon_deg\", \"depth_km\"]",
+      "present_fields": "[\"origin_time\", \"lat_deg\", \"lon_deg\", \"depth_km\"]",
+      "missing_fields": "[]"
+    },
+    {
+      "file": "stations",
+      "n_rows": 371,
+      "required_fields": "[\"station_code\", \"latitude\", \"longitude\", \"matched\"]",
+      "present_fields": "[\"station_code\", \"latitude\", \"longitude\", \"matched\"]",
+      "missing_fields": "[]"
+    }
+  ],
+  "rematch": [
+    {
+      "mainshock": "M1",
+      "ref_time": "2025-11-09T08:03:39.240000+00:00",
+      "ref_lat": 39.402,
+      "ref_lon": 143.507,
+      "ref_dep": 15.9,
+      "ref_mag": 6.9,
+      "matched_event_id": 5006,
+      "matched_time": "2025-11-09T08:03:39.240000+00:00",
+      "matched_lat": 39.403072,
+      "matched_lon": 143.50568,
+      "matched_dep": 15.96,
+      "matched_mag": 6.9,
+      "time_shift_minutes": 0.0,
+      "horizontal_shift_km": 0.16453562980491596,
+      "depth_shift_km": 0.0600000000000005,
+      "match_score": 0.010226781490245813,
+      "n_close_candidates": 1,
+      "close_candidates": "[5006, 5011, 5009, 5004, 5005]"
+    },
+    {
+      "mainshock": "M2",
+      "ref_time": "2025-12-08T14:15:10.180000+00:00",
+      "ref_lat": 40.968,
+      "ref_lon": 142.288,
+      "ref_dep": 53.5,
+      "ref_mag": 7.5,
+      "matched_event_id": 8482,
+      "matched_time": "2025-12-08T14:15:10.180000+00:00",
+      "matched_lat": 40.966239,
+      "matched_lon": 142.290218,
+      "matched_dep": 53.46,
+      "matched_mag": 7.5,
+      "time_shift_minutes": 0.0,
+      "horizontal_shift_km": 0.27022909403658935,
+      "depth_shift_km": -0.03999999999999915,
+      "match_score": 0.014844788035162771,
+      "n_close_candidates": 1,
+      "close_candidates": "[8482, 8494, 8491, 8506, 8497]"
+    },
+    {
+      "mainshock": "M3",
+      "ref_time": "2026-04-20T07:52:58.060000+00:00",
+      "ref_lat": 39.842,
+      "ref_lon": 143.157,
+      "ref_dep": 19.4,
+      "ref_mag": 7.7,
+      "matched_event_id": 21629,
+      "matched_time": "2026-04-20T07:52:58.050000+00:00",
+      "matched_lat": 39.843477,
+      "matched_lon": 143.15651,
+      "matched_dep": 19.31,
+      "matched_mag": 7.7,
+      "time_shift_minutes": -0.00016666666666666682,
+      "horizontal_shift_km": 0.16947924017603608,
+      "depth_shift_km": -0.08999999999999986,
+      "match_score": 0.011476739786579579,
+      "n_close_candidates": 1,
+      "close_candidates": "[21629, 21639, 21632, 21638, 21637]"
+    }
+  ],
+  "n_catalog": 25646,
+  "n_mechanism": 354,
+  "n_stations": 371,
+  "baseline_definition": {
+    "radius_km": 50.0,
+    "time_window_days": 90.0,
+    "depth_strategy": "all",
+    "mag_threshold": null
+  },
+  "mainshock_summary": [
+    {
+      "mainshock": "M1",
+      "background_level": 6.8,
+      "pre_activity": 6.8,
+      "post_activity": 36.77777777777778,
+      "burstiness_index": 46.26829268292683,
+      "aftershock_decay_p": 0.6383674259945586,
+      "aftershock_decay_r2": 0.913343338766479,
+      "spatial_concentration_q50": 19.40104045326473,
+      "depth_structure_q50": 11.54,
+      "median_magnitude": 1.7,
+      "mechanism_overlap": 0
+    },
+    {
+      "mainshock": "M2",
+      "background_level": 1.011111111111111,
+      "pre_activity": 1.011111111111111,
+      "post_activity": 25.31111111111111,
+      "burstiness_index": 27.10769230769231,
+      "aftershock_decay_p": 0.6437024855030238,
+      "aftershock_decay_r2": 0.956437260026316,
+      "spatial_concentration_q50": 25.222822478385623,
+      "depth_structure_q50": 41.555,
+      "median_magnitude": 1.3,
+      "mechanism_overlap": 0
+    },
+    {
+      "mainshock": "M3",
+      "background_level": 9.733333333333333,
+      "pre_activity": 9.733333333333333,
+      "post_activity": 30.855555555555554,
+      "burstiness_index": 72.96153846153848,
+      "aftershock_decay_p": NaN,
+      "aftershock_decay_r2": NaN,
+      "spatial_concentration_q50": 26.58538123566893,
+      "depth_structure_q50": 12.83,
+      "median_magnitude": 1.65,
+      "mechanism_overlap": 0
+    }
+  ]
+}

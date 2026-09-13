@@ -1,0 +1,5 @@
+subset,from_phase,to_phase,delta_median_b,from_interpretable_windows,to_interpretable_windows,transition_assessment
+combined_local,baseline_primary,M1_related_primary,0.025117409203496588,4,31,broadly_similar
+combined_local,M1_related_primary,middle_primary,-0.057684593111086424,31,14,broadly_similar
+combined_local,middle_primary,preM3_primary,-0.13122951018891993,14,8,decrease
+combined_local,preM3_primary,postM3_context,0.15869532993816382,8,30,increase

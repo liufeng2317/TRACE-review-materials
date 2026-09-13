@@ -1,0 +1,33 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Computing catalog diagnostics
+Running screening case dense_damp120 for (datetime.datetime(2025, 12, 1, 0, 19, 25, 30000), datetime.datetime(2025, 12, 31, 23, 59, 28, 410000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Running screening case alt_damp80 for (datetime.datetime(2026, 4, 1, 0, 16, 22, 930000), datetime.datetime(2026, 4, 30, 23, 59, 40, 750000))
+Input phase file prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+run ph2dt: grid 0-0
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 973, in <module>
+    main()
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 924, in main
+    write_json(OUTPUT_DIR / "screening_run_manifest.json", screening_records)
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 99, in write_json
+    json.dump(convert(obj), f, indent=2, ensure_ascii=False)
+  File "<LOCAL_PATH>", line 179, in dump
+    for chunk in iterable:
+  File "<LOCAL_PATH>", line 429, in _iterencode
+    yield from _iterencode_list(o, _current_indent_level)
+  File "<LOCAL_PATH>", line 325, in _iterencode_list
+    yield from chunks
+  File "<LOCAL_PATH>", line 405, in _iterencode_dict
+    yield from chunks
+  File "<LOCAL_PATH>", line 325, in _iterencode_list
+    yield from chunks
+  File "<LOCAL_PATH>", line 438, in _iterencode
+    o = _default(o)
+  File "<LOCAL_PATH>", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+

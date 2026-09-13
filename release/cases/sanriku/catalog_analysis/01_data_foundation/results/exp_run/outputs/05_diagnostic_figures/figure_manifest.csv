@@ -1,0 +1,12 @@
+figure_file,exists,size_bytes
+figure_01_regional_map.png,True,1563884
+figure_02_time_magnitude.png,True,782562
+figure_03_depth_time.png,True,1179463
+figure_04_magnitude_depth.png,True,660807
+figure_05_magnitude_frequency_mc_bvalue.png,True,206937
+figure_06_spatial_density.png,True,958679
+figure_07_depth_distribution.png,True,91176
+figure_08_depth_cross_section.png,True,928436
+figure_09_station_coverage.png,True,856412
+figure_10_mechanism_diagnostics.png,True,191420
+figure_11_mainshock_context_overview.png,True,245289

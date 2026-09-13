@@ -1,0 +1,4 @@
+check_name,base_value,test_value,change,impact
+combined_local_step100_vs_step200_median_b,0.7137417808037374,0.702278615950763,-0.011463164852974383,minor
+middle_phase_raw_vs_m2aware_aggregate_b,0.7108532372964101,0.6951875314303675,-0.015665705866042656,minor
+moment_dominance_raw_vs_m2aware,0.8614354801531544,0.8614354801531544,0.0,minor

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "01_data_foundation",
+  "run_name": "01_data_foundation",
+  "root": "<CASE_ROOT>/run/01_data_foundation",
+  "status": "running",
+  "next_stage": "data_desc",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-05-23T01:08:03.236344+00:00",
+  "updated_at": "2026-05-23T01:08:12.452945+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nYou are an earthquake scientist and data-analysis agent.\n\nGoal:\nBuild a reliable data foundation, characterize the regional seismicity background, generate publication-quality diagnostic figures, and prepare reusable data products for further sequence analysis.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nTasks:\n\n1. Data audit and cleaning\nInspect all files for schema, record count, time/location/depth/magnitude ranges, missing values, duplicates, abnormal values, and usable fields.\nCreate a clean Stage-1 catalog with parsed time, latitude, longitude, depth, magnitude, event ID if available, and quality flags.\n\n2. Major-earthquake matching\nMatch the major earthquakes in main_earthquake.csv with the regional catalog (a very small time shift caused by relocation).\nFor each major earthquake, report the nearest matched catalog event, time difference, spatial distance, depth difference, magnitude difference, and match confidence.\n\n3. Regional seismicity background\nCharacterize the regional catalog in terms of:\n- spatial distribution and event density\n- temporal activity rate\n- magnitude distribution\n- depth distribution and depth segmentation\n- magnitude-depth relationship\n- preliminary completeness magnitude Mc and b-value (estimated with Gutenberg-Richter law)\n- station distribution and simple coverage metrics\n- focal-mechanism feature and distribution\n\n4. Mainshock regional context\nFor each major earthquake, summarize its regional context:\n- local event density\n- surrounding depth distribution\n- nearby station distribution and coverage\n- nearby focal-mechanism distribution and availability\n- whether the event lies in a distinct spatial/depth domain\n- whether later sequence analysis should use special radius, depth, or magnitude thresholds\n\n5. Diagnostic figures\nGenerate **Nature-Style** publication-quality figures\n- regional map of earthquakes, major earthquakes, stations, and focal mechanisms if available\n- time–magnitude plot\n- depth–time plot\n- magnitude–depth plot\n- magnitude-frequency / Mc plot / b-value plot\n- spatial event-density or cluster diagnostic\n- depth-distribution or cross-section diagnostic\n- station coverage diagnostic\n- focal-mechanism distribution and availability diagnostic\n- other useful regional-background plots that support further sequence analysis and hypothesis testing\n\nFigures should use clear labels, units, legends, readable fonts, appropriate color scales, and should be saved as high-resolution PNG.\n\n6. Candidate patterns estimation\nIdentify compact, testable candidate patterns for further sequence analysis and hypothesis testing, such as:\n- spatial clusters\n- temporal bursts or quiet periods\n- depth segmentation\n- magnitude-depth-space relationships\n- station-coverage effects\n- focal-mechanism data gaps\n- regional differences around the major earthquakes\n\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "01_data_foundation",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nYou are an earthquake scientist and data-analysis agent.\n\nGoal:\nBuild a reliable data foundation, characterize the regional seismicity background, generate publication-quality diagnostic figures, and prepare reusable data products for further sequence analysis.\n\nData folder:\n\"<CASE_ROOT>/data\"\n\nFiles:\n- catalog/Snet_catalog_relocate.csv\n- catalog/main_earthquake.csv\n- source_mechanism/Snet_mecha.csv\n- stations/station.sta\n\nTasks:\n\n1. Data audit and cleaning\nInspect all files for schema, record count, time/location/depth/magnitude ranges, missing values, duplicates, abnormal values, and usable fields.\nCreate a clean Stage-1 catalog with parsed time, latitude, longitude, depth, magnitude, event ID if available, and quality flags.\n\n2. Major-earthquake matching\nMatch the major earthquakes in main_earthquake.csv with the regional catalog (a very small time shift caused by relocation).\nFor each major earthquake, report the nearest matched catalog event, time difference, spatial distance, depth difference, magnitude difference, and match confidence.\n\n3. Regional seismicity background\nCharacterize the regional catalog in terms of:\n- spatial distribution and event density\n- temporal activity rate\n- magnitude distribution\n- depth distribution and depth segmentation\n- magnitude-depth relationship\n- preliminary completeness magnitude Mc and b-value (estimated with Gutenberg-Richter law)\n- station distribution and simple coverage metrics\n- focal-mechanism feature and distribution\n\n4. Mainshock regional context\nFor each major earthquake, summarize its regional context:\n- local event density\n- surrounding depth distribution\n- nearby station distribution and coverage\n- nearby focal-mechanism distribution and availability\n- whether the event lies in a distinct spatial/depth domain\n- whether later sequence analysis should use special radius, depth, or magnitude thresholds\n\n5. Diagnostic figures\nGenerate **Nature-Style** publication-quality figures\n- regional map of earthquakes, major earthquakes, stations, and focal mechanisms if available\n- time–magnitude plot\n- depth–time plot\n- magnitude–depth plot\n- magnitude-frequency / Mc plot / b-value plot\n- spatial event-density or cluster diagnostic\n- depth-distribution or cross-section diagnostic\n- station coverage diagnostic\n- focal-mechanism distribution and availability diagnostic\n- other useful regional-background plots that support further sequence analysis and hypothesis testing\n\nFigures should use clear labels, units, legends, readable fonts, appropriate color scales, and should be saved as high-resolution PNG.\n\n6. Candidate patterns estimation\nIdentify compact, testable candidate patterns for further sequence analysis and hypothesis testing, such as:\n- spatial clusters\n- temporal bursts or quiet periods\n- depth segmentation\n- magnitude-depth-space relationships\n- station-coverage effects\n- focal-mechanism data gaps\n- regional differences around the major earthquakes\n\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": "English",
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [
+      "input_guard"
+    ],
+    "active_round": 0,
+    "rounds": [
+      {
+        "round_index": 0,
+        "plan_path": null,
+        "tasks": [],
+        "evaluation_path": null,
+        "evaluation_satisfactory": null
+      }
+    ]
+  },
+  "artifacts": {
+    "request_txt": "<CASE_ROOT>/run/01_data_foundation/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/01_data_foundation/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/01_data_foundation/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/01_data_foundation/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {
+      "Input Guard": {
+        "input_tokens": 2207,
+        "output_tokens": 15
+      }
+    },
+    "total_input_tokens": 2207,
+    "total_output_tokens": 15,
+    "total_tokens": 2222
+  },
+  "failure": null
+}

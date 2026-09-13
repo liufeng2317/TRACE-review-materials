@@ -1,0 +1,280 @@
+{
+  "anchors": [
+    {
+      "anchor": "M1",
+      "time": "2025-11-09 08:03:39.240000+00:00",
+      "lat": 39.402,
+      "lon": 143.507,
+      "depth_km": 15.9,
+      "mag": 6.9,
+      "m1_m3_axis_length_km": 57.16418144737493
+    },
+    {
+      "anchor": "M2",
+      "time": "2025-12-08 14:15:10.180000+00:00",
+      "lat": 40.968,
+      "lon": 142.288,
+      "depth_km": 53.5,
+      "mag": 7.5,
+      "m1_m3_axis_length_km": 57.16418144737493
+    },
+    {
+      "anchor": "M3",
+      "time": "2026-04-20 07:52:58.060000+00:00",
+      "lat": 39.842,
+      "lon": 143.157,
+      "depth_km": 19.4,
+      "mag": 7.7,
+      "m1_m3_axis_length_km": 57.16418144737493
+    }
+  ],
+  "overall_classification": "mixed_endpoint_centered_overlap",
+  "working_context_check": [
+    {
+      "working_context_statement": "endpoint_core_dominates_main_windows",
+      "expected": "endpoint_preferred",
+      "status": "consistent",
+      "evidence": "Primary phases compared using M3+ composition fractions."
+    },
+    {
+      "working_context_statement": "full_interval_not_homogeneous_migration",
+      "expected": "no_phase_stable_monotonic_migration",
+      "status": "consistent",
+      "evidence": "Full trend=no_robust_monotonic_migration; phase-robust=False."
+    },
+    {
+      "working_context_statement": "pre_m3_clear_activation",
+      "expected": "pre_m3_present",
+      "status": "consistent",
+      "evidence": "pre_m3_primary M3+ event_count=51"
+    }
+  ],
+  "primary_phase_summary_M3plus": [
+    {
+      "summary_type": "window_name",
+      "summary_name": "m1_related_primary",
+      "mode": "raw",
+      "threshold": "M3+",
+      "event_count": 335,
+      "largest_magnitude": 6.9,
+      "start_time": "2025-11-01 07:34:32.810000+00:00",
+      "end_time": "2025-11-29 21:46:28.400000+00:00",
+      "duration_days": 28.591615625,
+      "centroid_lat": 39.48880253731343,
+      "centroid_lon": 143.45846534925374,
+      "median_depth_km": 12.89,
+      "depth_min_km": 3.82,
+      "depth_max_km": 31.31,
+      "median_projected_km": 10.008335499370247,
+      "median_perp_km": 10.03400947312763,
+      "centroid_dist_m1_km": 10.513317068955807,
+      "centroid_dist_m3_km": 46.992371105718135,
+      "median_dist_m1_km": 18.41352555578301,
+      "median_dist_m3_km": 48.788850082269555,
+      "median_axis_fraction": 0.17508053550253094,
+      "m2_related_fraction": 0.0,
+      "frac_0_30km": 0.9970149253731343,
+      "frac_30_60km": 0.0029850746268656717,
+      "frac_gt_60km": 0.0,
+      "frac_M1_endpoint": 0.7940298507462686,
+      "frac_M3_endpoint": 0.13432835820895522,
+      "frac_endpoint_overlap": 0.0,
+      "frac_corridor_noncore": 0.008955223880597015,
+      "frac_off_corridor_local": 0.0626865671641791,
+      "dominant_spatial_category": "M1_endpoint",
+      "window_name": "m1_related_primary"
+    },
+    {
+      "summary_type": "window_name",
+      "summary_name": "middle_phase_primary",
+      "mode": "raw",
+      "threshold": "M3+",
+      "event_count": 75,
+      "largest_magnitude": 6.1,
+      "start_time": "2025-12-02 01:46:38.120000+00:00",
+      "end_time": "2026-03-15 23:57:16.420000+00:00",
+      "duration_days": 103.92405439814816,
+      "centroid_lat": 39.62825806666667,
+      "centroid_lon": 143.37229209333333,
+      "median_depth_km": 14.17,
+      "depth_min_km": 5.94,
+      "depth_max_km": 36.31,
+      "median_projected_km": 17.657435333507586,
+      "median_perp_km": 10.80979388175502,
+      "centroid_dist_m1_km": 27.685595304410214,
+      "centroid_dist_m3_km": 30.06297196934299,
+      "median_dist_m1_km": 24.406164486141346,
+      "median_dist_m3_km": 48.244997039740426,
+      "median_axis_fraction": 0.30888984826561255,
+      "m2_related_fraction": 0.09333333333333334,
+      "frac_0_30km": 0.9733333333333334,
+      "frac_30_60km": 0.02666666666666667,
+      "frac_gt_60km": 0.0,
+      "frac_M1_endpoint": 0.6666666666666666,
+      "frac_M3_endpoint": 0.16,
+      "frac_endpoint_overlap": 0.02666666666666667,
+      "frac_corridor_noncore": 0.0,
+      "frac_off_corridor_local": 0.14666666666666667,
+      "dominant_spatial_category": "M1_endpoint",
+      "window_name": "middle_phase_primary"
+    },
+    {
+      "summary_type": "window_name",
+      "summary_name": "pre_m3_primary",
+      "mode": "raw",
+      "threshold": "M3+",
+      "event_count": 51,
+      "largest_magnitude": 7.7,
+      "start_time": "2026-03-17 13:41:01.780000+00:00",
+      "end_time": "2026-04-20 07:52:58.050000+00:00",
+      "duration_days": 33.758290162037035,
+      "centroid_lat": 39.51123107843137,
+      "centroid_lon": 143.34128723529412,
+      "median_depth_km": 14.12,
+      "depth_min_km": 3.09,
+      "depth_max_km": 25.82,
+      "median_projected_km": 13.834189317706628,
+      "median_perp_km": 9.69071419321687,
+      "centroid_dist_m1_km": 18.706560668346864,
+      "centroid_dist_m3_km": 40.018755224915346,
+      "median_dist_m1_km": 18.32320246506285,
+      "median_dist_m3_km": 44.45859763094798,
+      "median_axis_fraction": 0.24200800164421693,
+      "m2_related_fraction": 0.0,
+      "frac_0_30km": 1.0,
+      "frac_30_60km": 0.0,
+      "frac_gt_60km": 0.0,
+      "frac_M1_endpoint": 0.8235294117647058,
+      "frac_M3_endpoint": 0.13725490196078433,
+      "frac_endpoint_overlap": 0.0,
+      "frac_corridor_noncore": 0.0196078431372549,
+      "frac_off_corridor_local": 0.0196078431372549,
+      "dominant_spatial_category": "M1_endpoint",
+      "window_name": "pre_m3_primary"
+    }
+  ],
+  "migration_support": [
+    {
+      "overall_pattern": "mixed_endpoint_centered_overlap",
+      "reason": "Primary phase dominant categories: M1-related=M1_endpoint, middle=M1_endpoint, pre-M3=M1_endpoint."
+    },
+    {
+      "overall_pattern": "mixed_endpoint_centered_overlap",
+      "reason": "Trend classes: full=no_robust_monotonic_migration, M1-related=no_robust_monotonic_migration, middle=no_robust_monotonic_migration, pre-M3=no_robust_monotonic_migration."
+    },
+    {
+      "overall_pattern": "mixed_endpoint_centered_overlap",
+      "reason": "Mixed evidence; defaulting to endpoint-centered separated bursts rather than continuous migration."
+    }
+  ],
+  "robustness_summary_head": [
+    {
+      "mode": "raw",
+      "threshold": "M3+",
+      "corridor_width_km": 20,
+      "event_count": 736,
+      "endpoint_frac": 0.8478260869565217,
+      "corridor_noncore_frac": 0.006793478260869565,
+      "endpoint_minus_corridor": 0.8410326086956522
+    },
+    {
+      "mode": "raw",
+      "threshold": "M3+",
+      "corridor_width_km": 30,
+      "event_count": 736,
+      "endpoint_frac": 0.8478260869565217,
+      "corridor_noncore_frac": 0.012228260869565218,
+      "endpoint_minus_corridor": 0.8355978260869565
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M3+",
+      "corridor_width_km": 20,
+      "event_count": 714,
+      "endpoint_frac": 0.8739495798319328,
+      "corridor_noncore_frac": 0.0070028011204481795,
+      "endpoint_minus_corridor": 0.8669467787114846
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M3+",
+      "corridor_width_km": 30,
+      "event_count": 714,
+      "endpoint_frac": 0.8739495798319328,
+      "corridor_noncore_frac": 0.012605042016806723,
+      "endpoint_minus_corridor": 0.8613445378151261
+    },
+    {
+      "mode": "raw",
+      "threshold": "M4+",
+      "corridor_width_km": 20,
+      "event_count": 158,
+      "endpoint_frac": 0.8544303797468354,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.8544303797468354
+    },
+    {
+      "mode": "raw",
+      "threshold": "M4+",
+      "corridor_width_km": 30,
+      "event_count": 158,
+      "endpoint_frac": 0.8544303797468354,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.8544303797468354
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M4+",
+      "corridor_width_km": 20,
+      "event_count": 155,
+      "endpoint_frac": 0.8709677419354839,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.8709677419354839
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M4+",
+      "corridor_width_km": 30,
+      "event_count": 155,
+      "endpoint_frac": 0.8709677419354839,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.8709677419354839
+    },
+    {
+      "mode": "raw",
+      "threshold": "M5+",
+      "corridor_width_km": 20,
+      "event_count": 50,
+      "endpoint_frac": 0.86,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.86
+    },
+    {
+      "mode": "raw",
+      "threshold": "M5+",
+      "corridor_width_km": 30,
+      "event_count": 50,
+      "endpoint_frac": 0.86,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.86
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M5+",
+      "corridor_width_km": 20,
+      "event_count": 50,
+      "endpoint_frac": 0.86,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.86
+    },
+    {
+      "mode": "m2aware",
+      "threshold": "M5+",
+      "corridor_width_km": 30,
+      "event_count": 50,
+      "endpoint_frac": 0.86,
+      "corridor_noncore_frac": 0.0,
+      "endpoint_minus_corridor": 0.86
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+version,followup_topic,priority,reason
+raw,spatial_depth_screening,high,Check whether pre-M3 or multi-burst activity occupies distinct depth bands or endpoint clusters.
+raw,b_value_completeness,high,Enough local events to test whether phase-specific magnitude-frequency behavior differs from pre-M1 background.
+raw,burst_wise_migration_screening,medium,"Only warranted if along-axis trends remain after separating M1-related, middle, and pre-M3 windows."
+raw,mechanism_screening,medium,Mechanisms are optional context; use only for burst or endpoint groups with sufficient coverage.
+m2aware,spatial_depth_screening,high,Check whether pre-M3 or multi-burst activity occupies distinct depth bands or endpoint clusters.
+m2aware,b_value_completeness,high,Enough local events to test whether phase-specific magnitude-frequency behavior differs from pre-M1 background.
+m2aware,burst_wise_migration_screening,medium,"Only warranted if along-axis trends remain after separating M1-related, middle, and pre-M3 windows."
+m2aware,mechanism_screening,medium,Mechanisms are optional context; use only for burst or endpoint groups with sufficient coverage.

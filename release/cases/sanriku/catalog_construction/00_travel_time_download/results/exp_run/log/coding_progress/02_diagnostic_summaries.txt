@@ -1,0 +1,19 @@
+Summary schema: coding_debug_summary/v1
+Task: 02_diagnostic_summaries
+Status: pending
+Execution stage: unknown
+Debug rounds: 0
+Result check rounds: 0
+Elapsed seconds: None
+Started at: 
+Finished at: 
+Latest log: 
+Script: <CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/02_diagnostic_summaries.py
+Output dir: <CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/02_diagnostic_summaries
+Analysis: <CASE_ROOT>/run/00_travel_time_download/exp_run/analysis/02_diagnostic_summaries.md
+Runtime action: 
+Code changes: 0
+Last activity: 2026-09-12T00:46:59.488136+00:00
+Last event: 
+Progress message: 
+Debug summary: <CASE_ROOT>/run/00_travel_time_download/exp_run/log/coding_progress/debug_summary.json

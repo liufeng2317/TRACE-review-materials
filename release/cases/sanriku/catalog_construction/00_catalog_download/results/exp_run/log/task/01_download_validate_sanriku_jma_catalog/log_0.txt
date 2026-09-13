@@ -1,0 +1,18 @@
+[2026-09-11T17:12:23Z] Starting Sanriku JMA workflow: interval=[2025-06-01, 2026-05-02), chunks=48, bounds=lat[38.5, 42.5], lon[141.0, 144.5], output=<CASE_ROOT>/run/00_catalog_download/exp_run/outputs/01_download_validate_sanriku_jma_catalog
+[2026-09-11T17:12:23Z] Fetching Hi-net login page
+[2026-09-11T17:14:22Z] Posting Hi-net login form (credential values suppressed)
+[2026-09-11T17:16:57Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 1 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Read timed out.); retrying in 2.0s
+[2026-09-11T17:23:59Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 2 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a097e80>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 4.0s
+[2026-09-11T17:31:03Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 3 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0a6580>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 8.0s
+[2026-09-11T17:38:12Z] GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php attempt 4 failed (HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe09fd61f0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))); retrying in 16.0s
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 767, in <module>
+    main()
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 670, in main
+    login(session, user, passwd, dirs["debug_raw"])
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 258, in login
+    verify_resp, _ = request_with_backoff(session, "GET", CATALOG_URL)
+  File "<CASE_ROOT>/run/00_catalog_download/exp_run/scripts/01_download_validate_sanriku_jma_catalog.py", line 197, in request_with_backoff
+    raise RuntimeError(f"{method} {url} failed after {MAX_ATTEMPTS} attempts: {last_exc}")
+RuntimeError: GET https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php failed after 5 attempts: HTTPSConnectionPool(host='hinetwww11.bosai.go.jp', port=443): Max retries exceeded with url: /auth/JMA/jmalist.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0xfffe0a0a60d0>, 'Connection to hinetwww11.bosai.go.jp timed out. (connect timeout=60)'))
+

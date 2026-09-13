@@ -1,0 +1,58 @@
+{
+  "chunk_count": 67,
+  "downloaded_or_reused_chunks": 73,
+  "full": {
+    "both_missing_rows": 0,
+    "both_p_s_rows": 2122885,
+    "event_count": 287868,
+    "label": "full",
+    "p_only_rows": 956246,
+    "p_pick_count": 3079131,
+    "pick_count": 4054829,
+    "s_only_rows": 975698,
+    "s_pick_count": 3098583
+  },
+  "parse_qc_totals": {
+    "auxiliary_records": 295775,
+    "closed_events": 288453,
+    "e_records": 288453,
+    "invalid_length_records": 0,
+    "j_records": 288453,
+    "orphan_pick_records": 0,
+    "parse_errors": 0,
+    "pick_records": 4059132,
+    "size_bytes": 478385861,
+    "skipped_events": 585,
+    "skipped_pick_records": 4303,
+    "total_lines": 4931813,
+    "unrecognized_records": 0,
+    "unterminated_events": 0,
+    "valid_96_byte_records": 4931813
+  },
+  "phase_dat_convention": {
+    "delimiter": ",",
+    "event_fields": 6,
+    "event_line_example": "2025-09-30T16:09:25.360000Z,38.702667,142.256833,41.340,2.80,1",
+    "pick_fields": 5,
+    "pick_line_example": "N.313S,2025-09-30T16:09:32.740000Z,2025-09-30T16:09:38.470000Z,0.000e+00,1.00"
+  },
+  "regional": {
+    "both_missing_rows": 0,
+    "both_p_s_rows": 319424,
+    "event_count": 36838,
+    "label": "regional",
+    "p_only_rows": 229752,
+    "p_pick_count": 549176,
+    "pick_count": 672005,
+    "s_only_rows": 122829,
+    "s_pick_count": 442253
+  },
+  "request_end_date_exclusive": "2026-05-02",
+  "request_start_date": "2025-06-01",
+  "sanriku_bounds": {
+    "lat_max": 42.5,
+    "lat_min": 38.5,
+    "lon_max": 144.5,
+    "lon_min": 141.0
+  }
+}

@@ -1,0 +1,40 @@
+[
+  {
+    "window": "foreshock_final2d",
+    "radius_km": 80.0,
+    "status": "ok",
+    "method_mc_primary": "estimate_mc_maxc",
+    "method_mc_secondary": "estimate_mc_ks",
+    "method_mc_tertiary": "estimate_mc_b_stability",
+    "method_b": "ClassicBValueEstimator",
+    "bin_width": 0.1,
+    "event_count_total": 396,
+    "event_count_ge_mc": 201,
+    "mc_maxc": 1.8,
+    "mc_ks": 1.4,
+    "mc_b_stability": 1.4,
+    "mc_primary": 1.8,
+    "b_value": 0.5142404135707136,
+    "b_uncertainty": 0.037036375288727934,
+    "exploratory_only": false
+  },
+  {
+    "window": "aftershock_0_0p5d",
+    "radius_km": 80.0,
+    "status": "ok",
+    "method_mc_primary": "estimate_mc_maxc",
+    "method_mc_secondary": "estimate_mc_ks",
+    "method_mc_tertiary": "estimate_mc_b_stability",
+    "method_b": "ClassicBValueEstimator",
+    "bin_width": 0.1,
+    "event_count_total": 415,
+    "event_count_ge_mc": 308,
+    "mc_maxc": 2.0,
+    "mc_ks": 2.2,
+    "mc_b_stability": 2.1,
+    "mc_primary": 2.0,
+    "b_value": 0.4328270255338892,
+    "b_uncertainty": 0.020415851010438968,
+    "exploratory_only": true
+  }
+]

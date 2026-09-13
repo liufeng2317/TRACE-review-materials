@@ -1,0 +1,212 @@
+tasks:
+- name: 01_download_validate_sanriku_jma_catalog
+  description: Download, parse, clean, validate, and visualize the authenticated
+    Hi-net JMA unified hypocenter catalog for the Sanriku study region.
+  script: 01_download_validate_sanriku_jma_catalog.py
+  ancestors: []
+  subtasks:
+  - name: load_credentials
+    description: Load Hi-net credentials from the default environment file with 
+      optional command-line overrides.
+    inputs:
+    - cli_arguments
+    - environment_file
+    outputs:
+    - credential_config
+    params:
+      env_path: 
+        <CASE_ROOT>/data/hinet_account/.env
+      required_keys:
+      - HINET_USERNAME
+      - HINET_PASSWORD
+      allow_cli_override: true
+      redact_credentials_in_outputs: true
+  - name: initialize_authenticated_session
+    description: Create a reusable requests session and authenticate against the
+      Hi-net login endpoint.
+    inputs:
+    - credential_config
+    outputs:
+    - authenticated_session
+    - login_diagnostics
+    params:
+      login_endpoint: https://hinetwww11.bosai.go.jp/auth/?LANG=en
+      session_library: requests.Session
+      retry_enabled: true
+      max_retries: 5
+      backoff_strategy: bounded_exponential
+      timeout_seconds: 60
+      fail_on_authentication_error: true
+  - name: generate_request_chunks
+    description: Build continuous half-open request chunks that cover the fixed 
+      manuscript interval without exceeding the service limit.
+    inputs:
+    - workflow_parameters
+    outputs:
+    - request_chunks
+    params:
+      start_date: '2025-06-01'
+      end_date_exclusive: '2026-05-02'
+      max_chunk_days: 7
+      expected_chunk_count: 48
+      first_chunk_start: '2025-06-01'
+      final_chunk_end_exclusive: '2026-05-02'
+      service_end_date_policy: submit_inclusive_end_as_chunk_end_minus_one_day
+      forbid_runtime_derived_date_defaults: true
+  - name: download_catalog_chunks
+    description: Request each catalog chunk through the authenticated session 
+      and record request, response, and raw-saving diagnostics.
+    inputs:
+    - authenticated_session
+    - request_chunks
+    - cli_arguments
+    outputs:
+    - chunk_responses
+    - chunk_request_manifest
+    - optional_raw_response_files
+    - failed_response_debug_files
+    params:
+      catalog_endpoint: https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php
+      raw_dir_argument: raw_dir
+      save_all_raw_when_raw_dir_supplied: true
+      save_failed_unparseable_responses: true
+      retry_enabled: true
+      max_retries: 5
+      backoff_strategy: bounded_exponential
+      timeout_seconds: 60
+      do_not_skip_failed_chunks: true
+      record_requested_boundaries: true
+      record_submitted_service_dates: true
+  - name: parse_fixed_width_catalog
+    description: Extract event rows from the returned JMA fixed-width catalog 
+      tables and capture parse status for each chunk.
+    inputs:
+    - chunk_responses
+    - chunk_request_manifest
+    outputs:
+    - parsed_chunk_records
+    - parse_diagnostics
+    - updated_chunk_manifest
+    - failed_response_debug_files
+    params:
+      parser_type: fixed_width_table
+      forbidden_row_parser: comma_splitting
+      required_fields:
+      - origin_datetime
+      - latitude
+      - longitude
+      - depth
+      - magnitude
+      allow_valid_zero_event_pages: true
+      fail_on_unrecognized_html_or_table_structure: true
+      include_debug_path_in_parse_errors: true
+      record_actual_returned_date_range: true
+  - name: clean_catalog
+    description: Standardize parsed records, remove invalid rows, apply fixed 
+      time and Sanriku bounds, sort events, and remove duplicates.
+    inputs:
+    - parsed_chunk_records
+    outputs:
+    - cleaned_catalog_table
+    - cleaning_diagnostics
+    params:
+      output_columns:
+      - datetime
+      - lat
+      - lon
+      - dep
+      - mag
+      datetime_parse_required: true
+      numeric_fields:
+      - lat
+      - lon
+      - dep
+      - mag
+      drop_missing_required_fields: true
+      time_start_inclusive: '2025-06-01'
+      time_end_exclusive: '2026-05-02'
+      latitude_min_inclusive: 38.50
+      latitude_max_inclusive: 42.50
+      longitude_min_inclusive: 141.00
+      longitude_max_inclusive: 144.50
+      sort_by: datetime
+      remove_duplicates_after_standardization: true
+  - name: write_catalog_and_manifests
+    description: Write the cleaned ASPECT-ready catalog and non-sensitive 
+      machine-readable processing evidence.
+    inputs:
+    - cleaned_catalog_table
+    - updated_chunk_manifest
+    - cleaning_diagnostics
+    - parse_diagnostics
+    - login_diagnostics
+    outputs:
+    - cleaned_catalog_csv
+    - chunk_manifest_csv
+    - validation_summary_json
+    params:
+      catalog_filename: Snet_catalog_20250601_20260502.csv
+      manifest_filename: Snet_catalog_20250601_20260502_chunk_manifest.csv
+      validation_filename: Snet_catalog_20250601_20260502_validation.json
+      catalog_columns_exact:
+      - datetime
+      - lat
+      - lon
+      - dep
+      - mag
+      include_credentials_in_outputs: false
+  - name: generate_distribution_figure
+    description: Generate a catalog distribution figure only from the validated 
+      cleaned catalog table.
+    inputs:
+    - cleaned_catalog_table
+    - cleaned_catalog_csv
+    outputs:
+    - distribution_figure
+    - figure_diagnostics
+    params:
+      figure_filename: Snet_catalog_20250601_20260502_distribution.png
+      require_exact_catalog_schema: true
+      source_must_be_cleaned_catalog: true
+      latitude_min: 38.50
+      latitude_max: 42.50
+      longitude_min: 141.00
+      longitude_max: 144.50
+      include_sanriku_bounding_box: true
+      include_epicenter_scatter: true
+      include_temporal_or_range_diagnostics: true
+      handle_empty_catalog_with_diagnostic_figure: true
+  - name: validate_final_outputs
+    description: Validate chunk coverage, parsed date evidence, cleaned CSV 
+      integrity, duplicate removal, and figure provenance before declaring 
+      success.
+    inputs:
+    - cleaned_catalog_csv
+    - chunk_manifest_csv
+    - validation_summary_json
+    - distribution_figure
+    - figure_diagnostics
+    outputs:
+    - final_validation_summary_json
+    - workflow_acceptance_status
+    params:
+      expected_chunk_count: 48
+      max_chunk_days: 7
+      required_interval_start: '2025-06-01'
+      required_interval_end_exclusive: '2026-05-02'
+      required_columns_exact:
+      - datetime
+      - lat
+      - lon
+      - dep
+      - mag
+      require_continuous_non_overlapping_chunks: true
+      require_actual_returned_dates_or_valid_zero_event_status: true
+      require_no_missing_values: true
+      require_numeric_lat_lon_dep_mag: true
+      require_time_bounds: true
+      require_spatial_bounds: true
+      require_sorted_by_datetime: true
+      require_no_duplicate_rows: true
+      require_figure_from_cleaned_csv: true
+      fail_on_parser_failure_as_empty_catalog: true

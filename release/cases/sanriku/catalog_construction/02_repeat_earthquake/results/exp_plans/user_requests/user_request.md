@@ -1,0 +1,9 @@
+Please conduct a preliminary and reviewable repeating-earthquake analysis based on the prepared SAC event waveforms for 2025-11-01 through 2025-12-06.
+
+The objective is to identify possible repeating-earthquake event pairs and repeating-earthquake families after the Japan Aomori Mw7.5 event. Do not download, convert, or reorganize the waveform data. Read the existing metadata and SAC waveforms, screen physically reasonable candidate pairs, perform consistent multi-station and multi-component phase-aligned cross-correlation, aggregate event-pair similarity, construct repeat-event families, and produce reproducible tables, figures, and a report.
+
+Use `observations.csv` and `event_pair_common_observations.csv` as the primary inputs. Prefer the `sac_file` paths recorded in `observations.csv`. Use exact `station_component` matching, S-arrival alignment with P-arrival fallback, the relative phase window `[-0.5, 5.5] s`, a `2-15 Hz` bandpass, and a lag search of at least `+/-1.5 s`. The phase time fields are relative to `origin_time`; construct absolute phase times before extracting SAC windows. Do not merge channel naming systems in the primary result.
+
+Use epicentral distance, magnitude difference, and shared station-component counts for candidate screening. Record depth differences without using them as a default hard constraint. Report both loose and high-confidence similarity thresholds, using `median_cc >= 0.55` and `median_cc >= 0.70` as reference values. Build families from high-similarity event-pair edges and retain machine-readable evidence for all failures and exclusions.
+
+Required outputs include candidate pairs, station-component correlations, event-pair summaries, family tables, `analysis_summary.json`, spatial and statistical figures, representative waveform comparisons, and a reproducible report.

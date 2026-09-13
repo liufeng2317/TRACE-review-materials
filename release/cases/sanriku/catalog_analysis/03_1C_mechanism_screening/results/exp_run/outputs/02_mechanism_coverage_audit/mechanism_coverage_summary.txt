@@ -1,0 +1,11 @@
+Mechanism coverage audit summary
+- Matched 240 mechanism rows out of 354 metadata rows (0.678).
+- Best reusable matching tolerances: time <= 1.0 s, horizontal <= 2.0 km, depth <= 2.0 km.
+- Catalog-wide coverage is sparse: 0.0094 of all relocated events and 0.0009 of the combined local-zone events have a matched mechanism row.
+- Combined local-zone matched-event coverage = 0.0009 (8/9109); complete-mechanism fraction among matched local events = 0.125.
+- Extended-zone coverage comparison: M1-extended = 0.0000, M3-extended = 0.0011; differences should be treated as descriptive because both samples are sparse.
+- Phase coverage comparison: M1-related phase = 0.0030, pre-M3 phase = 0.0059; low fractions imply mechanism consistency by phase is exploratory unless restricted to larger events.
+- Coverage rises strongly with magnitude: for M>=4.5 events the matched fraction is 0.241 (35/145).
+- Representativeness check in the combined local zone: matched events have median magnitude 3.70 versus 1.70 for unmatched events (difference 2.00), indicating strong magnitude-biased mechanism availability.
+- Interpretation rule: focal mechanisms should be considered unavailable for general catalog-wide phase/spatial inference, and only exploratory-to-descriptive for larger-event subsets with explicitly reported coverage.
+- This audit addresses metadata matching and sampling bias only; it does not justify physical interpretation of rupture style or triggering.

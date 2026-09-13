@@ -1,0 +1,286 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\traceauthor}{TRACE}
+\newcommand{\outdir}{<LOCAL_PATH>\_LLM/Science\_Discovery\_Agenet/TRACE-1.1/examples/japan\_aomori/catalog\_construction\_from\_JMA/run/00\_travel\_time\_download/exp\_run/outputs/01\_hinet\_jma\_arrivals\_workflow}
+
+\title{Independent Implementation and Validation of a JMA/Hi-net Arrival-Time Download and Parsing Workflow for the Sanriku Region}
+\author{\traceauthor}
+\date{2026-09-12}
+
+
+% --- EarthLink enforced font settings (XeLaTeX) ---
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{unicode-math}
+\setmainfont{DejaVu Serif}
+\setCJKmainfont{Noto Serif CJK SC}
+\setmathfont{XITS Math}
+\usepackage[htt]{hyphenat}
+% --- end enforced font settings ---
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report documents an independent implementation and validation of a JMA/Hi-net arrival-time workflow for the Sanriku study region.  The requested interval was 2025-06-01 through 2026-05-01, implemented as a half-open request interval ending at 2026-05-02.  The implemented workflow supports authenticated Hi-net/HinetPy arrival-time retrieval, skip-by-default reuse of non-empty raw files, retry/backoff for network requests, byte-exact fixed-width parsing of 96-byte JMA measure records, conversion of Japanese Standard Time (JST) timestamps to UTC ISO strings, regional subsetting, and export of normalized event/pick tables plus project-compatible \texttt{phase.dat} and \texttt{station.sta} products.  In the completed execution analyzed here, no new network request was made because 73 pre-existing non-empty raw measure files were discovered and reused.  The smoke test on the first five-day raw file passed, and final validation passed with zero invalid-length records, zero parser errors, zero orphan picks, zero unterminated event blocks, and zero catalog validation errors.  The full parsed catalog contains 287,868 events and 4,054,829 station-pick rows; the Sanriku regional subset contains 36,838 events and 672,005 station-pick rows.
+\end{abstract}
+
+\section{Objective and Scope}
+
+The objective was to implement and validate a reproducible workflow for JMA arrival-time measure files available through the Hi-net/HinetPy arrival-time interface, then parse those files into structured products for the Sanriku study region.  The requested temporal and spatial scope was:
+\begin{itemize}
+  \item requested time interval: \(2025\text{-}06\text{-}01 \leq t < 2026\text{-}05\text{-}02\), covering records through 2026-05-01 in JST request time;
+  \item preferred request chunking: no more than 7 days per request, preferably five-day chunks;
+  \item regional filter: latitude 38.50--42.50\(^{\circ}\)N and longitude 141.00--144.50\(^{\circ}\)E;
+  \item spatial filtering requirement: apply the geographic selection locally after parsing, rather than assuming server-side geographic filtering.
+\end{itemize}
+
+The implemented outputs were designed to satisfy two complementary use cases.  First, normalized CSV tables preserve event and station-pick information in explicit relational form.  Second, \texttt{phase.dat} and \texttt{station.sta} maintain compatibility with the project relocation convention.  The canonical products used by relocation are the expert-processed files under \url{<CASE_ROOT>/run/00_travel_time_download/exp_run/expert/outputs}.
+
+\section{Implementation Summary}
+
+The implemented script is located at:
+\begin{center}
+\small\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/scripts/01_hinet_jma_arrivals_workflow.py}
+\end{center}
+The main output directory is:
+\begin{center}
+\small\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow}
+\end{center}
+
+\subsection{Download and Raw-File Handling}
+
+The workflow implements authenticated arrival-time retrieval through \texttt{HinetPy.Client.get\_arrivaltime}.  Hi-net credentials are loaded from environment variables or from the configured \texttt{.env} file, with support for one or multiple accounts.  Passwords are redacted from messages.  For direct network retrieval, the script writes one raw file per chunk with names of the form \texttt{measure\_YYYYMMDD\_N.txt}, skips non-empty existing files by default, and performs per-account retry/backoff on failed requests.  Download/reuse state is recorded in \texttt{download\_manifest.csv} with the requested columns \texttt{start\_date}, \texttt{span\_days}, \texttt{raw\_file}, \texttt{exists}, \texttt{size\_bytes}, \texttt{status}, and \texttt{message}.
+
+In the completed run, the workflow discovered a complete set of 73 non-empty existing raw files in the prior raw-data directory and reused them.  Thus, the final products validate the downloader/reuse and parser workflow, but the completed run did not exercise a fresh network transfer.  The manifest records every raw input row with status \texttt{reused\_existing\_source}; see Table~\ref{tab:download_scope}.  The planned five-day schedule is also preserved in \texttt{chunk\_schedule.csv}; it contains 67 planned half-open five-day windows from 2025-06-01 to 2026-05-02.  The reused raw-file collection contains additional month-boundary files but still has a maximum span of 5 days and covers the requested interval through the 2026-05-01 boundary.
+
+\subsection{Fixed-Width Parser}
+
+The parser treats each non-empty JMA measure record as a 96-byte record excluding line endings.  It does not comma-split or use free-width parsing.  The parser reads byte slices with CP932 decoding and classifies records as follows:
+\begin{itemize}
+  \item event header records beginning with \texttt{J}; parsed fields include origin time, latitude, longitude, depth, magnitude, and region;
+  \item station pick records beginning with \texttt{\_}; parsed fields include station code, station number, first and second pick times, phase quality flags, and weight;
+  \item event terminators beginning with \texttt{E};
+  \item documented auxiliary/non-primary records, including \texttt{j} and \texttt{W}, counted separately and excluded from the event/pick tables.
+\end{itemize}
+All JMA raw times are interpreted as JST and exported as UTC ISO strings ending in \texttt{Z}.  Missing P or S picks are represented by \texttt{-1}.  Event identifiers are stable hashes derived from the source file, event sequence, and origin time, enabling foreign-key checks between event and pick tables.
+
+The event-table schema is:
+\begin{center}
+\small\texttt{event\_id, origin\_time, latitude, longitude, depth\_km, magnitude, region, npicks, source\_file}.
+\end{center}
+The pick-table schema is:
+\begin{center}
+\small\texttt{event\_id, station\_code, station\_number, p\_pick\_time, s\_pick\_time, p\_quality, s\_quality, weight, source\_file}.
+\end{center}
+Both full and Sanriku-regional versions of these tables were written.  The files \texttt{events.csv} and \texttt{picks.csv} are user-facing aliases for the regional products.
+
+\subsection{Regional Selection and Compatibility Products}
+
+The Sanriku subset was applied after parsing by selecting events with coordinates inside 38.50--42.50\(^{\circ}\)N and 141.00--144.50\(^{\circ}\)E, then retaining only picks whose \texttt{event\_id} belongs to the selected event set.  Regional \texttt{npicks} values were recomputed after subsetting.
+
+The \texttt{phase.dat} export preserves the existing project convention rather than introducing a new \texttt{\#}-prefixed or whitespace-delimited format.  The inferred convention is comma-delimited, with six event-line fields and five pick-line fields.  The event-line example recorded by validation is:
+\begin{center}
+\small\texttt{2025-09-30T16:09:25.360000Z,38.702667,142.256833,41.340,2.80,1}
+\end{center}
+The pick-line example is:
+\begin{center}
+\small\texttt{N.313S,2025-09-30T16:09:32.740000Z,2025-09-30T16:09:38.470000Z,0.000e+00,1.00}
+\end{center}
+A separate traceability file maps each line block in \texttt{phase.dat} back to event identifiers, source files, and station codes.
+
+\section{Validation Procedure}
+
+Validation was staged in the requested order.  First, the workflow ran a smoke test on the first five-day file, representing \(2025\text{-}06\text{-}01 \leq t < 2025\text{-}06\text{-}06\).  The smoke test verified that the raw file was present and non-empty, that 96-byte fixed-width parsing produced valid event and pick tables, that event--pick foreign keys were consistent, and that P/S pick counts were non-degenerate.  After the smoke test passed, the complete reused raw-file collection was parsed and validated.
+
+Final validation checked the following conditions:
+\begin{enumerate}
+  \item required event and pick columns are present in the required order;
+  \item event identifiers are unique;
+  \item every pick references an existing event;
+  \item each event \texttt{npicks} value equals the number of linked pick rows;
+  \item P and S timestamps are parseable UTC strings when not equal to \texttt{-1};
+  \item no pick row has both P and S missing;
+  \item regional event coordinates remain inside the requested Sanriku bounds;
+  \item fixed-width parser fatal counters are zero: invalid record length, unrecognized record, orphan pick, unterminated event, and parser error.
+\end{enumerate}
+The authoritative validation summaries are \texttt{smoke\_qc\_summary.json}, \texttt{catalog\_qc\_summary.json}, and \texttt{final\_validation\_summary.json}; the final validation error file is empty apart from the CSV newline.
+
+\section{Results}
+
+\subsection{Download/Reuse Coverage}
+
+Table~\ref{tab:download_scope} summarizes the raw-file coverage and download/reuse evidence.  The manifest contains 73 rows, all with status \texttt{reused\_existing\_source}.  All accepted rows were non-empty, and the maximum manifest span was 5 days.  The first raw input was \texttt{measure\_20250601\_5.txt}; the last was \texttt{measure\_20260501\_1.txt}, which provides the 2026-05-01 boundary day while respecting the exclusive 2026-05-02 upper bound.
+
+\begin{table}[htbp]
+\centering
+\caption{Raw-file coverage and manifest evidence.  Paths identify the exact machine-readable evidence used in this report.}
+\label{tab:download_scope}
+\small
+\begin{tabular}{P{0.30\linewidth}P{0.62\linewidth}}
+\toprule
+Item & Value / evidence \\
+\midrule
+Planned schedule & 67 five-day half-open windows in \url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/chunk_schedule.csv} \\
+Completed raw inputs & 73 reused non-empty raw files in \url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/download_manifest.csv} \\
+Manifest statuses & 73 \texttt{reused\_existing\_source}; no \texttt{downloaded}, \texttt{failed}, or \texttt{empty\_file} rows in the completed run \\
+First manifest row & 2025-06-01, span 5 days, raw size 6,841,119 bytes \\
+Last manifest row & 2026-05-01, span 1 day, raw size 1,292,816 bytes \\
+Maximum raw-file span & 5 days \\
+Parsed raw byte total & 478,385,861 bytes across 73 files, summarized in \url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/parse_qc_by_file.csv} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Smoke-Test Results}
+
+The first five-day smoke test passed.  It used the raw file \url{<CASE_ROOT>/data_downloading/travel_time/data/raw/measure_20250601_5.txt}, whose size was 6,841,119 bytes.  Table~\ref{tab:smoke} summarizes the smoke-test parsed counts.  The smoke-test products are \texttt{events\_smoke.csv}, \texttt{picks\_smoke.csv}, \texttt{smoke\_parse\_qc\_by\_file.csv}, \texttt{smoke\_parse\_errors.csv}, \texttt{smoke\_validation\_errors.csv}, and \texttt{smoke\_qc\_summary.json} in the output directory.
+
+\begin{table}[htbp]
+\centering
+\caption{Smoke-test validation summary for 2025-06-01 through 2025-06-05, represented as the half-open five-day file starting 2025-06-01.}
+\label{tab:smoke}
+\small
+\begin{tabular}{lr}
+\toprule
+Metric & Value \\
+\midrule
+Smoke test passed & true \\
+Parsed events & 4,053 \\
+Pick rows & 59,895 \\
+Rows with both P and S & 30,089 \\
+P-only rows & 14,865 \\
+S-only rows & 14,941 \\
+P pick count & 44,954 \\
+S pick count & 45,030 \\
+Rows with both P and S missing & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Full and Regional Catalog Products}
+
+The final parsed catalog counts are listed in Table~\ref{tab:catalog_counts}.  The full parsed catalog contains 287,868 events and 4,054,829 pick rows.  The Sanriku subset contains 36,838 events and 672,005 pick rows.  For the regional subset, there are 549,176 non-missing P picks and 442,253 non-missing S picks.  The regional catalog time span in UTC is 2025-05-31T15:09:02.360000Z to 2026-05-01T14:58:44.740000Z, consistent with conversion from a JST request window beginning on 2025-06-01 and ending before 2026-05-02.
+
+\begin{table}[htbp]
+\centering
+\caption{Validated full and Sanriku-regional catalog counts from \texttt{final\_validation\_summary.json}.}
+\label{tab:catalog_counts}
+\small
+\begin{tabular}{lrr}
+\toprule
+Metric & Full parsed catalog & Sanriku regional subset \\
+\midrule
+Events & 287,868 & 36,838 \\
+Pick rows & 4,054,829 & 672,005 \\
+Rows with both P and S & 2,122,885 & 319,424 \\
+P-only rows & 956,246 & 229,752 \\
+S-only rows & 975,698 & 122,829 \\
+P pick count & 3,079,131 & 549,176 \\
+S pick count & 3,098,583 & 442,253 \\
+Rows with both P and S missing & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The regional coordinate ranges are exactly within the requested filter: latitude 38.500000 to 42.499833\(^{\circ}\)N and longitude 141.000500 to 144.500000\(^{\circ}\)E.  Regional depths range from 0.00 to 149.24 km and magnitudes range from -0.5 to 7.7.  These descriptive ranges are quality-control summaries of the parsed JMA source information; no relocation or downstream event matching was performed in this workflow.
+
+\subsection{Parser Quality Control}
+
+Parser quality-control totals are shown in Table~\ref{tab:parser_qc}.  The parser processed 4,931,813 non-empty lines, all of which were valid 96-byte records.  The workflow closed 288,453 event blocks, matching the number of \texttt{J} headers and \texttt{E} terminators counted before exclusions.  It then omitted 585 events and 4,303 station-pick records associated with skipped events, primarily malformed or far-field records lacking required local coordinates.  These skips are tracked explicitly and are not counted as parser failures.  The validation-critical counters---invalid record lengths, parse errors, orphan picks, unrecognized records, and unterminated event blocks---are all zero.
+
+\begin{table}[htbp]
+\centering
+\caption{Fixed-width parser quality-control totals from \texttt{catalog\_qc\_summary.json} and \texttt{final\_validation\_summary.json}.}
+\label{tab:parser_qc}
+\small
+\begin{tabular}{lr}
+\toprule
+Parser metric & Count \\
+\midrule
+Total non-empty lines & 4,931,813 \\
+Valid 96-byte records & 4,931,813 \\
+Invalid-length records & 0 \\
+\texttt{J} event-header records & 288,453 \\
+Station-pick records & 4,059,132 \\
+\texttt{E} terminator records & 288,453 \\
+Auxiliary records & 295,775 \\
+Unrecognized records & 0 \\
+Orphan pick records & 0 \\
+Closed event blocks & 288,453 \\
+Skipped events & 585 \\
+Skipped pick records & 4,303 \\
+Unterminated events & 0 \\
+Parser errors & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Output Inventory and Traceability}
+
+Table~\ref{tab:outputs} lists the principal products.  The normalized CSV files are the primary structured outputs.  The phase-file export is intentionally secondary and traceable: \texttt{phase\_dat\_traceability.csv} contains 708,843 trace rows, matching 36,838 regional event lines plus 672,005 regional pick lines.  The station export contains 371 matched station rows; the station metadata audit contains 522 unique station-code/station-number pairs used by the regional picks, of which 151 lacked matched coordinates in the available reference station metadata and are listed in \texttt{station\_metadata\_missing.csv}.
+
+\begin{longtable}{P{0.25\linewidth}P{0.15\linewidth}P{0.52\linewidth}}
+\caption{Principal workflow products and their roles.}\label{tab:outputs}\\
+\toprule
+Product & Size & Role \\
+\midrule
+\endfirsthead
+\toprule
+Product & Size & Role \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/events_full.csv} & 42,256,079 bytes & Full parsed event table. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/picks_full.csv} & 480,969,262 bytes & Full parsed station-pick table. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/events_regional.csv} & 5,360,942 bytes & Sanriku regional event table; also duplicated as \texttt{events.csv}. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/picks_regional.csv} & 78,890,170 bytes & Sanriku regional station-pick table; also duplicated as \texttt{picks.csv}. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/phase.dat} & 45,923,345 bytes & Project-convention regional phase file. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/phase_dat_traceability.csv} & 52,731,927 bytes & Line/block traceability from \texttt{phase.dat} back to normalized event and pick rows. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/station.sta} & 15,968 bytes & Matched station metadata for regional picks. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/station_metadata_audit.csv} & 19,018 bytes & Audit of station-code/station-number pairs and coordinate-match status. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/final_validation_summary.json} & 1,598 bytes & Authoritative final validation summary. \\
+\url{<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs/01_hinet_jma_arrivals_workflow/product_inventory.csv} & 6,147 bytes & Output inventory with file sizes and modification times. \\
+\end{longtable}
+
+\section{Scientific Interpretation}
+
+The implemented workflow successfully converts raw JMA/Hi-net arrival-time measure files into a relational event--pick catalog and compatibility products for Sanriku.  The strongest validation evidence is not the event count alone, but the complete evidence chain: non-empty raw inputs are enumerated in the manifest; every parsed non-empty line is a 96-byte fixed-width record; event headers and terminators are balanced; no orphan picks or unterminated event blocks remain; normalized timestamps are parseable as UTC; every pick row references an event; and the regional subset satisfies the requested latitude--longitude bounds.
+
+The full catalog count of 287,868 events is a parsing-stage count after excluding records that lacked required local source information.  The Sanriku count of 36,838 events is the locally filtered subset of this parsed catalog.  This count should not be confused with any downstream manuscript count produced by later arrival matching, relocation-input filtering, or other catalog construction stages.  The regional P/S distribution indicates a large number of usable arrivals: 549,176 P picks and 442,253 S picks, with no rows where both phases are missing.  The presence of P-only and S-only rows is expected in station-pick records and is preserved explicitly using \texttt{-1} for the missing counterpart.
+
+\section{Limitations and Caveats}
+
+\begin{enumerate}
+  \item \textbf{Fresh network download was not exercised in the completed run.}  The implementation includes the HinetPy download path, credential loading, retry/backoff, skip-existing behavior, and manifest writing.  However, the completed execution reused 73 previously downloaded non-empty raw measure files and therefore did not validate live Hi-net service availability, account permissions, or network behavior at execution time.
+  \item \textbf{Manifest differs from the planned five-day schedule because source reuse mode was used.}  The workflow wrote a 67-row planned five-day schedule for the requested half-open interval, but the accepted raw input manifest contains 73 previously downloaded files, including month-boundary files.  The manifest is the authoritative record for what was parsed in this completed run.  All manifest spans are at most 5 days, and the final raw file covers 2026-05-01 with a one-day span.
+  \item \textbf{Station metadata coverage is incomplete.}  The regional picks use 522 unique station-code/station-number pairs.  The station metadata audit matched 371 of them and left 151 unmatched in \texttt{station\_metadata\_missing.csv}.  The event and pick CSV products remain complete, but \texttt{station.sta} contains only matched station metadata.
+  \item \textbf{Skipped records are explicitly tracked.}  The parser skipped 585 event headers and 4,303 pick records associated with events lacking required parseable source coordinates, notably far-field records.  These exclusions are documented in parser QC totals and should be considered when comparing full raw JMA record counts to parsed local-source catalog counts.
+  \item \textbf{Regional product is a source-parameter subset, not a relocated catalog.}  Depths, magnitudes, regions, and origin times are parsed from the JMA measure source records.  No hypocenter relocation, phase association refinement, or station correction was performed in this workflow.
+  \item \textbf{Handoff status metadata was stale relative to final products.}  The compact handoff JSON retained a \texttt{running} status snapshot, but the task analysis and the output directory contain completed validation products.  This report relies on the final output artifacts, especially \texttt{final\_validation\_summary.json}, \texttt{catalog\_qc\_summary.json}, and the product inventory.
+\end{enumerate}
+
+\section{Conclusion}
+
+The JMA/Hi-net arrival-time workflow was independently implemented and validated for the Sanriku study region.  The parser satisfies the fixed-width 96-byte record requirement, preserves JST-to-UTC timestamp conversion, represents missing phase arrivals with \texttt{-1}, exports both full and regional normalized tables, and preserves the established comma-delimited project convention for \texttt{phase.dat}.  The smoke test passed, and final validation passed with zero validation errors.  The resulting Sanriku regional catalog contains 36,838 parsed events and 672,005 station-pick rows for the requested 2025-06-01 to 2026-05-01 coverage, with all regional event coordinates inside the specified bounds.  The primary scientific products are the normalized CSV tables, while the compatibility phase and station files are traceable secondary exports.
+
+\end{document}

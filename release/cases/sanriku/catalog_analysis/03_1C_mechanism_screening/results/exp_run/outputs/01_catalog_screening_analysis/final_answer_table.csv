@@ -1,0 +1,8 @@
+question,answer,evidence_summary
+Are sliding-window b-value estimates reliable enough to interpret?,yes_with_caution,Combined-local interpretable window count=217.
+"Does b-value vary meaningfully through time, and do changes align with predefined phases?",see_phase_summary,Use sliding-window medians and transition table; interpret only windows with reliability better than not_interpretable.
+Are phase-level aggregate b-values consistent with sliding-window evolution?,mostly_consistent,Potentially misleading aggregate subset-phase combinations=0.
+"Is moment release single-event dominated, compound/swarm-like, phase-distributed, or burst-distributed?",single_event_dominated,Use top1/top3 fractions and phase/burst moment tables.
+Do M1-centered and M3-centered local subsets differ from along-axis subsets?,robust,Spatial comparison uses reliability-graded sliding-window results; avoid strong claims when along-axis is exploratory.
+"Which mechanism hypotheses are supported, weakened, or unresolved?",independent_local_ruptures; phase_separated_activation_between_M1_and_M3; compact_swarm_like_compound_activation; M1_M3_centered_repeated_shallow_activation; background_window_artifact,See catalog_mechanism_evidence_matrix.csv for full support/contradiction fields.
+Which follow-up analyses should be prioritized next?,relocation_QC_waveform_similarity_detection_completeness_formal_change_points,Required follow-up is listed per hypothesis; causal physical inference requires independent constraints.

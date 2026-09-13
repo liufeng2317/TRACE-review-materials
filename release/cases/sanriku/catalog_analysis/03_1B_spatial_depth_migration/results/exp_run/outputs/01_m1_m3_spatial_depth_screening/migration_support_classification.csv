@@ -1,0 +1,4 @@
+overall_pattern,reason
+mixed_endpoint_centered_overlap,"Primary phase dominant categories: M1-related=M1_endpoint, middle=M1_endpoint, pre-M3=M1_endpoint."
+mixed_endpoint_centered_overlap,"Trend classes: full=no_robust_monotonic_migration, M1-related=no_robust_monotonic_migration, middle=no_robust_monotonic_migration, pre-M3=no_robust_monotonic_migration."
+mixed_endpoint_centered_overlap,Mixed evidence; defaulting to endpoint-centered separated bursts rather than continuous migration.

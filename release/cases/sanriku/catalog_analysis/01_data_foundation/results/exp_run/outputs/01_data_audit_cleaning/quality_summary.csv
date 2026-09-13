@@ -1,0 +1,3 @@
+dataset,records,clean_records,issue_records,duplicate_signatures,time_parse_failures,lat_out_of_bounds,lon_out_of_bounds,depth_out_of_bounds,mag_out_of_bounds
+regional_catalog,25646,25646,0,0,0,0,0,0,0
+main_earthquake,3,3,0,0,0,0,0,0,0

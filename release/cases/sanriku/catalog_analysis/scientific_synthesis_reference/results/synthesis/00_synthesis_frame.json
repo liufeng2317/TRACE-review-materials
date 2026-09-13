@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "type": "scientific_synthesis_frame",
+  "raw_request": "\nFocus the synthesis on the evolutionary relationship between the M1 and M3 earthquakes in the recent Aomori M7.7-area sequence.\n\nBuild a coherent scientific story for the regional seismicity evolution around the M1 and M3 earthquakes.\n\nUse the available evidence to connect background seismicity, M1/M3 local activation, event-chain or burst behavior, spatial and depth evolution, focal-mechanism context, and background-rate/statistical checks.\n\nFor the most evidence-supported M1-M3 interpretation, identify supporting evidence, weakening or non-comparable evidence, and external validation needed to distinguish tectonic linkage, aftershock triggering, regional activation, migration-like behavior, or catalog/observational bias.\n",
+  "run_count": 9,
+  "request_normalization": {
+    "normalized_request": "Produce a focused synthesis of the evolutionary relationship between the M1 and M3 earthquakes within the recent Aomori M7.7-area sequence. Build a single coherent scientific narrative for regional seismicity evolution centered on M1 and M3, using available run evidence to examine background seismicity, local activation near each event, possible event-chain or burst behavior, spatial and depth evolution, focal-mechanism context, and background-rate or statistical checks. For the interpretation of the M1-M3 relationship that is best supported by the available evidence, clearly separate evidence that supports it, evidence that weakens it or is not directly comparable, and the external validation still needed to discriminate among tectonic linkage, aftershock triggering, broader regional activation, migration-like behavior, and catalog or observational bias.",
+    "concise_goal": "Frame a tightly evidence-based synthesis that explains how M1 and M3 may be related within the broader Aomori sequence and what evidence is needed to distinguish competing interpretations.",
+    "key_terms": [
+      "M1-M3 relationship",
+      "regional seismicity evolution",
+      "competing interpretations"
+    ]
+  },
+  "request_classification": {
+    "mode": "hypothesis_comparison",
+    "rationale": "The user asks for a coherent explanation centered on M1 and M3 while explicitly comparing multiple possible relationship types and weighing supporting versus weakening evidence.",
+    "expected_output": "A comparative scientific narrative that prioritizes the most evidence-supported interpretation and contrasts it with plausible alternatives, including limits and needed external validation."
+  },
+  "request_expansion": {
+    "related_questions": [
+      "Does the broader regional background before and between M1 and M3 suggest localized triggering or distributed activation?",
+      "Are temporal clustering, burst structure, and spatial-depth progression consistent with a connected process or with separate responses to regional stress changes?",
+      "How much can focal-mechanism consistency and catalog-statistical behavior help distinguish physical linkage from observational artifacts?"
+    ],
+    "evidence_directions": [
+      "Check whether timing, distance, and depth evolution between M1 and M3 are more compatible with direct triggering, migration-like progression, or independent activation.",
+      "Check whether local rate changes around M1 and M3 exceed background variability after accounting for catalog completeness and background-rate corrections.",
+      "Check whether mechanism similarity, contrast, or limited coverage constrains interpretation strength rather than being over-read as proof of linkage."
+    ],
+    "boundary_conditions": [
+      "Do not infer a causal M1-to-M3 relationship without explicit run evidence separating coincidence, aftershock behavior, and regional activation.",
+      "Do not treat migration-like patterns, mechanism similarity, or statistical anomalies as definitive physical linkage unless multiple runs converge.",
+      "Do not claim catalog bias, tectonic linkage, or external validation outcomes without direct support from the completed runs."
+    ]
+  }
+}

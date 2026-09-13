@@ -1,0 +1,14 @@
+metric,value
+mecha_total_rows,354.0
+mecha_rows_with_good_catalog_match,239.0
+good_match_fraction,0.6751412429378532
+matched_mecha_count__M1_related_M1minus14d_to_M1plus21d,12.0
+matched_mecha_count__baseline_to_M1_minus14d,7.0
+matched_mecha_count__middle_M1plus21d_to_M3minus35d,194.0
+matched_mecha_count__post_M3_context,13.0
+matched_mecha_count__preM3_M3minus35d_to_M3,13.0
+matched_local_zone_fraction,0.03347280334728033
+matched_axis30_fraction,0.0
+matched_median_time_abs_s,0.01
+matched_median_dist_km,0.08505029638711792
+matched_median_depth_abs_diff_km,0.0799999999999983

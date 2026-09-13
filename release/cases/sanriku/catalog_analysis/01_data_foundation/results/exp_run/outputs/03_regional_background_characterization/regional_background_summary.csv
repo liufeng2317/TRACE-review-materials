@@ -1,0 +1,32 @@
+metric,value
+catalog_start,2025-06-01 00:13:38.900000+00:00
+catalog_end,2026-05-01 14:44:22.450000+00:00
+catalog_duration_years,0.9160976611022384
+n_events,25243
+mean_events_per_year,27554.922440941402
+latitude_min,38.50304
+latitude_max,42.382633
+longitude_min,141.000635
+longitude_max,144.49847
+depth_min_km,0.0
+depth_max_km,125.3
+magnitude_min,-0.5
+magnitude_max,7.7
+mean_depth_km,22.477400071306896
+median_depth_km,16.49
+mean_magnitude,1.5682050469437074
+median_magnitude,1.5
+events_per_1000_km2,196.84740741059227
+mc_preliminary,1.1999999999999997
+b_value_preliminary,0.612811660594093
+b_fit_n,18282.0
+b_fit_min_mag,1.2
+b_fit_max_mag,7.7
+station_count,371.0
+median_nearest_station_km,14.34698912395093
+p90_nearest_station_km,22.276258696065092
+mechanism_records,354.0
+mechanism_geometry_available,139.0
+mechanism_core_available,139.0
+mechanism_geometry_fraction,0.3926553672316384
+mechanism_core_fraction,0.3926553672316384

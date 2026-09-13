@@ -1,0 +1,7 @@
+{
+  "complexity": "complex",
+  "reason": "The request combines multi-file catalog audit, event matching with relocation tolerance, regional seismicity statistics, completeness/b-value estimation, station and focal-mechanism diagnostics, contextual summaries around multiple mainshocks, and a substantial figure suite. It requires careful preprocessing and several derived products from observation data only, with moderate methodological risk around Mc/b-value stability and matching criteria.",
+  "data_source_count": 4,
+  "workflow_risk": "moderate",
+  "expected_script_count": 1
+}

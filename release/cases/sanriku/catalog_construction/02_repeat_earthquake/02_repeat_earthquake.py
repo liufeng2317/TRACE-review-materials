@@ -1,0 +1,78 @@
+import os
+import sys
+sys.path.append("<REPO_ROOT>")
+from seismoagent.runing import run_seismoagent
+
+user_request = """
+Please conduct a preliminary and reviewable repeating-earthquake analysis based on the prepared SAC event waveforms for 2025-11-01 through 2025-12-07.
+
+# 1. Research objective
+
+The objective is to identify possible repeating-earthquake event pairs and repeating-earthquake families within the short time window after the Japan Aomori Mw7.5 event.
+
+Please do not download, convert, or reorganize the waveform data. The core tasks are:
+- Read the existing metadata and SAC waveforms;
+- Screen candidate event pairs according to time, spatial distance, magnitude difference, and the number of shared observations;
+- Apply consistent preprocessing and cross-correlation to waveforms from common station-components;
+- Aggregate similarity metrics across multiple stations and components;
+- Output candidate repeating-earthquake pairs, event families, figures, and a reproducible experimental report.
+
+# 2. Data root
+
+The data root is `<base_path>`.
+
+Use the `sac_file` field in `observations.csv` to read waveforms whenever possible. Do not manually assume a single directory structure. The current waveforms mainly include:
+- Original event waveforms: `<base_path>/waveforms/by_date/YYYYMMDD/D{evid}_20/*.SAC`
+- Supplementary continuous waveforms: `<base_path>/waveforms/supplements/YYYYMMDD/D{evid}_20/*.SAC`
+
+Main metadata tables:
+- Main observation table: `<base_path>/metadata/observations.csv`
+- Shared-observation statistics for event pairs: `<base_path>/metadata/event_pair_common_observations.csv`
+
+`observations.csv` is the primary analysis entry point. Each row corresponds to one event-station-component SAC waveform and contains event information, station coordinates, SAC paths, and JMA P/S picks.
+
+# 3. Recommended technical approach
+
+Please design the detailed implementation while following these principles:
+
+1. Begin with data auditing: check fields, time range, SAC path existence, P/S pick coverage, and event/station counts. If fields are missing or anomalies exist, describe them in the report and make only minimal corrections.
+2. Fix the analysis window as `2025-11-01T00:00:00 <= origin_time < 2025-12-07T00:00:00`, covering 2025-11-01 through 2025-12-06.
+3. For candidate screening, use shared station-component counts, epicentral distance, and magnitude difference. Start with `common_station_components >= 40`, `epicentral_distance_km <= 5`, and `magnitude_diff <= 0.8`. Compare alternative thresholds when necessary. Record depth difference, but do not use it as a default hard constraint.
+4. The primary cross-correlation result must use exact `station_component` matching, S-arrival alignment with P-arrival fallback, the relative phase window `[-0.5, 5.5] s`, a `2-15 Hz` bandpass, and a lag search of at least `+/-1.5 s`. Phase times are relative to `origin_time`; construct the absolute phase time before extracting the SAC window. Do not forcefully merge channel naming systems such as `XH/XL`, `YH/YL`, `ZH/ZL`, or `E/N/U`.
+5. Aggregate multiple common station-components for each event pair. At minimum output `median_cc`, `mean_cc`, `max_cc`, `num_components_used`, `num_stations_used`, `num_s_components_used`, `num_p_components_used`, and `median_abs_lag_s`. Distinguish signed CC from the absolute peak, and use phase-consistent positive peaks for the primary criterion.
+6. Report at least one loose and one high-confidence candidate set. Use `median_cc >= 0.55` and `median_cc >= 0.70` as reference thresholds.
+7. Use high-similarity event pairs as graph edges and construct connected components, or another justified clustering result, to obtain repeating-earthquake families.
+8. The final report must explain threshold choices and show how candidate counts change with spatial distance, magnitude difference, shared observations, and correlation coefficient.
+
+# 4. Outputs
+
+Please output at least:
+- `candidate_event_pairs.csv`;
+- `repeat_event_pairs.csv`;
+- `station_component_cc.csv`;
+- `repeat_event_families.csv` and `repeat_family_members.csv`;
+- `analysis_summary.json`;
+- Nature-style spatial, temporal, waveform, correlation, statistical, and station-component diagnostic figures;
+- A reproducible experimental report.
+
+# 5. Computational and engineering constraints
+
+- First refer to or reuse the small-window phase-aligned workflow to confirm SAC reading, P/S arrival alignment, and cross-correlation.
+- Use epicentral distance for primary screening; use depth difference for supplementary review.
+- Use multiprocessing for cross-correlation, for example 64 cores, and record the actual number of used cores.
+"""
+
+if __name__ == "__main__":
+
+    run_name = "02_repeat_earthquake"
+    output_dir = "<CASE_ROOT>/run"
+
+    run_seismoagent(
+        request=user_request,
+        run_name=run_name,
+        output_dir=output_dir,
+        disable_refinement=False,
+        max_refinement_rounds=3,
+        enable_trajectory=True,
+        # resume=os.path.join(output_dir, run_name)
+    )

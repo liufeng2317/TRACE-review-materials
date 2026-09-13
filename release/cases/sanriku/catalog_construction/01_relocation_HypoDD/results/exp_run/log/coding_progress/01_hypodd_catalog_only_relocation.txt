@@ -1,0 +1,22 @@
+Summary schema: coding_debug_summary/v1
+Task: 01_hypodd_catalog_only_relocation
+Status: running
+Execution stage: script_execution
+Debug rounds: 8
+Result check rounds: 3
+Elapsed seconds: 6488.599
+Started at: 2026-05-27T14:37:18.846824+00:00
+Finished at: 
+Latest log: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/log/task/01_hypodd_catalog_only_relocation/log_7.txt
+Script: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py
+Output dir: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Analysis: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/analysis/01_hypodd_catalog_only_relocation.md
+Runtime action: pass
+Code changes: 8
+Last activity: 2026-05-27T16:25:27.445523+00:00
+Last event: script_heartbeat
+Progress message: ile prepared (whole file before ot_range/lat/lon selection): detected_format=hypodd, converted=False, total_events=29896, total_pick_lines=529165, effective_path=<CASE_ROOT>/data/regional/phase.dat
+Timing: code_review_sec=87.005, coding_agent_sec=393.868, preflight_sec=3.532, result_check_sec=101.106, script_execution_current_sec=180.214, script_execution_sec=5708.959, total_sec=6488.599
+Coding plan context: mode=full_experiment_plan, original_chars=21607, compact_chars=21607
+Coding tool usage: total=39, read_file=12, unique_files=6, used_retrieve=True, tools={'python_executor': 8, 'retrieve_api_document_of_hypodd_runner': 4, 'retrieve_hypodd_runner_examples': 1, 'WebSearchTool': 1, 'write_file': 1, 'read_file': 12, 'apply_diff': 10, 'bash_executor': 2}
+Debug summary: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/log/coding_progress/debug_summary.json

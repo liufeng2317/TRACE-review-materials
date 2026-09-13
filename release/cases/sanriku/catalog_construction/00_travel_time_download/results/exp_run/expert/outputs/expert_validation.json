@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "event_count": 33702,
+  "pick_count": 637812,
+  "station_count": 386,
+  "checks": "expert/outputs/expert_validation.csv"
+}

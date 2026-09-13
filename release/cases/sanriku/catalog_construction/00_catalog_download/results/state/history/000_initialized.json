@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "00_catalog_download",
+  "run_name": "00_catalog_download",
+  "root": "<CASE_ROOT>/run/00_catalog_download",
+  "status": "running",
+  "next_stage": "initialized",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 0,
+  "created_at": "2026-09-11T16:59:39.449088+00:00",
+  "updated_at": "2026-09-11T16:59:39.491961+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nImplement and validate a JMA unified hypocenter catalog download workflow for\nthe Sanriku, northeast Japan study region.\n\n## Task objective\n\n1. Use the NIED Hi-net JMA catalog service:\n   - Login endpoint: https://hinetwww11.bosai.go.jp/auth/?LANG=en\n   - Catalog endpoint: https://hinetwww11.bosai.go.jp/auth/JMA/jmalist.php\n2. Use the manuscript-aligned time interval:\n   - start date: 2025-06-01\n   - end date: 2026-05-02\n   - treat the end date as exclusive when constructing requests, so the\n     requested records cover 2025-06-01 through 2026-05-01.\n   - do not replace this interval with a current-date or 2026-only default.\n3. Use the Sanriku regional bounds:\n   - latitude: 38.50 to 42.50 degrees N\n   - longitude: 141.00 to 144.50 degrees E\n   - apply the bounds inclusively after parsing the catalog.\n4. Split requests into chunks of no more than 7 days because of the JMA\n   service limit. Record the exact chunk boundaries and actual returned dates.\n5. Output an ASPECT-ready CSV with exactly:\n   datetime,lat,lon,dep,mag\n6. Use the filename pattern:\n   Snet_catalog_YYYYMMDD_YYYYMMDD.csv\n\n## Implementation requirements\n\n- Prefer reading HINET_USERNAME and HINET_PASSWORD from the .env file;\n  command-line arguments may override them.\n  - <CASE_ROOT>/data/hinet_account/.env\n- Use requests.Session to maintain the authenticated session.\n- Add retry and backoff for network requests.\n- If an HTML response cannot be parsed, save the original failed response to a\n  debug/raw file and state the saved path in the error message.\n- Parse the JMA fixed-width catalog table; do not use fragile comma splitting.\n- During cleaning:\n  - parse datetime as time;\n  - convert lat/lon/dep/mag to numeric values;\n  - remove rows with missing values;\n  - filter by the Sanriku spatial range;\n  - sort by datetime;\n  - remove duplicates.\n- Keep the optional raw-dir argument for saving the raw text from each time\n  chunk.\n\n## Required outputs\n\n- The cleaned catalog CSV file.\n- A catalog distribution figure.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "00_catalog_download",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": []
+  },
+  "artifacts": {
+    "request_txt": null,
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/00_catalog_download/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/00_catalog_download/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/00_catalog_download/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": null
+}

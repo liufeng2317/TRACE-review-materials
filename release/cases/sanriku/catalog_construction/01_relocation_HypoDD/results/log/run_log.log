@@ -1,0 +1,11 @@
+2026-09-12 INFO Relocation record was refreshed for the full Japan Aomori time range.
+2026-09-12 INFO Input workflow: data/hypodd_info.
+2026-09-12 INFO Input summary: 33702 events, 637812 picks, 386 stations.
+2026-09-12 INFO Existing hypodd_runner native output was synchronized without editing.
+2026-09-12 INFO Native output: japan_aomori_nocc_full.
+2026-09-12 INFO Time-window status: 12 monthly windows, all successful.
+2026-09-12 INFO Initial locations: 29036.
+2026-09-12 INFO Relocated events: 25648.
+2026-09-12 INFO Residual rows: 276172.
+2026-09-12 INFO Article data alignment was verified for the initial and relocated catalogs.
+2026-09-12 INFO This log documents provenance and verification; it does not claim a new agent rerun.

@@ -1,0 +1,56 @@
+{
+  "source": {
+    "workflow": "<TRAVEL_TIME_SOURCE_ROOT>",
+    "raw_file_count": 73
+  },
+  "processing": [
+    "Parse the selected JMA fixed-width measure files with the legacy project parser.",
+    "Restrict event origin times to 2025-06-01 through 2026-05-01 inclusive in Japan Standard Time.",
+    "Restrict hypocenters to 38.5-42.5 degrees north and 141.0-144.5 degrees east.",
+    "Keep events with a reported magnitude; no additional magnitude threshold is applied.",
+    "Keep events with a physical hypocentral depth from 0.0 through 200.0 km.",
+    "Retain all parsed P/S arrivals, including records with JMA weight 0.",
+    "Export the canonical events.csv, picks.csv, phase.dat, and station.sta products."
+  ],
+  "counts": {
+    "parsed_events": 288453,
+    "regional_events_before_magnitude_filter": 36838,
+    "excluded_missing_magnitude_events": 3136,
+    "excluded_invalid_depth_events": 0,
+    "events": 33702,
+    "picks": 637812,
+    "stations": 386,
+    "p_pick_count": 522050,
+    "s_pick_count": 423024,
+    "both_p_and_s_count": 307262,
+    "jma_weight_counts": {
+      "1": 637108,
+      "0": 704
+    }
+  },
+  "criteria": {
+    "start_day_inclusive": "20250601",
+    "end_day_inclusive": "20260501",
+    "latitude_inclusive": [
+      38.5,
+      42.5
+    ],
+    "longitude_inclusive": [
+      141.0,
+      144.5
+    ],
+    "magnitude": "reported magnitude required",
+    "depth_km_inclusive": [
+      0.0,
+      200.0
+    ],
+    "weight": "preserved as parsed; weight 0 is retained"
+  },
+  "outputs": [
+    "events.csv",
+    "picks.csv",
+    "phase.dat",
+    "station.sta",
+    "expert_processing_summary.json"
+  ]
+}

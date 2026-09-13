@@ -1,0 +1,3 @@
+status,slope_km_per_day,slope_km_per_hour,intercept_km,r_squared,total_bins,retained_bins,excluded_bins,time_min_days,time_max_days,phase,bin_width_days,front_percentile,front_min_count
+ok,4.3312516227929825,0.18046881761637426,14.015602430390446,0.8216785657994978,10,9,1,-1.7000000000000002,-0.10000000000000042,foreshock_final2d,0.2,90.0,5
+ok,16.1586054461115,0.6732752269213126,24.167371810375432,0.29078322553846603,20,20,0,0.0125,0.48750000000000004,aftershock_0_0p5d,0.025,90.0,5

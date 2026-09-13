@@ -1,0 +1,25 @@
+version,classification_item,classification,evidence_note
+raw,pre_existing_local_activity_before_M1,present,"Pre-M1 baseline (to M1-14 d) contains 20 M3+ events over 146.1 d (0.137/d), with M1-core 0.25, M3-core 0.20, corridor non-core 0.09, off-corridor 0.45."
+raw,M1_related_swarm_aftershock_dominated,strong,"M1-related window has 335 M3+, 83 M4+, 30 M5+; M3+ rate is 23.94x the conservative pre-M1 baseline, and the phase contributes 83.54% of full-interval M3+ and 84.69% of M4+."
+raw,middle_phase_activity_after_M1_plus_21d,sustained,Middle phase contains 79 M3+ and 20 M4+; M3+ rate is 3.33x baseline and the phase accounts for 19.70% of full-interval M3+.
+raw,continuous_activation_chain,not_supported,Full M1-M3 M3+ max inter-event gap is 11.03 d and middle-phase max gap is 11.03 d; continuous activation is screened cautiously because fixed-window activity persists but is not uniform.
+raw,separated_bursts,yes,"Burst table reports 9 M3+ bursts; full-interval max gaps are 11.03 d for M3+ and 26.16 d for M4+, supporting burst separation rather than a homogeneous sequence."
+raw,endpoint_centered_activity,yes,"Endpoint cores dominate local events in key windows: full M1-M3 0.86, M1-related 0.92, pre-M3 0.85."
+raw,pre_M3_local_activation,clear_local_activation,"Pre-M3 window contains 52 M3+ and 15 M4+; M3+ rate is 6.36x baseline, with M3-core fraction 0.18 and M1-core fraction 0.67."
+raw,corridor_like_activity,no_or_mixed,"Corridor non-core fractions are full M1-M3 0.06, middle 0.10, pre-M3 0.04; corridor events are present but not dominant."
+raw,apparent_migration,not_robust,"Time-along-axis correlations are full 0.192, M1-related 0.111, middle 0.032, pre-M3 0.302; apparent full-interval trend does not remain robust after window separation."
+raw,endpoint_switching_or_mixed_endpoint_sequences,mixed_endpoint_sequences,"Window-separated activity remains endpoint-heavy without robust migration; M1-core fractions are 0.77 in the M1-related phase and 0.67 in the pre-M3 phase, while M3-core fractions are 0.15 and 0.18."
+raw,broader_regional_or_background_component,subordinate,"Off-corridor local fraction is 0.07 for full M1-M3 and 0.45 in the pre-M1 baseline, so broader/background local activity is present but secondary to endpoint-centered activity."
+raw,M2_affected_or_ambiguous_mixed_behavior,compare_raw_and_m2aware,"M2-aware removal changes M3+ counts by 2.99% for full M1-M3, 13.92% for the middle phase, and 1.92% for the pre-M3 phase; effects are quantified but do not erase the main fixed-window pattern."
+m2aware,pre_existing_local_activity_before_M1,present,"Pre-M1 baseline (to M1-14 d) contains 20 M3+ events over 146.1 d (0.137/d), with M1-core 0.27, M3-core 0.22, corridor non-core 0.03, off-corridor 0.48."
+m2aware,M1_related_swarm_aftershock_dominated,strong,"M1-related window has 335 M3+, 83 M4+, 30 M5+; M3+ rate is 25.67x the conservative pre-M1 baseline, and the phase contributes 86.12% of full-interval M3+ and 87.37% of M4+."
+m2aware,middle_phase_activity_after_M1_plus_21d,sustained,Middle phase contains 68 M3+ and 18 M4+; M3+ rate is 3.46x baseline and the phase accounts for 17.48% of full-interval M3+.
+m2aware,continuous_activation_chain,not_supported,Full M1-M3 M3+ max inter-event gap is 11.03 d and middle-phase max gap is 11.03 d; continuous activation is screened cautiously because fixed-window activity persists but is not uniform.
+m2aware,separated_bursts,yes,"Burst table reports 9 M3+ bursts; full-interval max gaps are 11.03 d for M3+ and 26.16 d for M4+, supporting burst separation rather than a homogeneous sequence."
+m2aware,endpoint_centered_activity,yes,"Endpoint cores dominate local events in key windows: full M1-M3 0.87, M1-related 0.92, pre-M3 0.87."
+m2aware,pre_M3_local_activation,clear_local_activation,"Pre-M3 window contains 51 M3+ and 14 M4+; M3+ rate is 6.72x baseline, with M3-core fraction 0.18 and M1-core fraction 0.68."
+m2aware,corridor_like_activity,no_or_mixed,"Corridor non-core fractions are full M1-M3 0.05, middle 0.07, pre-M3 0.03; corridor events are present but not dominant."
+m2aware,apparent_migration,not_robust,"Time-along-axis correlations are full 0.177, M1-related 0.111, middle 0.036, pre-M3 0.294; apparent full-interval trend does not remain robust after window separation."
+m2aware,endpoint_switching_or_mixed_endpoint_sequences,mixed_endpoint_sequences,"Window-separated activity remains endpoint-heavy without robust migration; M1-core fractions are 0.77 in the M1-related phase and 0.68 in the pre-M3 phase, while M3-core fractions are 0.15 and 0.18."
+m2aware,broader_regional_or_background_component,subordinate,"Off-corridor local fraction is 0.07 for full M1-M3 and 0.48 in the pre-M1 baseline, so broader/background local activity is present but secondary to endpoint-centered activity."
+m2aware,M2_affected_or_ambiguous_mixed_behavior,compare_raw_and_m2aware,"M2-aware removal changes M3+ counts by 2.99% for full M1-M3, 13.92% for the middle phase, and 1.92% for the pre-M3 phase; effects are quantified but do not erase the main fixed-window pattern."

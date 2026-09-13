@@ -1,0 +1,4 @@
+mainshock_id,matched_mechanism_count,within_primary_tolerance_count,nearfield_mechanism_count_0_30,outerband_mechanism_count_30_100,m4plus_mechanism_count,m5plus_mechanism_count,median_strike_plane1,median_dip_plane1,median_rake_plane1,quality_labels
+M1,354,242,39,27,93,18,188.0,26.0,79.0,100.0; 86.0; 87.0; 88.0; 89.0; 90.0; 91.0; 92.0; 93.0; 94.0; 95.0; 96.0; 97.0; 98.0; 99.0
+M2,354,242,27,202,93,18,188.0,26.0,79.0,100.0; 86.0; 87.0; 88.0; 89.0; 90.0; 91.0; 92.0; 93.0; 94.0; 95.0; 96.0; 97.0; 98.0; 99.0
+M3,354,242,8,88,93,18,188.0,26.0,79.0,100.0; 86.0; 87.0; 88.0; 89.0; 90.0; 91.0; 92.0; 93.0; 94.0; 95.0; 96.0; 97.0; 98.0; 99.0

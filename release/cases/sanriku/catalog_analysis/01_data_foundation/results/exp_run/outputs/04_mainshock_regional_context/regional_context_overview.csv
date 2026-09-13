@@ -1,0 +1,2 @@
+regional_event_count,regional_depth_median_km,regional_depth_iqr_km,regional_density_proxy,regional_mechanism_geometry_fraction,regional_mechanism_core_fraction,regional_station_count,mainshock_count,distinct_depth_domain_count,distinct_spatial_domain_count,edge_effect_count
+25243,16.49,20.314999999999998,0.15097655924932765,0.3926553672316384,0.3926553672316384,371,3,1,3,0

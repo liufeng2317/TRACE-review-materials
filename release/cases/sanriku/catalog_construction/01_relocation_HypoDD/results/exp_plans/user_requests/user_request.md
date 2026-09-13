@@ -1,0 +1,67 @@
+
+You are a senior seismologist and seismic workflow engineer.
+
+You are given a task to relocate events in the Japan Aomori regional JMA catalog with `hypodd_runner`.
+
+## 1. Input data
+
+Use the regional data directory:
+
+<data_dir>: `<CASE_ROOT>/data/regional`
+
+The available input files are:
+- `<data_dir>/events.csv`: catalog of events
+- `<data_dir>/picks.csv`: picks of events
+- `<data_dir>/phase.dat`: phase data
+- `<data_dir>/station.sta`: station data
+- `<data_dir>/summary.txt`: statistics of the catalog
+- `<data_dir>/main_earthquake.csv`: main earthquake information (just for plotting)
+
+Station codes must remain internally consistent between station and phase files. For this catalog-only task, prefer preserving the original station IDs when they already match between `phase.dat` and `station.sta`. Add a synthetic network prefix such as `J.` only if the selected `hypodd_runner` API path explicitly requires `NET.STA`, and apply the same mapping consistently to all generated inputs. Preserve event IDs and UTC-compatible ISO time strings throughout the workflow.
+
+Use the provided `phase.dat` as the primary phase input when it validates successfully. Do not rebuild it from `picks.csv` by default.
+
+## 2. Velocity model
+Use this 1-D velocity model for the relocation:
+- layer tops in km: `[0.0, 5.0, 10.0, 20.0, 35.0, 50.0, 90.0]`
+- Vp in km/s: `[5.4, 5.8, 6.2, 6.6, 7.2, 7.6, 8.05]`
+- Use a documented Vp/Vs ratio suitable for HypoDD, with `1.73` as the default if no better value is estimated.
+
+## 3. Experiment design requirements
+Use the Python package `hypodd_runner` as the relocation package.
+
+This is a full-catalog catalog-only relocation task.
+
+Required execution strategy:
+- Write a self-contained Python script for the `hypodd_runner` workflow.
+- Use the documented `hypodd_runner` Python API with grouped parameter objects such as `HypoDDInputs`, `EventSelection`, `Ph2dtParams`, `HypoDDParams`, and `RuntimeOptions`.
+- Use the public `hypodd_runner` catalog-only relocation entry point and package-provided helpers when the catalog scale requires them.
+- Set the `hypodd_runner` parameters from the research region and the actual data diagnostics, not only from API defaults. In particular, explicitly choose and record `Ph2dtParams` and `HypoDDParams(iter_rows=...)` for this catalog.
+- For `HypoDDParams.iter_rows`, remember that each row is `NITER WTCCP WTCCS WRCC WDCC WTCTP WTCTS WRCT WDCT DAMP`. Treat `DAMP`, `WRCT`, `WDCT`, phase weights, and iteration endpoints as scientific/numerical controls that must be justified from station-event geometry, pick coverage, event-link density, residual behavior, convergence, and relocation stability.
+- Do not use `iter_rows=None` as the scientific default for the full regional catalog. For this regional catalog, the package fallback with very small damping may be inefficient or unstable; test a documented larger LSQR damping choice when appropriate, for example values in the tens to hundreds such as `80-120`, and compare runtime, convergence, residuals, relocated-event counts, and failure evidence before accepting it.
+- Check the event count and data volume against documented HypoDD/runtime limits before execution, and choose a package-supported execution strategy that preserves all input events in the final accounting.
+- Do not replace `hypodd_runner` with hand-written relocation formulas, synthetic coordinate shifts, placeholder outputs, or a custom imitation of HypoDD.
+
+## 4. Success criteria and outputs
+
+Full-run success means a real full-catalog relocation product:
+- all input events are accounted for as relocated, unrelocated, or failed with explicit reasons;
+- every attempted package run has a status, input counts, key parameter summary, output folder, native log paths, and failure evidence if applicable;
+- successful package runs have real non-empty native outputs;
+- the final merged relocated catalog is built from real native outputs and preserves event IDs or a verified event identity mapping;
+- failed or unrelocated events are recorded separately and are not counted as relocated results.
+
+Do not treat fallback, mock, skipped, no-op, unchanged original catalog, empty files, plotting-only output, or schema-only checks as success.
+
+## 5. Required figures (nature-style)
+Generate figures from real relocation outputs only. If no real relocated events exist, any figure must be clearly marked as diagnostic/failure evidence and must not satisfy the success criteria.
+
+- relocation map: showing the relocation results, including the stations, initial locations (gray), relocated events (black), and main earthquakes (red);
+    - lon-lat map
+    - lon-depth map
+    - lat-depth map
+- residual distribution figure: showing the residual distribution of the relocated events;
+- relocation shift figure: showing the relocation shift of the relocated events relative to the initial locations;
+- statistic figure: showing the statistics of the events (including the initial and relocated events)
+- other meaningful figures (optional)
+

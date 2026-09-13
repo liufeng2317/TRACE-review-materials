@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "00_travel_time_download",
+  "run_name": "00_travel_time_download",
+  "root": "<CASE_ROOT>/run/00_travel_time_download",
+  "status": "running",
+  "next_stage": "input_guard",
+  "current_refinement_round": 0,
+  "max_refinement_rounds": 3,
+  "created_at": "2026-09-12T00:31:50.041374+00:00",
+  "updated_at": "2026-09-12T00:31:50.091507+00:00",
+  "cli": {
+    "config": null,
+    "request": "\nIndependently implement and validate the JMA/Hi-net arrival-time download and\nparsing workflow for the Sanriku study region.\n\n## Background\n\nHi-net provides JMA arrival-time measure files containing event-source\ninformation and station-level P/S arrivals. Download the requested raw measure\nfiles and parse them into structured event tables, phase-arrival tables,\nphase.dat, and station.sta.\n\n## Time interval\n\n- start: 2025-06-01\n- end: 2026-05-02\n- treat the end date as exclusive in requests, covering records through\n  2026-05-01;\n- split requests into chunks of no more than 7 days, preferably 5-day chunks.\n- Do not substitute a current-date default or a 2026-only interval.\n\n## Study region\n\n- latitude: 38.50 to 42.50 degrees N\n- longitude: 141.00 to 144.50 degrees E\n- apply the spatial filter locally after parsing; do not assume the download\n  service supports geographic filtering.\n\nAccount and authentication:\n\n- Read the Hi-net account from environment variables or the .env file.\n- .env path:\n  <CASE_ROOT>/data/hinet_account/.env\n- Support one account or multiple accounts.\n- Do not print passwords in code, logs, or reports.\n\n## Download requirements\n\n1. Use a Hi-net/HinetPy-supported arrival-time interface to obtain JMA measure\n   files.\n2. Write one raw file per chunk using a name such as:\n   measure_YYYYMMDD_N.txt\n   where YYYYMMDD is the chunk start date and N is its span in days.\n3. If a raw file already exists and is non-empty, skip it by default rather\n   than overwriting it.\n4. Add retry and backoff for failed requests.\n5. Generate download_manifest.csv with:\n   start_date, span_days, raw_file, exists, size_bytes, status, message\n\n## Parsing requirements\n\n1. Parse the JMA measure fixed-width format. Each record is 96 bytes\n   excluding the line ending; do not use comma splitting or free-width parsing.\n2. Event header records begin with J and contain:\n   - origin_time\n   - latitude\n   - longitude\n   - depth_km\n   - magnitude\n   - region\n3. Station pick records begin with _. Parse:\n   - station_code\n   - station_number\n   - P pick time\n   - S pick time\n   - P/S quality\n   - weight\n4. Event-terminator records begin with E.\n5. JMA raw times are JST; convert structured output timestamps to UTC ISO\n   strings.\n6. Represent a missing P or S arrival as -1.\n7. Output:\n   - events.csv:\n     event_id,origin_time,latitude,longitude,depth_km,magnitude,region,npicks,source_file\n   - picks.csv:\n     event_id,station_code,station_number,p_pick_time,s_pick_time,p_quality,s_quality,weight,source_file\n8. Output both the full parsed version and the Sanriku regional subset.\n9. When writing `phase.dat`, preserve the existing project convention used by\n   `data/regional/phase.dat`; do not invent a new `#`-prefixed or whitespace-\n   delimited format. Keep the normalized CSV tables as the primary structured\n   outputs and make the phase-file format traceable to the source convention.\n\n## Quality control\n\n- First run a smoke test on the first five-day half-open window:\n  2025-06-01 <= time < 2025-06-06.\n- The smoke test must validate raw download, fixed-width parsing, event-pick\n  foreign-key consistency, and P/S pick counts.\n- After the smoke test passes, run the complete time range.\n",
+    "plan": null,
+    "papers": null,
+    "use_mineru_for_papers": false,
+    "request_images": null,
+    "output_dir": "<CASE_ROOT>/run",
+    "run_output_dir": null,
+    "log_path": null,
+    "run_name": "00_travel_time_download",
+    "enable_trajectory": true,
+    "disable_refinement": false,
+    "max_refinement_rounds": 3,
+    "user_data_description": null
+  },
+  "context": {
+    "user_request": "\nIndependently implement and validate the JMA/Hi-net arrival-time download and\nparsing workflow for the Sanriku study region.\n\n## Background\n\nHi-net provides JMA arrival-time measure files containing event-source\ninformation and station-level P/S arrivals. Download the requested raw measure\nfiles and parse them into structured event tables, phase-arrival tables,\nphase.dat, and station.sta.\n\n## Time interval\n\n- start: 2025-06-01\n- end: 2026-05-02\n- treat the end date as exclusive in requests, covering records through\n  2026-05-01;\n- split requests into chunks of no more than 7 days, preferably 5-day chunks.\n- Do not substitute a current-date default or a 2026-only interval.\n\n## Study region\n\n- latitude: 38.50 to 42.50 degrees N\n- longitude: 141.00 to 144.50 degrees E\n- apply the spatial filter locally after parsing; do not assume the download\n  service supports geographic filtering.\n\nAccount and authentication:\n\n- Read the Hi-net account from environment variables or the .env file.\n- .env path:\n  <CASE_ROOT>/data/hinet_account/.env\n- Support one account or multiple accounts.\n- Do not print passwords in code, logs, or reports.\n\n## Download requirements\n\n1. Use a Hi-net/HinetPy-supported arrival-time interface to obtain JMA measure\n   files.\n2. Write one raw file per chunk using a name such as:\n   measure_YYYYMMDD_N.txt\n   where YYYYMMDD is the chunk start date and N is its span in days.\n3. If a raw file already exists and is non-empty, skip it by default rather\n   than overwriting it.\n4. Add retry and backoff for failed requests.\n5. Generate download_manifest.csv with:\n   start_date, span_days, raw_file, exists, size_bytes, status, message\n\n## Parsing requirements\n\n1. Parse the JMA measure fixed-width format. Each record is 96 bytes\n   excluding the line ending; do not use comma splitting or free-width parsing.\n2. Event header records begin with J and contain:\n   - origin_time\n   - latitude\n   - longitude\n   - depth_km\n   - magnitude\n   - region\n3. Station pick records begin with _. Parse:\n   - station_code\n   - station_number\n   - P pick time\n   - S pick time\n   - P/S quality\n   - weight\n4. Event-terminator records begin with E.\n5. JMA raw times are JST; convert structured output timestamps to UTC ISO\n   strings.\n6. Represent a missing P or S arrival as -1.\n7. Output:\n   - events.csv:\n     event_id,origin_time,latitude,longitude,depth_km,magnitude,region,npicks,source_file\n   - picks.csv:\n     event_id,station_code,station_number,p_pick_time,s_pick_time,p_quality,s_quality,weight,source_file\n8. Output both the full parsed version and the Sanriku regional subset.\n9. When writing `phase.dat`, preserve the existing project convention used by\n   `data/regional/phase.dat`; do not invent a new `#`-prefixed or whitespace-\n   delimited format. Keep the normalized CSV tables as the primary structured\n   outputs and make the phase-file format traceable to the source convention.\n\n## Quality control\n\n- First run a smoke test on the first five-day half-open window:\n  2025-06-01 <= time < 2025-06-06.\n- The smoke test must validate raw download, fixed-width parsing, event-pick\n  foreign-key consistency, and P/S pick counts.\n- After the smoke test passes, run the complete time range.\n",
+    "request_rewritten": null,
+    "request_rewrite_thought_chain": null,
+    "reference_papers": null,
+    "reference_paper_articles": null,
+    "request_images": null,
+    "experiment_plan": null,
+    "language": null,
+    "user_data_description": null,
+    "data_descriptions_summary": null,
+    "data_usage_hints": null,
+    "refinement_suggestions": null,
+    "aborted": false,
+    "abort_task": null,
+    "abort_reason": null
+  },
+  "progress": {
+    "completed_stages": [],
+    "active_round": 0,
+    "rounds": []
+  },
+  "artifacts": {
+    "request_txt": "<CASE_ROOT>/run/00_travel_time_download/request.txt",
+    "article_dir": null,
+    "request_rewrite_dir": null,
+    "request_rewrite_input_json": null,
+    "request_rewrite_thought_chain_txt": null,
+    "run_output_dir": "<CASE_ROOT>/run/00_travel_time_download/exp_run/outputs",
+    "run_log_path": "<CASE_ROOT>/run/00_travel_time_download/log/run_log.log",
+    "final_report_md": null,
+    "final_report_pdf": null,
+    "final_report_tex": null,
+    "token_summary_json": null,
+    "trajectory_dir": "<CASE_ROOT>/run/00_travel_time_download/log/trajectory"
+  },
+  "token_stats": {
+    "by_stage": {},
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "total_tokens": 0
+  },
+  "failure": null
+}

@@ -1,0 +1,137 @@
+{
+  "by_stage": {
+    "Input Guard": {
+      "input_tokens": 2559,
+      "output_tokens": 15
+    },
+    "Data Descriptions Judgement": {
+      "input_tokens": 0,
+      "output_tokens": 0
+    },
+    "Data Descriptions": {
+      "input_tokens": 226415,
+      "output_tokens": 14642
+    },
+    "Planing": {
+      "input_tokens": 66419,
+      "output_tokens": 10633
+    },
+    "Plan Merging": {
+      "input_tokens": 20574,
+      "output_tokens": 2244
+    },
+    "Workflow Agent": {
+      "input_tokens": 27484,
+      "output_tokens": 5557
+    },
+    "Coding Agent (01_data_verification_and_rematch)": {
+      "input_tokens": 378980,
+      "output_tokens": 8475
+    },
+    "Result Check Agent (01_data_verification_and_rematch)": {
+      "input_tokens": 22706,
+      "output_tokens": 793
+    },
+    "Task Analysis Agent (01_data_verification_and_rematch)": {
+      "input_tokens": 18733,
+      "output_tokens": 3042
+    },
+    "Coding Agent (02_sequence_extraction)": {
+      "input_tokens": 238774,
+      "output_tokens": 8055
+    },
+    "Result Check Agent (02_sequence_extraction)": {
+      "input_tokens": 20480,
+      "output_tokens": 842
+    },
+    "Task Analysis Agent (02_sequence_extraction)": {
+      "input_tokens": 24677,
+      "output_tokens": 3838
+    },
+    "Coding Agent (03_sequence_diagnostics)": {
+      "input_tokens": 614926,
+      "output_tokens": 13939
+    },
+    "Result Check Agent (03_sequence_diagnostics)": {
+      "input_tokens": 18782,
+      "output_tokens": 628
+    },
+    "Task Analysis Agent (03_sequence_diagnostics)": {
+      "input_tokens": 21468,
+      "output_tokens": 5020
+    },
+    "Coding Agent (06_control_comparison)": {
+      "input_tokens": 271853,
+      "output_tokens": 10534
+    },
+    "Result Check Agent (06_control_comparison)": {
+      "input_tokens": 38432,
+      "output_tokens": 1224
+    },
+    "Task Analysis Agent (06_control_comparison)": {
+      "input_tokens": 31421,
+      "output_tokens": 5425
+    },
+    "Coding Agent (04_robustness_analysis)": {
+      "input_tokens": 896775,
+      "output_tokens": 10149
+    },
+    "Result Check Agent (04_robustness_analysis)": {
+      "input_tokens": 27569,
+      "output_tokens": 1058
+    },
+    "Task Analysis Agent (04_robustness_analysis)": {
+      "input_tokens": 44356,
+      "output_tokens": 4304
+    },
+    "Coding Agent (05_three_sequence_comparison)": {
+      "input_tokens": 975250,
+      "output_tokens": 15018
+    },
+    "Result Check Agent (05_three_sequence_comparison)": {
+      "input_tokens": 23176,
+      "output_tokens": 896
+    },
+    "Task Analysis Agent (05_three_sequence_comparison)": {
+      "input_tokens": 56662,
+      "output_tokens": 5083
+    },
+    "Coding Agent (07_figure_generation)": {
+      "input_tokens": 1463482,
+      "output_tokens": 14009
+    },
+    "Result Check Agent (07_figure_generation)": {
+      "input_tokens": 19049,
+      "output_tokens": 922
+    },
+    "Task Analysis Agent (07_figure_generation)": {
+      "input_tokens": 235673,
+      "output_tokens": 7730
+    },
+    "Coding Agent (08_reusable_outputs)": {
+      "input_tokens": 2075483,
+      "output_tokens": 16285
+    },
+    "Result Check Agent (08_reusable_outputs)": {
+      "input_tokens": 33650,
+      "output_tokens": 979
+    },
+    "Task Analysis Agent (08_reusable_outputs)": {
+      "input_tokens": 119596,
+      "output_tokens": 5298
+    },
+    "Evaluation": {
+      "input_tokens": 44401,
+      "output_tokens": 665
+    },
+    "Report Synthesis": {
+      "input_tokens": 894597,
+      "output_tokens": 24097
+    }
+  },
+  "total": {
+    "input_tokens": 8954402,
+    "output_tokens": 201399,
+    "total_tokens": 9155801
+  }
+}

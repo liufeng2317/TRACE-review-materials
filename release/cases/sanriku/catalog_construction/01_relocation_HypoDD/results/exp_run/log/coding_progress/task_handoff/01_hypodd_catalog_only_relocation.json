@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "schema_version": 2,
+    "type": "coding_task_handoff",
+    "task": "01_hypodd_catalog_only_relocation",
+    "generated_at": "2026-05-27T16:25:27.538433+00:00"
+  },
+  "status": {
+    "state": "running",
+    "stage": "script_execution",
+    "elapsed_sec": 6488.599,
+    "timing": {
+      "total_sec": 6488.599,
+      "coding_agent_sec": 393.868,
+      "code_review_sec": 87.005,
+      "preflight_sec": 3.532,
+      "script_execution_sec": 5708.959,
+      "result_check_sec": 101.106,
+      "script_execution_current_sec": 180.214
+    },
+    "quality_flags": [
+      "task_status:running"
+    ]
+  },
+  "paths": {
+    "root": "<CASE_ROOT>/run/01_relocation_HypoDD-v5",
+    "script": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/scripts/01_hypodd_catalog_only_relocation.py",
+    "output_dir": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation",
+    "analysis": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/analysis/01_hypodd_catalog_only_relocation.md",
+    "log": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/log/task/01_hypodd_catalog_only_relocation/log_7.txt"
+  },
+  "outputs": {
+    "primary": [
+      {
+        "path": "api_contract_check.json",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/api_contract_check.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "catalog_diagnostics.json",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/catalog_diagnostics.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "input_validation.json",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/input_validation.json",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "screening/dense_damp120/evid_lists.npy",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/screening/dense_damp120/evid_lists.npy",
+        "kind": "machine_readable"
+      },
+      {
+        "path": "screening/dense_damp120/ph2dt.log",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/screening/dense_damp120/ph2dt.log",
+        "kind": "document"
+      },
+      {
+        "path": "screening/dense_damp120/0-0.ph2dt",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/screening/dense_damp120/0-0.ph2dt",
+        "kind": "other"
+      },
+      {
+        "path": "screening/dense_damp120/dt.ct",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/screening/dense_damp120/dt.ct",
+        "kind": "other"
+      },
+      {
+        "path": "screening/dense_damp120/event.dat",
+        "absolute_path": "<CASE_ROOT>/run/01_relocation_HypoDD-v5/exp_run/outputs/01_hypodd_catalog_only_relocation/screening/dense_damp120/event.dat",
+        "kind": "other"
+      }
+    ],
+    "all": [
+      "api_contract_check.json",
+      "catalog_diagnostics.json",
+      "input_validation.json",
+      "screening/dense_damp120/0-0.ph2dt",
+      "screening/dense_damp120/dt.ct",
+      "screening/dense_damp120/event.dat",
+      "screening/dense_damp120/event.sel",
+      "screening/dense_damp120/evid_lists.npy",
+      "screening/dense_damp120/hypoDD_phase.dat",
+      "screening/dense_damp120/hypoDD_phase_0-0.dat",
+      "screening/dense_damp120/hypoDD_station.dat",
+      "screening/dense_damp120/ph2dt.inp",
+      "screening/dense_damp120/ph2dt.log"
+    ],
+    "truncated": false
+  },
+  "notes": {
+    "purpose": "Execute a self-contained hypodd_runner catalog-only relocation workflow for the full Aomori JMA catalog with validation, bounded parameter screening, production windowed relocation, merged accounting, and real-output figures.",
+    "result": "Execute a self-contained hypodd_runner catalog-only relocation workflow for the full Aomori JMA catalog with validation, bounded parameter screening, production windowed relocation...[truncated] Status=running; outputs=13 discovered; primary=8.",
+    "warnings": [],
+    "assumptions": [],
+    "limitations": []
+  }
+}

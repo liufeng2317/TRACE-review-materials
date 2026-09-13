@@ -1,0 +1,16 @@
+{
+  "input_file": "outputs/production/japan_aomori_nocc_full.reloc",
+  "expert_event_handoff": "00_travel_time_download/results/exp_run/expert/outputs/events.csv",
+  "output_file": "results/exp_run/expert/outputs/japan_aomori_nocc_full_clean.reloc",
+  "input_rows": 25648,
+  "retained_rows": 25646,
+  "excluded_rows": 2,
+  "excluded_reasons": {
+    "outside_physical_depth_range": 2
+  },
+  "depth_km_inclusive": [
+    0.0,
+    200.0
+  ],
+  "quality_control_rule": "retain rows with physical hypocentral depth in the stated range"
+}

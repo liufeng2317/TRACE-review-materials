@@ -1,0 +1,306 @@
+tasks:
+- name: 01_hinet_jma_arrivals_workflow
+  description: Download Hi-net JMA arrival-time measure files, parse fixed-width
+    records, subset the Sanriku region, export compatibility products, and 
+    validate all required outputs.
+  script: 01_hinet_jma_arrivals_workflow.py
+  ancestors: []
+  subtasks:
+  - name: load_credentials
+    description: Load one or more Hi-net accounts from environment variables 
+      before the configured dotenv source with password redaction.
+    inputs:
+    - environment_variables
+    - dotenv_account_source
+    outputs:
+    - validated_account_list
+    - credential_audit
+    params:
+      dotenv_path: 
+        <CASE_ROOT>/data/hinet_account/.env
+      allow_multiple_accounts: true
+      redact_secrets: true
+  - name: build_chunk_schedule
+    description: Build deterministic half-open five-day chunks for the full 
+      requested JST interval and identify the smoke-test chunk.
+    inputs:
+    - interval_definition
+    outputs:
+    - chunk_schedule_table
+    - smoke_chunk
+    params:
+      start_date: '2025-06-01'
+      end_date_exclusive: '2026-05-02'
+      preferred_span_days: 5
+      maximum_span_days: 7
+      expected_chunk_count: 67
+      raw_file_pattern: measure_YYYYMMDD_N.txt
+  - name: run_smoke_download
+    description: Download or reuse the first five-day raw measure file through 
+      the HinetPy arrival-time interface with retry and backoff.
+    inputs:
+    - validated_account_list
+    - smoke_chunk
+    - existing_raw_files
+    outputs:
+    - smoke_raw_measure_file
+    - smoke_download_manifest_rows
+    - smoke_download_diagnostics
+    params:
+      client: HinetPy.Client
+      method: Client.get_arrivaltime
+      method_arguments: startdate, span, filename, os
+      os: UNIX
+      overwrite_existing_nonempty: false
+      retry_strategy: bounded_exponential_backoff
+      rotate_accounts_after_request_failure: true
+      sanitize_exception_messages: true
+  - name: verify_measure_format_schema
+    description: Verify documented byte slices for JMA fixed-width J, 
+      station-pick, and E records before producing scientific catalogs.
+    inputs:
+    - measure_format_reference
+    - smoke_raw_measure_file
+    outputs:
+    - fixed_width_schema
+    - schema_validation_evidence
+    - schema_failure_evidence
+    params:
+      required_record_body_bytes: 96
+      required_record_types:
+      - J
+      - _
+      - E
+      stop_if_unverified: true
+      prohibited_parsing_methods:
+      - comma_splitting
+      - whitespace_splitting
+  - name: parse_and_validate_smoke_chunk
+    description: Parse the smoke raw file in byte mode and gate full execution 
+      on download, fixed-width, event-pick, and P/S count checks.
+    inputs:
+    - smoke_raw_measure_file
+    - fixed_width_schema
+    - smoke_download_manifest_rows
+    outputs:
+    - events_smoke_table
+    - picks_smoke_table
+    - smoke_qc_summary
+    - smoke_validation_errors
+    - smoke_gate_decision
+    params:
+      raw_timezone: Asia/Tokyo
+      output_timezone: UTC
+      missing_arrival_value: '-1'
+      event_columns:
+      - event_id
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      - region
+      - npicks
+      - source_file
+      pick_columns:
+      - event_id
+      - station_code
+      - station_number
+      - p_pick_time
+      - s_pick_time
+      - p_quality
+      - s_quality
+      - weight
+      - source_file
+      fatal_on_malformed_record: true
+      fatal_on_foreign_key_error: true
+      fatal_on_npicks_mismatch: true
+  - name: run_full_download
+    description: After smoke-test success, download or reuse all scheduled raw 
+      measure files and write a complete sanitized manifest.
+    inputs:
+    - validated_account_list
+    - chunk_schedule_table
+    - smoke_gate_decision
+    - existing_raw_files
+    outputs:
+    - raw_measure_file_collection
+    - download_manifest
+    - download_failure_evidence
+    params:
+      proceed_only_if_smoke_passed: true
+      client: HinetPy.Client
+      method: Client.get_arrivaltime
+      os: UNIX
+      overwrite_existing_nonempty: false
+      retry_strategy: bounded_exponential_backoff
+      manifest_columns:
+      - start_date
+      - span_days
+      - raw_file
+      - exists
+      - size_bytes
+      - status
+      - message
+      accepted_statuses:
+      - downloaded
+      - skipped_existing
+      failure_statuses:
+      - failed
+      - empty_file
+      - documented_no_data
+  - name: parse_merge_full_catalog
+    description: Parse all accepted raw measure files into deterministic full 
+      event and pick tables with per-file parser QC.
+    inputs:
+    - raw_measure_file_collection
+    - download_manifest
+    - fixed_width_schema
+    outputs:
+    - events_full_table
+    - picks_full_table
+    - parse_qc_by_file
+    - full_parse_warnings
+    params:
+      read_mode: byte
+      required_record_body_bytes: 96
+      raw_timezone: Asia/Tokyo
+      output_timezone: UTC
+      missing_arrival_value: '-1'
+      deterministic_event_id: utc_origin_time_source_file_sequence
+      exclude_failed_or_empty_chunks_from_scientific_tables: true
+      preserve_source_file: true
+  - name: apply_sanriku_subset
+    description: Apply the inclusive Sanriku event-location filter locally after
+      parsing and retain linked picks by event identifier.
+    inputs:
+    - events_full_table
+    - picks_full_table
+    outputs:
+    - events_regional_table
+    - picks_regional_table
+    - regional_subset_qc
+    params:
+      latitude_min: 38.5
+      latitude_max: 42.5
+      longitude_min: 141.0
+      longitude_max: 144.5
+      filter_stage: local_after_parsing
+      preserve_event_ids: true
+      recompute_npicks: true
+  - name: export_phase_and_station_products
+    description: Export Sanriku phase.dat and station.sta products using 
+      existing project conventions without fabricating station metadata.
+    inputs:
+    - events_regional_table
+    - picks_regional_table
+    - phase_format_reference
+    - station_metadata_references
+    outputs:
+    - phase_dat_product
+    - station_sta_product
+    - phase_dat_traceability_table
+    - station_metadata_audit
+    - station_metadata_missing
+    params:
+      phase_reference: data/regional/phase.dat
+      preserve_existing_phase_convention: true
+      prohibit_hash_prefixed_phase_format: true
+      prohibit_whitespace_delimited_phase_format: true
+      missing_arrival_value: '-1'
+      station_reference_matching_keys:
+      - station_code
+      - station_number
+      prohibit_fabricated_station_metadata: true
+  - name: run_final_validation_and_inventory
+    description: Validate download schedule, parser QC, table integrity, 
+      regional subset consistency, compatibility exports, and product 
+      completeness.
+    inputs:
+    - chunk_schedule_table
+    - download_manifest
+    - parse_qc_by_file
+    - events_full_table
+    - picks_full_table
+    - events_regional_table
+    - picks_regional_table
+    - phase_dat_product
+    - station_sta_product
+    - phase_dat_traceability_table
+    - station_metadata_audit
+    outputs:
+    - catalog_qc_summary
+    - final_validation_summary
+    - final_validation_errors
+    - product_inventory
+    params:
+      expected_chunk_count: 67
+      first_chunk_start: '2025-06-01'
+      final_chunk_start: '2026-04-27'
+      final_end_date_exclusive: '2026-05-02'
+      require_event_column_order: true
+      require_pick_column_order: true
+      require_utc_iso_timestamps: true
+      require_foreign_key_integrity: true
+      require_npicks_consistency: true
+      require_ps_pick_count_summary: true
+      require_regional_bounds_consistency: true
+      require_no_secret_leakage: true
+- name: 02_diagnostic_summaries
+  description: Generate compact non-authoritative diagnostic summaries and 
+    optional QC figures from the validated catalog products.
+  script: 02_diagnostic_summaries.py
+  ancestors:
+  - 01_hinet_jma_arrivals_workflow
+  subtasks:
+  - name: aggregate_temporal_coverage
+    description: Summarize download, event, and pick coverage by chunk and UTC 
+      calendar day.
+    inputs:
+    - download_manifest
+    - parse_qc_by_file
+    - events_full_table
+    - picks_full_table
+    - events_regional_table
+    - picks_regional_table
+    outputs:
+    - daily_event_counts
+    - chunk_event_pick_counts
+    - temporal_coverage_diagnostics
+    params:
+      time_field: origin_time
+      time_zone: UTC
+      separate_full_and_regional: true
+  - name: summarize_pick_completeness
+    description: Compute P/S availability, P-only, S-only, both-present, and 
+      both-missing summaries for full and regional pick tables.
+    inputs:
+    - picks_full_table
+    - picks_regional_table
+    outputs:
+    - pick_completeness_summary
+    - pick_completeness_warnings
+    params:
+      missing_arrival_value: '-1'
+      flag_both_missing_rows: true
+      separate_full_and_regional: true
+  - name: summarize_spatial_and_station_outputs
+    description: Summarize Sanriku filtering behavior and station metadata 
+      matching without changing authoritative outputs.
+    inputs:
+    - events_full_table
+    - events_regional_table
+    - picks_regional_table
+    - station_metadata_audit
+    - final_validation_summary
+    outputs:
+    - spatial_subset_summary
+    - station_match_summary
+    - optional_qc_figure_products
+    params:
+      latitude_min: 38.5
+      latitude_max: 42.5
+      longitude_min: 141.0
+      longitude_max: 144.5
+      figures_are_diagnostic_only: true
+      omit_credentials_from_outputs: true

@@ -1,0 +1,7 @@
+hypothesis,phase_centroids,burst_centroids,projection_trends,depth_domain
+endpoint_switching,supported,supported,mixed,mixed
+separated_local_bursts,supported,supported,not_supported,mixed
+corridor_like_stepwise_activation,mixed,mixed,mixed,mixed
+spatial_depth_coherent_activation,mixed,mixed,weak,supported
+diffuse_local_occupancy,mixed,weak,mixed,mixed
+no_organized_migration,mixed,supported,mixed,mixed

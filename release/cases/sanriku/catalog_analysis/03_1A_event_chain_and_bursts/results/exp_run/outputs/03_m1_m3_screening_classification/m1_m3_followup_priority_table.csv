@@ -1,0 +1,9 @@
+version,followup_topic,priority,reason
+raw,spatial_depth_screening,high,"Separate M1-related, middle, and pre-M3 depth bands and endpoint clusters to test whether later activity occupies distinct local volumes rather than a single homogeneous sequence."
+raw,b_value_completeness,high,"The local chain has enough events to compare magnitude-frequency behavior across the conservative pre-M1 baseline, M1-related phase, middle phase, and pre-M3 phase."
+raw,burst_wise_migration_screening,medium,"Only test burst-wise centroid motion after keeping M1-related, middle, and pre-M3 windows separate; do not rely on full-interval centroid shifts alone."
+raw,mechanism_screening,medium,Use focal mechanisms only as partial-coverage context for identified endpoint groups or bursts; treat any mechanism interpretation as hypothesis-level follow-up.
+m2aware,spatial_depth_screening,high,"Separate M1-related, middle, and pre-M3 depth bands and endpoint clusters to test whether later activity occupies distinct local volumes rather than a single homogeneous sequence."
+m2aware,b_value_completeness,high,"The local chain has enough events to compare magnitude-frequency behavior across the conservative pre-M1 baseline, M1-related phase, middle phase, and pre-M3 phase."
+m2aware,burst_wise_migration_screening,medium,"Only test burst-wise centroid motion after keeping M1-related, middle, and pre-M3 windows separate; do not rely on full-interval centroid shifts alone."
+m2aware,mechanism_screening,medium,Use focal mechanisms only as partial-coverage context for identified endpoint groups or bursts; treat any mechanism interpretation as hypothesis-level follow-up.

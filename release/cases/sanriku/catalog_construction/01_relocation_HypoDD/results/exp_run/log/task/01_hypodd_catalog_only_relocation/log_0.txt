@@ -1,0 +1,10 @@
+Output directory: <CASE_ROOT>/run/01_relocation_HypoDD/exp_run/outputs/01_hypodd_catalog_only_relocation
+Loading tables from <CASE_ROOT>/data/regional
+Validating phase.dat and station.sta consistency
+Traceback (most recent call last):
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 961, in <module>
+    main()
+  File "<CASE_ROOT>/run/01_relocation_HypoDD/exp_run/scripts/01_hypodd_catalog_only_relocation.py", line 884, in main
+    raise RuntimeError("Provided phase.dat failed validation for primary use; fallback rebuilding from picks.csv is not implemented in this default path.")
+RuntimeError: Provided phase.dat failed validation for primary use; fallback rebuilding from picks.csv is not implemented in this default path.
+

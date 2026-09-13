@@ -1,0 +1,384 @@
+tasks:
+- name: 01_aomori_sequence_analysis
+  description: Build the mainshock-referenced sequence dataset, compute all 
+    requested metrics and context summaries, generate the required figures, 
+    score behavior dimensions, assemble the scientific diagnosis, and validate 
+    outputs in one self-contained script.
+  script: 01_aomori_sequence_analysis.py
+  ancestors: []
+  subtasks:
+  - name: validate_and_load_inputs
+    description: Load the catalog, mainshock, mechanism, and station inputs and 
+      standardize required fields.
+    inputs:
+    - relocated_catalog
+    - mainshock_catalog
+    - focal_mechanism_catalog
+    - station_metadata
+    outputs:
+    - standardized_catalog
+    - standardized_mainshocks
+    - standardized_mechanisms
+    - standardized_stations
+    - input_validation_log
+    params:
+      required_sources:
+      - Snet_catalog_relocate
+      - main_earthquake
+      - Snet_mecha
+      - station_sta
+      core_fields:
+      - event_id
+      - origin_time
+      - latitude
+      - longitude
+      - depth_km
+      - magnitude
+      origin_time_policy: consistent_datetime_parsing
+      event_id_fallback: row_index_based
+  - name: match_mainshock_like_events
+    description: Identify the catalog event corresponding to each mainshock with
+      deterministic matching and ambiguity diagnostics.
+    inputs:
+    - standardized_catalog
+    - standardized_mainshocks
+    outputs:
+    - mainshock_like_match_summary
+    - mainshock_like_match_diagnostics
+    params:
+      primary_rule: minimum_absolute_time_difference
+      tie_breakers:
+      - minimum_epicentral_distance_km
+      - minimum_absolute_depth_difference_km
+      - minimum_magnitude_difference
+      tolerance_strategy: staged_relaxation_with_recorded_stage
+      ambiguity_tracking: true
+  - name: build_mainshock_reference_table
+    description: Compute event-to-mainshock relative times, distances, depth 
+      differences, bins, flags, and overlap diagnostics for all events.
+    inputs:
+    - standardized_catalog
+    - standardized_mainshocks
+    - mainshock_like_match_summary
+    outputs:
+    - mainshock_reference_event_table
+    - reference_table_qa_counts
+    - plotted_window_provenance_table
+    params:
+      relative_time_units:
+      - days
+      - hours
+      distance_measure: epicentral_distance_km
+      depth_difference_fields:
+      - signed_depth_difference_km
+      - absolute_depth_difference_km
+      cumulative_radii_km:
+      - 30
+      - 60
+      - 100
+      distance_bands_km:
+      - 0-30
+      - 30-60
+      - 60-100
+      - over_100
+      magnitude_bins:
+      - below_4
+      - 4_to_below_5
+      - 5_to_below_6
+      - 6_and_above
+      threshold_flags:
+      - M4_plus
+      - M5_plus
+      - M6_plus
+      overlap_diagnostics: retain_all_reference_frames
+  - name: generate_short_window_morphology_figures
+    description: Create the required plus-minus 7 day and within 100 km 
+      morphology and summary figures for M1, M2, and M3.
+    inputs:
+    - mainshock_reference_event_table
+    - mainshock_like_match_summary
+    - standardized_mainshocks
+    outputs:
+    - magnitude_time_distance_pm7d_100km
+    - m4plus_sequence_views_pm7d_100km
+    - prepost_magnitude_distance_counts_pm7d_100km
+    - m4_m5_distance_band_contribution_pm7d_100km
+    - short_window_figure_metadata
+    params:
+      relative_time_window_days: 7
+      maximum_distance_km: 100
+      layout: three_by_two_subplots
+      row_order:
+      - M1
+      - M2
+      - M3
+      distance_band_colors:
+      - band_0_30
+      - band_30_60
+      - band_60_100
+      marker_size_mapping: magnitude_scaled
+      m4plus_black_edge: true
+      mainshock_marker: star
+      reference_lines:
+        magnitude_panels:
+        - M4
+        - M5
+        distance_panels:
+        - 30_km
+        - 60_km
+      statistics_exclude_mainshock_like_for_m4plus_support: true
+  - name: compute_matched_window_metrics
+    description: Compute exhaustive matched pre and post metrics across all 
+      requested time windows and spatial definitions.
+    inputs:
+    - mainshock_reference_event_table
+    - mainshock_like_match_summary
+    outputs:
+    - matched_window_metrics_all
+    - matched_window_metrics_by_band
+    - magnitude_dominance_metrics
+    - companion_event_metrics
+    - largest_event_lists_by_window
+    - regional_outerband_metrics
+    params:
+      symmetric_time_windows_days:
+      - 7
+      - 14
+      - 25
+      cumulative_radii_km:
+      - 30
+      - 60
+      - 100
+      annular_bands_km:
+      - 0-30
+      - 30-60
+      - 60-100
+      event_metrics:
+      - total_counts
+      - total_rates
+      - M4_plus_counts
+      - M4_plus_rates
+      - M5_plus_counts
+      - M5_plus_rates
+      - M6_plus_counts
+      - M6_plus_rates
+      - post_pre_count_ratio
+      - post_pre_rate_ratio
+      - magnitude_bin_counts
+      - magnitude_bin_fractions
+      - largest_pre_event
+      - largest_post_event
+      - largest_non_mainshock_event
+      - mainshock_minus_largest_non_mainshock_gap
+      - top_non_mainshock_rank_gaps
+      - companion_count_within_0_5_mag
+      - companion_count_within_1_0_mag
+      - near_field_vs_outer_band_contributions
+      - raw_distance_band_shares
+      - normalized_distance_band_shares
+      - annulus_area_normalized_rates
+      - immediate_post_shares
+      - fixed_bin_decay_summaries
+      immediate_post_windows:
+      - 6_hours
+      - 12_hours
+      - 1_day
+      - 3_days
+      paired_versions:
+      - including_mainshock_like
+      - excluding_mainshock_like
+      zero_denominator_policy: explicit_flagging
+      scalar_moment_summary: if_feasible_from_catalog_magnitudes
+  - name: derive_curated_comparison_products
+    description: Summarize the exhaustive metric tables into cross-mainshock 
+      comparison figures and sensitivity views.
+    inputs:
+    - matched_window_metrics_all
+    - matched_window_metrics_by_band
+    - magnitude_dominance_metrics
+    - companion_event_metrics
+    - regional_outerband_metrics
+    outputs:
+    - magnitude_dominance_companion_summary
+    - window_radius_sensitivity_heatmaps
+    - optional_robustness_figure
+    - comparison_product_tables
+    params:
+      required_comparisons:
+      - pre_post_magnitude_and_distance_summary
+      - M4_plus_M5_plus_distance_band_contribution
+      - magnitude_dominance_and_companion_events
+      - window_radius_sensitivity
+      heatmap_metrics:
+      - post_pre_rate_ratio
+      - near_field_share
+      - M4_plus_concentration
+      - M5_plus_concentration
+      - dominance_gap_indicator
+      optional_robustness_trigger: only_if_14d_or_25d_changes_interpretation
+  - name: compute_temporal_depth_mechanism_and_migration_context
+    description: Quantify temporal concentration, radial progression 
+      diagnostics, depth distributions, and focal mechanism context for each 
+      mainshock-centered sequence.
+    inputs:
+    - mainshock_reference_event_table
+    - standardized_mechanisms
+    - standardized_stations
+    - mainshock_like_match_summary
+    outputs:
+    - post_response_temporal_metrics
+    - migration_diagnostics
+    - depth_summary_by_mainshock
+    - depth_summary_m4_m5
+    - mechanism_match_summary
+    - mechanism_context_by_sequence
+    - optional_station_context_summary
+    params:
+      temporal_windows_days:
+      - 7
+      - 25
+      temporal_structure_metrics:
+      - fixed_bin_event_rates
+      - local_peak_counts
+      - near_field_outer_band_decay_contrasts
+      migration_metrics:
+      - distance_time_regression_slope
+      - rank_correlation
+      - distance_band_activation_order
+      - activation_front_speed_if_monotonic
+      no_migration_label: no_monotonic_progression_supported
+      depth_windows_days:
+      - 7
+      - 14
+      - 25
+      depth_summaries:
+      - median
+      - interquartile_range
+      - range
+      - mainshock_relative_depth_difference
+      thresholded_depth_groups:
+      - all_events
+      - M4_plus
+      - M5_plus
+      mechanism_matching: time_space_matching_with_ambiguity_flags
+      mechanism_context_fields:
+      - matched_count
+      - near_field_consistency
+      - outer_band_consistency
+      - coverage_caveat
+      station_use: contextual_only
+  - name: score_behavior_dimensions_and_write_diagnosis
+    description: Assign evidence-based behavior-dimension scores for each 
+      mainshock and assemble the concise scientific diagnosis and evidence 
+      tables.
+    inputs:
+    - matched_window_metrics_all
+    - matched_window_metrics_by_band
+    - magnitude_dominance_metrics
+    - companion_event_metrics
+    - largest_event_lists_by_window
+    - regional_outerband_metrics
+    - post_response_temporal_metrics
+    - migration_diagnostics
+    - depth_summary_by_mainshock
+    - depth_summary_m4_m5
+    - mechanism_context_by_sequence
+    - magnitude_time_distance_pm7d_100km
+    - m4plus_sequence_views_pm7d_100km
+    - prepost_magnitude_distance_counts_pm7d_100km
+    - m4_m5_distance_band_contribution_pm7d_100km
+    outputs:
+    - behavior_dimension_scores
+    - behavior_dimension_supporting_metrics
+    - sequence_behavior_evidence_table
+    - aomori_mainshock_sequence_diagnosis
+    params:
+      score_levels:
+      - low
+      - possible
+      - moderate
+      - strong
+      behavior_dimensions:
+      - aftershock_response
+      - single_mainshock_dominance
+      - compact_cascade_compound_sequence_evidence
+      - swarm_like_organization
+      - foreshock_or_pre_mainshock_activation
+      - broader_regional_activation
+      - radial_migration_or_expansion
+      - slow_slip_related_candidate_behavior
+      scoring_basis:
+      - explicit_metric_thresholding_or_ranked_comparison
+      - event_list_cross_checks
+      - figure_cross_check_only
+      required_score_fields:
+      - supporting_metrics
+      - competing_explanations
+      - main_caveat
+      - overlap_contamination_flag
+      interpretation_constraints:
+      - non_mutually_exclusive_axes
+      - no_distance_band_only_inference
+      - conservative_slow_slip_screening
+      - no_swarm_confirmation_from_catalog_only
+      diagnosis_sections:
+      - visual_summary_plus_minus_7_days
+      - per_mainshock_behavior_interpretation
+      - compact_evidence_table
+      - limits_of_catalog_only_inference
+      - verification_analyses_needed
+  - name: validate_outputs_and_record_run_summary
+    description: Verify that all required tables and figures were created, are 
+      non-empty, and are recorded in a machine-readable run summary.
+    inputs:
+    - mainshock_reference_event_table
+    - mainshock_like_match_summary
+    - matched_window_metrics_all
+    - matched_window_metrics_by_band
+    - magnitude_dominance_metrics
+    - companion_event_metrics
+    - largest_event_lists_by_window
+    - regional_outerband_metrics
+    - post_response_temporal_metrics
+    - migration_diagnostics
+    - depth_summary_by_mainshock
+    - depth_summary_m4_m5
+    - mechanism_match_summary
+    - mechanism_context_by_sequence
+    - behavior_dimension_scores
+    - behavior_dimension_supporting_metrics
+    - sequence_behavior_evidence_table
+    - aomori_mainshock_sequence_diagnosis
+    - magnitude_time_distance_pm7d_100km
+    - m4plus_sequence_views_pm7d_100km
+    - prepost_magnitude_distance_counts_pm7d_100km
+    - m4_m5_distance_band_contribution_pm7d_100km
+    - magnitude_dominance_companion_summary
+    - window_radius_sensitivity_heatmaps
+    outputs:
+    - output_validation_report
+    - run_manifest
+    - failure_evidence_log
+    params:
+      required_non_empty_tables:
+      - mainshock_reference_event_table
+      - mainshock_like_match_summary
+      - matched_window_metrics_all
+      - matched_window_metrics_by_band
+      - behavior_dimension_scores
+      - sequence_behavior_evidence_table
+      required_figures:
+      - magnitude_time_distance_pm7d_100km
+      - m4plus_sequence_views_pm7d_100km
+      - prepost_magnitude_distance_counts_pm7d_100km
+      - m4_m5_distance_band_contribution_pm7d_100km
+      - magnitude_dominance_companion_summary
+      - window_radius_sensitivity_heatmaps
+      validation_checks:
+      - file_exists
+      - non_empty_content
+      - expected_mainshock_coverage
+      - expected_window_coverage
+      - expected_spatial_definition_coverage
+      - figure_creation_status
+      success_policy: merged_tables_and_required_figures_must_be_valid

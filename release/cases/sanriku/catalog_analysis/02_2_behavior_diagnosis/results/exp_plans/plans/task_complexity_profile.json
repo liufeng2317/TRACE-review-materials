@@ -1,0 +1,7 @@
+{
+  "complexity": "moderate",
+  "reason": "Catalog-centered observational analysis with four local data sources, multiple matched-window metrics, several curated comparison figures, and qualitative behavior scoring, but no heavy external modeling or waveform processing.",
+  "data_source_count": 4,
+  "workflow_risk": "medium",
+  "expected_script_count": 2
+}

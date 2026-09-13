@@ -1,0 +1,243 @@
+tasks:
+- name: 01_sanriku_m69_catalog_screening
+  description: Build the M6.9-centered catalog, compute screening metrics, 
+    generate diagnostic figures, and validate machine-readable outputs for the 
+    Sanriku-Oki sequence.
+  script: 01_sanriku_m69_catalog_screening.py
+  ancestors: []
+  subtasks:
+  - name: load_and_standardize_inputs
+    description: Load the relocated catalog and mainshock table and standardize 
+      event fields and times.
+    inputs:
+    - relocated_catalog
+    - mainshock_table
+    - optional_mechanism_table
+    - optional_station_table
+    outputs:
+    - standardized_catalog
+    - standardized_mainshock_table
+    - input_metadata
+    params:
+      target_mainshock_id: M1
+      analysis_reference_time: '2025-11-09 08:03:39.240'
+      analysis_reference_latitude: 39.402
+      analysis_reference_longitude: 143.507
+      analysis_reference_depth_km: 15.9
+      analysis_reference_magnitude: 6.9
+  - name: rematch_mainshock_reference
+    description: Re-match M1 to the relocated catalog with a documented 
+      near-time and near-space search and save the selection decision.
+    inputs:
+    - standardized_catalog
+    - standardized_mainshock_table
+    outputs:
+    - adopted_mainshock_reference
+    - mainshock_reference_selection
+    - rematch_candidates
+    params:
+      selection_strategy: nearest unique near-time near-space match with 
+        fallback to mainshock table reference
+      time_tolerance_strategy: documented threshold chosen in script and saved 
+        in metadata
+      distance_tolerance_strategy: documented threshold chosen in script and 
+        saved in metadata
+  - name: build_m69_centered_event_table
+    description: Construct the master event table relative to the adopted M6.9 
+      reference with distance, local coordinates, and phase labels.
+    inputs:
+    - standardized_catalog
+    - adopted_mainshock_reference
+    outputs:
+    - m69_centered_event_table
+    - window_event_counts_by_radius
+    params:
+      context_window_days:
+        start: -10.0
+        end: -2.0
+      foreshock_window_days:
+        start: -2.0
+        end: 0.0
+      aftershock_window_days:
+        start: 0.0
+        end: 0.5
+      radius_thresholds_km:
+      - 60.0
+      - 80.0
+      - 100.0
+      - 150.0
+      coordinate_system: local east north kilometers relative to adopted 
+        mainshock reference
+  - name: select_largest_early_aftershock
+    description: Identify the largest distinct event in the first 0.5 days after
+      M6.9 within the local sequence while excluding the mainshock itself.
+    inputs:
+    - m69_centered_event_table
+    outputs:
+    - largest_early_aftershock
+    - early_aftershock_selection_metadata
+    params:
+      selection_window_days:
+        start_exclusive: 0.0
+        end_inclusive: 0.5
+      primary_radius_km: 80.0
+      exclusion_rule: exclude mainshock reference row and any duplicate event at
+        relative time zero
+      tie_break_rule: larger magnitude then earlier origin time
+  - name: summarize_rate_and_magnitude_by_window
+    description: Compute event-rate and magnitude-occurrence summaries for the 
+      foreshock and early-aftershock windows across radii.
+    inputs:
+    - m69_centered_event_table
+    outputs:
+    - window_rate_magnitude_summary
+    - radius_sensitivity_summary
+    - event_rate_magnitude_timeline
+    params:
+      primary_radius_km: 80.0
+      diagnostic_radii_km:
+      - 60.0
+      - 100.0
+      - 150.0
+      formal_windows:
+      - foreshock_final2d
+      - aftershock_0_0p5d
+      context_window_label: context_pre10d_2d
+      magnitude_thresholds:
+      - 3.0
+      - 4.0
+      - 5.0
+      exclude_mainshock_from_aftershock_metrics: true
+  - name: estimate_migration_fronts
+    description: Compute 90th-percentile distance fronts in time bins and fit 
+      simple linear apparent speeds before and after the mainshock.
+    inputs:
+    - m69_centered_event_table
+    outputs:
+    - time_distance_front_bins
+    - migration_front_fit_summary
+    - time_distance_series
+    params:
+      primary_radius_km: 80.0
+      front_percentile: 90
+      minimum_events_per_bin: 5
+      foreshock_window_days:
+        start: -2.0
+        end: 0.0
+      aftershock_window_days:
+        start_exclusive: 0.0
+        end_inclusive: 0.5
+      foreshock_bin_width_days: 0.2
+      aftershock_bin_width_days: 0.025
+      fit_model: linear least squares on retained front bins
+      fit_diagnostics:
+      - intercept
+      - slope_km_per_day
+      - slope_km_per_hour
+      - r_squared
+      - total_bins
+      - retained_bins
+      - excluded_bins
+      - fit_time_span_days
+  - name: compute_activated_area_metrics
+    description: Estimate window-specific activated-area geometry with distance 
+      trimming, PCA rotation, and convex-hull metrics.
+    inputs:
+    - m69_centered_event_table
+    outputs:
+    - activated_area_metrics
+    - activated_area_points_projected
+    - activated_area_sensitivity_by_radius
+    params:
+      primary_radius_km: 80.0
+      compact_core_radius_km: 60.0
+      optional_diagnostic_radii_km:
+      - 100.0
+      - 150.0
+      windows:
+      - foreshock_final2d
+      - aftershock_0_0p5d
+      distance_retention_fraction: 0.9
+      geometry_metrics:
+      - convex_hull_area_km2
+      - equivalent_hull_radius_km
+      - along_axis_span_km
+      - across_axis_span_km
+      - pca_orientation_deg
+      - explained_variance_ratio
+      insufficient_data_policy: record explicit failure status instead of 
+        placeholder metrics
+  - name: estimate_mc_and_bvalue
+    description: Estimate completeness magnitude and b-value for the final 
+      foreshock stage and optionally for the early aftershock window as 
+      exploratory screening.
+    inputs:
+    - m69_centered_event_table
+    outputs:
+    - mc_bvalue_summary
+    - fmd_foreshock_final2d
+    - fmd_aftershock_0_0p5d
+    - mc_bvalue_metadata
+    params:
+      primary_window: foreshock_final2d
+      exploratory_window: aftershock_0_0p5d
+      primary_radius_km: 80.0
+      exclude_mainshock_from_aftershock_metrics: true
+      mc_method_strategy: use a documented catalog-completeness method and save 
+        the exact method name used
+      mc_crosscheck_strategy: add one robustness-oriented cross-check if sample 
+        size permits
+      bvalue_estimator_strategy: use a documented estimator applied only to 
+        events at or above Mc
+      magnitude_bin_strategy: use documented metadata or an explicit recorded 
+        assumption and do not infer bin width from decimal formatting
+      exploratory_aftershock_label: exploratory due to likely early 
+        incompleteness
+  - name: generate_figures_and_compact_summaries
+    description: Produce the requested diagnostic figures, export compact 
+      summary files, and verify required outputs are present and non-empty.
+    inputs:
+    - adopted_mainshock_reference
+    - m69_centered_event_table
+    - largest_early_aftershock
+    - window_rate_magnitude_summary
+    - event_rate_magnitude_timeline
+    - time_distance_front_bins
+    - migration_front_fit_summary
+    - activated_area_metrics
+    - activated_area_points_projected
+    - mc_bvalue_summary
+    outputs:
+    - diagnostic_map_figure
+    - time_distance_figure
+    - rate_magnitude_timeline_figure
+    - activated_area_figure
+    - mc_bvalue_figure
+    - sanriku_m69_screening_summary
+    - output_inventory_and_checks
+    params:
+      figure_set:
+      - m69_centered_map
+      - time_distance_fronts
+      - event_rate_magnitude_timeline
+      - activated_area_comparison
+      - mc_bvalue_diagnostic
+      mark_reference_events:
+      - m69_mainshock
+      - largest_distinct_early_aftershock
+      required_plot_markers:
+      - m69_mainshock
+      - largest_distinct_early_aftershock
+      summary_contents:
+      - mainshock_reference_and_rematch_status
+      - largest_early_aftershock_metadata
+      - rate_and_magnitude_metrics
+      - migration_front_speeds_and_fit_diagnostics
+      - activated_area_metrics
+      - mc_bvalue_metrics
+      - method_settings
+      validation_rules:
+      - required_summary_tables_non_empty
+      - required_figures_present
+      - required_markers_present_on_relevant_plots
+      - no_placeholder_success_for_failed_fits_or_geometry

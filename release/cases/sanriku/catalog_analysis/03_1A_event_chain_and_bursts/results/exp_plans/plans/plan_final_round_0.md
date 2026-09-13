@@ -1,0 +1,275 @@
+# Goal
+Screen the relocated/filtered Aomori active-year catalog for the M1-M3 local event-chain and burst structure, using the M1-M3 local/corridor system as the primary domain, to decide whether the pattern is best described as pre-existing local activity before M1, M1-related swarm/aftershock-dominated activity, quiet or sustained middle-phase activity, separated bursts, endpoint-centered activity, pre-M3 local activation, corridor-like activity, broader/background activity, migration-like behavior, endpoint switching/mixed endpoint sequences, or M2-affected/ambiguous behavior.
+
+## Planning Assumptions
+- Use observation/catalog data only; no model data are needed.
+- Primary data sources:
+  - relocated/filtered catalog: `data/Snet_catalog_relocate_250601_260501.csv`
+  - mainshock table: `catalog/main_earthquake.csv`
+- Optional context-only sources:
+  - `source_mechanism/Snet_mecha.csv`
+  - `stations/station.sta`
+- The primary scientific domain is the M1-M3 local union: events within 60 km of either M1 or M3. Whole-catalog or broader-regional views are secondary controls only.
+- The relocated catalog should be read with explicit columns: origin_time, latitude, longitude, depth_km, magnitude.
+- `main_earthquake.csv` is the authoritative source for M1, M2, and M3 origin times and hypocenters used in all relative-time and geometry calculations.
+- Spatial metrics should use consistent geodetic horizontal distances for endpoint membership and a local projected Cartesian representation, or equivalent geodetic projection, for along-axis and perpendicular-distance calculations.
+- Primary fixed, non-overlapping interpretation windows must remain:
+  - pre-M1 conservative baseline: catalog start to M1-14 d
+  - pre-M1 sensitivity baseline: catalog start to M1-7 d
+  - M1-related dominated phase: M1-14 d to M1+21 d
+  - M1-M3 middle phase: M1+21 d to M3-35 d
+  - pre-M3 local activation phase: M3-35 d to M3
+  - post-M3 context: M3 to M3+7 d and optionally M3+14 d
+- Optional data-driven burst/gap refinements may be added only as secondary sensitivity checks; they must not replace the fixed-window interpretation and must not merge the M1-related dominated phase with the final pre-M3 phase without explicit quantification.
+- Spatial categories must preserve endpoint cores separately from corridor non-core activity:
+  - endpoint core zones: within 30 km of M1 or M3
+  - endpoint extended zones / local union: within 60 km of M1 or M3
+  - corridor: projected between M1 and M3 with perpendicular distance threshold 20 km primary and 30 km sensitivity, with endpoint buffers included
+- M2-related events must be flagged, not removed by default. All key summaries should be produced in raw and M2-aware forms.
+- Do not infer triggering or physical causality from temporal order, proximity, burst order, or centroid shifts alone.
+- Do not label full-interval along-axis changes as migration unless the signal remains after separating M1-related, middle, and pre-M3 windows and after M2-aware comparison; otherwise describe as endpoint switching or mixed endpoint activity.
+- Station and mechanism files are optional follow-up context only and must not control first-pass catalog screening.
+
+## Analysis Plan
+
+### Task 1 — Build one unified M1-M3 event-chain analysis table and all core summary products
+- Task description:
+  - In one primary catalog-analysis script, load the relocated catalog and mainshock table, compute all event-level relative-time and geometry metrics, assign spatial and temporal categories, generate raw and M2-aware summaries, detect major bursts, test continuity versus burst separation, evaluate migration-like versus endpoint-switching behavior, and write machine-readable outputs needed for figures and final screening.
+- Required data sources:
+  - `data/Snet_catalog_relocate_250601_260501.csv`
+  - `catalog/main_earthquake.csv`
+  - optional context only:
+    - `source_mechanism/Snet_mecha.csv`
+    - `stations/station.sta`
+- Parameter selection strategy:
+  - Load the relocated catalog with explicit columns:
+    - origin_time
+    - latitude
+    - longitude
+    - depth_km
+    - magnitude
+  - Parse `main_earthquake.csv` to extract unique M1, M2, M3 records with:
+    - origin time
+    - latitude
+    - longitude
+    - depth
+    - magnitude
+  - Compute for every catalog event:
+    - time_since_M1_days
+    - time_before_M3_days
+    - distance_to_M1_km
+    - distance_to_M3_km
+    - distance_to_M2_km
+    - along_axis_km projected onto the M1→M3 axis
+    - perpendicular_distance_km to the M1-M3 axis
+    - nearest_endpoint
+    - depth_km
+    - magnitude
+  - Define spatial membership flags:
+    - in_M1_core_30km
+    - in_M3_core_30km
+    - in_M1_extended_60km
+    - in_M3_extended_60km
+    - in_local_union_60km
+    - in_corridor_20km
+    - in_corridor_30km
+    - off_corridor_local
+  - Define mutually interpretable primary spatial categories with explicit precedence:
+    - overlap_core if inside both endpoint cores
+    - M1-core
+    - M3-core
+    - corridor_noncore
+    - off-corridor_local
+    - outside_local_union
+  - Define M2 flags:
+    - M2_related_100km
+    - M2_ambiguous_overlap for events that are both M2-related and inside the M1-M3 local union or corridor interpretation space
+  - Assign fixed time windows:
+    - pre_M1_baseline_14d
+    - pre_M1_baseline_7d
+    - M1_related_primary
+    - full_M1_to_M3
+    - middle_primary
+    - pre_M3_primary
+    - post_M3_7d
+    - post_M3_14d if coverage exists
+  - Add optional sensitivity windows only if needed to clarify burst boundaries:
+    - M1-7 d to M1+14 d
+    - M1-14 d to M1+28 d
+    - M3-42 d to M3
+    - M3-28 d to M3
+  - Summarize M3+, M4+, M5+, and M6+ for each required window:
+    - counts
+    - window duration
+    - rates per day
+    - fraction of the full M1-to-M3 total
+    - raw and M2-aware versions
+  - For each fixed window compute spatial composition:
+    - counts and fractions of M1-core, M3-core, corridor_noncore, off-corridor_local
+    - M1-core versus M3-core contrast
+    - endpoint extended-zone counts
+    - raw and M2-aware versions
+  - Quantify how much of M1-to-M3 activity is explained by the M1-related dominated phase:
+    - compare M1-related counts/rates against full M1-to-M3 counts/rates
+    - compare middle and pre-M3 windows after excluding the M1-related phase
+  - Burst detection:
+    - use a simple transparent catalog-rate method based on daily and short rolling-window counts plus inter-event gap scanning
+    - detect major bursts conservatively and report, for each burst:
+      - start and end time
+      - duration
+      - event count by threshold
+      - largest magnitude
+      - depth range
+      - centroid location
+      - along-axis centroid
+      - dominant spatial category
+      - M2-related proportion
+      - assigned phase class:
+        - M1-related dominated
+        - intermediate M1-M3
+        - pre-M3 local activation
+        - post-M3 context
+        - mixed/ambiguous
+  - Continuity/gap analysis:
+    - compute inter-event-gap diagnostics for local-union events and key thresholds
+    - test whether the middle phase is sustained, sparse, or burst-separated
+  - Migration-like versus endpoint-switching tests:
+    - compare along-axis centroid or median trends for:
+      - full M1-to-M3 interval
+      - M1-related phase only
+      - middle phase only
+      - pre-M3 phase only
+    - compare nearest-endpoint occupancy through time
+    - repeat in raw and M2-aware forms
+  - Add simple controls where feasible:
+    - primary control time comparison: pre_M1_baseline_14d versus later windows
+    - sensitivity control time comparison: pre_M1_baseline_7d versus later windows
+    - simple spatial control: corridor versus off-corridor local
+    - optional broader-regional context only if it helps distinguish local-chain behavior from background
+  - If optional mechanism follow-up is attempted:
+    - join `source_mechanism/Snet_mecha.csv` to identified bursts or endpoint groups only as partial-coverage context
+    - do not use mechanism completeness as a success criterion
+- Constraints:
+  - Do not use a baseline ending exactly at M1 as the primary baseline.
+  - Do not merge M1-related dominated and pre-M3 activation into one homogeneous sequence.
+  - Do not remove M2-related events by default.
+  - Keep endpoint cores distinct from corridor non-core activity in all summaries.
+  - Treat burst detection as secondary to the fixed-window framework.
+  - Do not call apparent full-interval centroid shifts migration unless the pattern survives window separation and M2-aware comparison.
+  - If the trend is explained by mixing early M1-core and later M3-core/corridor activity, classify it as endpoint switching or mixed endpoint activity.
+- Key outputs:
+  - `m1_m3_event_chain_table.csv`
+  - `m1_m3_reference_table.csv`
+  - `m1_m3_window_summary_counts_rates.csv`
+  - `m1_m3_window_summary_composition.csv`
+  - `m1_m3_raw_vs_m2aware_summary.csv`
+  - `m1_m3_phase_contribution_summary.csv`
+  - `m1_m3_burst_table.csv`
+  - `m1_m3_gap_continuity_metrics.csv`
+  - `m1_m3_migration_endpoint_switching_summary.csv`
+  - `m1_m3_control_comparison.csv`
+  - `m1_m3_followup_targets.csv`
+
+### Task 2 — Generate the required compact diagnostic figures from the unified analysis outputs
+- Task description:
+  - Use the outputs from Task 1 to produce the requested compact figure set that directly tests fixed-window behavior, endpoint versus corridor organization, burst separation, raw versus M2-aware differences, and pre-M3 activation.
+- Required data sources:
+  - outputs from Task 1
+  - optional overlays from:
+    - `catalog/main_earthquake.csv`
+    - `stations/station.sta` only if station context is helpful and uncluttered
+- Parameter selection strategy:
+  - M1-M3 map:
+    - show local-union M3+/M4+/M5+ events
+    - color by time
+    - label or symbolize primary spatial category
+    - mark M1, M2, M3
+    - draw 30 km core circles, 60 km extended circles, M1-M3 axis, and corridor envelope
+    - distinguish M2-related flagged events if readable
+  - Magnitude-time plot:
+    - cover available pre-M1 through M3 and short post-M3 context
+    - mark fixed windows and M1/M2/M3 times
+    - include threshold references for M3+, M4+, M5+, M6+
+  - Projected distance versus time:
+    - along-axis distance through time
+    - emphasize window separation and category differences
+    - support raw and M2-aware interpretation
+  - Distance-to-M1 and distance-to-M3 versus time:
+    - expose endpoint-centered versus corridor versus switching behavior
+  - Cumulative count curves:
+    - M4+ and M5+ cumulative counts
+    - raw and M2-aware versions
+    - mark fixed-window boundaries
+  - Burst timeline summary:
+    - show baseline, M1-related dominated, middle, pre-M3, and post-M3 windows
+    - annotate major bursts by timing, dominant category, largest magnitude, and phase assignment
+  - Pre-M3 local activation comparison:
+    - direct raw versus M2-aware comparison focused on M3-35 d to M3
+    - show whether the signal remains in M3-core, corridor_noncore, or off-corridor local subsets
+  - Window-separated composition figure:
+    - for each fixed window show fractions or counts of:
+      - M1-core
+      - M3-core
+      - corridor_noncore
+      - off-corridor_local
+    - include raw and M2-aware comparison
+  - Optional figure sensitivities only if ambiguity remains:
+    - corridor width 20 km versus 30 km
+    - endpoint radius emphasis
+    - nearest-endpoint transition or continuity-gap panel
+- Constraints:
+  - Keep the figure suite compact and tied directly to the user’s screening questions.
+  - Preserve visual separation between M1-related, middle, pre-M3, and post-M3 windows.
+  - Do not add exploratory plots that do not clarify event-chain continuity, burst separation, endpoint-centered behavior, corridor-like behavior, pre-M3 activation, migration-like behavior, endpoint switching, or M2 influence.
+- Key outputs:
+  - `fig_m1_m3_map_time_category`
+  - `fig_magnitude_time_windows`
+  - `fig_projected_distance_time`
+  - `fig_distance_to_M1_M3_time`
+  - `fig_cumulative_counts_raw_vs_M2aware`
+  - `fig_burst_timeline_summary`
+  - `fig_preM3_activation_raw_vs_M2aware`
+  - `fig_window_composition_raw_vs_M2aware`
+  - optional sensitivity figures only if needed to resolve ambiguity
+
+### Task 3 — Produce the final catalog-level screening classification and follow-up prioritization
+- Task description:
+  - Convert the fixed-window summaries, burst diagnostics, spatial composition results, control comparisons, and raw versus M2-aware contrasts into a concise screening classification of the M1-M3 system and identify which deeper analyses are justified.
+- Required data sources:
+  - outputs from Tasks 1–2
+  - optional selective context from `source_mechanism/Snet_mecha.csv` only for follow-up recommendations
+- Parameter selection strategy:
+  - For each requested interpretation label, assign evidence based on explicit metrics:
+    - pre-existing local activity before M1
+    - M1-related swarm/aftershock-dominated activity relative to the earlier pre-M1 baseline
+    - quiet or sustained intermediate M1-M3 activity after M1+21 d
+    - continuous activation chain
+    - separated bursts
+    - endpoint-centered activity
+    - pre-M3 local activation
+    - corridor-like activity
+    - apparent migration
+    - endpoint switching or mixed M1-core/M3-core sequences
+    - broader regional/background activity
+    - M2-affected or ambiguous mixed behavior
+  - Base classification on:
+    - baseline versus phase-specific rates
+    - phase contribution to the full M1-to-M3 interval
+    - window-separated spatial composition
+    - burst/gap structure
+    - full-interval versus window-separated along-axis behavior
+    - raw versus M2-aware changes
+    - simple control comparisons
+  - Mark follow-up priorities only when screening supports them:
+    - spatial-depth screening
+    - b-value/completeness screening
+    - burst-wise migration screening
+    - mechanism screening where burst or endpoint groups have enough available coverage
+- Constraints:
+  - Keep conclusions catalog-level and non-causal.
+  - If evidence is mixed, classify as mixed/ambiguous rather than forcing a single-process interpretation.
+  - Treat mechanism-based implications as hypotheses for later work only.
+- Key outputs:
+  - `m1_m3_classification_summary.csv`
+  - `m1_m3_followup_priority_table.csv`
+  - concise final report structured around the fixed windows and the requested interpretation labels
