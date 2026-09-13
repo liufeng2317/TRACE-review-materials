@@ -29,17 +29,17 @@
         <div class="hero-shade"></div>
         <div class="shell hero-content">
           <div class="hero-copy">
-            <p class="eyebrow">TRACE review materials</p>
-            <h1>From scientific questions to inspectable evidence.</h1>
-            <p class="hero-lede">TRACE is a multi-agent workflow for seismic research. It turns a scientific request into a sequence of plans, tools, executable analysis, checks, and evidence-linked results.</p>
+            <p class="eyebrow">TRACE / review materials</p>
+            <h1>TRACE: A scientific agent for seismology.</h1>
+            <p class="hero-lede">TRACE turns an open-ended seismic question into a planned, executable and auditable workflow&mdash;from observations and tools to checked results and evidence-linked interpretation.</p>
             <div class="hero-actions">
               <a class="button button-primary tab-trigger" href="#framework" data-tab-target="framework">See how it works <span aria-hidden="true">v</span></a>
               <a class="button button-quiet tab-trigger" href="#cases" data-tab-target="cases">Explore the applications</a>
             </div>
           </div>
           <div class="hero-note">
-            <span class="note-kicker">The central idea</span>
-            <p>An agent is not just a chatbot that writes code. It is a controlled loop that plans, executes, inspects, revises, and records scientific work.</p>
+            <span class="note-kicker">What "agent" means here</span>
+            <p>The model does not replace the scientific workflow. It coordinates planning, code generation, execution, diagnostics and synthesis, while the analysis records keep each decision inspectable.</p>
           </div>
         </div>
       </section>
@@ -51,8 +51,8 @@
             <span>benchmark tasks</span>
           </div>
           <div class="signal-item">
-            <strong>3</strong>
-            <span>evaluated models</span>
+            <strong>312</strong>
+            <span>model-task runs</span>
           </div>
           <div class="signal-item">
             <strong>2</strong>
@@ -60,7 +60,7 @@
           </div>
           <div class="signal-item">
             <strong>25,646</strong>
-            <span>validated Sanriku events</span>
+            <span>Sanriku events retained</span>
           </div>
         </div>
       </section>
@@ -68,15 +68,15 @@
       <section class="tab-section" id="explore">
         <div class="shell">
           <div class="tab-intro">
-            <p class="eyebrow">01 / Scientific discovery framework</p>
-            <h2>TRACE connects scientific questions to inspectable evidence.</h2>
-            <p>The first page introduces the multi-agent framework itself. The benchmark page measures bounded execution and workflow control; the Applications page shows how the same evidence-preserving workflow is used on real earthquake sequences and can later be extended to other scientific domains.</p>
+            <p class="eyebrow">TRACE / review guide</p>
+            <h2>Inspect the framework, test the capabilities, then read the cases.</h2>
+            <p>This site follows the same order as a scientific evaluation: first the workflow, then the benchmark, then the end-to-end applications. Each page pairs a plain-language explanation with the records and figures available in the public review release.</p>
           </div>
 
           <section class="tab-panel is-active" id="framework" role="tabpanel" aria-label="TRACE framework" data-panel="framework">
             <div class="section-heading">
-              <p class="eyebrow">01 / The idea</p>
-              <h2>What does an "agent" mean in this study?</h2>
+              <p class="eyebrow">01 / Framework</p>
+              <h2>A scientific agent is a workflow, not a chatbot.</h2>
               <p>A scientific agent is more than a language model that writes a script. It is a controlled research loop that turns a question into executable work, checks what the work produced, and preserves the path from observation to interpretation.</p>
             </div>
 
@@ -92,8 +92,8 @@
             </div>
 
             <div class="section-heading compact-heading">
-              <p class="eyebrow">Two complementary applications</p>
-              <h3>Validation and discovery are deliberately separated.</h3>
+              <p class="eyebrow">Why two application types?</p>
+              <h3>The same evidence discipline enters through different observations.</h3>
             </div>
             <div class="role-grid">
               <article class="role-item">
@@ -112,7 +112,7 @@
 
             <div class="section-heading">
               <p class="eyebrow">02 / The workflow</p>
-              <h2>From an open question to an evidence-supported interpretation.</h2>
+              <h2>Five stages keep the reasoning inspectable.</h2>
               <p>TRACE connects planning, execution and synthesis while preserving the information boundary at each stage. The language model proposes and implements workflows; scientific tools generate the numerical and graphical products; diagnostics determine which products are allowed into the evidence chain.</p>
             </div>
 
@@ -172,15 +172,15 @@
             <div class="workflow-gallery" aria-label="Representative workflow figures">
               <figure class="workflow-figure">
                 <img src="assets/workflow-waveform.png" alt="Waveform before and after signal preprocessing">
-                <figcaption><span class="label">Preprocess</span>Condition the signal before scientific inference.</figcaption>
+                <figcaption><span class="label">Condition the signal</span>Waveform preprocessing makes later picks inspectable.</figcaption>
               </figure>
               <figure class="workflow-figure">
                 <img src="assets/workflow-picking.png" alt="Three-component waveforms with P and S phase picks">
-                <figcaption><span class="label">Pick phases</span>Estimate P and S arrivals from waveform evidence.</figcaption>
+                <figcaption><span class="label">Detect phase arrivals</span>P and S picks create the event-level evidence layer.</figcaption>
               </figure>
               <figure class="workflow-figure">
                 <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
-                <figcaption><span class="label">Associate events</span>Group station-level arrivals into event hypotheses.</figcaption>
+                <figcaption><span class="label">Assemble event hypotheses</span>Station arrivals become a catalog through explicit association.</figcaption>
               </figure>
             </div>
 
@@ -204,16 +204,33 @@
             <div class="section-heading split-heading">
               <div>
                 <p class="eyebrow">02 / Benchmark</p>
-                <h2>Does the agent complete scientific work?</h2>
+                <h2>Benchmarking scientific workflow execution.</h2>
               </div>
-              <p>The benchmark separates bounded tool execution from longer workflow control. Level 1 tests individual seismological operations. Level 2 tests chaining, branching, batching and constrained exploration. Level 3 is represented by the two integrated case studies.</p>
+              <p>The benchmark asks three increasingly demanding questions: can the agent perform a defined operation, coordinate several operations, and support an integrated scientific interpretation? Level 1 and Level 2 are scored task by task; Level 3 is represented by the two case studies.</p>
+            </div>
+
+            <div class="benchmark-hero">
+              <figure class="benchmark-figure">
+                <img src="assets/workflow-association.png" alt="Phase arrivals grouped into earthquake event hypotheses">
+                <figcaption><span class="label">Representative operation</span>Phase arrivals are associated into event hypotheses before catalog analysis.</figcaption>
+              </figure>
+              <div class="benchmark-hero-copy">
+                <span class="label">How to read the benchmark</span>
+                <h3>Capability grows from an operation to a research workflow.</h3>
+                <p>The benchmark keeps the task definition, tool access, scoring rule and execution record explicit. This makes it possible to separate a local coding success from reliable multi-step scientific work.</p>
+                <div class="benchmark-ladder">
+                  <div><strong>Level 1</strong><span>Execute a defined operation.</span></div>
+                  <div><strong>Level 2</strong><span>Coordinate a multi-step analysis.</span></div>
+                  <div><strong>Level 3</strong><span>Assemble and qualify evidence in a case.</span></div>
+                </div>
+              </div>
             </div>
 
             <div class="benchmark-summary">
               <div class="benchmark-lead">
                 <span class="label">Overall result</span>
                 <div class="score-line"><strong id="mean-score">4.82</strong><span>/ 5</span></div>
-                <p>Mean task score across 104 tasks and three evaluated models. Manual-reference visualization ratings are the mean of five expert ratings on a 1-5 scale.</p>
+                <p>Mean task score across 104 tasks and 312 model-task runs. For qualitative outputs, the reported task score is the mean of five expert ratings on a 1-5 scale.</p>
                 <div class="score-rail"><span style="width: 96.4%"></span></div>
                 <div class="mini-stat-row">
                   <span><strong id="passed-runs">310</strong> passing runs</span>
@@ -246,18 +263,18 @@
             <div class="benchmark-level-grid">
               <article class="benchmark-level">
                 <span class="label">Level 1 / 74 tasks</span>
-                <h3>Atomic task capability</h3>
-                <p>Data access and retrieval, data representation and formatting, signal processing, statistics and feature extraction, and scientific visualization.</p>
+                <h3>Defined operations</h3>
+                <p>Can the agent complete data access, signal processing, statistics, feature extraction and visualization tasks with explicit outputs?</p>
               </article>
               <article class="benchmark-level">
                 <span class="label">Level 2 / 30 tasks</span>
-                <h3>Multi-step analytical capability</h3>
-                <p>Sequential chaining, heuristic branching, scalable batching and scanning, and constrained space exploration under physical constraints.</p>
+                <h3>Coordinated workflows</h3>
+                <p>Can it chain, branch, batch and scan operations while preserving the constraints and outputs required by the next step?</p>
               </article>
               <article class="benchmark-level">
                 <span class="label">Level 3 / 2 cases</span>
-                <h3>Integrated scientific analysis</h3>
-                <p>End-to-end workflows that connect case-specific observations, candidate interpretations, multiple analyses and structured evidence synthesis.</p>
+                <h3>Integrated cases</h3>
+                <p>Can a complete workflow connect observations, candidate interpretations, multiple analyses and a qualified evidence synthesis?</p>
               </article>
             </div>
 
@@ -265,7 +282,7 @@
               <div class="model-table-wrap">
                 <div class="subheading">
                   <span class="label">Model comparison</span>
-                  <h3>Three models, one task set</h3>
+                  <h3>Same tasks, tools and scoring rules</h3>
                 </div>
                 <div class="table-scroll">
                   <table class="model-table">
@@ -304,9 +321,14 @@
             <div class="case-panel-heading applications-heading">
               <div>
                 <p class="eyebrow">03 / Scientific applications</p>
-                <h2>Case studies that grow with the framework.</h2>
+                <h2>Applications: from retrospective validation to scientific discovery.</h2>
               </div>
               <p>Each application uses the same evidence-preserving architecture with a different observational entry point and scientific question. New cases can be added here without changing the benchmark or the framework description.</p>
+            </div>
+
+            <div class="section-heading compact-heading application-directory-heading">
+              <p class="eyebrow">Application directory</p>
+              <h3>Choose the scientific question you want to inspect.</h3>
             </div>
 
             <div class="application-directory" aria-label="Application directory">
@@ -334,7 +356,7 @@
             <div class="case-panel-heading">
               <div>
                 <p class="eyebrow">Application 01 / Validation</p>
-                <h2>Ridgecrest: reconstructing delayed cascading activation.</h2>
+                <h2>Ridgecrest: recovering delayed cascading activation from waveforms.</h2>
               </div>
               <p>The 2019 sequence is the retrospective validation case. TRACE began with continuous waveforms and mapped surface ruptures, without a prescribed target interpretation, and recovered an established physical interpretation from the resulting catalog evidence.</p>
             </div>
@@ -342,7 +364,7 @@
             <div class="case-hero">
               <figure class="case-figure">
                 <img src="assets/ridgecrest-mechanism-chain.png" alt="Ridgecrest earthquake sequence and fault-mechanism evidence">
-                <figcaption>Ridgecrest evidence chain: catalog structure, timing, fault organization and candidate interpretations.</figcaption>
+                <figcaption>Ridgecrest evidence chain: catalog structure, timing, fault organization and interpretation checks.</figcaption>
               </figure>
               <div class="case-hero-copy">
                 <span class="label">Scientific question</span>
@@ -387,7 +409,7 @@
             <div class="case-panel-heading">
               <div>
                 <p class="eyebrow">Application 02 / Discovery</p>
-                <h2>Sanriku: linking shallow activation to rupture geometry.</h2>
+                <h2>Sanriku: tracing persistent shallow-interface activation.</h2>
               </div>
               <p>The Sanriku sequence is the discovery application. TRACE began from official JMA event and phase-arrival products, then used relocation, fixed-stage catalog analysis, migration diagnostics and repeating-earthquake evidence to formulate a testable interpretation.</p>
             </div>
@@ -395,7 +417,7 @@
             <div class="case-hero">
               <figure class="case-figure">
                 <img src="assets/sanriku-composite-evidence.png" alt="Composite evidence figure for the Sanriku earthquake sequence">
-                <figcaption>Sanriku evidence chain: regional geometry, rates, magnitude-frequency structure and repeating-earthquake families.</figcaption>
+                <figcaption>Sanriku evidence chain: regional geometry, rates, magnitude-frequency structure and repeating-earthquake evidence.</figcaption>
               </figure>
               <div class="case-hero-copy">
                 <span class="label">Scientific question</span>

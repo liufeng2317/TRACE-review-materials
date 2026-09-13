@@ -584,6 +584,80 @@ h3 {
   background: var(--line);
 }
 
+.benchmark-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 1px;
+  margin: 0 0 64px;
+  background: var(--line);
+}
+
+.benchmark-figure {
+  margin: 0;
+  background: var(--white);
+}
+
+.benchmark-figure img {
+  width: 100%;
+  aspect-ratio: 1.55 / 1;
+  object-fit: cover;
+  background: #edf5f4;
+}
+
+.benchmark-figure figcaption {
+  padding: 14px 18px 16px;
+  color: var(--muted);
+  font-size: 0.79rem;
+}
+
+.benchmark-figure .label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--coral);
+}
+
+.benchmark-hero-copy {
+  padding: 32px;
+  color: var(--white);
+  background: var(--dark);
+}
+
+.benchmark-hero-copy .label {
+  color: #a7f3ed;
+}
+
+.benchmark-hero-copy h3 {
+  max-width: 390px;
+  font-size: 1.65rem;
+}
+
+.benchmark-hero-copy > p {
+  max-width: 470px;
+  color: #c1d0d2;
+}
+
+.benchmark-ladder {
+  margin-top: 28px;
+  border-top: 1px solid #2e4652;
+}
+
+.benchmark-ladder div {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #2e4652;
+  font-size: 0.84rem;
+}
+
+.benchmark-ladder strong {
+  color: #a7f3ed;
+}
+
+.benchmark-ladder span {
+  color: #b9cccf;
+}
+
 .benchmark-level {
   min-height: 210px;
   padding: 26px;
@@ -1086,6 +1160,10 @@ h3 {
   gap: 64px;
 }
 
+.application-directory-heading {
+  margin-bottom: 24px;
+}
+
 .subheading {
   margin-bottom: 20px;
 }
@@ -1410,6 +1488,7 @@ h3 {
 
   .hero-content,
   .split-heading,
+  .benchmark-hero,
   .benchmark-summary,
   .benchmark-columns {
     grid-template-columns: 1fr;
