@@ -14,13 +14,10 @@
         <a class="brand" href="#top" aria-label="TRACE home">
           <img src="assets/trace-logo.svg" alt="TRACE">
         </a>
-        <nav class="main-nav" aria-label="Primary navigation">
-          <button class="nav-tab is-active" type="button" data-tab-target="overview" role="tab" aria-selected="true">Overview</button>
-          <button class="nav-tab" type="button" data-tab-target="workflow" role="tab" aria-selected="false">TRACE workflow</button>
-          <button class="nav-tab" type="button" data-tab-target="benchmark" role="tab" aria-selected="false">Benchmark</button>
-          <button class="nav-tab" type="button" data-tab-target="ridgecrest" role="tab" aria-selected="false">Ridgecrest</button>
-          <button class="nav-tab" type="button" data-tab-target="sanriku" role="tab" aria-selected="false">Sanriku</button>
-          <button class="nav-tab" type="button" data-tab-target="evidence" role="tab" aria-selected="false">Evidence</button>
+        <nav class="main-nav" aria-label="Primary navigation" role="tablist">
+          <button class="nav-tab is-active" type="button" data-tab-target="framework" role="tab" aria-selected="true" aria-controls="framework">TRACE framework</button>
+          <button class="nav-tab" type="button" data-tab-target="benchmark" role="tab" aria-selected="false" aria-controls="benchmark">Benchmark</button>
+          <button class="nav-tab" type="button" data-tab-target="cases" role="tab" aria-selected="false" aria-controls="cases">Applications</button>
         </nav>
         <a class="nav-link" href="https://github.com/liufeng2317/TRACE-review-materials" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">-&gt;</span></a>
       </div>
@@ -36,8 +33,8 @@
             <h1>From scientific questions to inspectable evidence.</h1>
             <p class="hero-lede">TRACE is a multi-agent workflow for seismic research. It turns a scientific request into a sequence of plans, tools, executable analysis, checks, and evidence-linked results.</p>
             <div class="hero-actions">
-              <a class="button button-primary tab-trigger" href="#workflow" data-tab-target="workflow">See how it works <span aria-hidden="true">v</span></a>
-              <a class="button button-quiet tab-trigger" href="#ridgecrest" data-tab-target="ridgecrest">Explore the cases</a>
+              <a class="button button-primary tab-trigger" href="#framework" data-tab-target="framework">See how it works <span aria-hidden="true">v</span></a>
+              <a class="button button-quiet tab-trigger" href="#cases" data-tab-target="cases">Explore the applications</a>
             </div>
           </div>
           <div class="hero-note">
@@ -59,7 +56,7 @@
           </div>
           <div class="signal-item">
             <strong>2</strong>
-            <span>earthquake case studies</span>
+            <span>current applications</span>
           </div>
           <div class="signal-item">
             <strong>25,646</strong>
@@ -71,21 +68,12 @@
       <section class="tab-section" id="explore">
         <div class="shell">
           <div class="tab-intro">
-            <p class="eyebrow">Explore the study</p>
-            <h2>Read TRACE by question, workflow, or case.</h2>
-            <p>The manuscript explains the scientific motivation and results; this site turns that same structure into a guided record. Start with the plain-language overview, then follow the workflow into the benchmark and the two complementary earthquake applications.</p>
+            <p class="eyebrow">01 / Scientific discovery framework</p>
+            <h2>TRACE connects scientific questions to inspectable evidence.</h2>
+            <p>The first page introduces the multi-agent framework itself. The benchmark page measures bounded execution and workflow control; the Applications page shows how the same evidence-preserving workflow is used on real earthquake sequences and can later be extended to other scientific domains.</p>
           </div>
 
-          <div class="tab-strip" role="tablist" aria-label="Study sections">
-            <button class="tab-button is-active" type="button" data-tab-target="overview" role="tab" aria-selected="true">Overview</button>
-            <button class="tab-button" type="button" data-tab-target="workflow" role="tab" aria-selected="false">TRACE workflow</button>
-            <button class="tab-button" type="button" data-tab-target="benchmark" role="tab" aria-selected="false">Benchmark</button>
-            <button class="tab-button" type="button" data-tab-target="ridgecrest" role="tab" aria-selected="false">Ridgecrest</button>
-            <button class="tab-button" type="button" data-tab-target="sanriku" role="tab" aria-selected="false">Sanriku</button>
-            <button class="tab-button" type="button" data-tab-target="evidence" role="tab" aria-selected="false">Evidence &amp; access</button>
-          </div>
-
-          <section class="tab-panel is-active" id="overview" role="tabpanel" aria-label="Overview" data-panel="overview">
+          <section class="tab-panel is-active" id="framework" role="tabpanel" aria-label="TRACE framework" data-panel="framework">
             <div class="section-heading">
               <p class="eyebrow">01 / The idea</p>
               <h2>What does an "agent" mean in this study?</h2>
@@ -112,18 +100,16 @@
                 <span class="role-index">A</span>
                 <h3>Ridgecrest: retrospective validation</h3>
                 <p>TRACE starts from continuous waveforms in the well-studied 2019 sequence and reconstructs a catalog-based interpretation of delayed cascading activation between the Mw 6.4 and Mw 7.1 earthquakes.</p>
-                <button class="text-button tab-trigger" type="button" data-tab-target="ridgecrest">Read the case <span aria-hidden="true">-&gt;</span></button>
+                <a class="text-button" href="#ridgecrest-application">Read the application <span aria-hidden="true">-&gt;</span></a>
               </article>
               <article class="role-item">
                 <span class="role-index">B</span>
                 <h3>Sanriku: an unresolved sequence</h3>
                 <p>TRACE starts from JMA catalog and phase-arrival products, then integrates relocation, stage-resolved seismicity and waveform similarity to formulate a testable interpretation before the 2026 Mw 7.7 rupture.</p>
-                <button class="text-button tab-trigger" type="button" data-tab-target="sanriku">Read the case <span aria-hidden="true">-&gt;</span></button>
+                <a class="text-button" href="#sanriku-application">Read the application <span aria-hidden="true">-&gt;</span></a>
               </article>
             </div>
-          </section>
 
-          <section class="tab-panel" id="workflow" role="tabpanel" aria-label="TRACE workflow" data-panel="workflow">
             <div class="section-heading">
               <p class="eyebrow">02 / The workflow</p>
               <h2>From an open question to an evidence-supported interpretation.</h2>
@@ -217,7 +203,7 @@
           <section class="tab-panel section-tint-panel" id="benchmark" role="tabpanel" aria-label="Benchmark" data-panel="benchmark">
             <div class="section-heading split-heading">
               <div>
-                <p class="eyebrow">03 / Benchmark</p>
+                <p class="eyebrow">02 / Benchmark</p>
                 <h2>Does the agent complete scientific work?</h2>
               </div>
               <p>The benchmark separates bounded tool execution from longer workflow control. Level 1 tests individual seismological operations. Level 2 tests chaining, branching, batching and constrained exploration. Level 3 is represented by the two integrated case studies.</p>
@@ -314,10 +300,40 @@
             </div>
           </section>
 
-          <section class="tab-panel" id="ridgecrest" role="tabpanel" aria-label="Ridgecrest case" data-panel="ridgecrest">
+          <section class="tab-panel" id="cases" role="tabpanel" aria-label="Scientific applications" data-panel="cases">
+            <div class="case-panel-heading applications-heading">
+              <div>
+                <p class="eyebrow">03 / Scientific applications</p>
+                <h2>Case studies that grow with the framework.</h2>
+              </div>
+              <p>Each application uses the same evidence-preserving architecture with a different observational entry point and scientific question. New cases can be added here without changing the benchmark or the framework description.</p>
+            </div>
+
+            <div class="application-directory" aria-label="Application directory">
+              <a class="application-card" href="#ridgecrest-application">
+                <span class="application-kicker">Application 01 / Validation</span>
+                <strong>Ridgecrest</strong>
+                <span>Continuous waveforms to a relocated catalog and delayed-cascading interpretation.</span>
+                <span class="application-arrow" aria-hidden="true">-&gt;</span>
+              </a>
+              <a class="application-card" href="#sanriku-application">
+                <span class="application-kicker">Application 02 / Discovery</span>
+                <strong>Sanriku</strong>
+                <span>Trusted catalog products to shallow-interface activation and a testable rupture-geometry hypothesis.</span>
+                <span class="application-arrow" aria-hidden="true">-&gt;</span>
+              </a>
+              <div class="application-card application-card-future">
+                <span class="application-kicker">Extension path</span>
+                <strong>Next applications</strong>
+                <span>Volcanic unrest, global catalog analysis and other scientific domains can be added as separate application records.</span>
+                <span class="application-status">Planned expansion</span>
+              </div>
+            </div>
+
+            <article class="application-block" id="ridgecrest-application">
             <div class="case-panel-heading">
               <div>
-                <p class="eyebrow">04 / Case study I</p>
+                <p class="eyebrow">Application 01 / Validation</p>
                 <h2>Ridgecrest: reconstructing delayed cascading activation.</h2>
               </div>
               <p>The 2019 sequence is the retrospective validation case. TRACE began with continuous waveforms and mapped surface ruptures, without a prescribed target interpretation, and recovered an established physical interpretation from the resulting catalog evidence.</p>
@@ -363,14 +379,14 @@
 
             <div class="case-links">
               <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/ridgecrest" target="_blank" rel="noreferrer">Open Ridgecrest release materials <span aria-hidden="true">-&gt;</span></a>
-              <button class="text-button tab-trigger" type="button" data-tab-target="evidence">Read the evidence boundary <span aria-hidden="true">-&gt;</span></button>
+              <a class="text-button" href="#evidence">Read the release boundary <span aria-hidden="true">-&gt;</span></a>
             </div>
-          </section>
+            </article>
 
-          <section class="tab-panel" id="sanriku" role="tabpanel" aria-label="Sanriku case" data-panel="sanriku">
+          <article class="application-block" id="sanriku-application">
             <div class="case-panel-heading">
               <div>
-                <p class="eyebrow">05 / Case study II</p>
+                <p class="eyebrow">Application 02 / Discovery</p>
                 <h2>Sanriku: linking shallow activation to rupture geometry.</h2>
               </div>
               <p>The Sanriku sequence is the discovery application. TRACE began from official JMA event and phase-arrival products, then used relocation, fixed-stage catalog analysis, migration diagnostics and repeating-earthquake evidence to formulate a testable interpretation.</p>
@@ -435,13 +451,13 @@
 
             <div class="case-links">
               <a class="text-link" href="https://github.com/liufeng2317/TRACE-review-materials/tree/main/release/scientific_cases/sanriku" target="_blank" rel="noreferrer">Open Sanriku release materials <span aria-hidden="true">-&gt;</span></a>
-              <button class="text-button tab-trigger" type="button" data-tab-target="evidence">Read the evidence boundary <span aria-hidden="true">-&gt;</span></button>
+              <a class="text-button" href="#evidence">Read the release boundary <span aria-hidden="true">-&gt;</span></a>
             </div>
-          </section>
+          </article>
 
-          <section class="tab-panel section-dark-panel" id="evidence" role="tabpanel" aria-label="Evidence and access" data-panel="evidence">
+          <div class="release-access section-dark-panel" id="evidence">
             <div class="section-heading">
-              <p class="eyebrow">06 / Evidence and access</p>
+              <p class="eyebrow">Release and access</p>
               <h2>The result is a chain of evidence, not a single answer.</h2>
               <p>The website is the explanation layer. The public release remains the source of truth for scripts, parameters, outputs, reports, figure source data and execution records.</p>
             </div>
@@ -509,6 +525,7 @@
                 <span class="evidence-arrow" aria-hidden="true">-&gt;</span>
               </a>
             </div>
+          </div>
           </section>
         </div>
       </section>

@@ -1,19 +1,13 @@
-const tabButtons = document.querySelectorAll(".nav-tab, .tab-button");
-const tabTriggers = document.querySelectorAll("[data-tab-target]");
-const tabPanels = document.querySelectorAll(".tab-panel");
-const tabAliases = {
-  agent: "overview",
-  cases: "ridgecrest",
-  meaning: "evidence"
-};
+const tabButtons = document.querySelectorAll(".nav-tab");
+const tabTriggers = document.querySelectorAll(".tab-trigger");
+const tabPanels = document.querySelectorAll("[data-panel]");
 
 const setActiveTab = (target, { scroll = true, updateHash = true } = {}) => {
-  const resolvedTarget = tabAliases[target] || target;
-  const panel = document.querySelector(`[data-panel="${resolvedTarget}"]`);
+  const panel = document.querySelector(`[data-panel="${target}"]`);
   if (!panel) return;
 
   tabButtons.forEach((button) => {
-    const active = button.dataset.tabTarget === resolvedTarget;
+    const active = button.dataset.tabTarget === target;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-selected", active ? "true" : "false");
   });
@@ -25,7 +19,7 @@ const setActiveTab = (target, { scroll = true, updateHash = true } = {}) => {
   });
 
   if (updateHash) {
-    window.history.replaceState(null, "", `#${resolvedTarget}`);
+    window.history.replaceState(null, "", `#${target}`);
   }
 
   if (scroll) {
@@ -36,31 +30,46 @@ const setActiveTab = (target, { scroll = true, updateHash = true } = {}) => {
 tabTriggers.forEach((trigger) => {
   trigger.addEventListener("click", (event) => {
     const target = trigger.dataset.tabTarget;
-    if (trigger.tagName === "A") event.preventDefault();
+    event.preventDefault();
     setActiveTab(target);
   });
 });
 
-document.querySelectorAll('[role="tablist"]').forEach((tablist) => {
-  const controls = [...tablist.querySelectorAll('[role="tab"]')];
-  controls.forEach((control, index) => {
-    control.addEventListener("keydown", (event) => {
-      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-      event.preventDefault();
-      const nextIndex = event.key === "Home"
-        ? 0
-        : event.key === "End"
-          ? controls.length - 1
-          : (index + (event.key === "ArrowRight" ? 1 : -1) + controls.length) % controls.length;
-      controls[nextIndex].focus();
-      setActiveTab(controls[nextIndex].dataset.tabTarget);
-    });
+document.querySelectorAll('a[href^="#ridgecrest-"], a[href^="#sanriku-"], a[href="#evidence"]').forEach((anchor) => {
+  anchor.addEventListener("click", (event) => {
+    const target = document.querySelector(anchor.getAttribute("href"));
+    if (!target) return;
+    event.preventDefault();
+    setActiveTab("cases", { scroll: false, updateHash: false });
+    window.history.replaceState(null, "", anchor.getAttribute("href"));
+    requestAnimationFrame(() => target.scrollIntoView({ behavior: "smooth", block: "start" }));
+  });
+});
+
+const navigation = document.querySelector(".main-nav");
+const navigationTabs = [...navigation.querySelectorAll(".nav-tab")];
+navigationTabs.forEach((button, index) => {
+  button.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const nextIndex = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? navigationTabs.length - 1
+        : (index + (event.key === "ArrowRight" ? 1 : -1) + navigationTabs.length) % navigationTabs.length;
+    navigationTabs[nextIndex].focus();
+    setActiveTab(navigationTabs[nextIndex].dataset.tabTarget);
   });
 });
 
 const initialTab = window.location.hash.slice(1);
-if (initialTab && (document.querySelector(`[data-panel="${tabAliases[initialTab] || initialTab}"]`))) {
+const initialPanel = document.querySelector(`[data-panel="${initialTab}"]`);
+const initialAnchor = document.getElementById(initialTab);
+if (initialPanel) {
   setActiveTab(initialTab, { scroll: false, updateHash: false });
+} else if (initialAnchor && initialAnchor.closest("#cases")) {
+  setActiveTab("cases", { scroll: false, updateHash: false });
+  requestAnimationFrame(() => initialAnchor.scrollIntoView({ behavior: "auto", block: "start" }));
 } else {
   tabPanels.forEach((panel, index) => {
     panel.hidden = index !== 0;
